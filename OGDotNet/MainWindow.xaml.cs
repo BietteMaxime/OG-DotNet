@@ -122,9 +122,12 @@ namespace OGDotNet
 
         private void grid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var uniqueIdentifier = (((ManageableSecurity)grid.SelectedItem)).UniqueId;
-            var security = SecurityMaster.GetSecurity(uniqueIdentifier);
-            MessageBox.Show(security.Name);
+            if (grid.SelectedItem != null)
+            {
+                var uniqueIdentifier = (((ManageableSecurity) grid.SelectedItem)).UniqueId;
+                var security = SecurityMaster.GetSecurity(uniqueIdentifier);
+                MessageBox.Show(security.Name);
+            }
         }
     }
 }
