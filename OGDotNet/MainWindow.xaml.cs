@@ -32,7 +32,7 @@ namespace OGDotNet
             Update();
         }
 
-        private IList<SecurityDocument> GetThem(string name, string type, long cancellationToken)
+        private SearchResults<SecurityDocument> GetThem(string name, string type, int currentPage, long cancellationToken)
         {
             var remoteSecuritySource = new RemoteSecurityMasterResource("http://localhost:8080/jax/");
             var securityMasters = remoteSecuritySource.GetSecurityMasters();
@@ -40,7 +40,7 @@ namespace OGDotNet
             foreach (var securityMaster in securityMasters)
             {
                 CancelIfCancelled(cancellationToken);
-                return securityMaster.Search(name, type).ToList();
+                return securityMaster.Search(name, type, currentPage);
             }
             throw new ArgumentException();
         }
@@ -64,18 +64,39 @@ namespace OGDotNet
 
             string type = typeBox.Text;
             string name = nameBox.Text;
+            
+            int currentPage = CurrentPage;
+
             BackgroundWorker worker = new BackgroundWorker();
             ThreadPool.QueueUserWorkItem(delegate
                                              {
-                                                 var securityDocuments = GetThem(name, type, previous).Select(s => s.Security).ToList();
+                                                 var results = GetThem(name, type, currentPage, previous);
                                                  CancelIfCancelled(previous);
                                                  Dispatcher.BeginInvoke((Action) (() =>
                                                                             {
                                                                                 CancelIfCancelled(previous);
-                                                                                grid.DataContext = securityDocuments;
+                                                                                grid.DataContext = results.Documents.Select(s => s.Security).ToList(); //TODO
+                                                                                pageCountLabel.DataContext = results.Paging;
+                                                                                currentPageLabel.DataContext = results.Paging;
                                                                             }));
                                              });
             
+        }
+
+        private int CurrentPage
+        {
+            get
+            {
+                int currentPage;
+                if (! int.TryParse(currentPageLabel.Text, out currentPage))
+                {
+                    currentPage = 1;
+                }
+                return currentPage;
+            }
+            set { 
+                currentPageLabel.Text = value.ToString();
+            }
         }
 
         private void typeBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
@@ -90,6 +111,17 @@ namespace OGDotNet
         {
             if (IsLoaded)
                 Update();
+        }
+
+        private void currentPageLabel_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            Update();
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentPage++;
+            Update();
         }
     }
 }

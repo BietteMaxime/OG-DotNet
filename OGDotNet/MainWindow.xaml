@@ -5,14 +5,18 @@
     <Grid>
         <TextBox Height="23" HorizontalAlignment="Left" Margin="48,14,0,0" Name="typeBox" VerticalAlignment="Top" Width="120" Text="*" AcceptsReturn="False" TextChanged="typeBox_TextChanged" />
         <TextBox Height="26" HorizontalAlignment="Left" Margin="210,15,0,0" Name="nameBox" VerticalAlignment="Top" Width="203" Text="*" TextChanged="nameBox_TextChanged" />
-        <ListView Height="383" HorizontalAlignment="Left" Margin="76,108,0,0" Name="grid" VerticalAlignment="Top" Width="588" ItemsSource="{Binding}">
+        <ListView Height="296" HorizontalAlignment="Left" Margin="48,47,0,0" Name="grid" VerticalAlignment="Top" Width="588" ItemsSource="{Binding}">
             <ListView.View>
                 <GridView AllowsColumnReorder="true">
-                    <GridViewColumn Header="Name" Width="120" DisplayMemberBinding="{Binding Path=NameProp}" />
-                    <GridViewColumn Header="Type" Width="120" DisplayMemberBinding="{Binding Path=SecurityTypeProp}" />
+                    <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Path=NameProp}" />
+                    <GridViewColumn Header="Type" Width="Auto" DisplayMemberBinding="{Binding Path=TypeProp}" />
+                    <GridViewColumn Header="Reference" Width="Auto" DisplayMemberBinding="{Binding Path=UniqueIdentifierProp.Value}" />
                 </GridView>
             </ListView.View>
         </ListView>
-        
+        <TextBlock Height="29" HorizontalAlignment="Left" Margin="167,367,0,0" Name="currentPageLabel" VerticalAlignment="Top" Width="46" Text="{Binding Path=CurrentPage, Mode=OneWay}" />
+        <TextBlock Height="29" HorizontalAlignment="Right" Margin="0,371,465,0" Name="textBlock1" Text="of" VerticalAlignment="Top" Width="25" />
+        <Label Height="28" HorizontalAlignment="Right" Margin="0,368,459,0" Name="pageCountLabel" VerticalAlignment="Top" Content="{Binding Path=Pages}"/>
+        <Button Content=">" Height="31" HorizontalAlignment="Left" Margin="370,370,0,0" Name="button1" VerticalAlignment="Top" Width="37" Click="button1_Click" />
     </Grid>
 </Window>

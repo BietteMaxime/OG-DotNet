@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
 using Fudge;
+using Fudge.Serialization;
 
 namespace OGDotNet
 {
-    [Serializable]
     public class UniqueIdentifier : IComparable<UniqueIdentifier>, IUniqueIdentifiable, IEquatable<UniqueIdentifier>
     {
 
@@ -248,13 +248,14 @@ namespace OGDotNet
         }
         #endregion
 
-        public static UniqueIdentifier FromFudgeMsg(FudgeMsg msg)
+        public static UniqueIdentifier FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             string schema = null; 
             string value = null;
             string version = null;
 
-            foreach (var field in msg.GetAllFields())
+
+            foreach (var field in ffc.GetAllFields())
             {
                 switch (field.Name)
                 {
@@ -272,6 +273,16 @@ namespace OGDotNet
                 }
             }
             return new UniqueIdentifier(schema, value, version);
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            a.Add(SCHEME_FUDGE_FIELD_NAME, Scheme);
+            a.Add(VALUE_FUDGE_FIELD_NAME, Value);
+            if (Version != null)
+            {
+                a.Add(VERSION_FUDGE_FIELD_NAME, Version);
+            }
         }
     }
 }

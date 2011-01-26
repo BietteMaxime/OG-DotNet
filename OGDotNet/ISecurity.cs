@@ -1,5 +1,4 @@
 ﻿using System;
-using Fudge;
 
 namespace OGDotNet
 {
@@ -69,13 +68,5 @@ namespace OGDotNet
         public const String SECURITY_TYPE_KEY = "securityType";
         public const String UNIQUE_ID_KEY = "uniqueId";
         public const String IDENTIFIERS_KEY = "identifiers";
-
-        public static ISecurity FromFudgeMsg(FudgeMsg fudgeMsg)
-        {
-            string name = (string) fudgeMsg.GetByName(NAME_KEY).Value;
-            string securityType = (string)fudgeMsg.GetByName(SECURITY_TYPE_KEY).Value;
-            UniqueIdentifier uniqueId = UniqueIdentifier.FromFudgeMsg((FudgeMsg) fudgeMsg.GetByName(UNIQUE_ID_KEY).Value);
-            return new Security(uniqueId, name, securityType);
-        }
     }
 }

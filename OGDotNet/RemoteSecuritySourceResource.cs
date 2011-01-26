@@ -7,16 +7,14 @@ using System.Net;
 using System.Runtime.Serialization;
 using Fudge;
 using Fudge.Serialization;
-using Fudge.Serialization.Reflection;
 using Fudge.Types;
-using Fudge.Util;
 
 namespace OGDotNet
 {
     [Serializable]
     internal class SecurityDocument
     {
-        //TODO public UniqueIdentifier UniqueId;
+        public string UniqueId;
         public ManageableSecurity Security;
 
         public override string ToString()
@@ -35,6 +33,7 @@ namespace OGDotNet
     {
         public string NameProp { get { return Name; } }
         public string SecurityTypeProp { get { return SecurityType; } }
+        public UniqueIdentifier UniqueIdentifierProp { get { return UniqueId; } }
         public string Name;
         public string SecurityType;
         public UniqueIdentifier UniqueId;
@@ -101,6 +100,11 @@ namespace OGDotNet
     }
     
 
+    class SearchResults<TDocument>
+    {
+        public Paging Paging { get; set; }
+        public IList<TDocument> Documents { get; set; }
+    }
     class RemoteSecurityMaster
     {
         internal readonly RESTMagic _restMagic;
@@ -108,24 +112,6 @@ namespace OGDotNet
         public RemoteSecurityMaster(RESTMagic restMagic)
         {
             _restMagic = restMagic;
-        }
-
-        public ISecurity GetSecurity(UniqueIdentifier uid)
-        {
-            if (uid.IsVersioned)
-            {
-                throw new NotImplementedException();
-            }
-
-
-            FudgeMsg reponse = _restMagic.GetSubMagic("securities").GetSubMagic("security").GetSubMagic(uid.ToString()).GetReponse();
-
-            var secField = reponse.GetByName("security");
-            if (secField == null)
-            {
-                return null;// TODO not found semantics
-            }
-            return Security.FromFudgeMsg((FudgeMsg)secField.Value);
         }
 
         public Collection<ISecurity> getSecurities(IdentifierBundle bundle)
@@ -139,7 +125,7 @@ namespace OGDotNet
         }
 
         ///TODO public void Search(SecuritySearchRequest ssr)
-        public IEnumerable<SecurityDocument> Search(string name, string type)
+        public SearchResults<SecurityDocument> Search(string name, string type, int currentPage)
         {
             var fudgeContext = new FudgeContext();
 
@@ -151,21 +137,14 @@ namespace OGDotNet
 
             
             //var fullDetail= new FudgeMsg(fudgeContext);
-            var request = new SecuritySearchRequest(new PagingRequest(1,10), name, type);
+            var request = new SecuritySearchRequest(new PagingRequest(cu,10), name, type);
 
             FudgeSerializer fudgeSerializer = new FudgeSerializer(fudgeContext);
             var msg = fudgeSerializer.SerializeToMsg(request);
             var fudgeMsg = _restMagic.GetSubMagic("search").GetReponse(fudgeContext, msg);
 
 
-
-
-            var paging = fudgeSerializer.Deserialize((FudgeMsg)fudgeMsg.GetByName("paging").Value, typeof(Paging));
-            //List of documents
-            var listOfDocsMessage = (FudgeMsg)fudgeMsg.GetByName("documents").Value;
-
-
-            return listOfDocsMessage.GetAllFields().Select(f => f.Value).Cast<FudgeMsg>().Select(fudgeSerializer.Deserialize).Cast<SecurityDocument>();
+            return (SearchResults<SecurityDocument>)fudgeSerializer.Deserialize(fudgeMsg, typeof(SearchResults<SecurityDocument>));
         }
     }
 
@@ -213,6 +192,15 @@ namespace OGDotNet
         public int Page;
         public int PagingSize;
         public int TotalItems;
+
+        public int CurrentPage
+        {
+            get{return Page;}
+        }
+        public int Pages
+        {
+            get { return ((TotalItems -1)/PagingSize) + 1; }
+        }
     }
 
     class RemoteSecurityMasterResource 
