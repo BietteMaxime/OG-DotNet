@@ -101,9 +101,9 @@ namespace OGDotNet
             _restMagic = restMagic;
         }
         
-        public SearchResults<SecurityDocument> Search(string name, string type, int currentPage)
+        public SearchResults<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest)
         {
-            var request = new SecuritySearchRequest(new PagingRequest(currentPage,10), name, type);
+            var request = new SecuritySearchRequest(pagingRequest, name, type);
             
             FudgeSerializer fudgeSerializer = new FudgeSerializer(FudgeContext);
             var msg = fudgeSerializer.SerializeToMsg(request);

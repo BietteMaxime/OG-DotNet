@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace OGDotNet
@@ -26,19 +27,13 @@ namespace OGDotNet
             
 
             InitializeComponent();
-            grid.Items.Clear();
+            itemGrid.Items.Clear();
         }
 
         
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Update();
-        }
-
-        private SearchResults<SecurityDocument> GetThem(string name, string type, int currentPage, long cancellationToken)
-        {
-            CancelIfCancelled(cancellationToken);
-            return SecurityMaster.Search(name, type, currentPage);
         }
 
         private void CancelIfCancelled(long cancellationToken)
@@ -63,15 +58,17 @@ namespace OGDotNet
                                              {
                                                  try
                                                  {
-                                                     var results = GetThem(name, type, currentPage, token);
+                                                     CancelIfCancelled(token);
+                                                     var results = SecurityMaster.Search(name, type, new PagingRequest(currentPage, 20));
                                                      CancelIfCancelled(token);
                                                      Dispatcher.Invoke((Action) (() =>
                                                                                           {
                                                                                               CancelIfCancelled(token);
-                                                                                              grid.DataContext = results.Documents.Select(s => s.Security).ToList(); //TODO
-                                                                                              grid.SelectedIndex = 0;
+                                                                                              itemGrid.DataContext = results.Documents.Select(s => s.Security).ToList(); //TODO
+                                                                                              itemGrid.SelectedIndex = 0;
                                                                                               pageCountLabel.DataContext = results.Paging;
                                                                                               currentPageLabel.DataContext = results.Paging;
+                                                                                              outerGrid.UpdateLayout();
                                                                                           }));
                                                  }
                                                  catch (OperationCanceledException e)
@@ -137,9 +134,9 @@ namespace OGDotNet
 
         private void grid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (grid.SelectedItem != null)
+            if (itemGrid.SelectedItem != null)
             {
-                var uniqueIdentifier = (((ManageableSecurity) grid.SelectedItem)).UniqueId;
+                var uniqueIdentifier = (((ManageableSecurity) itemGrid.SelectedItem)).UniqueId;
                 var security = SecurityMaster.GetSecurity(uniqueIdentifier);
                 MessageBox.Show(security.Name);
             }
@@ -147,7 +144,7 @@ namespace OGDotNet
 
         private void grid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            detailsGrid.DataContext = grid.SelectedItem;
+            detailsGrid.DataContext = itemGrid.SelectedItem;
         }
 
 
