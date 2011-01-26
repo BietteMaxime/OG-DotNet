@@ -27,16 +27,8 @@ namespace OGDotNet
     {
     }
 
-    public class ManageableSecurity
+    public class ManageableSecurity : Security
     {
-        public string Name { get; set; }
-        public string SecurityType { get; set; }
-        public UniqueIdentifier UniqueId { get; set; }
-
-        public override string ToString()
-        {
-            return "ManageableSecurity " + Name;
-        }
     }
 
     [Serializable]
@@ -95,7 +87,7 @@ namespace OGDotNet
     }
     
 
-    class SearchResults<TDocument>
+    class SearchResults<TDocument> //where TDocument extends Document
     {
         public Paging Paging { get; set; }
         public IList<TDocument> Documents { get; set; }
@@ -108,38 +100,42 @@ namespace OGDotNet
         {
             _restMagic = restMagic;
         }
-
-        public Collection<ISecurity> getSecurities(IdentifierBundle bundle)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISecurity GetSecurity(IdentifierBundle bundle)
-        {
-            throw new NotImplementedException();
-        }
-
-        ///TODO public void Search(SecuritySearchRequest ssr)
+        
         public SearchResults<SecurityDocument> Search(string name, string type, int currentPage)
         {
-            var fudgeContext = new FudgeContext();
-
-            var mapper = new JavaTypeMappingStrategy("OGDotNet", "com.opengamma.master.security");
-            var mapper2 = new JavaTypeMappingStrategy("OGDotNet", "com.opengamma.financial.security");
-
-            fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty, new JoiningMappingStrategty(mapper, mapper2));
-            fudgeContext.SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
-
-            
-            //var fullDetail= new FudgeMsg(fudgeContext);
             var request = new SecuritySearchRequest(new PagingRequest(currentPage,10), name, type);
-
-            FudgeSerializer fudgeSerializer = new FudgeSerializer(fudgeContext);
+            
+            FudgeSerializer fudgeSerializer = new FudgeSerializer(FudgeContext);
             var msg = fudgeSerializer.SerializeToMsg(request);
-            var fudgeMsg = _restMagic.GetSubMagic("search").GetReponse(fudgeContext, msg);
+            var fudgeMsg = _restMagic.GetSubMagic("search").GetReponse(FudgeContext, msg);
 
 
-            return (SearchResults<SecurityDocument>)fudgeSerializer.Deserialize(fudgeMsg, typeof(SearchResults<SecurityDocument>));
+            return fudgeSerializer.Deserialize<SearchResults<SecurityDocument>>(fudgeMsg);
+        }
+
+        private static FudgeContext FudgeContext
+        {
+            get
+            {
+                var fudgeContext = new FudgeContext();
+
+                var mapper = new JavaTypeMappingStrategy("OGDotNet", "com.opengamma.master.security");
+                var mapper2 = new JavaTypeMappingStrategy("OGDotNet", "com.opengamma.financial.security");
+                var mapper3 = new JavaTypeMappingStrategy("OGDotNet", "com.opengamma.id");
+                var joiningMappingStrategty = new JoiningMappingStrategty(mapper, mapper2, mapper3);
+                fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty,
+                                         joiningMappingStrategty);
+                fudgeContext.SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
+                return fudgeContext;
+            }
+        }
+
+        public ManageableSecurity GetSecurity(UniqueIdentifier uid)
+        {
+            var fudgeMsg = _restMagic.GetSubMagic("security").GetSubMagic(uid.ToString()).GetReponse();
+            FudgeSerializer fudgeSerializer = new FudgeSerializer(FudgeContext);
+            return fudgeSerializer.Deserialize<SecurityDocument>(fudgeMsg).Security;
+
         }
     }
 

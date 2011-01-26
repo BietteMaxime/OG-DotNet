@@ -15,6 +15,9 @@ namespace OGDotNet
     {
         long _cancellationToken = long.MinValue;
 
+        static readonly RemoteSecurityMasterResource RemoteSecuritySource = new RemoteSecurityMasterResource("http://localhost:8080/jax/");
+        static readonly RemoteSecurityMaster SecurityMaster = RemoteSecuritySource.GetSecurityMaster("0");
+            
 
 
         public MainWindow()
@@ -34,15 +37,8 @@ namespace OGDotNet
 
         private SearchResults<SecurityDocument> GetThem(string name, string type, int currentPage, long cancellationToken)
         {
-            var remoteSecuritySource = new RemoteSecurityMasterResource("http://localhost:8080/jax/");
-            var securityMasters = remoteSecuritySource.GetSecurityMasters();
             CancelIfCancelled(cancellationToken);
-            foreach (var securityMaster in securityMasters)
-            {
-                CancelIfCancelled(cancellationToken);
-                return securityMaster.Search(name, type, currentPage);
-            }
-            throw new ArgumentException();
+            return SecurityMaster.Search(name, type, currentPage);
         }
 
         private void CancelIfCancelled(long cancellationToken)
@@ -122,6 +118,13 @@ namespace OGDotNet
         {
             CurrentPage++;
             Update();
+        }
+
+        private void grid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var uniqueIdentifier = (((ManageableSecurity)grid.SelectedItem)).UniqueId;
+            var security = SecurityMaster.GetSecurity(uniqueIdentifier);
+            MessageBox.Show(security.Name);
         }
     }
 }

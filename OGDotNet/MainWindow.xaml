@@ -5,7 +5,7 @@
     <Grid>
         <TextBox Height="23" HorizontalAlignment="Left" Margin="48,14,0,0" Name="typeBox" VerticalAlignment="Top" Width="120" Text="*" AcceptsReturn="False" TextChanged="typeBox_TextChanged" />
         <TextBox Height="26" HorizontalAlignment="Left" Margin="210,15,0,0" Name="nameBox" VerticalAlignment="Top" Width="203" Text="*" TextChanged="nameBox_TextChanged" />
-        <ListView Height="296" HorizontalAlignment="Left" Margin="48,47,0,0" Name="grid" VerticalAlignment="Top" Width="588" ItemsSource="{Binding}">
+        <ListView Height="296" HorizontalAlignment="Left" Margin="48,47,0,0" Name="grid" VerticalAlignment="Top" Width="588" ItemsSource="{Binding}" MouseDoubleClick="grid_MouseDoubleClick">
             <ListView.View>
                 <GridView AllowsColumnReorder="true">
                     <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Path=Name}" />

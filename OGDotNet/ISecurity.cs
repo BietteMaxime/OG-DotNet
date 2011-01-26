@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using Fudge;
+using Fudge.Serialization;
 
 namespace OGDotNet
 {
@@ -31,42 +34,49 @@ namespace OGDotNet
 
     }
 
-    class Security : ISecurity
+    public class Security : ISecurity
     {
-        private readonly UniqueIdentifier _uniqueId;
-        private readonly string _name;
-        private readonly string _securityType;
+        public string Name { get; set; }
+        public string SecurityType { get; set; }
+        public UniqueIdentifier UniqueId { get; set; }
+        public IdentifierBundle Identifiers { get; set; }
 
-        public Security(UniqueIdentifier uniqueId, string name, string securityType)
+        public override string ToString()
         {
-            _uniqueId = uniqueId;
-            _name = name;
-            _securityType = securityType;
+            return SecurityType + ": " + Name;
+        }
+    }
+
+    public class Identifier
+    {
+        public string Scheme { get; set; }
+        public string Value { get; set; }
+
+        public static Identifier FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            var r = new Identifier();
+
+            foreach (var field in ffc.GetAllFields())
+            {
+                switch (field.Name)
+                {
+                    case "Scheme":
+                        r.Scheme = (string) field.Value;
+                        break;
+                    case "Value":
+                        r.Value= (string)field.Value;
+                        break;
+                    default:
+                        throw new ArgumentException();
+                }
+            }
+            return r;
         }
 
-        public UniqueIdentifier UniqueId
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            get { return _uniqueId; }
+            a.Add("Scheme", Scheme);
+            a.Add("Value", Value);
         }
-
-        public string Name
-        {
-            get { return _name; }
-        }
-
-        public IdentifierBundle Identifiers
-        {
-            get { throw new NotImplementedException(); }//TODO
-        }
-
-        public string SecurityType
-        {
-            get { throw new NotImplementedException(); }//TODO
-        }
-
-        public const String NAME_KEY = "name";
-        public const String SECURITY_TYPE_KEY = "securityType";
-        public const String UNIQUE_ID_KEY = "uniqueId";
-        public const String IDENTIFIERS_KEY = "identifiers";
     }
 }
