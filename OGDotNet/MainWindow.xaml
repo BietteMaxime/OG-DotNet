@@ -11,7 +11,7 @@
                 <Label HorizontalAlignment="Right" Height="Auto" Width="Auto" Content="Type:"/>
                 <TextBox Name="typeBox" Text="*" AcceptsReturn="False" TextChanged="typeBox_TextChanged" Width="100" />
             </StackPanel>
-            <ListView Width="Auto" Name="grid" VerticalAlignment="Top" ItemsSource="{Binding}" MouseDoubleClick="grid_MouseDoubleClick" Height="Auto">
+            <ListView Width="Auto" Name="grid" VerticalAlignment="Top" ItemsSource="{Binding}" MouseDoubleClick="grid_MouseDoubleClick" Height="Auto" SelectionChanged="grid_SelectionChanged">
                 <ListView.View>
                     <GridView AllowsColumnReorder="true">
                         <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Path=Name}" />
@@ -26,6 +26,29 @@
                 <Label VerticalAlignment="Center" Name="pageCountLabel" Content="{Binding Path=Pages}" Width="40" />
                 <Button VerticalAlignment="Center" Content=">" Name="button1" Click="button1_Click" />
             </StackPanel>
+            <Separator Height="5" Name="separator1" Width="Auto" />
+            <Grid Height="Auto" x:Name="detailsGrid" Width="Auto" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                
+                <Label Grid.Row="0" Grid.Column="0" Content="Type:" />
+                <Label Grid.Row="0" Grid.Column="1" Content="{Binding ElementName=detailsGrid, Path=DataContext.SecurityType}" />
+                <Label Grid.Row="1" Grid.Column="0" Content="Expiry date:"/>
+                <Label Grid.Row="2" Grid.Column="0" Content="Trading exchange:"/>
+                <Label Grid.Row="3" Grid.Column="0" Content="Settlement exchange:"/>
+                <Label Grid.Row="4" Grid.Column="0" Content="Redemption value:"/>
+                
+            </Grid>
         </StackPanel>
         
     </Grid>

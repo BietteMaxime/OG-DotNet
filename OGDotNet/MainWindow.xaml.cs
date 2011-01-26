@@ -129,5 +129,10 @@ namespace OGDotNet
                 MessageBox.Show(security.Name);
             }
         }
+
+        private void grid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            detailsGrid.DataContext = grid.SelectedItem;
+        }
     }
 }
