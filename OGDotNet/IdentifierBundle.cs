@@ -20,6 +20,11 @@ namespace OGDotNet
             _identifiers = identifiers;
         }
 
+        public HashSet<Identifier> Identifiers
+        {
+            get { return _identifiers; }
+        }
+
         public static IdentifierBundle FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var identifiers = new HashSet<Identifier>();

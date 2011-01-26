@@ -43,7 +43,7 @@ namespace OGDotNet
 
         private void CancelIfCancelled(long cancellationToken)
         {
-            if (cancellationToken != Interlocked.Read(ref cancellationToken))
+            if (cancellationToken != _cancellationToken)
             {
                 throw new OperationCanceledException();
             }
@@ -51,12 +51,7 @@ namespace OGDotNet
 
         private void Update()
         {
-            var value = new object();
-            var previous = _cancellationToken+1;
-            while (Interlocked.Increment(ref _cancellationToken) != previous)
-            {
-                previous = _cancellationToken+1;
-            }
+            var token = ++_cancellationToken;
 
             string type = typeBox.Text;
             string name = nameBox.Text;
@@ -66,15 +61,22 @@ namespace OGDotNet
             BackgroundWorker worker = new BackgroundWorker();
             ThreadPool.QueueUserWorkItem(delegate
                                              {
-                                                 var results = GetThem(name, type, currentPage, previous);
-                                                 CancelIfCancelled(previous);
-                                                 Dispatcher.BeginInvoke((Action) (() =>
-                                                                            {
-                                                                                CancelIfCancelled(previous);
-                                                                                grid.DataContext = results.Documents.Select(s => s.Security).ToList(); //TODO
-                                                                                pageCountLabel.DataContext = results.Paging;
-                                                                                currentPageLabel.DataContext = results.Paging;
-                                                                            }));
+                                                 try
+                                                 {
+                                                     var results = GetThem(name, type, currentPage, token);
+                                                     CancelIfCancelled(token);
+                                                     Dispatcher.Invoke((Action) (() =>
+                                                                                          {
+                                                                                              CancelIfCancelled(token);
+                                                                                              grid.DataContext = results.Documents.Select(s => s.Security).ToList(); //TODO
+                                                                                              grid.SelectedIndex = 0;
+                                                                                              pageCountLabel.DataContext = results.Paging;
+                                                                                              currentPageLabel.DataContext = results.Paging;
+                                                                                          }));
+                                                 }
+                                                 catch (OperationCanceledException e)
+                                                 {
+                                                 }
                                              });
             
         }

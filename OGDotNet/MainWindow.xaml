@@ -34,6 +34,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200" />
@@ -47,8 +49,13 @@
                 <Label Grid.Row="2" Grid.Column="0" Content="Trading exchange:"/>
                 <Label Grid.Row="3" Grid.Column="0" Content="Settlement exchange:"/>
                 <Label Grid.Row="4" Grid.Column="0" Content="Redemption value:"/>
-                
+                <Label Grid.Row="5" Grid.Column="0" Content="Identifiers:"/>
+                <ListView Grid.Row="5" Grid.Column="1" ItemsSource="{Binding ElementName=detailsGrid, Path=DataContext.Identifiers.Identifiers}" >
+                    
+                </ListView>
+
             </Grid>
+            
         </StackPanel>
         
     </Grid>
