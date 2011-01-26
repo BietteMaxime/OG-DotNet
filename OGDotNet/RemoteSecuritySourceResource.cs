@@ -23,20 +23,15 @@ namespace OGDotNet
         }
     }
 
-    [Serializable]
     internal class FinancialSecurity : ManageableSecurity
     {
     }
 
-    [Serializable]
     public class ManageableSecurity
     {
-        public string NameProp { get { return Name; } }
-        public string SecurityTypeProp { get { return SecurityType; } }
-        public UniqueIdentifier UniqueIdentifierProp { get { return UniqueId; } }
-        public string Name;
-        public string SecurityType;
-        public UniqueIdentifier UniqueId;
+        public string Name { get; set; }
+        public string SecurityType { get; set; }
+        public UniqueIdentifier UniqueId { get; set; }
 
         public override string ToString()
         {
@@ -137,7 +132,7 @@ namespace OGDotNet
 
             
             //var fullDetail= new FudgeMsg(fudgeContext);
-            var request = new SecuritySearchRequest(new PagingRequest(cu,10), name, type);
+            var request = new SecuritySearchRequest(new PagingRequest(currentPage,10), name, type);
 
             FudgeSerializer fudgeSerializer = new FudgeSerializer(fudgeContext);
             var msg = fudgeSerializer.SerializeToMsg(request);

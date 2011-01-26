@@ -8,9 +8,9 @@
         <ListView Height="296" HorizontalAlignment="Left" Margin="48,47,0,0" Name="grid" VerticalAlignment="Top" Width="588" ItemsSource="{Binding}">
             <ListView.View>
                 <GridView AllowsColumnReorder="true">
-                    <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Path=NameProp}" />
-                    <GridViewColumn Header="Type" Width="Auto" DisplayMemberBinding="{Binding Path=TypeProp}" />
-                    <GridViewColumn Header="Reference" Width="Auto" DisplayMemberBinding="{Binding Path=UniqueIdentifierProp.Value}" />
+                    <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Path=Name}" />
+                    <GridViewColumn Header="Type" Width="Auto" DisplayMemberBinding="{Binding Path=SecurityType}" />
+                    <GridViewColumn Header="Reference" Width="Auto" DisplayMemberBinding="{Binding Path=UniqueId.Value}" />
                 </GridView>
             </ListView.View>
         </ListView>
