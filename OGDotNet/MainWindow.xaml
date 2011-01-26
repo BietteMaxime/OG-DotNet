@@ -1,0 +1,18 @@
+﻿<Window x:Class="OGDotNet.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="560" Width="722" Loaded="Window_Loaded">
+    <Grid>
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="48,14,0,0" Name="typeBox" VerticalAlignment="Top" Width="120" Text="*" AcceptsReturn="False" TextChanged="typeBox_TextChanged" />
+        <TextBox Height="26" HorizontalAlignment="Left" Margin="210,15,0,0" Name="nameBox" VerticalAlignment="Top" Width="203" Text="*" TextChanged="nameBox_TextChanged" />
+        <ListView Height="383" HorizontalAlignment="Left" Margin="76,108,0,0" Name="grid" VerticalAlignment="Top" Width="588" ItemsSource="{Binding}">
+            <ListView.View>
+                <GridView AllowsColumnReorder="true">
+                    <GridViewColumn Header="Name" Width="120" DisplayMemberBinding="{Binding Path=NameProp}" />
+                    <GridViewColumn Header="Type" Width="120" DisplayMemberBinding="{Binding Path=SecurityTypeProp}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        
+    </Grid>
+</Window>

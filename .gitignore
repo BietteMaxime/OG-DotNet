@@ -1,0 +1,14 @@
+*~	
+
+# Ignore user option and built files
+*.suo
+*.csproj.user
+*/bin
+*/obj
+
+# Generated help files
+Help/
+
+# ReSharper stuff
+_ReSharper.*
+*.ReSharper.user
