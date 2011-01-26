@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -136,9 +137,17 @@ namespace OGDotNet
         {
             if (itemGrid.SelectedItem != null)
             {
-                var uniqueIdentifier = (((ManageableSecurity) itemGrid.SelectedItem)).UniqueId;
+                var uniqueIdentifier = ((Security) itemGrid.SelectedItem).UniqueId;
                 var security = SecurityMaster.GetSecurity(uniqueIdentifier);
-                MessageBox.Show(security.Name);
+
+                StringBuilder sb = new StringBuilder();
+                foreach (var propertyInfo in security.GetType().GetProperties())
+                {
+                    sb.AppendFormat(string.Format("{0}: {1}",propertyInfo.Name, propertyInfo.GetGetMethod().Invoke(security, null)));
+                    sb.Append(Environment.NewLine);
+                }
+                MessageBox.Show(sb.ToString(), security.Name);
+
             }
         }
 

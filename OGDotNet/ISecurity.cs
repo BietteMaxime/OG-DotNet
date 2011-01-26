@@ -34,6 +34,14 @@ namespace OGDotNet
 
     }
 
+    public class BondSecurity : FinancialSecurity
+    {
+        public string IssuerName
+        {
+            get;
+            set;
+        }
+    }
     public class Security : ISecurity
     {
         public string Name { get; set; }

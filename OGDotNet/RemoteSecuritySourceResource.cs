@@ -23,7 +23,7 @@ namespace OGDotNet
         }
     }
 
-    internal class FinancialSecurity : ManageableSecurity
+    public class FinancialSecurity : ManageableSecurity
     {
     }
 
@@ -49,13 +49,13 @@ namespace OGDotNet
     {
         public readonly PagingRequest PagingRequest;
         public readonly string Name;
-        public readonly string Type;
+        public readonly string SecurityType;
 
-        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string type)
+        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType)
         {
             PagingRequest = pagingRequest;
             Name = name;
-            Type = type ?? "";
+            SecurityType = securityType ?? "";
         }
     }
 
@@ -71,7 +71,7 @@ namespace OGDotNet
             return new FudgeMsg
                        {
                            {"name", ssr.Name},
-                           {"type", null, StringFieldType.Instance, ssr.Type},
+                           {"type", null, StringFieldType.Instance, ssr.SecurityType},
                            {"pagingRequest", Encode(ssr.PagingRequest)}
                        };
         }
@@ -122,7 +122,8 @@ namespace OGDotNet
                 var mapper = new JavaTypeMappingStrategy("OGDotNet", "com.opengamma.master.security");
                 var mapper2 = new JavaTypeMappingStrategy("OGDotNet", "com.opengamma.financial.security");
                 var mapper3 = new JavaTypeMappingStrategy("OGDotNet", "com.opengamma.id");
-                var joiningMappingStrategty = new JoiningMappingStrategty(mapper, mapper2, mapper3);
+                var mapper4 = new JavaTypeMappingStrategy("OGDotNet", "com.opengamma.financial.security.bond");
+                var joiningMappingStrategty = new JoiningMappingStrategty(mapper, mapper2, mapper3, mapper4);
                 fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty,
                                          joiningMappingStrategty);
                 fudgeContext.SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
