@@ -93,7 +93,18 @@ namespace OGDotNet
                 return currentPage;
             }
             set { 
+                if (value<1)
+                {
+                    value = 1;
+                }
                 currentPageLabel.Text = value.ToString();
+            }
+        }
+        public int PageCount
+        {
+            get
+            {
+                return (int) pageCountLabel.Content; 
             }
         }
 
@@ -111,16 +122,18 @@ namespace OGDotNet
                 Update();
         }
 
-        private void currentPageLabel_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            Update();
-        }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void nextPage_Click(object sender, RoutedEventArgs e)
         {
             CurrentPage++;
             Update();
         }
+        private void lastPage_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentPage = PageCount;
+            Update();
+        }
+
 
         private void grid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -135,6 +148,19 @@ namespace OGDotNet
         private void grid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             detailsGrid.DataContext = grid.SelectedItem;
+        }
+
+
+        private void firstPage_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentPage = 1;
+            Update();
+        }
+
+        private void previousPage_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentPage--;
+            Update();
         }
     }
 }
