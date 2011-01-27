@@ -8,9 +8,9 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Threading;
 using Fudge;
 using Fudge.Serialization;
-using Fudge.Serialization.Reflection;
 using Fudge.Types;
 using OGDotNet;
 using OGDotNet_Analytics.Mappedtypes.LiveData;
@@ -26,6 +26,7 @@ namespace OGDotNet_Analytics
         private RemoteViewResource _remoteViewResource;
         private ViewDefinition _viewDefinition;
         private Portfolio _portfolio;
+        private int _counter;
 
         public MainWindow()
         {
@@ -80,18 +81,23 @@ namespace OGDotNet_Analytics
             while (true)
             {
                 var results = _client.LatestResult;
-                if (results != null && prev != results.ValuationTime)
+                if (results != null)
                 {
                     var rows = BuildRows(_viewDefinition, results, _portfolio).ToList();
                     Dispatcher.Invoke((Action)(() =>
                                                    {
+
                                                        table.DataContext = rows;
+                                                       
+                                                       count.Text = _counter++.ToString();
+                                                       
                                                    }));
-                    prev = results.ValuationTime;
+
+                    Thread.Sleep(1000);
                 }
-                
             }
         }
+
 
         private static IEnumerable<string> GetColumns(ViewDefinition viewDefinition)
         {
@@ -110,7 +116,7 @@ namespace OGDotNet_Analytics
             }
         }
 
-        private IEnumerable<Row> BuildRows(ViewDefinition viewDefinition, ViewComputationResultModel results, Portfolio portfolio)
+        private static IEnumerable<Row> BuildRows(ViewDefinition viewDefinition, ViewComputationResultModel results, Portfolio portfolio)
         {
             var valueIndex = new Dictionary<Tuple<UniqueIdentifier, string, string>, object>();
             
@@ -185,15 +191,21 @@ namespace OGDotNet_Analytics
 
             public object this[String key]
             {
-                get { return _columns[key]; }
+                get
+                {
+                    return _columns[key];
+                }
             }
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            _client.Stop();
+            if (_client != null)
+            {
+                _client.Stop();
+            }
         }
-    }
+        }
 
     public class Portfolio
     {
@@ -261,8 +273,8 @@ namespace OGDotNet_Analytics
         private readonly string _configId;
         private readonly RESTMagic _rootRest;
         private readonly FudgeMsg _configMsg;
-        private string _userDataUri;
-        private string _viewProcessorUri;
+        private readonly string _userDataUri;
+        private readonly string _viewProcessorUri;
 
         public RemoteConfig(string configId, string rootUri)
         {
@@ -484,7 +496,7 @@ namespace OGDotNet_Analytics
         {
             var reponse = _rest.GetSubMagic("start").GetReponse("POST");
         }
-        public void Stop()
+        public void Stop()//TODO dispose
         {
             var reponse = _rest.GetSubMagic("stop").GetReponse("POST");
         }
