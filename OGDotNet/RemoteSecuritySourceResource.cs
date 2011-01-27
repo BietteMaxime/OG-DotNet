@@ -7,7 +7,6 @@ using System.Net;
 using System.Runtime.Serialization;
 using Fudge;
 using Fudge.Serialization;
-using Fudge.Types;
 
 namespace OGDotNet
 {
@@ -59,33 +58,6 @@ namespace OGDotNet
         }
     }
 
-    
-    /// <summary>
-    /// There must be a better place for this
-    /// </summary>
-    internal static class FudgeEncoder
-    {
-        internal static FudgeMsg Encode(SecuritySearchRequest ssr)
-        {
-
-            return new FudgeMsg
-                       {
-                           {"name", ssr.Name},
-                           {"type", null, StringFieldType.Instance, ssr.SecurityType},
-                           {"pagingRequest", Encode(ssr.PagingRequest)}
-                       };
-        }
-
-        private static FudgeMsg Encode(PagingRequest pagingRequest)
-        {
-            return new FudgeMsg()
-                       {
-                           {"page", pagingRequest.page},
-                           {"pagingSize", pagingRequest.pagingSize}
-                       };
-        }
-    }
-    
 
     class SearchResults<TDocument> //where TDocument extends Document
     {
@@ -220,7 +192,7 @@ namespace OGDotNet
 
     }
 
-    class RESTMagic
+    public class RESTMagic
     {
 
         private static string FUDGE_MIME_TYPE = "application/vnd.fudgemsg";
@@ -241,8 +213,9 @@ namespace OGDotNet
 
         public RESTMagic GetSubMagic(string method)
         {
+            var safeMethod = UrlEncode(method);
             var uriBuilder = new UriBuilder(_serviceUri);
-            uriBuilder.Path = Path.Combine(uriBuilder.Path, method);
+            uriBuilder.Path = Path.Combine(uriBuilder.Path, safeMethod);
             return new RESTMagic(uriBuilder.Uri);
         }
 
@@ -251,6 +224,7 @@ namespace OGDotNet
             return GetReponse(method, "");
         }
 
+        
         public FudgeMsg GetReponse(FudgeContext context, FudgeMsg reqMsg)
         {
             var request = (HttpWebRequest)WebRequest.Create(_serviceUri.ToString().Replace("securitySource","securityMaster"));
@@ -262,15 +236,32 @@ namespace OGDotNet
                 context.Serialize(reqMsg, requestStream);
             }
 
-            var response = (HttpWebResponse)request.GetResponse();
-
-            FudgeMsg fudgeMsg;
+            using (var response = (HttpWebResponse) request.GetResponse())
             using (Stream responseStream = response.GetResponseStream())
             {
-
-                fudgeMsg = context.Deserialize(responseStream).Message;
+                return  context.Deserialize(responseStream).Message;
             }
-            return fudgeMsg;
+        }
+
+        public Uri Create(FudgeContext context, FudgeMsg reqMsg)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(_serviceUri.ToString().Replace("securitySource", "securityMaster"));
+            MangleRequest(request);
+
+            request.Method = "POST";
+            using (var requestStream = request.GetRequestStream())
+            {
+                context.Serialize(reqMsg, requestStream);
+            }
+
+            using (var response = (HttpWebResponse)request.GetResponse())
+            {
+                if (response.StatusCode != HttpStatusCode.Created)
+                {
+                    throw new ArgumentException();
+                }
+                return new Uri(response.Headers["Location"]);
+            }
         }
 
         public string GetReponse(string method, string body)
@@ -294,7 +285,7 @@ namespace OGDotNet
         private string UrlEncode(string method)
         {
             //TODO This
-            return method.Replace(":", "%3");
+            return method.Replace(":", "%3").Replace(" ","%20");
         }
 
         static string GetString(HttpWebResponse response)

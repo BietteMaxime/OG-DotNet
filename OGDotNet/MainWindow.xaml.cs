@@ -24,9 +24,6 @@ namespace OGDotNet
 
         public MainWindow()
         {
-
-            
-
             InitializeComponent();
             itemGrid.Items.Clear();
         }
