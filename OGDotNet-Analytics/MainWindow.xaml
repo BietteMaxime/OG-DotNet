@@ -1,8 +1,15 @@
 ﻿<Window x:Class="OGDotNet_Analytics.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid>
-        
+        <ListView Name="table"  ItemsSource="{Binding}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="140" Header="Position" DisplayMemberBinding="{Binding Path=PositionName}"/>
+                    <GridViewColumn Width="140" Header="Quantity" DisplayMemberBinding="{Binding Path=Quantity}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>
