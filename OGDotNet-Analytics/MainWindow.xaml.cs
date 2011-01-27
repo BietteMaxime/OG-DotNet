@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -127,7 +128,6 @@ namespace OGDotNet_Analytics
                 }
             }
 
-            //TODO string serviceUri = GetWorkingUri(uris);
             return GetWorkingUri(uris.Where(u => u.Contains("2.")));
         }
 
@@ -257,34 +257,46 @@ namespace OGDotNet_Analytics
             IFudgeTypeMappingStrategy old = (IFudgeTypeMappingStrategy)fudgeContext.GetProperty(ContextProperties.TypeMappingStrategyProperty, new JoiningMappingStrategty());
             fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty, new JoiningMappingStrategty(old, new JavaTypeMappingStrategy("OGDotNet_Analytics.Mappedtypes", "com.opengamma"), new LaxTypeMappingStrategy()));
             fudgeContext.SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
+
             return fudgeContext;
         }
     }
 
-    namespace Mappedtypes.LiveData
+    namespace Mappedtypes
     {
-        [Serializable]
-        public class UserPrincipal
+        namespace financial.model.interestrate.curve
         {
-            private string userName;
-            private string ipAddress;
-
-            public string UserName
+            public class YieldCurve
             {
-                get { return userName; }
-                set { userName = value; }
+                //TODO
             }
+        }
 
-            public string IpAddress
+        namespace LiveData
+        {
+            [Serializable]
+            public class UserPrincipal
             {
-                get { return ipAddress; }
-                set { ipAddress = value; }
-            }
+                private string userName;
+                private string ipAddress;
 
-            public UserPrincipal(string userName, string ipAddress)
-            {
-                UserName = userName;
-                IpAddress = ipAddress;
+                public string UserName
+                {
+                    get { return userName; }
+                    set { userName = value; }
+                }
+
+                public string IpAddress
+                {
+                    get { return ipAddress; }
+                    set { ipAddress = value; }
+                }
+
+                public UserPrincipal(string userName, string ipAddress)
+                {
+                    UserName = userName;
+                    IpAddress = ipAddress;
+                }
             }
         }
     }
@@ -460,7 +472,22 @@ namespace OGDotNet_Analytics
             var map = new Dictionary<ComputationTargetSpecification, Dictionary<String, ComputedValue>>();
             foreach (var field in msg)
             {
-                var value = deserializer.FromField<ComputedValue>(field);
+                var subMsg = (IFudgeFieldContainer) field.Value;
+                
+                var valueSpecification = deserializer.FromField<ValueSpecification>(subMsg.GetByName("specification"));
+                var o = subMsg.GetByName("value");
+                object innerValue;
+                try
+                {
+                    innerValue = deserializer.FromField<object>(o);
+                }
+                catch (Exception e)
+                {
+                    innerValue = new MisunderstoodValue(e);
+                }
+
+                var value = new ComputedValue(valueSpecification, innerValue);
+                
                 ComputationTargetSpecification target = value.Specification.TargetSpecification;
                 if (!map.ContainsKey(target)) {//TODO try get
                     map.Add(target, new Dictionary<String, ComputedValue>());
@@ -471,9 +498,38 @@ namespace OGDotNet_Analytics
         }
     }
 
+    public class MisunderstoodValue
+    {
+        //TODO stop this
+        private readonly Exception _exception;
+
+        public MisunderstoodValue(Exception exception)
+        {
+            _exception = exception;
+            Debug.Fail(exception.Message);
+        }
+    }
+
     public class ComputedValue
-    {//TODO
-        public ValueSpecification Specification { get; set; }
+    {
+        private readonly ValueSpecification _specification;
+        private readonly object _value;
+
+        public ComputedValue(ValueSpecification specification, object value)
+        {
+            _specification = specification;
+            _value = value;
+        }
+
+        public ValueSpecification Specification
+        {
+            get { return _specification; }
+        }
+
+        public object Value
+        {
+            get { return _value; }
+        }
     }
 
     
