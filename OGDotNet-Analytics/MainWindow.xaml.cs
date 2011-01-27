@@ -43,7 +43,7 @@ namespace OGDotNet_Analytics
                     
                 }
                 var latestResult = client.LatestResult;
-            }
+           }
         }
     }
 
@@ -218,7 +218,7 @@ namespace OGDotNet_Analytics
             get
             {
                 var fudgeMsg = _rest.GetSubMagic("definition").GetReponse();
-                return FudgeConfig.GetFudgeSerializer().Deserialize<ViewDefinition>(fudgeMsg);
+              return FudgeConfig.GetFudgeSerializer().Deserialize<ViewDefinition>(fudgeMsg);
             }
         }
 
@@ -240,25 +240,6 @@ namespace OGDotNet_Analytics
                 return ipaddress.ToString();
             }
             throw new ArgumentException();
-        }
-    }
-    public static class FudgeConfig
-    {
-        public static FudgeSerializer GetFudgeSerializer()
-        {
-            FudgeContext fudgeContext = GetFudgeContext();
-
-            return new FudgeSerializer(fudgeContext);
-        }
-
-        public static FudgeContext GetFudgeContext()
-        {
-            var fudgeContext = new FudgeContext();
-            IFudgeTypeMappingStrategy old = (IFudgeTypeMappingStrategy)fudgeContext.GetProperty(ContextProperties.TypeMappingStrategyProperty, new JoiningMappingStrategty());
-            fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty, new JoiningMappingStrategty(old, new JavaTypeMappingStrategy("OGDotNet_Analytics.Mappedtypes", "com.opengamma"), new LaxTypeMappingStrategy()));
-            fudgeContext.SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
-
-            return fudgeContext;
         }
     }
 
@@ -559,14 +540,12 @@ namespace OGDotNet_Analytics
     public abstract class BuilderBase<T>: IFudgeSerializationSurrogate
     {
         protected readonly FudgeContext _context;
+        protected readonly Type _type;
 
         protected BuilderBase(FudgeContext context, Type type)
         {
             _context = context;
-            if (type != typeof(T))
-            {
-                throw new ArgumentException();
-            }
+            _type = type;
         }
 
         public void Serialize(object obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
@@ -729,20 +708,6 @@ public enum ComputationTargetType {
         public IList<ViewResultEntry> AllResults{ get { return _allResults; } }
     }
 
-    
-    public class ViewTargetResultModel
-    {
-        //TODO
-    }
-
-    public class ViewDefinition
-    {
-        public ResultModelDefinition ResultModelDefinition { get; set; }
-    }
-    public class ResultModelDefinition
-    {
-        
-    }
 
     public class LaxTypeMappingStrategy : IFudgeTypeMappingStrategy
     {
