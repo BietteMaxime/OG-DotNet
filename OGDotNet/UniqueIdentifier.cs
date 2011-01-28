@@ -259,12 +259,6 @@ namespace OGDotNet
             {
                 switch (field.Name)
                 {
-                    case "ID":
-                        if (ffc.GetAllByName("ID").Count != 1)
-                        {
-                            throw new ArgumentException("Bundles!");
-                        }
-                        return FromFudgeMsg((IFudgeFieldContainer) field.Value, deserializer);
                     case SCHEME_FUDGE_FIELD_NAME:
                         schema = (string) field.Value;
                         break;

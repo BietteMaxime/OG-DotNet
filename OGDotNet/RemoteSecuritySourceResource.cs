@@ -11,7 +11,7 @@ using Fudge.Serialization;
 namespace OGDotNet
 {
     [Serializable]
-    internal class SecurityDocument
+    public class SecurityDocument
     {
         public string UniqueId;
         public ManageableSecurity Security;
@@ -31,7 +31,7 @@ namespace OGDotNet
     }
 
     [Serializable]
-    internal class PagingRequest
+    public class PagingRequest
     {
         public readonly int page;
         public readonly int pagingSize;
@@ -49,22 +49,76 @@ namespace OGDotNet
         public readonly PagingRequest PagingRequest;
         public readonly string Name;
         public readonly string SecurityType;
+        public readonly IdentifierSearch SecurityKeys;
+        //private List<ObjectIdentifier> _securityIds
 
-        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType)
+        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType, IdentifierSearch securityKeys)
         {
             PagingRequest = pagingRequest;
+            SecurityKeys = securityKeys;
             Name = name;
             SecurityType = securityType ?? "";
         }
     }
 
+    public class IdentifierSearch
+    {
+        private readonly List<Identifier> _identifiers;
+        private readonly IdentifierSearchType _searchType;
 
-    class SearchResults<TDocument> //where TDocument extends Document
+        public IdentifierSearch(List<Identifier> identifiers, IdentifierSearchType searchType)
+        {
+            _identifiers = identifiers;
+            _searchType = searchType;
+        }
+
+        public List<Identifier> Identifiers
+        {
+            get { return _identifiers; }
+        }
+
+        public static IdentifierSearch FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            foreach (var identifier in _identifiers)
+            {
+                a.Add("identifier", identifier);
+            }
+            a.Add("searchType", _searchType.ToString());
+        }
+    }
+
+    public enum IdentifierSearchType
+    {
+        /**
+        * Match requires that the target must contain exactly the same set of identifiers.
+        */
+        EXACT,
+        /**
+         * Match requires that the target must contain all of the search identifiers.
+         */
+        ALL,
+        /**
+         * Match requires that the target must contain any of the search identifiers.
+         */
+        ANY,
+        /**
+         * Match requires that the target must contain none of the search identifiers.
+         */
+        NONE
+    }
+
+
+    public class SearchResults<TDocument> //where TDocument extends Document
     {
         public Paging Paging { get; set; }
         public IList<TDocument> Documents { get; set; }
     }
-    class RemoteSecurityMaster
+    public class RemoteSecurityMaster
     {
         internal readonly RESTMagic _restMagic;
 
@@ -73,16 +127,20 @@ namespace OGDotNet
             _restMagic = restMagic;
         }
         
-        public SearchResults<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest)
+        public SearchResults<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest, IdentifierSearch identifierSearch)
         {
-            var request = new SecuritySearchRequest(pagingRequest, name, type);
-            
+            var request = new SecuritySearchRequest(pagingRequest, name, type, identifierSearch);
+
             FudgeSerializer fudgeSerializer = new FudgeSerializer(FudgeContext);
             var msg = fudgeSerializer.SerializeToMsg(request);
             var fudgeMsg = _restMagic.GetSubMagic("search").GetReponse(FudgeContext, msg);
 
 
-            return fudgeSerializer.Deserialize<SearchResults<SecurityDocument>>(fudgeMsg);
+            return fudgeSerializer.Deserialize<SearchResults<SecurityDocument>>(fudgeMsg); 
+        }
+        public SearchResults<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest)
+        {
+            return Search(name, type, pagingRequest, null);
         }
 
         private static FudgeContext FudgeContext
@@ -211,11 +269,15 @@ namespace OGDotNet
             _serviceUri = new Uri(serviceUri);
         }
 
-        public RESTMagic GetSubMagic(string method)
+
+        public RESTMagic GetSubMagic(string method, params Tuple<string,string>[] queryParams)
         {
             var safeMethod = UrlEncode(method);
             var uriBuilder = new UriBuilder(_serviceUri);
             uriBuilder.Path = Path.Combine(uriBuilder.Path, safeMethod);
+            uriBuilder.Query = String.Join("&",
+                                           queryParams.Select(
+                                               p => string.Format("{0}={1}", Uri.EscapeDataString(p.Item1), Uri.EscapeDataString(p.Item2))));
             return new RESTMagic(uriBuilder.Uri);
         }
 
@@ -303,9 +365,10 @@ namespace OGDotNet
             var response = (HttpWebResponse)request.GetResponse();
             FudgeMsg fudgeMsg;
             using (Stream responseStream = response.GetResponseStream())
+            using (BufferedStream buff = new BufferedStream(responseStream))
             {
 
-                fudgeMsg = fudgeContext.Deserialize(responseStream).Message;
+                fudgeMsg = fudgeContext.Deserialize(buff).Message;
             }
             return fudgeMsg;
         }

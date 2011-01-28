@@ -5,19 +5,23 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
+        <ComboBox Name="viewSelector" Grid.Row="0" ItemsSource="{Binding}" SelectionChanged="viewSelector_SelectionChanged">
+            
+        </ComboBox>
         
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
             <TextBlock Grid.Row="0" Text="0" Name="count"/>
             <TextBlock Grid.Row="0" Text="0" Name="countLayout"/>
         </StackPanel>
 
-        <ListView Visibility="Visible" Grid.Row="1"  Name="table"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+        <ListView Visibility="Visible" Grid.Row="2"  Name="table"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="140" Header="Position" DisplayMemberBinding="{Binding Path=PositionName}"/>
-                    <GridViewColumn Width="140" Header="Quantity" DisplayMemberBinding="{Binding Path=Quantity}"/>
                 </GridView>
                 
             </ListView.View>

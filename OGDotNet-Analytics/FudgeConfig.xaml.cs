@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet;
@@ -26,7 +27,12 @@ namespace OGDotNet_Analytics
             {
                 _fudgeContext = new FudgeContext();
                 var old = (IFudgeTypeMappingStrategy)_fudgeContext.GetProperty(ContextProperties.TypeMappingStrategyProperty, new JoiningMappingStrategty());
-                _fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty, new JoiningMappingStrategty(old, new JavaTypeMappingStrategy("OGDotNet_Analytics.Mappedtypes", "com.opengamma"), new LaxTypeMappingStrategy()));
+                _fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty, new JoiningMappingStrategty(
+                    old, 
+                    new JavaTypeMappingStrategy("OGDotNet_Analytics.Mappedtypes", "com.opengamma"),
+                    new LaxTypeMappingStrategy(Assembly.GetExecutingAssembly()),
+                    new LaxTypeMappingStrategy(typeof(ManageableSecurity).Assembly)
+                    ));
                 _fudgeContext.SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
                 _typeMap = new SerializationTypeMap(_fudgeContext);
             }

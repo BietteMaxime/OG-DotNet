@@ -22,12 +22,11 @@ namespace OGDotNet_Analytics
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ViewClient _client;
-        private RemoteViewResource _remoteViewResource;
-        private ViewDefinition _viewDefinition;
-        private Portfolio _portfolio;
         private int _counter;
+        private RemoteSecuritySource _remoteSecuritySource;
+        private RemoteViewProcessor _remoteViewProcessor;
 
+        private volatile  object _currentProcessorToken = new object();
         public MainWindow()
         {
             InitializeComponent();
@@ -36,66 +35,105 @@ namespace OGDotNet_Analytics
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var remoteConfig = new RemoteConfig("0", "http://localhost:8080/jax"); //devsvr-lx-2 or localhost
+            
             var remoteClient = remoteConfig.UserClient;
             remoteClient.HeartbeatSender();
-            var remoteViewProcessor = remoteConfig.ViewProcessor;
-            var viewNames = remoteViewProcessor.ViewNames;
-            foreach (var viewName in viewNames.Where(v => v == "Swap Test View"))
+
+            _remoteViewProcessor = remoteConfig.ViewProcessor;
+            var viewNames = _remoteViewProcessor.ViewNames;
+            _remoteSecuritySource = remoteConfig.SecuritySource;
+            viewSelector.DataContext = viewNames;
+
+        }
+
+        private void viewSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _currentProcessorToken = new object();
+
+            var viewName = (string) viewSelector.SelectedItem;
+            if (viewName != null)
             {
-                _remoteViewResource = remoteViewProcessor.GetView(viewName);
-                _remoteViewResource.Init();
                 
-                //TODO use tree 
-                _portfolio = _remoteViewResource.Portfolio;
-
-                _viewDefinition = _remoteViewResource.Definition;
-
-               var viewBase = (GridView) table.View;
-                while (viewBase.Columns.Count >2)
-                {
-                    viewBase.Columns.RemoveAt(2);
-                }
-                foreach (var column in GetColumns(_viewDefinition))
-                {
-                    viewBase.Columns.Add(new GridViewColumn()
-                                             {
-                                                 Width=Double.NaN,
-                                                 Header =  column,
-                                                 DisplayMemberBinding = new Binding(string.Format(".[{0}]", column))//TODO bugs galore
-                                             });
-                }
-
-                _client = _remoteViewResource.CreateClient();
-                _client.Start();
-
-                new Thread(RefreshMyData){IsBackground =  true}.Start();
+                new Thread(() => RefreshMyData(viewName, _currentProcessorToken)).Start();
             }
         }
 
-        public void RefreshMyData()
+        public void RefreshMyData(string viewName, object currentProcessorToken)
         {
-
-
-            FudgeDateTime prev = null;
-
-            while (true)
+            try
             {
-                var results = _client.LatestResult;
-                if (results != null)
+                CancelIfCancelled(currentProcessorToken);
+                var remoteViewResource = _remoteViewProcessor.GetView(viewName);
+                CancelIfCancelled(currentProcessorToken);
+                remoteViewResource.Init();
+
+                CancelIfCancelled(currentProcessorToken);
+                var viewDefinition = remoteViewResource.Definition;
+
+                Dispatcher.Invoke((Action)(() =>
+                   {
+                       var viewBase = (GridView)table.View;
+
+                       while (viewBase.Columns.Count >1)
+                       {
+                           viewBase.Columns.RemoveAt(1);                           
+                       }
+
+                       foreach (var column in GetColumns(viewDefinition))
+                       {
+                           viewBase.Columns.Add(new GridViewColumn
+                                                    {
+                                                        Width = Double.NaN,
+                                                        Header = column,
+                                                        DisplayMemberBinding = new Binding(string.Format(".[{0}]", column))//TODO bugs galore
+                                                    });
+                       }
+                   }));
+
+
+
+                CancelIfCancelled(currentProcessorToken);
+                using (var client = remoteViewResource.CreateClient())
                 {
-                    var rows = BuildRows(_viewDefinition, results, _portfolio).ToList();
-                    Dispatcher.Invoke((Action)(() =>
-                                                   {
+                    CancelIfCancelled(currentProcessorToken);
+                    client.Start();
 
-                                                       table.DataContext = rows;
-                                                       
-                                                       count.Text = _counter++.ToString();
-                                                       
-                                                   }));
+                    CancelIfCancelled(currentProcessorToken);
+                    var portfolio = remoteViewResource.Portfolio;
 
-                    Thread.Sleep(1000);
+                    while (true)
+                    {
+                        CancelIfCancelled(currentProcessorToken);
+                        var results = client.LatestResult;
+                        if (results != null)
+                        {
+                            CancelIfCancelled(currentProcessorToken);
+                            var rows = BuildRows(viewDefinition, results, portfolio).ToList();
+                            CancelIfCancelled(currentProcessorToken);
+                            Dispatcher.Invoke((Action)(() =>
+                                                           {
+                                                               CancelIfCancelled(currentProcessorToken);
+                                                               table.DataContext = rows;
+                                                       
+                                                               count.Text = _counter++.ToString();
+                                                       
+                                                           }));
+
+                            CancelIfCancelled(currentProcessorToken);
+                            Thread.Sleep(500);//TODO whaa?
+                        }
+                    }
                 }
             }
+            catch (OperationCanceledException oce)
+            {
+            }
+        }
+
+        private void CancelIfCancelled(object currentProcessorToken)
+        {
+            if (currentProcessorToken != _currentProcessorToken)
+                throw new OperationCanceledException();
         }
 
 
@@ -116,24 +154,32 @@ namespace OGDotNet_Analytics
             }
         }
 
-        private static IEnumerable<Row> BuildRows(ViewDefinition viewDefinition, ViewComputationResultModel results, Portfolio portfolio)
+        private static IEnumerable<Position> GetPositions(Portfolio portfolio)
         {
-            var valueIndex = new Dictionary<Tuple<UniqueIdentifier, string, string>, object>();
-            
+            return GetPositions(portfolio.Root);
+        }
 
-            foreach (var result in results.AllResults)
+        private static IEnumerable<Position> GetPositions(PortfolioNode portfolio)
+        {
+            foreach (var position in portfolio.Positions)
             {
-                if (result.ComputedValue.Specification.TargetSpecification.Type == ComputationTargetType.POSITION)
+                yield return position;
+            }
+            foreach (var portfolioNode in portfolio.SubNodes)
+            {
+                foreach (var position in GetPositions(portfolioNode))
                 {
-                    valueIndex.Add(
-                        new Tuple<UniqueIdentifier, string, string>(
-                            result.ComputedValue.Specification.TargetSpecification.Uid,
-                            result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
-                        result.ComputedValue.Value);
+                    yield return position;
                 }
             }
+        }
 
-            foreach (var position in portfolio.Root.Positions)
+        private IEnumerable<Row> BuildRows(ViewDefinition viewDefinition, ViewComputationResultModel results, Portfolio portfolio)
+        {
+            Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex = Indexvalues(results);
+
+
+            foreach (var position in GetPositions(portfolio))
             {
                 var values = new Dictionary<string, object>();
 
@@ -146,19 +192,50 @@ namespace OGDotNet_Analytics
                         {
                             string header = string.Format("{0}/{1}", configuration.Key, portfolioReq);
                             object value;
-                            if (valueIndex.TryGetValue(new Tuple<UniqueIdentifier, string, string>(position.GetIdentifier(), portfolioReq, configuration.Key), out value))
+                            if (
+                                valueIndex.TryGetValue(
+                                    new Tuple<UniqueIdentifier, string, string>(position.GetIdentifier(), portfolioReq,
+                                                                                configuration.Key), out value))
                             {
                                 values.Add(header, value);
                             }
                             else
                             {
-                                
                             }
                         }
                     }
                 }
-                yield return new Row(position.GetIdentifier(), position.GetQuantity(), values);
+
+                var securities =
+                    _remoteSecuritySource.GetSecurities(
+                        position.SecurityKey.Identifiers.Select(x => x.ToString()).ToList());
+                if (securities.Count != 1)
+                {
+                    throw new ArgumentException();
+                }
+
+                string securityName = securities[0].Name;
+
+
+                yield return new Row(position.GetIdentifier(), position.GetQuantity(), values, securityName);
             }
+        }
+
+        private static Dictionary<Tuple<UniqueIdentifier, string, string>, object> Indexvalues(ViewComputationResultModel results)
+        {
+            var valueIndex = new Dictionary<Tuple<UniqueIdentifier, string, string>, object>();
+            foreach (var result in results.AllResults)
+            {
+                if (result.ComputedValue.Specification.TargetSpecification.Type == ComputationTargetType.POSITION)
+                {
+                    valueIndex.Add(
+                        new Tuple<UniqueIdentifier, string, string>(
+                            result.ComputedValue.Specification.TargetSpecification.Uid,
+                            result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
+                        result.ComputedValue.Value);
+                }
+            }
+            return valueIndex;
         }
 
         public class Row
@@ -166,17 +243,28 @@ namespace OGDotNet_Analytics
             private readonly string _positionName;
             private readonly long _quantity;
             private readonly Dictionary<string, object> _columns;
+            private readonly string _securityName;
 
-            public Row(UniqueIdentifier positionId, long quantity, Dictionary<string, object> columns)
+            public Row(UniqueIdentifier positionId, long quantity, Dictionary<string, object> columns, string securityName)
             {
-                _positionName = positionId.ToString();//TODO
+                _positionName = string.Format("{0} ({1})", securityName, quantity);
                 _quantity = quantity;
                 _columns = columns;
+                _securityName = securityName;
+            }
+
+
+            public string SecurityName
+            {
+                get { return _securityName; }
             }
 
             public string PositionName
             {
-                get { return _positionName; }
+                get
+                {
+                    return _positionName;
+                }
             }
 
             public long Quantity
@@ -186,25 +274,28 @@ namespace OGDotNet_Analytics
 
             public Dictionary<string, object> Columns
             {
-                get { return _columns; }
+                get
+                {
+                    return _columns;
+                }
             }
 
             public object this[String key]
             {
                 get
                 {
-                    return _columns[key];
+                    return _columns.ContainsKey(key) ? _columns[key] : "";//TODO
                 }
             }
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (_client != null)
-            {
-                _client.Stop();
-            }
+            //TODO this properly
+            viewSelector.SelectedItem = null;
         }
+
+      
         }
 
     public class Portfolio
@@ -231,7 +322,7 @@ namespace OGDotNet_Analytics
         public override Position DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             var id = msg.GetValue<string>("identifier");
-            var secKey = deserializer.FromField<UniqueIdentifier>(msg.GetByName("securityKey"));
+            var secKey = deserializer.FromField<IdentifierBundle>(msg.GetByName("securityKey"));
             var quant = msg.GetValue<string>("quantity");
 
             return new Position( UniqueIdentifier.Parse(id), long.Parse(quant), secKey);
@@ -241,18 +332,18 @@ namespace OGDotNet_Analytics
     [FudgeSurrogate(typeof(PositionBuilder))]
     public class Position
     {
-        private readonly UniqueIdentifier _securityKey;
+        private readonly IdentifierBundle _securityKey;
         private readonly UniqueIdentifier _identifier;
         private readonly long _quantity;
 
-        public Position(UniqueIdentifier identifier, long quantity, UniqueIdentifier securityKey)
+        public Position(UniqueIdentifier identifier, long quantity, IdentifierBundle securityKey)
         {
             _securityKey = securityKey;
             _identifier = identifier;
             _quantity = quantity;
         }
 
-        public UniqueIdentifier SecurityKey
+        public IdentifierBundle SecurityKey
         {
             get { return _securityKey; }
         }
@@ -275,6 +366,7 @@ namespace OGDotNet_Analytics
         private readonly FudgeMsg _configMsg;
         private readonly string _userDataUri;
         private readonly string _viewProcessorUri;
+        private string _securitySourceUri;
 
         public RemoteConfig(string configId, string rootUri)
         {
@@ -283,9 +375,12 @@ namespace OGDotNet_Analytics
 
             _configMsg = _rootRest.GetSubMagic("configuration").GetReponse();
 
-            _userDataUri = GetServiceUri(_configMsg, "userData");
-            _viewProcessorUri = GetServiceUri(_configMsg, "viewProcessor");
+            var serviceUris = GetServiceUris(_configMsg, "userData", "viewProcessor", "securitySource");
+            _userDataUri = serviceUris["userData"];
+            _viewProcessorUri = serviceUris["viewProcessor"];
+            _securitySourceUri = serviceUris["securitySource"];
         }
+
 
 
         public RemoteClient UserClient
@@ -304,11 +399,25 @@ namespace OGDotNet_Analytics
             }
         }
 
+        public RemoteSecuritySource SecuritySource
+        {
+            get {
+                return new RemoteSecuritySource(new RESTMagic(_securitySourceUri));
+            }
+        }
+
+        private Dictionary<string, string> GetServiceUris(FudgeMsg configMsg, params string[] serviceId)
+        {
+            return serviceId.AsParallel().ToDictionary(s=> s, s => GetServiceUri(configMsg, s));
+        }
+
+
+
         private string GetServiceUri(FudgeMsg config, string serviceId)
         {
-            FudgeMsg userDataField = (FudgeMsg)((IFudgeFieldContainer)config.GetByName(_configId).Value).GetByName(serviceId).Value;
+            var userDataField = (FudgeMsg)((IFudgeFieldContainer)config.GetByName(_configId).Value).GetByName(serviceId).Value;
 
-            List<string> uris = new List<string>();
+            var uris = new List<string>();
             foreach (var field in userDataField.GetAllFields())
             {
                 switch (field.Name)
@@ -327,7 +436,7 @@ namespace OGDotNet_Analytics
                 }
             }
 
-            return GetWorkingUri(uris.Where(u => u.Contains("2.")));
+            return GetWorkingUri(uris);
         }
 
         private static string GetWorkingUri(IEnumerable<string> uris)
@@ -337,7 +446,9 @@ namespace OGDotNet_Analytics
                 {
                     try
                     {
-                        using (WebRequest.Create(uri).GetResponse())
+                        var webRequest = WebRequest.Create(uri);
+                        //webRequest.Timeout = 5000;
+                        using (webRequest.GetResponse())
                         { }
                     }
                     catch (WebException e)
@@ -360,6 +471,63 @@ namespace OGDotNet_Analytics
                 }).Where(u => u != null).First();
         }
 
+    }
+
+    public class RemoteSecuritySource
+    {
+        private readonly RESTMagic _restMagic;
+
+        public RemoteSecuritySource(RESTMagic restMagic)
+        {
+            _restMagic = restMagic;
+        }
+
+        public Security GetSecurity(UniqueIdentifier uid)
+        {//TODO use this
+            var fudgeMsg = _restMagic.GetSubMagic("securities").GetSubMagic("security").GetSubMagic(uid.ToString()).GetReponse();
+            var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
+            return fudgeSerializer.Deserialize<Security> (fudgeMsg); 
+        }
+
+       private class OrderedComparison : IEqualityComparer<List<string>>
+       {
+           public static OrderedComparison Instance  =new OrderedComparison();
+
+           public bool Equals(List<string> x, List<string> y)
+           {
+               return x.SequenceEqual(y);
+           }
+
+           public int GetHashCode(List<string> obj)
+           {
+               return obj[0].GetHashCode();
+           }
+       }
+       readonly Dictionary<List<string>, List<Security>> _securitiesCache = new Dictionary<List<string>, List<Security>>(OrderedComparison.Instance);
+
+        public List<Security> GetSecurities(List<String> idStrings)//TODO type
+        {
+            List<Security> ret;
+            if (_securitiesCache.TryGetValue(idStrings, out ret))
+            {
+                return ret;
+            }
+
+
+            var parameters = idStrings.Select(s => new Tuple<string,string>("id", s)).ToArray();
+            var fudgeMsg = _restMagic.GetSubMagic("securities", parameters).GetReponse();
+
+            var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
+            ret = fudgeMsg.GetAllByName("security").Select(f => f.Value).Cast<FudgeMsg>().Select(fudgeSerializer.Deserialize<Security>).ToList();
+
+
+            _securitiesCache[idStrings] = ret;
+
+            return ret.ToList();
+
+
+
+        }
     }
 
     public class RemoteViewProcessor
@@ -484,7 +652,7 @@ namespace OGDotNet_Analytics
     /// <summary>
     /// DataViewClientResource
     /// </summary>
-    public class ViewClient
+    public class ViewClient : DisposableBase
     {
         private readonly RESTMagic _rest;
 
@@ -528,8 +696,28 @@ namespace OGDotNet_Analytics
         {
             public ViewComputationResultModel LatestResult { get; set; }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            Stop();
+        }
     }
-    
+
+    public abstract class DisposableBase : IDisposable
+    {
+        ~DisposableBase()
+        {
+            Dispose(false);
+        }
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            Dispose(true);
+        }
+
+        protected abstract void Dispose(bool disposing);
+    }
+
 
     public class ViewComputationResultModelBuilder : BuilderBase<ViewComputationResultModel>
     {
@@ -934,6 +1122,13 @@ public enum ComputationTargetType {
 
     public class LaxTypeMappingStrategy : IFudgeTypeMappingStrategy
     {
+        private readonly Assembly _assembly;
+
+        public LaxTypeMappingStrategy(Assembly assembly)
+        {
+            _assembly = assembly;
+        }
+
         public string GetName(Type type)
         {
             //throw new NotImplementedException();
@@ -943,7 +1138,7 @@ public enum ComputationTargetType {
         public Type GetType(string fullName)
         {
             var name = fullName.Substring(fullName.LastIndexOf(".") + 1);
-            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+            foreach (var type in _assembly.GetTypes())
             {
                 if (type.Name == name)
                 {
