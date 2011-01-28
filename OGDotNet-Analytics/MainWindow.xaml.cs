@@ -74,21 +74,31 @@ namespace OGDotNet_Analytics
 
                 Dispatcher.Invoke((Action)(() =>
                    {
-                       var viewBase = (GridView)table.View;
+                       var portfolioView = (GridView)portfolioTable.View;
 
-                       while (viewBase.Columns.Count >1)
+                       TrimColumns(portfolioView.Columns, 1);
+                       
+                       foreach (var column in GetPortfolioColumns(viewDefinition))
                        {
-                           viewBase.Columns.RemoveAt(1);                           
-                       }
-
-                       foreach (var column in GetColumns(viewDefinition))
-                       {
-                           viewBase.Columns.Add(new GridViewColumn
+                           portfolioView.Columns.Add(new GridViewColumn
                                                     {
                                                         Width = Double.NaN,
                                                         Header = column,
                                                         DisplayMemberBinding = new Binding(string.Format(".[{0}]", column))//TODO bugs galore
                                                     });
+                       }
+
+                       var primitivesView = (GridView)primitivesTable.View;
+
+                       TrimColumns(primitivesView.Columns, 1);
+                       foreach (var column in GetPrimitiveColumns(viewDefinition))
+                       {
+                           primitivesView.Columns.Add(new GridViewColumn
+                           {
+                               Width = Double.NaN,
+                               Header = column,
+                               DisplayMemberBinding = new Binding(string.Format(".[{0}]", column))//TODO bugs galore
+                           });
                        }
                    }));
 
@@ -108,13 +118,20 @@ namespace OGDotNet_Analytics
                             var results = startResultStream.GetNext(cancellationToken);
 
                             cancellationToken.ThrowIfCancellationRequested();
-                            var rows = BuildRows(viewDefinition, results, portfolio).ToList();
+                            var valueIndex = Indexvalues(results);
 
+                            cancellationToken.ThrowIfCancellationRequested();
+                            var portfolioRows = BuildPortfolioRows(viewDefinition, portfolio, valueIndex).ToList();
+
+                            cancellationToken.ThrowIfCancellationRequested();
+                            var primitiveRows = BuildPrimitiveRows(viewDefinition, results, portfolio, valueIndex).ToList();
+                            
                             cancellationToken.ThrowIfCancellationRequested();
                             Dispatcher.Invoke((Action) (() =>
                                                             {
                                                                 cancellationToken.ThrowIfCancellationRequested();
-                                                                table.DataContext = rows;
+                                                                portfolioTable.DataContext = portfolioRows;
+                                                                primitivesTable.DataContext = primitiveRows;
 
                                                                 count.Text = (++_counter).ToString();
 
@@ -133,8 +150,68 @@ namespace OGDotNet_Analytics
             }
         }
 
+        private static void TrimColumns(GridViewColumnCollection gridViewColumnCollection, int length)
+        {
+            while (gridViewColumnCollection.Count >length)
+            {
+                gridViewColumnCollection.RemoveAt(length);                           
+            }
+        }
 
-        private static IEnumerable<string> GetColumns(ViewDefinition viewDefinition)
+        public class PrimitiveRow
+        {
+            private readonly string _targetId;
+            private readonly Dictionary<string, object> _columns;
+
+            public PrimitiveRow(string targetId, Dictionary<string, object> columns)
+            {
+                _targetId = targetId;
+                _columns = columns;
+            }
+
+            public string TargetName
+            {
+                get { return _targetId; }//TODO
+            }
+
+            public object this[string key]
+            {
+                get { return _columns.ContainsKey(key) ? _columns[key] : null; }
+            }
+        }
+        private IEnumerable<PrimitiveRow> BuildPrimitiveRows(ViewDefinition viewDefinition, ViewComputationResultModel results, Portfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
+        {
+            var targets = new HashSet<string>();
+            foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
+            {
+                foreach (var row in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.PRIMITIVE.ToString()).GroupBy(vr => vr.ComputationTargetIdentifier))
+                {
+                    var values =new Dictionary<string, object>();
+                    foreach (var valueRequirement in row)
+                    {
+                        var value = valueIndex[new Tuple<UniqueIdentifier, string, string>(UniqueIdentifier.Parse(valueRequirement.ComputationTargetIdentifier), valueRequirement.ValueName, configuration.Key)];
+                        values.Add(valueRequirement.ValueName, value);
+                    }
+                    yield return new PrimitiveRow(row.Key, values);
+                }
+            }
+        }
+
+        private static IEnumerable<string> GetPrimitiveColumns(ViewDefinition viewDefinition)
+        {
+            var valueNames = new HashSet<string>();
+            foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
+            {
+                foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.PRIMITIVE.ToString()))
+                {
+                    valueNames.Add(req.ValueName);
+                }
+            }
+            return valueNames;
+        }
+
+
+        private static IEnumerable<string> GetPortfolioColumns(ViewDefinition viewDefinition)
         {
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
@@ -171,11 +248,8 @@ namespace OGDotNet_Analytics
             }
         }
 
-        private IEnumerable<Row> BuildRows(ViewDefinition viewDefinition, ViewComputationResultModel results, Portfolio portfolio)
+        private IEnumerable<Row> BuildPortfolioRows(ViewDefinition viewDefinition, Portfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
         {
-            Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex = Indexvalues(results);
-
-
             foreach (var position in GetPositions(portfolio))
             {
                 var values = new Dictionary<string, object>();
@@ -224,13 +298,16 @@ namespace OGDotNet_Analytics
             var valueIndex = new Dictionary<Tuple<UniqueIdentifier, string, string>, object>();
             foreach (var result in results.AllResults)
             {
-                if (result.ComputedValue.Specification.TargetSpecification.Type == ComputationTargetType.POSITION)
+                //TODO others
+                switch (result.ComputedValue.Specification.TargetSpecification.Type)
                 {
-                    valueIndex.Add(
-                        new Tuple<UniqueIdentifier, string, string>(
+                    case ComputationTargetType.PRIMITIVE:
+                    case ComputationTargetType.POSITION:
+                        valueIndex.Add(new Tuple<UniqueIdentifier, string, string>(
                             result.ComputedValue.Specification.TargetSpecification.Uid,
                             result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
-                        result.ComputedValue.Value);
+                            result.ComputedValue.Value);
+                        break;
                 }
             }
             return valueIndex;

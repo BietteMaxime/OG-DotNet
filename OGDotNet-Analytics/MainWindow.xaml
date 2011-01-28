@@ -37,26 +37,25 @@
 
                    
 
-                    <ListView Visibility="Visible" Grid.Row="2"  Name="table"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+                    <ListView Visibility="Visible" Grid.Row="2"  Name="portfolioTable"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="140" Header="Position" DisplayMemberBinding="{Binding Path=PositionName}"/>
                             </GridView>
 
                         </ListView.View>
-
-
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Height" Value="50" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
                     </ListView>
 
                 </Grid>
             </TabItem>
             <TabItem Header="Primitives" Name="tabItem2">
-
+                <ListView Name="primitivesTable"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="140" Header="Target" DisplayMemberBinding="{Binding Path=TargetName}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
             </TabItem>
         </TabControl>
     </Grid>
