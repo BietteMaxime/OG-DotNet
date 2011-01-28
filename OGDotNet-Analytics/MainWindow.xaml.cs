@@ -116,7 +116,7 @@ namespace OGDotNet_Analytics
                                                                 cancellationToken.ThrowIfCancellationRequested();
                                                                 table.DataContext = rows;
 
-                                                                count.Text = _counter++.ToString();
+                                                                count.Text = (++_counter).ToString();
 
                                                             }));
                         }

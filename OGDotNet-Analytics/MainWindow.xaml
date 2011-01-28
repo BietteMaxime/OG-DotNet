@@ -5,33 +5,60 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-        <ComboBox Name="viewSelector" Grid.Row="0" ItemsSource="{Binding}" SelectionChanged="viewSelector_SelectionChanged">
-            
-        </ComboBox>
+            <TextBlock Grid.Column="0" Text="View:" Margin="3,0,10,0"/>
+            <ComboBox Grid.Column="1" Name="viewSelector" ItemsSource="{Binding}" SelectionChanged="viewSelector_SelectionChanged" Width="Auto"/>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0" HorizontalAlignment="Right">
+                <TextBlock Text="0" Name="count"/>
+                <TextBlock Text="0" Name="countLayout"/>
+            </StackPanel>
+        </Grid>
         
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <TextBlock Grid.Row="0" Text="0" Name="count"/>
-            <TextBlock Grid.Row="0" Text="0" Name="countLayout"/>
-        </StackPanel>
+        <TabControl Grid.Row="1" Height="Auto" Name="tabControl1" Width="Auto">
+            <TabItem Header="Portfolio" Name="tabItem1">
+                <Grid>
 
-        <ListView Visibility="Visible" Grid.Row="2"  Name="table"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="140" Header="Position" DisplayMemberBinding="{Binding Path=PositionName}"/>
-                </GridView>
-                
-            </ListView.View>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-            
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Height" Value="50" />
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+
+
+                   
+
+                    <ListView Visibility="Visible" Grid.Row="2"  Name="table"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="140" Header="Position" DisplayMemberBinding="{Binding Path=PositionName}"/>
+                            </GridView>
+
+                        </ListView.View>
+
+
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Height" Value="50" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Primitives" Name="tabItem2">
+
+            </TabItem>
+        </TabControl>
     </Grid>
+
 </Window>
