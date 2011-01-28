@@ -3,13 +3,31 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid>
-        <ListView Name="table"  ItemsSource="{Binding}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Grid.Row="0" Text="0" Name="count"/>
+            <TextBlock Grid.Row="0" Text="0" Name="countLayout"/>
+        </StackPanel>
+
+        <ListView Visibility="Visible" Grid.Row="1"  Name="table"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="140" Header="Position" DisplayMemberBinding="{Binding Path=PositionName}"/>
                     <GridViewColumn Width="140" Header="Quantity" DisplayMemberBinding="{Binding Path=Quantity}"/>
                 </GridView>
+                
             </ListView.View>
+
+            
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Height" Value="50" />
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
 </Window>
