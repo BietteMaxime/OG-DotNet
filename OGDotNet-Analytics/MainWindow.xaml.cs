@@ -181,19 +181,20 @@ namespace OGDotNet_Analytics
         }
         private IEnumerable<PrimitiveRow> BuildPrimitiveRows(ViewDefinition viewDefinition, ViewComputationResultModel results, Portfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
         {
-            var targets = new HashSet<string>();
-            foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
+            var targets = viewDefinition.CalculationConfigurationsByName.SelectMany(conf => conf.Value.SpecificRequirements).Select(s => s.ComputationTargetIdentifier).Distinct();
+            foreach (var target in targets)
             {
-                foreach (var row in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.PRIMITIVE.ToString()).GroupBy(vr => vr.ComputationTargetIdentifier))
+                var values = new Dictionary<string, object>();
+                foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
                 {
-                    var values =new Dictionary<string, object>();
-                    foreach (var valueRequirement in row)
+                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r =>r.ComputationTargetType == ComputationTargetType.PRIMITIVE.ToString() &&r.ComputationTargetIdentifier == target))
                     {
-                        var value = valueIndex[new Tuple<UniqueIdentifier, string, string>(UniqueIdentifier.Parse(valueRequirement.ComputationTargetIdentifier), valueRequirement.ValueName, configuration.Key)];
-                        values.Add(valueRequirement.ValueName, value);
+                        var value = valueIndex[new Tuple<UniqueIdentifier, string, string>(UniqueIdentifier.Parse(target),valueReq.ValueName, configuration.Key)];
+                        values.Add(GetColumnHeading(configuration.Key, valueReq.ValueName), value);
                     }
-                    yield return new PrimitiveRow(row.Key, values);
                 }
+                yield return new PrimitiveRow(target, values);
+
             }
         }
 
@@ -204,7 +205,7 @@ namespace OGDotNet_Analytics
             {
                 foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.PRIMITIVE.ToString()))
                 {
-                    valueNames.Add(req.ValueName);
+                    valueNames.Add(GetColumnHeading(configuration.Key, req.ValueName));
                 }
             }
             return valueNames;
@@ -221,11 +222,16 @@ namespace OGDotNet_Analytics
                     {
                         foreach (var p in property.Value)
                         {
-                            yield return string.Format("{0}/{1}", configuration.Key, p);
+                            yield return GetColumnHeading(configuration.Key, p);
                         }
                     }
                 }
             }
+        }
+
+        private static string GetColumnHeading(string configuration, string valueName)
+        {
+            return string.Format("{0}/{1}", configuration, valueName);
         }
 
         private static IEnumerable<Position> GetPositions(Portfolio portfolio)
