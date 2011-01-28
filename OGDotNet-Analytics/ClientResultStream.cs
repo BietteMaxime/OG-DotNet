@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading;
 using Apache.NMS;
-using Apache.NMS.Util;
 using Fudge.Encodings;
 
 namespace OGDotNet_Analytics

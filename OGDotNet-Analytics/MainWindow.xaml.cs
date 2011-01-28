@@ -127,6 +127,10 @@ namespace OGDotNet_Analytics
             catch (OperationCanceledException oce)
             {
             }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Failed to retrieve data");
+            }
         }
 
 
@@ -194,6 +198,7 @@ namespace OGDotNet_Analytics
                             }
                             else
                             {
+                                values.Add(header, "undefined");
                             }
                         }
                     }
@@ -897,16 +902,7 @@ namespace OGDotNet_Analytics
                 var subMsg = (IFudgeFieldContainer) field.Value;
                 
                 var valueSpecification = deserializer.FromField<ValueSpecification>(subMsg.GetByName("specification"));
-                var o = subMsg.GetByName("value");
-                object innerValue;
-                try
-                {
-                    innerValue = deserializer.FromField<object>(o);
-                }
-                catch (Exception e)
-                {
-                    innerValue = new MisunderstoodValue(e);
-                }
+                object innerValue = GetValue(deserializer, subMsg, valueSpecification);
 
                 var value = new ComputedValue(valueSpecification, innerValue);
                 
@@ -918,8 +914,36 @@ namespace OGDotNet_Analytics
             }
             return new ViewCalculationResultModel(map);
         }
+
+        private static object GetValue(IFudgeDeserializer deserializer, IFudgeFieldContainer subMsg, ValueSpecification valueSpecification)
+        {
+            var o = subMsg.GetByName("value");
+            object innerValue;
+
+            if (valueSpecification.ValueName == "YieldCurveJacobian")
+            {
+                var fromField = deserializer.FromField<List<double[]>>(o);
+                return fromField;//TODO I hope this gets a better type one day?
+            }
+
+            try
+            {
+                var t = o.Type.CSharpType;
+
+                innerValue = deserializer.FromField(o, t);
+            }
+            catch (Exception e)
+            {
+                innerValue = new MisunderstoodValue(e);
+            }
+            return innerValue;
+        }
     }
 
+    public class VolatilitySurfaceData
+    {//TODO
+        
+    }
     public class MisunderstoodValue
     {
         //TODO stop this
