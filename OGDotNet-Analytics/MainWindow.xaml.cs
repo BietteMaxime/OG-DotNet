@@ -26,7 +26,7 @@ namespace OGDotNet_Analytics
         private RemoteSecuritySource _remoteSecuritySource;
         private RemoteViewProcessor _remoteViewProcessor;
 
-        private volatile  object _currentProcessorToken = new object();
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         public MainWindow()
         {
             InitializeComponent();
@@ -48,26 +48,28 @@ namespace OGDotNet_Analytics
 
         private void viewSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _currentProcessorToken = new object();
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
+            
 
             var viewName = (string) viewSelector.SelectedItem;
             if (viewName != null)
             {
-                
-                new Thread(() => RefreshMyData(viewName, _currentProcessorToken)).Start();
+
+                new Thread(() => RefreshMyData(viewName, _cancellationTokenSource.Token)).Start();
             }
         }
 
-        public void RefreshMyData(string viewName, object currentProcessorToken)
+        public void RefreshMyData(string viewName, CancellationToken cancellationToken)
         {
             try
             {
-                CancelIfCancelled(currentProcessorToken);
+                cancellationToken.ThrowIfCancellationRequested();
                 var remoteViewResource = _remoteViewProcessor.GetView(viewName);
-                CancelIfCancelled(currentProcessorToken);
+                cancellationToken.ThrowIfCancellationRequested();
                 remoteViewResource.Init();
 
-                CancelIfCancelled(currentProcessorToken);
+                cancellationToken.ThrowIfCancellationRequested();
                 var viewDefinition = remoteViewResource.Definition;
 
                 Dispatcher.Invoke((Action)(() =>
@@ -91,49 +93,40 @@ namespace OGDotNet_Analytics
                    }));
 
 
-
-                CancelIfCancelled(currentProcessorToken);
+                cancellationToken.ThrowIfCancellationRequested();
                 using (var client = remoteViewResource.CreateClient())
                 {
-                    CancelIfCancelled(currentProcessorToken);
+                    cancellationToken.ThrowIfCancellationRequested();
                     client.Start();
-
-                    CancelIfCancelled(currentProcessorToken);
-                    var portfolio = remoteViewResource.Portfolio;
-
-                    while (true)
+                    using (var startResultStream = client.StartResultStream())
                     {
-                        CancelIfCancelled(currentProcessorToken);
-                        var results = client.LatestResult;
-                        if (results != null)
-                        {
-                            CancelIfCancelled(currentProcessorToken);
-                            var rows = BuildRows(viewDefinition, results, portfolio).ToList();
-                            CancelIfCancelled(currentProcessorToken);
-                            Dispatcher.Invoke((Action)(() =>
-                                                           {
-                                                               CancelIfCancelled(currentProcessorToken);
-                                                               table.DataContext = rows;
-                                                       
-                                                               count.Text = _counter++.ToString();
-                                                       
-                                                           }));
+                        cancellationToken.ThrowIfCancellationRequested();
+                        var portfolio = remoteViewResource.Portfolio;
 
-                            CancelIfCancelled(currentProcessorToken);
-                            Thread.Sleep(500);//TODO whaa?
+                        while (! cancellationToken.IsCancellationRequested)
+                        {
+                            var results = startResultStream.GetNext(cancellationToken);
+
+                            cancellationToken.ThrowIfCancellationRequested();
+                            var rows = BuildRows(viewDefinition, results, portfolio).ToList();
+
+                            cancellationToken.ThrowIfCancellationRequested();
+                            Dispatcher.Invoke((Action) (() =>
+                                                            {
+                                                                cancellationToken.ThrowIfCancellationRequested();
+                                                                table.DataContext = rows;
+
+                                                                count.Text = _counter++.ToString();
+
+                                                            }));
                         }
+
                     }
                 }
             }
             catch (OperationCanceledException oce)
             {
             }
-        }
-
-        private void CancelIfCancelled(object currentProcessorToken)
-        {
-            if (currentProcessorToken != _currentProcessorToken)
-                throw new OperationCanceledException();
         }
 
 
@@ -363,22 +356,29 @@ namespace OGDotNet_Analytics
     {
         private readonly string _configId;
         private readonly RESTMagic _rootRest;
-        private readonly FudgeMsg _configMsg;
+        private readonly FudgeMsg _configsMsg;
         private readonly string _userDataUri;
         private readonly string _viewProcessorUri;
         private string _securitySourceUri;
+        private string _activeMQSpec;
 
         public RemoteConfig(string configId, string rootUri)
         {
             _rootRest = new RESTMagic(rootUri);
             _configId = configId;
 
-            _configMsg = _rootRest.GetSubMagic("configuration").GetReponse();
+            _configsMsg = _rootRest.GetSubMagic("configuration").GetReponse();
 
-            var serviceUris = GetServiceUris(_configMsg, "userData", "viewProcessor", "securitySource");
+            var configMsg = ((IFudgeFieldContainer)_configsMsg.GetByName(_configId).Value);
+
+            _activeMQSpec = configMsg.GetValue<string>("activeMQ");
+
+            var serviceUris = GetServiceUris(configMsg, "userData", "viewProcessor", "securitySource");
             _userDataUri = serviceUris["userData"];
             _viewProcessorUri = serviceUris["viewProcessor"];
             _securitySourceUri = serviceUris["securitySource"];
+            
+            
         }
 
 
@@ -395,7 +395,7 @@ namespace OGDotNet_Analytics
         {
             get
             {
-                return new RemoteViewProcessor(new RESTMagic(_viewProcessorUri));
+                return new RemoteViewProcessor(new RESTMagic(_viewProcessorUri), _activeMQSpec);
             }
         }
 
@@ -406,16 +406,18 @@ namespace OGDotNet_Analytics
             }
         }
 
-        private Dictionary<string, string> GetServiceUris(FudgeMsg configMsg, params string[] serviceId)
+        private Dictionary<string, string> GetServiceUris(IFudgeFieldContainer configMsg, params string[] serviceId)
         {
             return serviceId.AsParallel().ToDictionary(s=> s, s => GetServiceUri(configMsg, s));
         }
 
 
 
-        private string GetServiceUri(FudgeMsg config, string serviceId)
+        private string GetServiceUri(IFudgeFieldContainer configMsg, string serviceId)
         {
-            var userDataField = (FudgeMsg)((IFudgeFieldContainer)config.GetByName(_configId).Value).GetByName(serviceId).Value;
+            
+
+            var userDataField = (FudgeMsg)configMsg.GetByName(serviceId).Value;
 
             var uris = new List<string>();
             foreach (var field in userDataField.GetAllFields())
@@ -533,10 +535,12 @@ namespace OGDotNet_Analytics
     public class RemoteViewProcessor
     {
         private readonly RESTMagic _rest;
+        private readonly string _activeMqSpec;
 
-        public RemoteViewProcessor(RESTMagic rest)
+        public RemoteViewProcessor(RESTMagic rest, string activeMqSpec)
         {
             _rest = rest;
+            _activeMqSpec = activeMqSpec;
         }
 
         public IEnumerable<string> ViewNames
@@ -551,17 +555,19 @@ namespace OGDotNet_Analytics
 
         public RemoteViewResource GetView(string viewName)
         {
-            return new RemoteViewResource(_rest.GetSubMagic("views").GetSubMagic(viewName));
+            return new RemoteViewResource(_rest.GetSubMagic("views").GetSubMagic(viewName), _activeMqSpec);
         }
     }
 
     public class RemoteViewResource
     {
         private readonly RESTMagic _rest;
+        private readonly string _activeMqSpec;
 
-        public RemoteViewResource(RESTMagic rest)
+        public RemoteViewResource(RESTMagic rest, string activeMqSpec)
         {
             _rest = rest;
+            _activeMqSpec = activeMqSpec;
         }
 
         public void Init()
@@ -594,7 +600,7 @@ namespace OGDotNet_Analytics
             
             var clientUri = _rest.GetSubMagic("clients").Create(FudgeConfig.GetFudgeContext(), FudgeConfig.GetFudgeSerializer().SerializeToMsg(new UserPrincipal("bbgintegrationtestuser", GetIP())));
 
-            return new ViewClient(clientUri);
+            return new ViewClient(clientUri, _activeMqSpec);
         }
 
         private string GetIP()
@@ -654,12 +660,15 @@ namespace OGDotNet_Analytics
     /// </summary>
     public class ViewClient : DisposableBase
     {
+        private readonly string _activeMqSpec;
         private readonly RESTMagic _rest;
 
-        public ViewClient(Uri clientUri)
+        public ViewClient(Uri clientUri, string activeMqSpec)
         {
+            _activeMqSpec = activeMqSpec;
             _rest = new RESTMagic(clientUri);
         }
+
         public void Start()
         {
             var reponse = _rest.GetSubMagic("start").GetReponse("POST");
@@ -671,6 +680,27 @@ namespace OGDotNet_Analytics
         public void Pause()
         {
             var reponse = _rest.GetSubMagic("pause").GetReponse("POST");
+        }
+
+        public ClientResultStream StartResultStream()
+        {
+            var reponse = _rest.GetSubMagic("startJmsResultStream").GetFudgeReponse("POST");
+            var queueName = reponse.GetValue<string>("value");
+            var queueUri = new Uri(_activeMqSpec);
+            return new ClientResultStream(queueUri, queueName, StopResultStream);
+        }
+        public void StopResultStream()
+        {
+            var reponse = _rest.GetSubMagic("startJmsResultStream").GetReponse("POST");
+        }
+
+        public void StartDeltaStream()//TODO use this
+        {
+            var reponse = _rest.GetSubMagic("startJmsDeltaStream").GetReponse("POST");
+        }
+        public void StopDeltaStream()
+        {
+            var reponse = _rest.GetSubMagic("startJmsDeltaStream").GetReponse("POST");
         }
 
         public bool ResultAvailable

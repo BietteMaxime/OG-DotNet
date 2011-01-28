@@ -355,6 +355,25 @@ namespace OGDotNet
             return new StreamReader(response.GetResponseStream()).ReadToEnd();
         }
 
+        public FudgeMsg GetFudgeReponse(string method)
+        {
+            var fudgeContext = new FudgeContext();
+
+            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
+            request.Method = UrlEncode(method);
+
+            MangleRequest(request);
+            var response = (HttpWebResponse)request.GetResponse();
+            FudgeMsg fudgeMsg;
+            using (Stream responseStream = response.GetResponseStream())
+            using (BufferedStream buff = new BufferedStream(responseStream))
+            {
+
+                fudgeMsg = fudgeContext.Deserialize(buff).Message;
+            }
+            return fudgeMsg;
+        }
+
         public FudgeMsg GetReponse()
         {
             var fudgeContext = new FudgeContext();
