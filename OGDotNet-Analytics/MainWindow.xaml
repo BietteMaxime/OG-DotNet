@@ -6,6 +6,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
@@ -14,17 +15,13 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="View:" Margin="3,0,10,0"/>
-            <ComboBox Grid.Column="1" Name="viewSelector" ItemsSource="{Binding}" SelectionChanged="viewSelector_SelectionChanged" Width="Auto"/>
+            <TextBlock Grid.Column="0" Text="View:" Margin="3,0,10,0" VerticalAlignment="Center"/>
+            <ComboBox Grid.Column="1" Name="viewSelector" ItemsSource="{Binding}" SelectionChanged="viewSelector_SelectionChanged" Width="Auto" VerticalAlignment="Center"/>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0" HorizontalAlignment="Right">
-                <TextBlock Text="0" Name="count"/>
-                <TextBlock Text="0" Name="countLayout"/>
-            </StackPanel>
         </Grid>
         
         <TabControl Grid.Row="1" Height="Auto" Name="tabControl1" Width="Auto">
-            <TabItem Header="Portfolio" Name="tabItem1">
+            <TabItem Header="Portfolio" Name="portfolioTabItem">
                 <Grid>
 
                     <Grid.RowDefinitions>
@@ -48,7 +45,7 @@
 
                 </Grid>
             </TabItem>
-            <TabItem Header="Primitives" Name="tabItem2">
+            <TabItem Header="Primitives" Name="primitiveTabItem">
                 <ListView Name="primitivesTable"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
                     <ListView.View>
                         <GridView>
@@ -58,6 +55,9 @@
                 </ListView>
             </TabItem>
         </TabControl>
+        <StatusBar Grid.Row="2" Name="statusBar">
+            <TextBlock Name="statusText" />
+        </StatusBar>
     </Grid>
 
 </Window>

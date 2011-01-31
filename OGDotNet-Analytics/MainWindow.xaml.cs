@@ -68,7 +68,12 @@ namespace OGDotNet_Analytics
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var remoteViewResource = _remoteViewProcessor.GetView(viewName);
+
                 cancellationToken.ThrowIfCancellationRequested();
+                var portfolio = remoteViewResource.Portfolio;
+
+                cancellationToken.ThrowIfCancellationRequested();
+                SetStatus("Initializing view...");
                 remoteViewResource.Init();
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -105,7 +110,9 @@ namespace OGDotNet_Analytics
 
                            });
                        }
-                       
+
+                       portfolioTabItem.Visibility = viewDefinition.PortfolioIdentifier == null ? Visibility.Hidden : Visibility.Visible;
+                       primitiveTabItem.Visibility = primitivesView.Columns.Count==1 ? Visibility.Hidden : Visibility.Visible;
                    }));
 
 
@@ -115,6 +122,8 @@ namespace OGDotNet_Analytics
                     cancellationToken.ThrowIfCancellationRequested();
                     client.Start();
 
+                    
+                    SetStatus("Waiting for results...");
                     while (! client.ResultAvailable)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
@@ -124,16 +133,14 @@ namespace OGDotNet_Analytics
                     using (var deltaStream = client.StartDeltaStream())
                     {
                         //NOTE: by starting the delta stream first I believe I am ok
+                        SetStatus("Getting first results...");
                         cancellationToken.ThrowIfCancellationRequested();
                         ViewComputationResultModel results = client.LatestResult;
-                        
 
-                        cancellationToken.ThrowIfCancellationRequested();
-                        var portfolio = remoteViewResource.Portfolio;
+
 
                         while (! cancellationToken.IsCancellationRequested)
-                        {
-                            
+                        {    
                             var valueIndex = Indexvalues(results);
 
                             cancellationToken.ThrowIfCancellationRequested();
@@ -147,13 +154,13 @@ namespace OGDotNet_Analytics
                                                             {
                                                                 cancellationToken.ThrowIfCancellationRequested();
                                                                 portfolioTable.DataContext = portfolioRows;
+                                                                
                                                                 primitivesTable.DataContext = primitiveRows;
-
-                                                                count.Text = (++_counter).ToString();
-
                                                             }));
 
+
                             cancellationToken.ThrowIfCancellationRequested();
+                            SetStatus("Waiting for next result...");
                             var delta = deltaStream.GetNext(cancellationToken);
                             results = results.ApplyDelta(delta);
                         }
@@ -168,6 +175,11 @@ namespace OGDotNet_Analytics
             {
                 MessageBox.Show(ex.ToString(), "Failed to retrieve data");
             }
+        }
+
+        private void SetStatus(string msg)
+        {
+            Dispatcher.Invoke((Action) (() => { statusText.Text = msg; }));
         }
 
         private static void TrimColumns(GridViewColumnCollection gridViewColumnCollection, int length)

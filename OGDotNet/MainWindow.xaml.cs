@@ -51,7 +51,6 @@ namespace OGDotNet
             
             int currentPage = CurrentPage;
 
-            BackgroundWorker worker = new BackgroundWorker();
             ThreadPool.QueueUserWorkItem(delegate
                                              {
                                                  try
