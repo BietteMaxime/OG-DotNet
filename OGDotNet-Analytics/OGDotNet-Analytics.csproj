@@ -63,6 +63,7 @@
     <Compile Include="ClientResultStream.cs" />
     <Compile Include="FudgeConfig.xaml.cs" />
     <Compile Include="InterpolatedDoublesCurve.xaml.cs" />
+    <Compile Include="PrimitiveCellTemplateSelector.xaml.cs" />
     <Compile Include="ResultModelDefinition.xaml.cs" />
     <Compile Include="YieldCurveCell.xaml.cs">
       <DependentUpon>YieldCurveCell.xaml</DependentUpon>
