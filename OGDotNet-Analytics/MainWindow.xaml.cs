@@ -69,15 +69,12 @@ namespace OGDotNet_Analytics
         public class PrimitiveCellTemplateSelector : DataTemplateSelector
         {
             private readonly string _column;
-            private readonly DataTemplate _baseTemplate;
 
-            public PrimitiveCellTemplateSelector(string column, DataTemplate baseTemplate)
+            public PrimitiveCellTemplateSelector(string column)
             {
                 _column = column;
-                _baseTemplate = baseTemplate;
             }
 
-            static HashSet<DataTemplate> templates = new HashSet<DataTemplate>();
             public override DataTemplate SelectTemplate(object item, DependencyObject container)
             {
                 var cellValue = ((PrimitiveRow) item)[_column];
@@ -87,15 +84,23 @@ namespace OGDotNet_Analytics
                     Binding b = new Binding(".[{0}]");
 
                     FrameworkElementFactory comboFactory = new FrameworkElementFactory(typeof(YieldCurveCell));
-                    comboFactory.Name = "myComboFactory";
-                    comboFactory.SetValue(DataContextProperty, cellValue);
+                    comboFactory.SetValue(DataContextProperty, cellValue);  //TODO binding so that I can reuse these
 
                     DataTemplate itemsTemplate = new DataTemplate();
                     itemsTemplate.VisualTree = comboFactory;
 
                     return itemsTemplate;
                 }
-                return null;
+                else
+                {
+                    FrameworkElementFactory comboFactory = new FrameworkElementFactory(typeof(TextBlock));
+                    comboFactory.SetValue(TextBlock.TextProperty, cellValue);
+
+                    DataTemplate itemsTemplate = new DataTemplate();
+                    itemsTemplate.VisualTree = comboFactory;
+
+                    return itemsTemplate;
+                }
             }
 
         }
@@ -138,7 +143,7 @@ namespace OGDotNet_Analytics
                            {
                                Width = Double.NaN,
                                Header = column,
-                               CellTemplateSelector = new PrimitiveCellTemplateSelector(column, (DataTemplate) Resources["YieldCurveTemplate"])//TODO bugs galore
+                               CellTemplateSelector = new PrimitiveCellTemplateSelector(column)//TODO bugs galore
 
                            });
                        }
