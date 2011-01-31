@@ -6,37 +6,37 @@ using Fudge.Encodings;
 
 namespace OGDotNet_Analytics
 {
-    public class ClientResultStream : DisposableBase
+    public class ClientResultStream<T> : DisposableBase //TODO IObservable
     {
-        private readonly Uri _queueUri;
-        private readonly string _queueName;
+        private readonly Uri _serviceUri;
+        private readonly string _topicName;
         private readonly Action _stopAction;
         private readonly IConnection _connection;
         private readonly ISession _session;
         private readonly IDestination _destination;
         private readonly IMessageConsumer _consumer;
 
-        public ClientResultStream(Uri queueUri, string queueName, Action stopAction)
+        public ClientResultStream(Uri serviceUri, string topicName, Action stopAction)
         {
-            _queueUri = queueUri;
-            _queueName = queueName;
+            _serviceUri = serviceUri;
+            _topicName = topicName;
             _stopAction = stopAction;
 
 
-            var oldSkooluri = _queueUri.LocalPath.Replace("(", "").Replace(")", "");
+            var oldSkooluri = _serviceUri.LocalPath.Replace("(", "").Replace(")", "");
             IConnectionFactory factory = new NMSConnectionFactory(oldSkooluri);
 
             _connection = factory.CreateConnection();
             _session = _connection.CreateSession();
 
-            _destination = _session.GetDestination("topic://"+queueName); //?
+            _destination = _session.GetDestination("topic://"+topicName); //?
 
             _consumer = _session.CreateConsumer(_destination);
 
             _connection.Start();
         }
 
-        public ViewComputationResultModel GetNext(CancellationToken cancellationToken)
+        public T GetNext(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var message = _consumer.Receive();
@@ -44,7 +44,7 @@ namespace OGDotNet_Analytics
             using (var memoryStream = new MemoryStream(bytesMessage.Content))
             {
                 var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(FudgeConfig.GetFudgeContext(), memoryStream);
-                return FudgeConfig.GetFudgeSerializer().Deserialize<ViewComputationResultModel>(fudgeEncodedStreamReader);
+                return FudgeConfig.GetFudgeSerializer().Deserialize<T>(fudgeEncodedStreamReader);
             }
         }
 

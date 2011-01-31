@@ -213,10 +213,10 @@ namespace OGDotNet_Analytics
 
         public class PrimitiveRow
         {
-            private readonly string _targetId;
+            private readonly UniqueIdentifier _targetId;
             private readonly Dictionary<string, object> _columns;
 
-            public PrimitiveRow(string targetId, Dictionary<string, object> columns)
+            public PrimitiveRow(UniqueIdentifier targetId, Dictionary<string, object> columns)
             {
                 _targetId = targetId;
                 _columns = columns;
@@ -224,7 +224,7 @@ namespace OGDotNet_Analytics
 
             public string TargetName
             {
-                get { return _targetId; }//TODO
+                get { return _targetId.ToString(); }//TODO
             }
 
             public object this[string key]
@@ -240,9 +240,9 @@ namespace OGDotNet_Analytics
                 var values = new Dictionary<string, object>();
                 foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
                 {
-                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r =>r.ComputationTargetType == ComputationTargetType.PRIMITIVE.ToString() &&r.ComputationTargetIdentifier == target))
+                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r =>r.ComputationTargetType == ComputationTargetType.PRIMITIVE && r.ComputationTargetIdentifier == target))
                     {
-                        var key = new Tuple<UniqueIdentifier, string, string>(UniqueIdentifier.Parse(target),valueReq.ValueName, configuration.Key);
+                        var key = new Tuple<UniqueIdentifier, string, string>(target,valueReq.ValueName, configuration.Key);
 
                         object value;
                         if (valueIndex.TryGetValue(key, out value))
@@ -261,7 +261,7 @@ namespace OGDotNet_Analytics
             var valueNames = new HashSet<string>();
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
-                foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.PRIMITIVE.ToString()))
+                foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.PRIMITIVE))
                 {
                     valueNames.Add(GetColumnHeading(configuration.Key, req.ValueName));
                 }
