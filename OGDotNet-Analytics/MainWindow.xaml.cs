@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
+using System.Xaml;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet;
+using OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet_Analytics.Mappedtypes.LiveData;
+using OGDotNet_Analytics.Mappedtypes.math.curve;
+using XamlReader = System.Windows.Markup.XamlReader;
 
 namespace OGDotNet_Analytics
 {
@@ -34,7 +40,7 @@ namespace OGDotNet_Analytics
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var remoteConfig = new RemoteConfig("0", "http://localhost:8080/jax"); //devsvr-lx-2 or localhost
+            var remoteConfig = new RemoteConfig("0", "http://127.0.0.1:8080/jax"); //devsvr-lx-2 or localhost
             
             var remoteClient = remoteConfig.UserClient;
             remoteClient.HeartbeatSender();
@@ -59,6 +65,41 @@ namespace OGDotNet_Analytics
                 new Thread(() => RefreshMyData(viewName, _cancellationTokenSource.Token)).Start();
             }
         }
+
+        public class PrimitiveCellTemplateSelector : DataTemplateSelector
+        {
+            private readonly string _column;
+            private readonly DataTemplate _baseTemplate;
+
+            public PrimitiveCellTemplateSelector(string column, DataTemplate baseTemplate)
+            {
+                _column = column;
+                _baseTemplate = baseTemplate;
+            }
+
+            static HashSet<DataTemplate> templates = new HashSet<DataTemplate>();
+            public override DataTemplate SelectTemplate(object item, DependencyObject container)
+            {
+                var cellValue = ((PrimitiveRow) item)[_column];
+                if (cellValue is YieldCurve)
+                {
+                    var type = typeof(YieldCurveCell);
+                    Binding b = new Binding(".[{0}]");
+
+                    FrameworkElementFactory comboFactory = new FrameworkElementFactory(typeof(YieldCurveCell));
+                    comboFactory.Name = "myComboFactory";
+                    comboFactory.SetValue(YieldCurveCell.DataContextProperty, cellValue);
+
+                    DataTemplate itemsTemplate = new DataTemplate();
+                    itemsTemplate.VisualTree = comboFactory;
+
+                    return itemsTemplate;
+                }
+                return null;
+            }
+
+        }
+
 
         public void RefreshMyData(string viewName, CancellationToken cancellationToken)
         {
@@ -97,7 +138,8 @@ namespace OGDotNet_Analytics
                            {
                                Width = Double.NaN,
                                Header = column,
-                               DisplayMemberBinding = new Binding(string.Format(".[{0}]", column))//TODO bugs galore
+                               CellTemplateSelector = new PrimitiveCellTemplateSelector(column, (DataTemplate) Resources["YieldCurveTemplate"])//TODO bugs galore
+
                            });
                        }
                    }));
@@ -189,8 +231,13 @@ namespace OGDotNet_Analytics
                 {
                     foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r =>r.ComputationTargetType == ComputationTargetType.PRIMITIVE.ToString() &&r.ComputationTargetIdentifier == target))
                     {
-                        var value = valueIndex[new Tuple<UniqueIdentifier, string, string>(UniqueIdentifier.Parse(target),valueReq.ValueName, configuration.Key)];
-                        values.Add(GetColumnHeading(configuration.Key, valueReq.ValueName), value);
+                        var key = new Tuple<UniqueIdentifier, string, string>(UniqueIdentifier.Parse(target),valueReq.ValueName, configuration.Key);
+
+                        object value;
+                        if (valueIndex.TryGetValue(key, out value))
+                        {
+                            values.Add(GetColumnHeading(configuration.Key, valueReq.ValueName), value);
+                        }
                     }
                 }
                 yield return new PrimitiveRow(target, values);
@@ -710,6 +757,7 @@ namespace OGDotNet_Analytics
         {
             public class YieldCurve
             {
+                public InterpolatedDoublesCurve Curve { get; set; }
                 //TODO
             }
         }
@@ -1314,3 +1362,14 @@ public enum ComputationTargetType {
         }
     }
 }
+
+namespace OGDotNet_Analytics.Mappedtypes.math.curve
+{
+    public class InterpolatedDoublesCurve
+    {
+        public double[] XData { get; set; }
+        public double[] YData { get; set; }
+
+    }
+}
+
