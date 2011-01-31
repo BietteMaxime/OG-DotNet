@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Fudge;
 using Fudge.Serialization;
@@ -150,16 +151,31 @@ namespace OGDotNet_Analytics
                             var primitiveRows = BuildPrimitiveRows(viewDefinition, valueIndex).ToList();
                             
                             cancellationToken.ThrowIfCancellationRequested();
+                            
+                            bool paused = false;
                             Dispatcher.Invoke((Action) (() =>
                                                             {
                                                                 cancellationToken.ThrowIfCancellationRequested();
                                                                 portfolioTable.DataContext = portfolioRows;
                                                                 
                                                                 primitivesTable.DataContext = primitiveRows;
+                                                                paused = pauseToggle.IsChecked.GetValueOrDefault(false);
                                                             }));
 
 
                             cancellationToken.ThrowIfCancellationRequested();
+                            if (paused)
+                            {
+                                SetStatus("Pausing...");
+                                cancellationToken.ThrowIfCancellationRequested();
+                                client.Pause();
+                                SetStatus("Paused");
+                                WaitForUncheck(pauseToggle, cancellationToken);
+                                cancellationToken.ThrowIfCancellationRequested();
+                                client.Start();
+                            }
+                            cancellationToken.ThrowIfCancellationRequested();
+
                             SetStatus("Waiting for next result...");
                             var delta = deltaStream.GetNext(cancellationToken);
                             results = results.ApplyDelta(delta);
@@ -168,13 +184,42 @@ namespace OGDotNet_Analytics
                     }
                 }
             }
-            catch (OperationCanceledException oce)
+            catch (OperationCanceledException)
             {
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Failed to retrieve data");
             }
+        }
+
+        private void WaitForUncheck(ToggleButton toggleButton, CancellationToken cancellationToken)
+        {
+            using (var autoResetEvent = new AutoResetEvent(false))
+            using (cancellationToken.Register(() => autoResetEvent.Set()))
+            {
+                bool done = false;
+
+                RoutedEventHandler clickHandler = delegate { autoResetEvent.Set(); };
+                toggleButton.Click += clickHandler;
+                try
+                {
+                    do
+                    {
+                        Dispatcher.Invoke((Action)(() =>
+                        {
+                            done = !toggleButton.IsChecked.GetValueOrDefault(false);
+                        }));
+                        if (! done) autoResetEvent.WaitOne();
+                    } while (! done);
+                    
+                }
+                finally
+                {
+                    toggleButton.Click -= clickHandler;
+                }
+            }
+           
         }
 
         private void SetStatus(string msg)

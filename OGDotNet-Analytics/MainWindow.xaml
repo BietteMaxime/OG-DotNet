@@ -17,7 +17,7 @@
 
             <TextBlock Grid.Column="0" Text="View:" Margin="3,0,10,0" VerticalAlignment="Center"/>
             <ComboBox Grid.Column="1" Name="viewSelector" ItemsSource="{Binding}" SelectionChanged="viewSelector_SelectionChanged" Width="Auto" VerticalAlignment="Center"/>
-
+            <ToggleButton Grid.Column="2" Name="pauseToggle" Content="Pause"/>
         </Grid>
         
         <TabControl Grid.Row="1" Height="Auto" Name="tabControl1" Width="Auto">
