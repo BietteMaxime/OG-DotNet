@@ -150,16 +150,23 @@ namespace OGDotNet_Analytics
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     client.Start();
-                    using (var startResultStream = client.StartResultStream())
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                    using (var deltaStream = client.StartDeltaStream())
                     {
+                        ViewComputationResultModel results = null;
+                        while (results == null)
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+                            results = client.LatestResult;
+                        }
+
                         cancellationToken.ThrowIfCancellationRequested();
                         var portfolio = remoteViewResource.Portfolio;
 
                         while (! cancellationToken.IsCancellationRequested)
                         {
-                            var results = startResultStream.GetNext(cancellationToken);
-
-                            cancellationToken.ThrowIfCancellationRequested();
+                            
                             var valueIndex = Indexvalues(results);
 
                             cancellationToken.ThrowIfCancellationRequested();
@@ -178,6 +185,10 @@ namespace OGDotNet_Analytics
                                                                 count.Text = (++_counter).ToString();
 
                                                             }));
+
+                            cancellationToken.ThrowIfCancellationRequested();
+                            var delta = deltaStream.GetNext(cancellationToken);
+                            results = results.ApplyDelta(delta);
                         }
 
                     }
@@ -818,21 +829,24 @@ namespace OGDotNet_Analytics
             var reponse = _rest.GetSubMagic("pause").GetReponse("POST");
         }
 
-        public ClientResultStream StartResultStream()
+        public ClientResultStream<ViewComputationResultModel> StartResultStream()
         {
             var reponse = _rest.GetSubMagic("startJmsResultStream").GetFudgeReponse("POST");
             var queueName = reponse.GetValue<string>("value");
             var queueUri = new Uri(_activeMqSpec);
-            return new ClientResultStream(queueUri, queueName, StopResultStream);
+            return new ClientResultStream<ViewComputationResultModel>(queueUri, queueName, StopResultStream);
         }
         public void StopResultStream()
         {
-            var reponse = _rest.GetSubMagic("startJmsResultStream").GetReponse("POST");
+            _rest.GetSubMagic("startJmsResultStream").GetReponse("POST");
         }
 
-        public void StartDeltaStream()//TODO use this
+        public ClientResultStream<ViewComputationResultModel> StartDeltaStream()//TODO use this
         {
-            var reponse = _rest.GetSubMagic("startJmsDeltaStream").GetReponse("POST");
+            var reponse = _rest.GetSubMagic("startJmsDeltaStream").GetFudgeReponse("POST");
+            var queueName = reponse.GetValue<string>("value");
+            var queueUri = new Uri(_activeMqSpec);
+            return new ClientResultStream<ViewComputationResultModel>(queueUri, queueName, StopResultStream);
         }
         public void StopDeltaStream()
         {
@@ -1117,7 +1131,7 @@ namespace OGDotNet_Analytics
 
     
     [FudgeSurrogate(typeof(ValueSpecificationBuilder))]
-    public class ValueSpecification
+    public class ValueSpecification : IEquatable<ValueSpecification>
     {
         private readonly string _valueName;
         private readonly ComputationTargetSpecification _targetSpecification;
@@ -1136,6 +1150,30 @@ namespace OGDotNet_Analytics
         public ComputationTargetSpecification TargetSpecification
         {
             get { return _targetSpecification; }
+        }
+
+
+        public bool Equals(ValueSpecification other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other._valueName, _valueName) && Equals(other._targetSpecification, _targetSpecification);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof (ValueSpecification)) return false;
+            return Equals((ValueSpecification) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((_valueName != null ? _valueName.GetHashCode() : 0)*397) ^ (_targetSpecification != null ? _targetSpecification.GetHashCode() : 0);
+            }
         }
     }
 
@@ -1246,6 +1284,29 @@ public enum ComputationTargetType {
         {
             get { return _uid; }
         }
+
+        public bool Equals(ComputationTargetSpecification other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other._type, _type) && Equals(other._uid, _uid);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof (ComputationTargetSpecification)) return false;
+            return Equals((ComputationTargetSpecification) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (_type.GetHashCode()*397) ^ (_uid != null ? _uid.GetHashCode() : 0);
+            }
+        }
     }
 
     public class Instant
@@ -1308,6 +1369,21 @@ public enum ComputationTargetType {
         public FudgeDateTime ResultTimestamp { get { return _resultTimestamp; } }
         public String ViewName { get { return _viewName; } }
         public IList<ViewResultEntry> AllResults{ get { return _allResults; } }
+
+        public ViewComputationResultModel ApplyDelta(ViewComputationResultModel delta)
+        {
+            //TODO if (delta._inputDataTimestamp. < _inputDataTimestamp) throw
+            //TODO assert config map same and targetmap subset
+
+            var deltaResults = delta._allResults.ToDictionary(r => new Tuple<string, ValueSpecification>(r.CalculationConfiguration, r.ComputedValue.Specification), r => r);
+            
+
+            List<ViewResultEntry> results = _allResults.Select(r => new Tuple<Tuple<string, ValueSpecification>, ViewResultEntry>(
+                    new Tuple<string, ValueSpecification>(r.CalculationConfiguration, r.ComputedValue.Specification), r))
+                    .Select(r => deltaResults.ContainsKey(r.Item1) ? deltaResults[r.Item1] : r.Item2).ToList();
+
+            return new ViewComputationResultModel(_viewName, delta._inputDataTimestamp, delta._resultTimestamp, _configurationMap, _targetMap, results);
+        }
     }
 
 
