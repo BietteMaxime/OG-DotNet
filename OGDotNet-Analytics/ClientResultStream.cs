@@ -39,7 +39,7 @@ namespace OGDotNet_Analytics
         public T GetNext(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var message = _consumer.Receive();
+            var message = _consumer.Receive();//TODO make this cancellable
             var bytesMessage = message as IBytesMessage;
             using (var memoryStream = new MemoryStream(bytesMessage.Content))
             {

@@ -272,7 +272,7 @@ namespace OGDotNet
 
         public RESTMagic GetSubMagic(string method, params Tuple<string,string>[] queryParams)
         {
-            var safeMethod = UrlEncode(method);
+            var safeMethod = Uri.EscapeDataString(method);
             var uriBuilder = new UriBuilder(_serviceUri);
             uriBuilder.Path = Path.Combine(uriBuilder.Path, safeMethod);
             uriBuilder.Query = String.Join("&",
@@ -330,7 +330,7 @@ namespace OGDotNet
         {
             var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
             MangleRequest(request);
-            request.Method = UrlEncode(method);
+            request.Method = Uri.EscapeDataString(method);
 
             using (var requestStream = request.GetRequestStream())
             using (var writer = new StreamWriter(requestStream))
@@ -344,12 +344,6 @@ namespace OGDotNet
 
         }
 
-        private static string UrlEncode(string method)
-        {
-            //TODO This
-            return method.Replace(":", "%3").Replace(" ","%20");
-        }
-
         static string GetString(HttpWebResponse response)
         {
             return new StreamReader(response.GetResponseStream()).ReadToEnd();
@@ -360,7 +354,7 @@ namespace OGDotNet
             var fudgeContext = new FudgeContext();
 
             var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
-            request.Method = UrlEncode(method);
+            request.Method = Uri.EscapeDataString(method);
 
             MangleRequest(request);
             var response = (HttpWebResponse)request.GetResponse();

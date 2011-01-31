@@ -87,7 +87,7 @@ namespace OGDotNet_Analytics
                                                     {
                                                         Width = Double.NaN,
                                                         Header = column,
-                                                        DisplayMemberBinding = new Binding(string.Format(".[{0}]", column))//TODO bugs galore
+                                                        DisplayMemberBinding = new Binding(string.Format(".[{0}]", column))
                                                     });
                        }
 
@@ -101,7 +101,7 @@ namespace OGDotNet_Analytics
                            {
                                Width = Double.NaN,
                                Header = column,
-                               CellTemplateSelector = new PrimitiveCellTemplateSelector(column)//TODO bugs galore
+                               CellTemplateSelector = new PrimitiveCellTemplateSelector(column)
 
                            });
                        }
@@ -188,7 +188,7 @@ namespace OGDotNet_Analytics
 
             public string TargetName
             {
-                get { return _targetId.ToString(); }//TODO
+                get { return _targetId.ToString(); }//This is what the WebUI does
             }
 
             public object this[string key]
@@ -275,7 +275,7 @@ namespace OGDotNet_Analytics
                 }
 
                 string securityName = securities[0].Name;
-                yield return new TreeNode(position.GetIdentifier(), string.Format("{0} ({1})", securityName, position.GetQuantity()));
+                yield return new TreeNode(position.Identifier, string.Format("{0} ({1})", securityName, position.Quantity));
             }
 
             foreach (var portfolioNode in node.SubNodes)
@@ -340,13 +340,11 @@ namespace OGDotNet_Analytics
                         foreach (var portfolioReq in req.Value.Properties["portfolioRequirement"])
                         {
                             string header = string.Format("{0}/{1}", configuration.Key, portfolioReq);
+                            
+                            var key = new Tuple<UniqueIdentifier, string, string>(position.Identifier.ToLatest(), portfolioReq, configuration.Key);
                             object value;
-                            Tuple<UniqueIdentifier, string, string> key = new Tuple<UniqueIdentifier, string, string>(position.Identifier.ToLatest(), portfolioReq, configuration.Key);
-                            if (
-                                valueIndex.TryGetValue(
-                                    key, out value))
+                            if (valueIndex.TryGetValue(key, out value))
                             {
-                                valueIndex.Remove(key);
                                 values.Add(header, value);
                             }
                             else
@@ -367,7 +365,7 @@ namespace OGDotNet_Analytics
             var valueIndex = new Dictionary<Tuple<UniqueIdentifier, string, string>, object>();
             foreach (var result in results.AllResults)
             {
-                //TODO others
+                
                 switch (result.ComputedValue.Specification.TargetSpecification.Type)
                 {
                     case ComputationTargetType.PRIMITIVE:
@@ -378,6 +376,9 @@ namespace OGDotNet_Analytics
                             result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
                             result.ComputedValue.Value);
                         break;
+                    case ComputationTargetType.TRADE:
+                    case ComputationTargetType.SECURITY:
+                        throw new NotImplementedException();
                 }
             }
             return valueIndex;
@@ -414,16 +415,12 @@ namespace OGDotNet_Analytics
 
             public object this[String key]
             {
-                get
-                {
-                    return _columns.ContainsKey(key) ? _columns[key] : "";//TODO
-                }
+                get { return _columns[key]; }
             }
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            //TODO this properly
             viewSelector.SelectedItem = null;
         }
 
@@ -480,14 +477,14 @@ namespace OGDotNet_Analytics
             get { return _securityKey; }
         }
 
-        public UniqueIdentifier GetIdentifier()//TODO make fudge happy with me with this as a property
+        public UniqueIdentifier Identifier
         {
-            return _identifier;
+            get { return _identifier; }
         }
 
-        public long GetQuantity()//TODO make fudge happy with me with this as a property
+        public long Quantity
         {
-            return _quantity;
+            get { return _quantity; }
         }
     }
 

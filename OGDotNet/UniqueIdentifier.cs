@@ -199,7 +199,7 @@ namespace OGDotNet
         #region auto generated equality
 
         public int CompareTo(UniqueIdentifier other)
-        {//TODO Aggh, cuulture nad compar to in java land vs .Net
+        {//TODO Aggh, cuulture and CompareTo in java land vs .Net
             if (_scheme.CompareTo(other._scheme) != 0)
             {
                 return _scheme.CompareTo(other._scheme);
