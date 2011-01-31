@@ -1,24 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Threading;
-using System.Xaml;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet;
 using OGDotNet_Analytics.Mappedtypes.LiveData;
 using OGDotNet_Analytics.Mappedtypes.math.curve;
-using XamlReader = System.Windows.Markup.XamlReader;
 
 namespace OGDotNet_Analytics
 {
@@ -210,7 +206,7 @@ namespace OGDotNet_Analytics
                 {
                     foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r =>r.ComputationTargetType == ComputationTargetType.PRIMITIVE && r.ComputationTargetIdentifier == target))
                     {
-                        var key = new Tuple<UniqueIdentifier, string, string>(target,valueReq.ValueName, configuration.Key);
+                        var key = new Tuple<UniqueIdentifier, string, string>(target.ToLatest(),valueReq.ValueName, configuration.Key);
 
                         object value;
                         if (valueIndex.TryGetValue(key, out value))
@@ -260,9 +256,35 @@ namespace OGDotNet_Analytics
             return string.Format("{0}/{1}", configuration, valueName);
         }
 
-        private static IEnumerable<Position> GetPositions(Portfolio portfolio)
+
+        private IEnumerable<TreeNode> GetNodes(Portfolio portfolio, RemoteSecuritySource remoteSecuritySource)
         {
-            return GetPositions(portfolio.Root);
+            return  GetNodesInner(portfolio.Root, remoteSecuritySource).ToList();
+        }
+
+
+        private static IEnumerable<TreeNode> GetNodesInner(PortfolioNode node, RemoteSecuritySource remoteSecuritySource)
+        {
+            yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name);
+            foreach (var position in node.Positions)
+            {
+                var securities = remoteSecuritySource.GetSecurities(position.SecurityKey.Identifiers.Select(x => x.ToString()).ToList());
+                if (securities.Count != 1)
+                {
+                    throw new ArgumentException();
+                }
+
+                string securityName = securities[0].Name;
+                yield return new TreeNode(position.GetIdentifier(), string.Format("{0} ({1})", securityName, position.GetQuantity()));
+            }
+
+            foreach (var portfolioNode in node.SubNodes)
+            {
+                foreach (var treeNode in GetNodesInner(portfolioNode, remoteSecuritySource))
+                {
+                    yield return treeNode;
+                }
+            }
         }
 
         private static IEnumerable<Position> GetPositions(PortfolioNode portfolio)
@@ -280,11 +302,33 @@ namespace OGDotNet_Analytics
             }
         }
 
+        private class TreeNode
+        {
+            private readonly UniqueIdentifier _identifier;
+            private readonly string _name;
+
+            public TreeNode(UniqueIdentifier identifier, string name)
+            {
+                _identifier = identifier;
+                _name = name;
+            }
+
+            public UniqueIdentifier Identifier
+            {
+                get { return _identifier; }
+            }
+
+            public string Name
+            {
+                get { return _name; }
+            }
+        }
+
         private IEnumerable<Row> BuildPortfolioRows(ViewDefinition viewDefinition, Portfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
         {
             if (portfolio == null)
                 yield break;
-            foreach (var position in GetPositions(portfolio))
+            foreach (var position in GetNodes(portfolio, _remoteSecuritySource))
             {
                 var values = new Dictionary<string, object>();
 
@@ -297,11 +341,12 @@ namespace OGDotNet_Analytics
                         {
                             string header = string.Format("{0}/{1}", configuration.Key, portfolioReq);
                             object value;
+                            Tuple<UniqueIdentifier, string, string> key = new Tuple<UniqueIdentifier, string, string>(position.Identifier.ToLatest(), portfolioReq, configuration.Key);
                             if (
                                 valueIndex.TryGetValue(
-                                    new Tuple<UniqueIdentifier, string, string>(position.GetIdentifier(), portfolioReq,
-                                                                                configuration.Key), out value))
+                                    key, out value))
                             {
+                                valueIndex.Remove(key);
                                 values.Add(header, value);
                             }
                             else
@@ -312,18 +357,8 @@ namespace OGDotNet_Analytics
                     }
                 }
 
-                var securities =
-                    _remoteSecuritySource.GetSecurities(
-                        position.SecurityKey.Identifiers.Select(x => x.ToString()).ToList());
-                if (securities.Count != 1)
-                {
-                    throw new ArgumentException();
-                }
 
-                string securityName = securities[0].Name;
-
-
-                yield return new Row(position.GetIdentifier(), position.GetQuantity(), values, securityName);
+                yield return new Row(position.Identifier, position.Name, values);
             }
         }
 
@@ -337,8 +372,9 @@ namespace OGDotNet_Analytics
                 {
                     case ComputationTargetType.PRIMITIVE:
                     case ComputationTargetType.POSITION:
+                    case ComputationTargetType.PORTFOLIO_NODE:
                         valueIndex.Add(new Tuple<UniqueIdentifier, string, string>(
-                            result.ComputedValue.Specification.TargetSpecification.Uid,
+                            result.ComputedValue.Specification.TargetSpecification.Uid.ToLatest(),
                             result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
                             result.ComputedValue.Value);
                         break;
@@ -350,22 +386,14 @@ namespace OGDotNet_Analytics
         public class Row
         {
             private readonly string _positionName;
-            private readonly long _quantity;
+            private readonly UniqueIdentifier _id;
             private readonly Dictionary<string, object> _columns;
-            private readonly string _securityName;
 
-            public Row(UniqueIdentifier positionId, long quantity, Dictionary<string, object> columns, string securityName)
+            public Row(UniqueIdentifier id, string positionName, Dictionary<string, object> columns)
             {
-                _positionName = string.Format("{0} ({1})", securityName, quantity);
-                _quantity = quantity;
+                _id = id;
+                _positionName = positionName;
                 _columns = columns;
-                _securityName = securityName;
-            }
-
-
-            public string SecurityName
-            {
-                get { return _securityName; }
             }
 
             public string PositionName
@@ -374,11 +402,6 @@ namespace OGDotNet_Analytics
                 {
                     return _positionName;
                 }
-            }
-
-            public long Quantity
-            {
-                get { return _quantity; }
             }
 
             public Dictionary<string, object> Columns
@@ -416,7 +439,7 @@ namespace OGDotNet_Analytics
 
     public class PortfolioNode
     {
-        public UniqueIdentifier UniqueId { get; set; }
+        public string Identifier { get; set; }
         public string Name { get; set; }
         public IList<PortfolioNode> SubNodes { get; set; }
         public IList<Position> Positions { get; set; }
