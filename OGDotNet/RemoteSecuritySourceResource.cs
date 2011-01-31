@@ -344,7 +344,7 @@ namespace OGDotNet
 
         }
 
-        private string UrlEncode(string method)
+        private static string UrlEncode(string method)
         {
             //TODO This
             return method.Replace(":", "%3").Replace(" ","%20");

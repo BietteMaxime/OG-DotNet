@@ -70,39 +70,55 @@ namespace OGDotNet_Analytics
         {
             private readonly string _column;
 
+            private static readonly Dictionary<Tuple<string,Type>, DataTemplate> TemplateCache = new Dictionary<Tuple<string, Type>, DataTemplate>();
+
             public PrimitiveCellTemplateSelector(string column)
             {
                 _column = column;
             }
 
             public override DataTemplate SelectTemplate(object item, DependencyObject container)
-            {
-                var cellValue = ((PrimitiveRow) item)[_column];
-                if (cellValue is YieldCurve)
+            {//TODO reuse the templates
+
+                var column = _column;
+                var cellValue = ((PrimitiveRow)item)[column];
+                var type = cellValue == null ? typeof(Object) : cellValue.GetType();
+
+                var key = new Tuple<string, Type>(column, type);
+
+                DataTemplate ret;
+                if (! TemplateCache.TryGetValue(key, out ret))
                 {
-                    var type = typeof(YieldCurveCell);
-                    Binding b = new Binding(".[{0}]");
+                    ret = BuildTemplate(column, type);
+                    TemplateCache[key] = ret;
+                }
+                return ret;
+            }
 
-                    FrameworkElementFactory comboFactory = new FrameworkElementFactory(typeof(YieldCurveCell));
-                    comboFactory.SetValue(DataContextProperty, cellValue);  //TODO binding so that I can reuse these
+            private static DataTemplate BuildTemplate(string column, Type type)
+            {
+                var binding = new Binding(string.Format(".[{0}]", column));//TODO bugs galore
+                
 
-                    DataTemplate itemsTemplate = new DataTemplate();
-                    itemsTemplate.VisualTree = comboFactory;
+                
+
+                if (typeof(YieldCurve).IsAssignableFrom(type) )
+                {
+                    var comboFactory = new FrameworkElementFactory(typeof(YieldCurveCell));
+                    comboFactory.SetValue(DataContextProperty, binding);  
+
+                    var itemsTemplate = new DataTemplate {VisualTree = comboFactory};
 
                     return itemsTemplate;
                 }
                 else
                 {
-                    FrameworkElementFactory comboFactory = new FrameworkElementFactory(typeof(TextBlock));
-                    comboFactory.SetValue(TextBlock.TextProperty, cellValue);
-
-                    DataTemplate itemsTemplate = new DataTemplate();
-                    itemsTemplate.VisualTree = comboFactory;
-
+                    var comboFactory = new FrameworkElementFactory(typeof(TextBlock));
+                    comboFactory.SetValue(TextBlock.TextProperty, binding);
+                    var itemsTemplate = new DataTemplate {VisualTree = comboFactory};
                     return itemsTemplate;
                 }
             }
-
         }
 
 
