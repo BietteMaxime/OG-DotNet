@@ -44,24 +44,22 @@ namespace OGDotNet_Analytics
         {
             if (YieldCurve != null)
             {
+                var doubleMinX = Curve.XData.Min();
                 var doubleMaxX = Curve.XData.Max();
-                double xScale = ActualWidth/doubleMaxX;
+                double xScale = ActualWidth/(doubleMaxX - doubleMinX);
+
+                var doubleMinY = Curve.YData.Min();
                 var doubleMaxY = Curve.YData.Max();
-                double yScale = ActualHeight / doubleMaxY;
+                double yScale = ActualHeight / (doubleMaxY - doubleMinY);
 
                 myLine.Points.Clear();
                 foreach (var tuple in    Curve.Data)
                 {
-                    var x = tuple.Item1 * xScale;
-                    var y = ActualHeight - (tuple.Item2 * yScale);
+                    var x = (tuple.Item1 - doubleMinX) * xScale;
+                    var y = ActualHeight - ((tuple.Item2 - doubleMinY) * yScale);
                     myLine.Points.Add(new Point(x, y));
                 }
             }
-        }
-
-        private void Grid_LayoutUpdated(object sender, EventArgs e)
-        {
-
         }
 
     }
