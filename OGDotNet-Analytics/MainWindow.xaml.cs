@@ -81,6 +81,7 @@ namespace OGDotNet_Analytics
                 Dispatcher.Invoke((Action)(() =>
                    {
                        var portfolioView = (GridView)portfolioTable.View;
+                       portfolioTable.DataContext = null;
 
                        TrimColumns(portfolioView.Columns, 1);
                        
@@ -94,6 +95,7 @@ namespace OGDotNet_Analytics
                                                     });
                        }
 
+                       primitivesTable.DataContext = null;
                        var primitivesView = (GridView)primitivesTable.View;
 
                        TrimColumns(primitivesView.Columns, 1);
@@ -107,6 +109,7 @@ namespace OGDotNet_Analytics
 
                            });
                        }
+                       
                    }));
 
 
@@ -138,7 +141,7 @@ namespace OGDotNet_Analytics
                             var portfolioRows = BuildPortfolioRows(viewDefinition, portfolio, valueIndex).ToList();
 
                             cancellationToken.ThrowIfCancellationRequested();
-                            var primitiveRows = BuildPrimitiveRows(viewDefinition, results, portfolio, valueIndex).ToList();
+                            var primitiveRows = BuildPrimitiveRows(viewDefinition, valueIndex).ToList();
                             
                             cancellationToken.ThrowIfCancellationRequested();
                             Dispatcher.Invoke((Action) (() =>
@@ -197,7 +200,7 @@ namespace OGDotNet_Analytics
                 get { return _columns.ContainsKey(key) ? _columns[key] : null; }
             }
         }
-        private IEnumerable<PrimitiveRow> BuildPrimitiveRows(ViewDefinition viewDefinition, ViewComputationResultModel results, Portfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
+        private static IEnumerable<PrimitiveRow> BuildPrimitiveRows(ViewDefinition viewDefinition, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
         {
             var targets = viewDefinition.CalculationConfigurationsByName.SelectMany(conf => conf.Value.SpecificRequirements).Select(s => s.ComputationTargetIdentifier).Distinct();
             foreach (var target in targets)
@@ -279,6 +282,8 @@ namespace OGDotNet_Analytics
 
         private IEnumerable<Row> BuildPortfolioRows(ViewDefinition viewDefinition, Portfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
         {
+            if (portfolio == null)
+                yield break;
             foreach (var position in GetPositions(portfolio))
             {
                 var values = new Dictionary<string, object>();
@@ -691,8 +696,12 @@ namespace OGDotNet_Analytics
             get
             {
                 var fudgeMsg = _rest.GetSubMagic("portfolio").GetReponse();
-                FudgeSerializer fudgeSerializer = FudgeConfig.GetFudgeSerializer();
+                if (fudgeMsg == null)
+                {
+                    return null;
+                }
 
+                FudgeSerializer fudgeSerializer = FudgeConfig.GetFudgeSerializer();
                 return fudgeSerializer.Deserialize<Portfolio>(fudgeMsg);
             }
         }

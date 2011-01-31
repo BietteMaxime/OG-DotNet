@@ -90,7 +90,7 @@ namespace OGDotNet_Analytics
         {
             var name = ffc.GetValue<string>("name");
             var resultModelDefinition = deserializer.FromField<ResultModelDefinition>(ffc.GetByName("resultModelDefinition"));//TODO enum it?
-            var portfolioIdentifier =UniqueIdentifier.Parse(ffc.GetValue<String>("identifier"));
+            var portfolioIdentifier =ffc.GetAllByName("identifier").Any()  ? UniqueIdentifier.Parse(ffc.GetValue<String>("identifier")) : null;
             var user = deserializer.FromField<UserPrincipal>(ffc.GetByName("user"));
 
             var currency= ffc.GetValue<string>("currency");
@@ -156,19 +156,17 @@ namespace OGDotNet_Analytics
 
             List<ValueRequirement> specificRequirements = GetList<ValueRequirement>(ffc, "specificRequirement", deserializer);
 
-            //This has the map keys bundled into it, but we can pluck them out later by hand
-            var portfolioReqsBySecType = ffc.GetMessage("portfolioRequirementsBySecurityType");
-
-            if (portfolioReqsBySecType.GetAllByName("securityType").Count!= 1)
-            {
-                throw new NotImplementedException("TODO this properly");
-            }
-            var securityType = portfolioReqsBySecType.GetValue<String>("securityType");
-            var valueProperties = deserializer.FromField<ValueProperties>(ffc.GetByName("portfolioRequirementsBySecurityType"));
-
             //TODO MAP deserializer by magic
-            //_portfolioRequirementsBySecurityType
-            return new ViewCalculationConfiguration(name, specificRequirements, new Dictionary<string, ValueProperties>{{securityType, valueProperties}});
+            var portfolioRequirementsBySecurityType = new Dictionary<string, ValueProperties>();
+            foreach (var portfolioReqField in ffc.GetAllByName("portfolioRequirementsBySecurityType"))
+            {
+                var securityType = ((IFudgeFieldContainer) portfolioReqField.Value).GetValue<String>("securityType");
+                var valueProperties = deserializer.FromField<ValueProperties>(portfolioReqField);
+                portfolioRequirementsBySecurityType.Add(securityType, valueProperties);
+            }
+
+            
+            return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType);
         }
 
         private static List<T> GetList<T>(IFudgeFieldContainer ffc, string fieldName, IFudgeDeserializer deserializer) where T : class

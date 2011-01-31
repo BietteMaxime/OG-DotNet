@@ -382,11 +382,15 @@ namespace OGDotNet
 
             MangleRequest(request);
             var response = (HttpWebResponse)request.GetResponse();
+            if (response.ContentLength == 0)
+            {
+                return null;
+            }
+
             FudgeMsg fudgeMsg;
             using (Stream responseStream = response.GetResponseStream())
             using (BufferedStream buff = new BufferedStream(responseStream))
             {
-
                 fudgeMsg = fudgeContext.Deserialize(buff).Message;
             }
             return fudgeMsg;
