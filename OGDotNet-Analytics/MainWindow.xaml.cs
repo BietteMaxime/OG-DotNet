@@ -88,7 +88,7 @@ namespace OGDotNet_Analytics
 
                     FrameworkElementFactory comboFactory = new FrameworkElementFactory(typeof(YieldCurveCell));
                     comboFactory.Name = "myComboFactory";
-                    comboFactory.SetValue(YieldCurveCell.DataContextProperty, cellValue);
+                    comboFactory.SetValue(DataContextProperty, cellValue);
 
                     DataTemplate itemsTemplate = new DataTemplate();
                     itemsTemplate.VisualTree = comboFactory;
@@ -1060,8 +1060,14 @@ namespace OGDotNet_Analytics
             try
             {
                 var t = o.Type.CSharpType;
-
-                innerValue = deserializer.FromField(o, t);
+                if (o.Type == FudgeMsgFieldType.Instance || o.Type == IndicatorFieldType.Instance)
+                {
+                    innerValue = deserializer.FromField(o, t);
+                }
+                else
+                {
+                    innerValue = subMsg.GetValue("value");
+                }
             }
             catch (Exception e)
             {
@@ -1360,16 +1366,6 @@ public enum ComputationTargetType {
         public Action HeartbeatSender {
             get { return () => _rest.GetSubMagic("heartbeat").GetReponse("POST"); }
         }
-    }
-}
-
-namespace OGDotNet_Analytics.Mappedtypes.math.curve
-{
-    public class InterpolatedDoublesCurve
-    {
-        public double[] XData { get; set; }
-        public double[] YData { get; set; }
-
     }
 }
 

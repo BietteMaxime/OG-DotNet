@@ -4,9 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        
-        <TextBlock Text="{Binding}"/>   
+             d:DesignHeight="300" d:DesignWidth="300" SizeChanged="UserControl_SizeChanged" DataContextChanged="UserControl_DataContextChanged" Width="235" Height="55">
+    <Grid LayoutUpdated="Grid_LayoutUpdated">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Polyline Grid.Column="0" Grid.Row="0" Name="myLine" Stroke="Black"
+    StrokeThickness="1" Points="10,10 0,0">
+            
+        </Polyline>        
     </Grid>
 </UserControl>
