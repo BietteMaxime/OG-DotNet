@@ -71,11 +71,11 @@ namespace OGDotNet_Analytics
                 var remoteViewResource = _remoteViewProcessor.GetView(viewName);
 
                 cancellationToken.ThrowIfCancellationRequested();
-                var portfolio = remoteViewResource.Portfolio;
-
-                cancellationToken.ThrowIfCancellationRequested();
                 SetStatus("Initializing view...");
                 remoteViewResource.Init();
+
+                cancellationToken.ThrowIfCancellationRequested();
+                var portfolio = remoteViewResource.Portfolio;
 
                 cancellationToken.ThrowIfCancellationRequested();
                 var viewDefinition = remoteViewResource.Definition;
@@ -129,7 +129,7 @@ namespace OGDotNet_Analytics
                     {
                         cancellationToken.ThrowIfCancellationRequested();
                     }
-
+                    
                     cancellationToken.ThrowIfCancellationRequested();
                     using (var deltaStream = client.StartDeltaStream())
                     {
@@ -139,6 +139,7 @@ namespace OGDotNet_Analytics
                         ViewComputationResultModel results = client.LatestResult;
 
 
+                        int count = 1;
 
                         while (! cancellationToken.IsCancellationRequested)
                         {    
@@ -176,7 +177,7 @@ namespace OGDotNet_Analytics
                             }
                             cancellationToken.ThrowIfCancellationRequested();
 
-                            SetStatus("Waiting for next result...");
+                            SetStatus(string.Format("Waiting for next result {0}... ", ++count));
                             var delta = deltaStream.GetNext(cancellationToken);
                             results = results.ApplyDelta(delta);
                         }
@@ -328,13 +329,13 @@ namespace OGDotNet_Analytics
             yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name);
             foreach (var position in node.Positions)
             {
-                var securities = remoteSecuritySource.GetSecurities(position.SecurityKey.Identifiers);
-                if (securities.Count != 1)
+                var securityNames = remoteSecuritySource.GetSecurities(position.SecurityKey.Identifiers).Select(s => s.Name).Distinct().ToList();
+                if (securityNames.Count != 1)
                 {
                     throw new ArgumentException();
                 }
 
-                string securityName = securities[0].Name;
+                string securityName = securityNames[0];
                 yield return new TreeNode(position.Identifier, string.Format("{0} ({1})", securityName, position.Quantity));
             }
 
