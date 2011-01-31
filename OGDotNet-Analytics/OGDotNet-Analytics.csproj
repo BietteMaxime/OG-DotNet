@@ -61,15 +61,22 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ClientResultStream.cs" />
+    <Compile Include="DoubleLabelledMatrixCell.xaml.cs">
+      <DependentUpon>DoubleLabelledMatrixCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FudgeConfig.xaml.cs" />
     <Compile Include="InterpolatedDoublesCurve.xaml.cs" />
-    <Compile Include="PrimitiveCellTemplateSelector.xaml.cs" />
+    <Compile Include="CellTemplateSelector.xaml.cs" />
     <Compile Include="ResultModelDefinition.xaml.cs" />
     <Compile Include="YieldCurveCell.xaml.cs">
       <DependentUpon>YieldCurveCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewDefinition.xaml.cs" />
     <Compile Include="ViewTargetResultModel.xaml.cs" />
+    <Page Include="DoubleLabelledMatrixCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
