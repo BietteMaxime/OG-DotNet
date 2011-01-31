@@ -115,15 +115,18 @@ namespace OGDotNet_Analytics
                     cancellationToken.ThrowIfCancellationRequested();
                     client.Start();
 
+                    while (! client.ResultAvailable)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+
                     cancellationToken.ThrowIfCancellationRequested();
                     using (var deltaStream = client.StartDeltaStream())
                     {
-                        ViewComputationResultModel results = null;
-                        while (results == null)
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
-                            results = client.LatestResult;
-                        }
+                        //NOTE: by starting the delta stream first I believe I am ok
+                        cancellationToken.ThrowIfCancellationRequested();
+                        ViewComputationResultModel results = client.LatestResult;
+                        
 
                         cancellationToken.ThrowIfCancellationRequested();
                         var portfolio = remoteViewResource.Portfolio;
@@ -268,7 +271,7 @@ namespace OGDotNet_Analytics
             yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name);
             foreach (var position in node.Positions)
             {
-                var securities = remoteSecuritySource.GetSecurities(position.SecurityKey.Identifiers.Select(x => x.ToString()).ToList());
+                var securities = remoteSecuritySource.GetSecurities(position.SecurityKey.Identifiers);
                 if (securities.Count != 1)
                 {
                     throw new ArgumentException();
@@ -627,44 +630,43 @@ namespace OGDotNet_Analytics
             return fudgeSerializer.Deserialize<Security> (fudgeMsg); 
         }
 
-       private class OrderedComparison : IEqualityComparer<List<string>>
+       private class OrderedComparison<T> : IEqualityComparer<List<T>>
        {
-           public static OrderedComparison Instance  =new OrderedComparison();
+           public static readonly OrderedComparison<T> Instance = new OrderedComparison<T>();
 
-           public bool Equals(List<string> x, List<string> y)
+           public bool Equals(List<T> x, List<T> y)
            {
                return x.SequenceEqual(y);
            }
 
-           public int GetHashCode(List<string> obj)
+           public int GetHashCode(List<T> obj)
            {
                return obj[0].GetHashCode();
            }
        }
-       readonly Dictionary<List<string>, List<Security>> _securitiesCache = new Dictionary<List<string>, List<Security>>(OrderedComparison.Instance);
+       readonly Dictionary<List<Identifier>, List<Security>> _securitiesCache = new Dictionary<List<Identifier>, List<Security>>(OrderedComparison<Identifier>.Instance);
 
-        public List<Security> GetSecurities(List<String> idStrings)//TODO type
+        public List<Security> GetSecurities(IEnumerable<Identifier> idEnum)
         {
+            var ids= idEnum.ToList();
+
             List<Security> ret;
-            if (_securitiesCache.TryGetValue(idStrings, out ret))
+            if (_securitiesCache.TryGetValue(ids, out ret))
             {
                 return ret;
             }
 
 
-            var parameters = idStrings.Select(s => new Tuple<string,string>("id", s)).ToArray();
+            var parameters = ids.Select(s => new Tuple<string,string>("id", s.ToString())).ToArray();
             var fudgeMsg = _restMagic.GetSubMagic("securities", parameters).GetReponse();
 
             var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
             ret = fudgeMsg.GetAllByName("security").Select(f => f.Value).Cast<FudgeMsg>().Select(fudgeSerializer.Deserialize<Security>).ToList();
 
 
-            _securitiesCache[idStrings] = ret;
+            _securitiesCache[ids] = ret;
 
             return ret.ToList();
-
-
-
         }
     }
 
@@ -763,7 +765,6 @@ namespace OGDotNet_Analytics
             public class YieldCurve
             {
                 public InterpolatedDoublesCurve Curve { get; set; }
-                //TODO
             }
         }
 
@@ -812,15 +813,16 @@ namespace OGDotNet_Analytics
 
         public void Start()
         {
-            var reponse = _rest.GetSubMagic("start").GetReponse("POST");
+            _rest.GetSubMagic("start").GetReponse("POST");
         }
-        public void Stop()//TODO dispose
+        public void Stop()
         {
-            var reponse = _rest.GetSubMagic("stop").GetReponse("POST");
+            _rest.GetSubMagic("stop").GetReponse("POST");
         }
-        public void Pause()
+
+        public void Pause()//TODO this
         {
-            var reponse = _rest.GetSubMagic("pause").GetReponse("POST");
+            _rest.GetSubMagic("pause").GetReponse("POST");
         }
 
         public ClientResultStream<ViewComputationResultModel> StartResultStream()
@@ -835,7 +837,7 @@ namespace OGDotNet_Analytics
             _rest.GetSubMagic("startJmsResultStream").GetReponse("POST");
         }
 
-        public ClientResultStream<ViewComputationResultModel> StartDeltaStream()//TODO use this
+        public ClientResultStream<ViewComputationResultModel> StartDeltaStream()
         {
             var reponse = _rest.GetSubMagic("startJmsDeltaStream").GetFudgeReponse("POST");
             var queueName = reponse.GetValue<string>("value");
@@ -844,7 +846,7 @@ namespace OGDotNet_Analytics
         }
         public void StopDeltaStream()
         {
-            var reponse = _rest.GetSubMagic("startJmsDeltaStream").GetReponse("POST");
+            _rest.GetSubMagic("startJmsDeltaStream").GetReponse("POST");
         }
 
         public bool ResultAvailable
@@ -952,7 +954,7 @@ namespace OGDotNet_Analytics
                         targetResult = new ViewTargetResultModelImpl();
                         targetMap.Add(targetSpec, targetResult);
                     }
-                    targetResult.AddAll(configurationEntry.Key, configurationEntry.Value.getValues(targetSpec));
+                    targetResult.AddAll(configurationEntry.Key, configurationEntry.Value[targetSpec]);
                 }
             }
     
@@ -961,7 +963,7 @@ namespace OGDotNet_Analytics
             {
                 foreach (var targetSpec in configurationEntry.Value.getAllTargets())
                 {
-                    var results = configurationEntry.Value.getValues(targetSpec);
+                    var results = configurationEntry.Value[targetSpec];
                     foreach (var value in results)
                     {
                         allResults.Add(new ViewResultEntry(configurationEntry.Key, value.Value));
@@ -999,7 +1001,6 @@ namespace OGDotNet_Analytics
     public class ViewTargetResultModelImpl : ViewTargetResultModel
     {
         private readonly Dictionary<string, Dictionary<string, ComputedValue>> _inner = new Dictionary<string, Dictionary<string, ComputedValue>>();
-        //TODO
         public void AddAll(string key, Dictionary<string, ComputedValue> values)
         {
             _inner.Add(key, values);
@@ -1021,9 +1022,9 @@ namespace OGDotNet_Analytics
             return _map.Keys;
         }
 
-        public Dictionary<String, ComputedValue> getValues(ComputationTargetSpecification target)
-        { //TODO indexer?
-            return _map[target];
+        public Dictionary<String, ComputedValue> this[ComputationTargetSpecification target]
+        {
+            get { return _map[target]; }
         }
     }
 
@@ -1046,7 +1047,7 @@ namespace OGDotNet_Analytics
                 var value = new ComputedValue(valueSpecification, innerValue);
                 
                 ComputationTargetSpecification target = value.Specification.TargetSpecification;
-                if (!map.ContainsKey(target)) {//TODO try get
+                if (!map.ContainsKey(target)) {
                     map.Add(target, new Dictionary<String, ComputedValue>());
                 }
                 map[target].Add(value.Specification.ValueName, value);
@@ -1065,22 +1066,17 @@ namespace OGDotNet_Analytics
                 return fromField;//TODO I hope this gets a better type one day?
             }
 
-            try
+            
+            var t = o.Type.CSharpType;
+            if (o.Type == FudgeMsgFieldType.Instance || o.Type == IndicatorFieldType.Instance)
             {
-                var t = o.Type.CSharpType;
-                if (o.Type == FudgeMsgFieldType.Instance || o.Type == IndicatorFieldType.Instance)
-                {
-                    innerValue = deserializer.FromField(o, t);
-                }
-                else
-                {
-                    innerValue = subMsg.GetValue("value");
-                }
+                innerValue = deserializer.FromField(o, t);
             }
-            catch (Exception e)
+            else
             {
-                innerValue = new MisunderstoodValue(e);
+                innerValue = subMsg.GetValue("value");
             }
+            
             return innerValue;
         }
     }
@@ -1089,17 +1085,7 @@ namespace OGDotNet_Analytics
     {//TODO
         
     }
-    public class MisunderstoodValue
-    {
-        //TODO stop this
-        private readonly Exception _exception;
-
-        public MisunderstoodValue(Exception exception)
-        {
-            _exception = exception;
-            Debug.Fail(exception.Message);
-        }
-    }
+   
 
     public class ComputedValue
     {
