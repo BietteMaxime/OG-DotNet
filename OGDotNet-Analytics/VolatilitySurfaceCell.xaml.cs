@@ -19,15 +19,14 @@ namespace OGDotNet_Analytics
         const double size = 5.0;
 
         private bool _haveInitedData;
-        private DispatcherTimer _timer;
+        private readonly DispatcherTimer _timer;
 
         public VolatilitySurfaceCell()
         {
             InitializeComponent();
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMilliseconds(1000.0);
+            _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(1000.0)};
 
-        // Start the timer
+            // Start the timer
             double t = 0;
             double direction = 0.01;
             SetCamera(0);
@@ -106,9 +105,9 @@ namespace OGDotNet_Analytics
             popup.IsOpen = false;
         }
 
-        private Model3DGroup CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2, float colorQuotient)
+        private static Model3DGroup CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2, float colorQuotient)
         {
-            MeshGeometry3D mesh = new MeshGeometry3D();
+            var mesh = new MeshGeometry3D();
             mesh.Positions.Add(p0);
             mesh.Positions.Add(p1);
             mesh.Positions.Add(p2);
@@ -119,28 +118,32 @@ namespace OGDotNet_Analytics
             mesh.Normals.Add(normal);
             mesh.Normals.Add(normal);
             mesh.Normals.Add(normal);
-            var color = Colors.Red* colorQuotient + Colors.Yellow * (1-colorQuotient);
+
+            Color color = GetColor(colorQuotient);
             Material material = new DiffuseMaterial(
                 new SolidColorBrush(color));
-            GeometryModel3D model = new GeometryModel3D(
-                mesh, material);
-            Model3DGroup group = new Model3DGroup();
+            var model = new GeometryModel3D(mesh, material);
+            var group = new Model3DGroup();
             group.Children.Add(model);
             return group;
         }
 
-        private Vector3D CalculateNormal(Point3D p0, Point3D p1, Point3D p2)
+        private static Color GetColor(float colorQuotient)
         {
-            Vector3D v0 = new Vector3D(
-                p1.X - p0.X, p1.Y - p0.Y, p1.Z - p0.Z);
-            Vector3D v1 = new Vector3D(
-                p2.X - p1.X, p2.Y - p1.Y, p2.Z - p1.Z);
+
+            return (Colors.White * (1-colorQuotient) + Colors.Red* colorQuotient);
+        }
+
+        private static Vector3D CalculateNormal(Point3D p0, Point3D p1, Point3D p2)
+        {
+            var v0 = new Vector3D(p1.X - p0.X, p1.Y - p0.Y, p1.Z - p0.Z);
+            var v1 = new Vector3D(p2.X - p1.X, p2.Y - p1.Y, p2.Z - p1.Z);
             return Vector3D.CrossProduct(v0, v1);
         }
 
         private void BuildModel()
         {
-            Model3DGroup group = new Model3DGroup();
+            var group = new Model3DGroup();
 
             var data = (VolatilitySurfaceData)DataContext;
 
@@ -211,7 +214,7 @@ namespace OGDotNet_Analytics
                 0
                                    ));
 
-            ModelVisual3D model = new ModelVisual3D {Content = group};
+            var model = new ModelVisual3D {Content = group};
             
             for (int i = 0; i < mainViewport.Children.Count; i++)
             {
@@ -221,7 +224,7 @@ namespace OGDotNet_Analytics
                     i--;
                 }
             }
-            ModelVisual3D lightModel = new ModelVisual3D {Content = new DirectionalLight(Colors.White, new Vector3D(0, 0, -1))};
+            var lightModel = new ModelVisual3D {Content = new DirectionalLight(Colors.White, new Vector3D(0, 0, -1))};
             mainViewport.Children.Clear();
             mainViewport.Children.Add(lightModel);
             mainViewport.Children.Add(model);
