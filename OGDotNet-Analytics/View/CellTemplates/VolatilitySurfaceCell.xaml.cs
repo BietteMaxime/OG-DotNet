@@ -121,10 +121,10 @@ namespace OGDotNet_Analytics.View.CellTemplates
             mesh.Normals.Add(normal);
             mesh.Normals.Add(normal);
 
-            Color color = GetColor(colorQuotient);
-            Material material = new DiffuseMaterial(
-                new SolidColorBrush(color));
-            var model = new GeometryModel3D(mesh, material);
+            var color = GetColor(colorQuotient);
+            var brush = new SolidColorBrush(color);
+            var diffuseMaterial = new DiffuseMaterial(brush);
+            var model = new GeometryModel3D(mesh, diffuseMaterial) { BackMaterial = diffuseMaterial };
             var group = new Model3DGroup();
             group.Children.Add(model);
             return group;
@@ -175,12 +175,6 @@ namespace OGDotNet_Analytics.View.CellTemplates
                         new Point3D(xi*xScale, yi*yScale, at*heightScale),
                         new Point3D((xi + 1) * xScale, (yi) * yScale, right * heightScale),
                         new Point3D((xi) * xScale, (yi + 1) * yScale, above * heightScale), (float) (colorScale * at)));
-
-                    group.Children.Add(CreateTriangleModel(
-                        new Point3D(xi * xScale, yi * yScale, at * heightScale),
-                        new Point3D((xi) * xScale, (yi + 1) * yScale, above * heightScale), 
-                        new Point3D((xi + 1) * xScale, (yi) * yScale, right * heightScale),
-                        (float)(colorScale * at)));
                 }
             }
             for (int yi = 1; yi < ys.Count; yi++)
@@ -195,11 +189,6 @@ namespace OGDotNet_Analytics.View.CellTemplates
                         new Point3D(xi * xScale, yi * yScale, at * heightScale),
                         new Point3D((xi - 1) * xScale, (yi) * yScale, left * heightScale),
                         new Point3D((xi) * xScale, (yi - 1) * yScale, below * heightScale), (float)(colorScale * at)));
-                    group.Children.Add(CreateTriangleModel(
-                        new Point3D(xi * xScale, yi * yScale, at * heightScale),
-                        new Point3D((xi) * xScale, (yi - 1) * yScale, below * heightScale),
-                        new Point3D((xi - 1) * xScale, (yi) * yScale, left * heightScale),
-                        (float)(colorScale * at)));
                 }
             }
 
