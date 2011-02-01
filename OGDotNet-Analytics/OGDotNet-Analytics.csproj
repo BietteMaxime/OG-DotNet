@@ -68,6 +68,11 @@
     <Compile Include="InterpolatedDoublesCurve.xaml.cs" />
     <Compile Include="CellTemplateSelector.xaml.cs" />
     <Compile Include="ResultModelDefinition.xaml.cs" />
+    <Compile Include="Tenor.xaml.cs" />
+    <Compile Include="VolatilitySurfaceCell.xaml.cs">
+      <DependentUpon>VolatilitySurfaceCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VolatilitySurfaceData.xaml.cs" />
     <Compile Include="YieldCurveCell.xaml.cs">
       <DependentUpon>YieldCurveCell.xaml</DependentUpon>
     </Compile>
@@ -89,6 +94,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="VolatilitySurfaceCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="YieldCurveCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

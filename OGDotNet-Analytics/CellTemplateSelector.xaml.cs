@@ -16,7 +16,8 @@ namespace OGDotNet_Analytics
         private static readonly Dictionary<Type, Type> TemplateTypes = new Dictionary<Type, Type>
                                                                            {
                                                                                {typeof(YieldCurve), typeof(YieldCurveCell)},
-                                                                               {typeof(DoubleLabelledMatrix1D), typeof(DoubleLabelledMatrixCell)}
+                                                                               {typeof(DoubleLabelledMatrix1D), typeof(DoubleLabelledMatrixCell)},
+                                                                               {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)}
                                                                            };
 
         private static readonly Dictionary<Tuple<string, Type>, DataTemplate> TemplateCache = new Dictionary<Tuple<string, Type>, DataTemplate>();

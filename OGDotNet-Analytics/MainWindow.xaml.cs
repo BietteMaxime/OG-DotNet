@@ -439,7 +439,8 @@ namespace OGDotNet_Analytics
                         break;
                     case ComputationTargetType.TRADE:
                     case ComputationTargetType.SECURITY:
-                        throw new NotImplementedException();
+                        //TODO throw new NotImplementedException();
+                        break;
                 }
             }
             return valueIndex;
@@ -1232,11 +1233,6 @@ namespace OGDotNet_Analytics
         }
     }
 
-    public class VolatilitySurfaceData
-    {//TODO
-        
-    }
-   
 
     public class ComputedValue
     {
@@ -1507,12 +1503,28 @@ public enum ComputationTargetType {
             //TODO assert config map same and targetmap subset
 
             var deltaResults = delta._allResults.ToDictionary(r => new Tuple<string, ValueSpecification>(r.CalculationConfiguration, r.ComputedValue.Specification), r => r);
+
+
+            var results = new List<ViewResultEntry>(_allResults.Count);
+
+            foreach (var pair in _allResults.Select(r => new Tuple<Tuple<string, ValueSpecification>, ViewResultEntry>(
+                    new Tuple<string, ValueSpecification>(r.CalculationConfiguration, r.ComputedValue.Specification), r)))
+            {
+                var key = pair.Item1;
+                var vre = pair.Item2;
+                ViewResultEntry newValue;
+                if (deltaResults.TryGetValue(key, out newValue))
+                {
+                    deltaResults.Remove(key);
+                }
+                else
+                {
+                    newValue = vre;
+                }
+                results.Add(newValue);
+            }
+            results.AddRange(deltaResults.Select(kvp => kvp.Value));
             
-
-            List<ViewResultEntry> results = _allResults.Select(r => new Tuple<Tuple<string, ValueSpecification>, ViewResultEntry>(
-                    new Tuple<string, ValueSpecification>(r.CalculationConfiguration, r.ComputedValue.Specification), r))
-                    .Select(r => deltaResults.ContainsKey(r.Item1) ? deltaResults[r.Item1] : r.Item2).ToList();
-
             return new ViewComputationResultModel(_viewName, delta._inputDataTimestamp, delta._resultTimestamp, _configurationMap, _targetMap, results);
         }
     }
