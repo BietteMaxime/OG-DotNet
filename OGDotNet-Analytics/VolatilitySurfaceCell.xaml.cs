@@ -119,7 +119,7 @@ namespace OGDotNet_Analytics
             mesh.Normals.Add(normal);
             mesh.Normals.Add(normal);
             mesh.Normals.Add(normal);
-            var color = Colors.Red* colorQuotient + Colors.Green * (1-colorQuotient);
+            var color = Colors.Red* colorQuotient + Colors.Yellow * (1-colorQuotient);
             Material material = new DiffuseMaterial(
                 new SolidColorBrush(color));
             GeometryModel3D model = new GeometryModel3D(
