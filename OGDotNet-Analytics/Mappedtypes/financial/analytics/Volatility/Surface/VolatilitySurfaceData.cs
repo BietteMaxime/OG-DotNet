@@ -13,7 +13,7 @@ namespace OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface
         private String _specificationName;
         private string _currency;//TODO type
         private String _interpolatorName;
-        private Dictionary<Tuple<Tenor, Tenor>, double> _values;
+        private readonly Dictionary<Tuple<Tenor, Tenor>, double> _values;
         private IList<Tenor> _xs;
         private IList<Tenor> _ys;
 

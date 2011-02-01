@@ -4,14 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-
 using OGDotNet_Analytics.Mappedtypes.Core.Position;
 using OGDotNet_Analytics.Mappedtypes.engine;
 using OGDotNet_Analytics.Mappedtypes.engine.View;
 using OGDotNet_Analytics.Mappedtypes.Id;
 using OGDotNet_Analytics.Model.Resources;
-using OGDotNet_Analytics.SecurityExplorer;
 using OGDotNet_Analytics.View.CellTemplates;
 
 namespace OGDotNet_Analytics
@@ -48,7 +45,7 @@ namespace OGDotNet_Analytics
         {
             _cancellationTokenSource.Cancel();
             _cancellationTokenSource = new CancellationTokenSource();
-            
+            pauseToggle.IsChecked = false;
 
             var viewName = (string) viewSelector.SelectedItem;
             if (viewName != null)
@@ -112,33 +109,23 @@ namespace OGDotNet_Analytics
                        primitiveTabItem.Visibility = primitivesView.Columns.Count==1 ? Visibility.Hidden : Visibility.Visible;
                    }));
 
+                int count = 0;
 
+                SetStatus("Creating client");
                 cancellationToken.ThrowIfCancellationRequested();
                 using (var client = remoteViewResource.CreateClient())
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    client.Start();
-
-                    
-                    SetStatus("Waiting for results...");
-                    while (! client.ResultAvailable)
+                    //TODO get these off the UI thread but with order
+                    RoutedEventHandler pausedHandler = delegate { if (! cancellationToken.IsCancellationRequested) {client.Pause();} };
+                    RoutedEventHandler unpausedHandler = delegate { if (!cancellationToken.IsCancellationRequested) { client.Start(); } };
+                    pauseToggle.Checked += pausedHandler;
+                    pauseToggle.Unchecked+= unpausedHandler;
+                    try
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
-                    
-                    cancellationToken.ThrowIfCancellationRequested();
-                    using (var deltaStream = client.StartDeltaStream())
-                    {
-                        //NOTE: by starting the delta stream first I believe I am ok
-                        SetStatus("Getting first results...");
-                        cancellationToken.ThrowIfCancellationRequested();
-                        ViewComputationResultModel results = client.LatestResult;
-
-
-                        int count = 1;
-
-                        while (! cancellationToken.IsCancellationRequested)
-                        {    
+                        SetStatus("Getting first result");
+                        foreach (var results in client.GetResults(cancellationToken))
+                        {
+                            //TODO move this logic elsewhere
                             var valueIndex = Indexvalues(results);
 
                             cancellationToken.ThrowIfCancellationRequested();
@@ -146,80 +133,34 @@ namespace OGDotNet_Analytics
 
                             cancellationToken.ThrowIfCancellationRequested();
                             var primitiveRows = BuildPrimitiveRows(viewDefinition, valueIndex).ToList();
-                            
+
                             cancellationToken.ThrowIfCancellationRequested();
-                            
-                            bool paused = false;
+
                             Dispatcher.Invoke((Action) (() =>
                             {
                                 if (!cancellationToken.IsCancellationRequested)
                                 {
                                     portfolioTable.DataContext = portfolioRows;
-
                                     primitivesTable.DataContext = primitiveRows;
-                                    paused = pauseToggle.IsChecked.GetValueOrDefault(false);
                                 }
                             }));
-
-
-                            cancellationToken.ThrowIfCancellationRequested();
-                            if (paused)
-                            {
-                                SetStatus("Pausing...");
-                                cancellationToken.ThrowIfCancellationRequested();
-                                client.Pause();
-                                SetStatus("Paused");
-                                WaitForUncheck(pauseToggle, cancellationToken);
-                                cancellationToken.ThrowIfCancellationRequested();
-                                client.Start();
-                            }
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            SetStatus(string.Format("Waiting for next result {0}... ", ++count));
-                            var delta = deltaStream.GetNext(cancellationToken);
-                            results = results.ApplyDelta(delta);
+                            SetStatus(string.Format("Awaiting next result. ({0})", ++count));
                         }
-
+                    }
+                    finally
+                    {
+                        pauseToggle.Checked -= pausedHandler;
+                        pauseToggle.Unchecked -= unpausedHandler;
                     }
                 }
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException)//TODO don't use exceptions here
             {
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Failed to retrieve data");
             }
-        }
-
-        private void WaitForUncheck(ToggleButton toggleButton, CancellationToken cancellationToken)
-        {
-            using (var autoResetEvent = new AutoResetEvent(false))
-            using (cancellationToken.Register(() => autoResetEvent.Set()))
-            {
-                bool done = false;
-
-                RoutedEventHandler clickHandler = delegate { autoResetEvent.Set(); };
-                toggleButton.Click += clickHandler;
-                try
-                {
-                    do
-                    {
-                        Dispatcher.Invoke((Action)(() =>
-                        {
-                            done = !toggleButton.IsChecked.GetValueOrDefault(false);
-                        }));
-                        if (! done) autoResetEvent.WaitOne();
-                        cancellationToken.ThrowIfCancellationRequested();
-                    } while (! done);
-                    
-                }
-                finally
-                {
-                    toggleButton.Click -= clickHandler;
-                }
-            }
-           
         }
 
         private void SetStatus(string msg)
@@ -296,6 +237,7 @@ namespace OGDotNet_Analytics
 
         private static IEnumerable<string> GetPortfolioColumns(ViewDefinition viewDefinition)
         {
+
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
                 foreach (var valuePropertiese in configuration.Value.PortfolioRequirementsBySecurityType)
@@ -317,7 +259,7 @@ namespace OGDotNet_Analytics
         }
 
 
-        private IEnumerable<TreeNode> GetNodes(Portfolio portfolio, RemoteSecuritySource remoteSecuritySource)
+        private static IEnumerable<TreeNode> GetNodes(Portfolio portfolio, RemoteSecuritySource remoteSecuritySource)
         {
             return  GetNodesInner(portfolio.Root, remoteSecuritySource).ToList();
         }
@@ -343,21 +285,6 @@ namespace OGDotNet_Analytics
                 foreach (var treeNode in GetNodesInner(portfolioNode, remoteSecuritySource))
                 {
                     yield return treeNode;
-                }
-            }
-        }
-
-        private static IEnumerable<Position> GetPositions(PortfolioNode portfolio)
-        {
-            foreach (var position in portfolio.Positions)
-            {
-                yield return position;
-            }
-            foreach (var portfolioNode in portfolio.SubNodes)
-            {
-                foreach (var position in GetPositions(portfolioNode))
-                {
-                    yield return position;
                 }
             }
         }
