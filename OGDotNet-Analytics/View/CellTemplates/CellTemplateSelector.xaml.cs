@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using OGDotNet_Analytics.Mappedtypes.financial.analytics;
+using OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve;
 
 namespace OGDotNet_Analytics.View.CellTemplates

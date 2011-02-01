@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGDotNet", "OGDotNet\OGDotNet.csproj", "{5AF9AACF-0064-4C55-9A0E-B2CE12D2187B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGDotNet-Analytics", "OGDotNet-Analytics\OGDotNet-Analytics.csproj", "{D0AA326F-E93D-42D2-9E4E-A000406350BA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4947477-AA86-4495-8834-E0D2F801D16D}"
@@ -16,10 +14,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5AF9AACF-0064-4C55-9A0E-B2CE12D2187B}.Debug|x86.ActiveCfg = Debug|x86
-		{5AF9AACF-0064-4C55-9A0E-B2CE12D2187B}.Debug|x86.Build.0 = Debug|x86
-		{5AF9AACF-0064-4C55-9A0E-B2CE12D2187B}.Release|x86.ActiveCfg = Release|x86
-		{5AF9AACF-0064-4C55-9A0E-B2CE12D2187B}.Release|x86.Build.0 = Release|x86
 		{D0AA326F-E93D-42D2-9E4E-A000406350BA}.Debug|x86.ActiveCfg = Debug|x86
 		{D0AA326F-E93D-42D2-9E4E-A000406350BA}.Debug|x86.Build.0 = Debug|x86
 		{D0AA326F-E93D-42D2-9E4E-A000406350BA}.Release|x86.ActiveCfg = Release|x86

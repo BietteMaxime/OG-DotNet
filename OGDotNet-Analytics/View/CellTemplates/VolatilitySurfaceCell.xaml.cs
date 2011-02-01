@@ -7,6 +7,8 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+using OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface;
+using OGDotNet_Analytics.Mappedtypes.Util.Time;
 
 namespace OGDotNet_Analytics.View.CellTemplates
 {

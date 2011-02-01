@@ -60,29 +60,81 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ClientResultStream.cs" />
+    <Compile Include="Builders\BuilderBase.xaml.cs" />
+    <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
+    <Compile Include="Mappedtypes\Core\Security\Security.cs" />
+    <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
+    <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
+    <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
+    <Compile Include="DisposableBase.xaml.cs" />
+    <Compile Include="Model\Resources\ClientResultStream.cs" />
     <Compile Include="Mappedtypes\financial\analytics\DoubleLabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrixEntry.cs" />
     <Compile Include="Mappedtypes\LiveData\UserPrincipal.cs" />
     <Compile Include="Mappedtypes\engine\depgraph\DependencyGraph\ResultOutputMode.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Portfolio.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Impl\PortfolioImpl.cs" />
+    <Compile Include="Mappedtypes\Core\Position\PortfolioNode.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Position.cs" />
+    <Compile Include="Builders\PositionBuilder.cs" />
+    <Compile Include="Model\Resources\RemoteConfig.cs" />
+    <Compile Include="Model\Resources\RemoteSecuritySource.cs" />
+    <Compile Include="Model\Resources\RemoteViewProcessor.cs" />
+    <Compile Include="Model\Resources\RemoteViewResource.cs" />
+    <Compile Include="Model\Resources\ViewClientResource.cs" />
+    <Compile Include="Builders\ViewComputationResultModelBuilder.cs" />
+    <Compile Include="Mappedtypes\engine\View\ViewResultEntry.cs" />
+    <Compile Include="Mappedtypes\engine\View\ViewTargetResultModelImpl.cs" />
+    <Compile Include="Mappedtypes\engine\View\ViewCalculationResultModel.cs" />
+    <Compile Include="Builders\ViewCalculationResultModelBuilder.cs" />
+    <Compile Include="Builders\ValueSpecificationBuilder.cs" />
+    <Compile Include="Mappedtypes\engine\Value\ValueSpecification.cs" />
+    <Compile Include="Mappedtypes\engine\View\ViewComputationResultModel.cs" />
+    <Compile Include="Model\Resources\RemoteClient.cs" />
+    <Compile Include="Mappedtypes\Id\IdentifierSearchType.cs" />
+    <Compile Include="Mappedtypes\Master\AbstractSearchResult.cs" />
+    <Compile Include="Utils\ArgumentChecker.cs" />
+    <Compile Include="Utils\CompareUtils.cs" />
+    <Compile Include="Mappedtypes\financial\Security\FinancialSecurity.cs" />
+    <Compile Include="Mappedtypes\Id\IdentifierBundle.cs" />
+    <Compile Include="Mappedtypes\Id\IdentifierSearch.cs" />
+    <Compile Include="Mappedtypes\Id\Identifier.cs" />
+    <Compile Include="Mappedtypes\Core\Security\ISecuritySource.cs" />
+    <Compile Include="SecurityExplorer\SecurityWindow.xaml.cs">
+      <DependentUpon>SecurityWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Mappedtypes\Util\Db\Paging.cs" />
+    <Compile Include="Mappedtypes\Master\Security\ManageableSecurity.cs" />
+    <Compile Include="Mappedtypes\Util\Db\PagingRequest.cs" />
+    <Compile Include="Model\Resources\RemoteSecurityMasterResource.cs" />
+    <Compile Include="SecurityExplorer\RemoteSecuritySourceResource.cs" />
+    <Compile Include="Model\RestTarget.cs" />
+    <Compile Include="Mappedtypes\Master\Security\SecurityDocument.cs" />
+    <Compile Include="Mappedtypes\Master\Security\SecuritySearchRequest.cs" />
+    <Compile Include="Utils\StringUtils.cs" />
+    <Compile Include="Mappedtypes\Id\UniqueIdentifier.cs" />
     <Compile Include="View\CellTemplates\DoubleLabelledMatrixCell.xaml.cs">
       <DependentUpon>DoubleLabelledMatrixCell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FudgeConfig.xaml.cs" />
+    <Compile Include="Model\FudgeConfig.cs" />
     <Compile Include="Mappedtypes\math\curve\InterpolatedDoublesCurve.cs" />
     <Compile Include="View\CellTemplates\CellTemplateSelector.xaml.cs" />
-    <Compile Include="ResultModelDefinition.xaml.cs" />
-    <Compile Include="Tenor.xaml.cs" />
+    <Compile Include="Mappedtypes\engine\View\ResultModelDefinition.xaml.cs" />
+    <Compile Include="Mappedtypes\Util\Time\Tenor.cs" />
     <Compile Include="View\CellTemplates\VolatilitySurfaceCell.xaml.cs">
       <DependentUpon>VolatilitySurfaceCell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VolatilitySurfaceData.xaml.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\VolatilitySurfaceData.cs" />
     <Compile Include="Mappedtypes\financial\model\interestrate\curve\YieldCurve.cs" />
-    <Compile Include="YieldCurveCell.xaml.cs">
+    <Compile Include="View\CellTemplates\YieldCurveCell.xaml.cs">
       <DependentUpon>YieldCurveCell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewDefinition.xaml.cs" />
-    <Compile Include="ViewTargetResultModel.xaml.cs" />
+    <Compile Include="Mappedtypes\engine\View\ViewDefinition.cs" />
+    <Compile Include="Mappedtypes\engine\View\ViewTargetResultModel.cs" />
+    <Page Include="SecurityExplorer\SecurityWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\CellTemplates\DoubleLabelledMatrixCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -103,7 +155,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="YieldCurveCell.xaml">
+    <Page Include="View\CellTemplates\YieldCurveCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -132,12 +184,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\OGDotNet\OGDotNet.csproj">
-      <Project>{5AF9AACF-0064-4C55-9A0E-B2CE12D2187B}</Project>
-      <Name>OGDotNet</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
