@@ -212,6 +212,7 @@ namespace OGDotNet_Analytics
                             done = !toggleButton.IsChecked.GetValueOrDefault(false);
                         }));
                         if (! done) autoResetEvent.WaitOne();
+                        cancellationToken.ThrowIfCancellationRequested();
                     } while (! done);
                     
                 }
