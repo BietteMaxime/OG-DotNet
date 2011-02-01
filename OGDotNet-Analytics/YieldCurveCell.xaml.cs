@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet_Analytics.Mappedtypes.math.curve;
 
@@ -59,6 +61,18 @@ namespace OGDotNet_Analytics
                     var y = ActualHeight - ((tuple.Item2 - doubleMinY) * yScale);
                     myLine.Points.Add(new Point(x, y));
                 }
+
+                xAxis.X1 = 0;
+                xAxis.X2 = ActualWidth;
+
+                xAxis.Y1 = ActualHeight - ((-doubleMinY)*yScale);
+                xAxis.Y2 = xAxis.Y1;
+
+                yAxis.X1 = 0;
+                yAxis.X2 = 0;
+                yAxis.Y1 = 0;
+                yAxis.Y2 = ActualHeight;
+
             }
         }
 
