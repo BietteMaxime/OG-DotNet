@@ -37,7 +37,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
 
             _timer.Tick += delegate
                                {
-                                   _timer.Interval = TimeSpan.FromMilliseconds(100.0);
+                                   _timer.Interval = TimeSpan.FromMilliseconds(80.0);
 
                                    if (t > maxTilt)
                                    {
