@@ -8,10 +8,10 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 
-namespace OGDotNet_Analytics
+namespace OGDotNet_Analytics.View.CellTemplates
 {
     /// <summary>
-    /// Interaction logic for VolatilitySurfaceCell.xaml
+    /// TODO work out how to present this
     /// </summary>
     public partial class VolatilitySurfaceCell : UserControl
     {

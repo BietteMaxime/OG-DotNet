@@ -7,7 +7,7 @@ using System.Windows.Data;
 using OGDotNet_Analytics.Mappedtypes.financial.analytics;
 using OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve;
 
-namespace OGDotNet_Analytics
+namespace OGDotNet_Analytics.View.CellTemplates
 {
     public class CellTemplateSelector : DataTemplateSelector
     {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,7 +14,7 @@ using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet;
 using OGDotNet_Analytics.Mappedtypes.LiveData;
-using OGDotNet_Analytics.Mappedtypes.math.curve;
+using OGDotNet_Analytics.View.CellTemplates;
 
 namespace OGDotNet_Analytics
 {
@@ -818,142 +817,10 @@ namespace OGDotNet_Analytics
         }
     }
 
-    namespace Mappedtypes
-    {
-        namespace financial.analytics
-        {
-            public class LabelledMatrixEntry
-            {
-                private readonly object _label;
-                private readonly double _value;
-
-                public LabelledMatrixEntry(object label, double value)
-                {
-                    _label = label;
-                    _value = value;
-                }
-
-                public object Label
-                {
-                    get { return _label; }
-                }
-
-                public double Value
-                {
-                    get { return _value; }
-                }
-            }
-            public class DoubleLabelledMatrix1D : IEnumerable<LabelledMatrixEntry>
-            {
-                private readonly IList<double> _keys;
-                private readonly IList<object> _labels;
-                private readonly IList<double> _values;
-
-                private DoubleLabelledMatrix1D(IList<double> keys, IList<object> labels, IList<double> values)
-                {
-                    _keys = keys;
-                    _labels = labels;
-                    _values = values;
-                }
-
-                public IList<double> Keys
-                {
-                    get { return _keys; }
-                }
-
-                public IList<object> Labels
-                {
-                    get { return _labels; }
-                }
-
-                public IList<double> Values
-                {
-                    get { return _values; }
-                }
-
-                public static DoubleLabelledMatrix1D FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-                {
-                    var keys = GetArray<double>(ffc, "keys");//This is a java Double[] go go go poor generics
-                    var values = ffc.GetValue<double[]>("values");//This is a java (and hence a fudge) double[]
-                    var labels = GetArray<object>(ffc, "labels");
-
-
-                    return new DoubleLabelledMatrix1D(keys, labels, values);
-                }
-
-                /// <summary>
-                /// Array here are packed YAN way
-                /// </summary>
-                private static List<T> GetArray<T>(IFudgeFieldContainer ffc, string fieldName)
-                {
-                    var fudgeFields = ffc.GetMessage(fieldName).GetAllFields();
-
-                    return fudgeFields.Select(fudgeField => (T) fudgeField.Value).ToList();
-                }
-
-                public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-                {
-                    throw new NotImplementedException();
-                }
-
-                public IEnumerator<LabelledMatrixEntry> GetEnumerator()
-                {
-                    return GetEntries().GetEnumerator();
-                }
-
-                IEnumerator IEnumerable.GetEnumerator()
-                {
-                    return GetEnumerator();
-                }
-
-                private IEnumerable<LabelledMatrixEntry> GetEntries()
-                {
-                    return _labels.Zip(_keys, (l, k) => new LabelledMatrixEntry(l, k));
-                }
-            }
-
-        }
-        namespace financial.model.interestrate.curve
-        {
-            public class YieldCurve
-            {
-                public InterpolatedDoublesCurve Curve { get; set; }
-            }
-        }
-
-        namespace LiveData
-        {
-            [Serializable]
-            public class UserPrincipal
-            {
-                private string userName;
-                private string ipAddress;
-
-                public string UserName
-                {
-                    get { return userName; }
-                    set { userName = value; }
-                }
-
-                public string IpAddress
-                {
-                    get { return ipAddress; }
-                    set { ipAddress = value; }
-                }
-
-                public UserPrincipal(string userName, string ipAddress)
-                {
-                    UserName = userName;
-                    IpAddress = ipAddress;
-                }
-            }
-        }
-    }
-
     /// <summary>
     /// DataViewClientResource
     /// </summary>
-    public class ViewClient : DisposableBase
+    public class ViewClient : DisposableBase  //TODO IObservable<ViewComputationResultModel>
     {
         private readonly string _activeMqSpec;
         private readonly RESTMagic _rest;
@@ -973,7 +840,7 @@ namespace OGDotNet_Analytics
             _rest.GetSubMagic("stop").GetReponse("POST");
         }
 
-        public void Pause()//TODO this
+        public void Pause()
         {
             _rest.GetSubMagic("pause").GetReponse("POST");
         }

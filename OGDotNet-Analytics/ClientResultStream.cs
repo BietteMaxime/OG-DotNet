@@ -6,7 +6,7 @@ using Fudge.Encodings;
 
 namespace OGDotNet_Analytics
 {
-    public class ClientResultStream<T> : DisposableBase //TODO IObservable
+    public class ClientResultStream<T> : DisposableBase
     {
         private readonly Uri _serviceUri;
         private readonly Action _stopAction;

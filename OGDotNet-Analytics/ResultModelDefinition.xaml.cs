@@ -1,10 +1,4 @@
-﻿using System;
-using System.Reflection.Emit;
-using Fudge;
-using Fudge.Serialization;
-using OGDotNet_Analytics.MappedTypes.engine.depgraph.DependencyGraph;
-
-namespace OGDotNet_Analytics
+﻿namespace OGDotNet_Analytics
 {
     public class ResultModelDefinition
     {
@@ -14,17 +8,5 @@ namespace OGDotNet_Analytics
         public string SecurityOutputMode { get; set; }
         public string PrimitiveOutputMode { get; set; }
         //TODO shouldOutputResult
-    }
-
-    namespace MappedTypes.engine.depgraph.DependencyGraph
-    {
-
-
-        public enum ResultOutputMode
-        {
-            NONE, TERMINAL_OUTPUTS, ALL
-
-            //TODO shouldOutputResult
-        }
     }
 }
