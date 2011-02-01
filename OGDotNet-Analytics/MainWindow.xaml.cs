@@ -122,6 +122,7 @@ namespace OGDotNet_Analytics
                     pauseToggle.Unchecked+= unpausedHandler;
                     try
                     {
+                        DateTime previousTime = DateTime.Now;
                         SetStatus("Getting first result");
                         foreach (var results in client.GetResults(cancellationToken))
                         {
@@ -136,6 +137,7 @@ namespace OGDotNet_Analytics
 
                             cancellationToken.ThrowIfCancellationRequested();
 
+                            
                             Dispatcher.Invoke((Action) (() =>
                             {
                                 if (!cancellationToken.IsCancellationRequested)
@@ -144,7 +146,9 @@ namespace OGDotNet_Analytics
                                     primitivesTable.DataContext = primitiveRows;
                                 }
                             }));
-                            SetStatus(string.Format("Awaiting next result. ({0})", ++count));
+
+                            SetStatus(string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (DateTime.Now- previousTime).TotalMilliseconds,++count));
+                            previousTime = DateTime.Now;
                         }
                     }
                     finally
