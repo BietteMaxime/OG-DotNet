@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
@@ -25,7 +26,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
             InitializeComponent();
             _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(80.0)};
 
-            double speed = 0.08;
+            double speed = 0.06;
 
             double t = Math.PI / 4.0;
             const double maxT= Math.PI/2.0;
@@ -46,6 +47,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
                                    t += speed;
 
                                    SetCamera(t);
+                                   UpdateToolTip(Mouse.GetPosition(mainViewport));
                                };
         }
 
@@ -100,12 +102,15 @@ namespace OGDotNet_Analytics.View.CellTemplates
         private void UserControl_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             InitData();
-            popup.IsOpen = true;
+            detailsPopup.IsOpen = true;
+            _timer.IsEnabled = false;
         }
 
         private void UserControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            popup.IsOpen = false;
+            detailsPopup.IsOpen = false;
+            toolTip.IsOpen = false;
+            _timer.IsEnabled = true;
         }
 
         private static Model3DGroup CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2, float colorQuotient)
@@ -148,18 +153,16 @@ namespace OGDotNet_Analytics.View.CellTemplates
         {
             var group = new Model3DGroup();
 
-            var data = (VolatilitySurfaceData)DataContext;
-
-            var xs = data.Xs.ToList();
-            var ys = data.Ys.ToList();
+            var xs = Surface.Xs.ToList();
+            var ys = Surface.Ys.ToList();
 
 
             double xScale = 1.0/(xs.Count-1);
             double yScale = 1.0 / (ys.Count -1);
 
-            const double max = 100.0;// xs.SelectMany(x => ys.Select(y => data[x, y])).Max();
-            const double colorScale = 1/ max;
-            const double heightScale = 1.0/max;
+            const double zRange = 100.0;
+            const double colorScale = 1 / zRange;
+            const double zScale = 1.0 / zRange;
             
 
 
@@ -168,28 +171,28 @@ namespace OGDotNet_Analytics.View.CellTemplates
             {
                 for (int xi = 0; xi < xs.Count-1; xi++)
                 {
-                    var at = GetPoint(xi, yi, xs, ys, data);
-                    var right = GetPoint(xi+1, yi, xs, ys, data);
-                    var above = GetPoint(xi, yi+1, xs, ys, data);
+                    var at = GetPoint(xi, yi, xs, ys, Surface);
+                    var right = GetPoint(xi+1, yi, xs, ys, Surface);
+                    var above = GetPoint(xi, yi+1, xs, ys, Surface);
 
                     group.Children.Add(CreateTriangleModel(
-                        new Point3D(xi*xScale, yi*yScale, at*heightScale),
-                        new Point3D((xi + 1) * xScale, (yi) * yScale, right * heightScale),
-                        new Point3D((xi) * xScale, (yi + 1) * yScale, above * heightScale), (float) (colorScale * at)));
+                        new Point3D(xi*xScale, yi*yScale, at*zScale),
+                        new Point3D((xi + 1) * xScale, (yi) * yScale, right * zScale),
+                        new Point3D((xi) * xScale, (yi + 1) * yScale, above * zScale), (float) (colorScale * at)));
                 }
             }
             for (int yi = 1; yi < ys.Count; yi++)
             {
                 for (int xi = 1; xi < xs.Count; xi++)
                 {
-                    var at = GetPoint(xi, yi, xs, ys, data);
-                    var left = GetPoint(xi - 1, yi, xs, ys, data);
-                    var below = GetPoint(xi, yi - 1, xs, ys, data);
+                    var at = GetPoint(xi, yi, xs, ys, Surface);
+                    var left = GetPoint(xi - 1, yi, xs, ys, Surface);
+                    var below = GetPoint(xi, yi - 1, xs, ys, Surface);
 
                     group.Children.Add(CreateTriangleModel(
-                        new Point3D(xi * xScale, yi * yScale, at * heightScale),
-                        new Point3D((xi - 1) * xScale, (yi) * yScale, left * heightScale),
-                        new Point3D((xi) * xScale, (yi - 1) * yScale, below * heightScale), (float)(colorScale * at)));
+                        new Point3D(xi * xScale, yi * yScale, at * zScale),
+                        new Point3D((xi - 1) * xScale, (yi) * yScale, left * zScale),
+                        new Point3D((xi) * xScale, (yi - 1) * yScale, below * zScale), (float)(colorScale * at)));
                 }
             }
 
@@ -224,6 +227,11 @@ namespace OGDotNet_Analytics.View.CellTemplates
             
         }
 
+        private VolatilitySurfaceData Surface
+        {
+            get { return (VolatilitySurfaceData) DataContext; }
+        }
+
         private static double GetPoint(int xi, int yi, List<Tenor> xs, List<Tenor> ys, VolatilitySurfaceData data)
         {
             return data[xs[xi], ys[yi]];
@@ -233,6 +241,46 @@ namespace OGDotNet_Analytics.View.CellTemplates
         {
             if (DataContext is VolatilitySurfaceData)
                 BuildModel();
+        }
+
+        private void mainViewport_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point position = e.GetPosition(mainViewport);
+            UpdateToolTip(position);
+        }
+
+        private void UpdateToolTip(Point position)
+        {
+            var xs = Surface.Xs.ToList();
+            var ys = Surface.Ys.ToList();
+
+
+            double xScale = 1.0 / (xs.Count - 1);
+            double yScale = 1.0 / (ys.Count - 1);
+
+
+            HitTestResult hitTestResult = VisualTreeHelper.HitTest(mainViewport, position);
+            if (hitTestResult!= null && hitTestResult.VisualHit != null)
+            {
+                if (!(hitTestResult is RayMeshGeometry3DHitTestResult))
+                    throw new ArgumentException();
+                var result = (RayMeshGeometry3DHitTestResult) hitTestResult;
+
+                var point = result.PointHit;
+
+                var floor = Math.Min((int) Math.Round(point.X/xScale), xs.Count-1);
+
+                var x = xs[floor];
+                floor = Math.Min((int)Math.Round(point.Y / yScale), ys.Count - 1);
+                var y = ys[floor];
+
+                toolTipBox.Text = string.Format("{0},{1},{2}", x,y, Surface[x,y]);
+                toolTip.IsOpen = true;
+            }
+            else
+            {
+                toolTip.IsOpen = false;
+            }
         }
     }
 }
