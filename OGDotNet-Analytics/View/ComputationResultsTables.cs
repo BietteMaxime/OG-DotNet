@@ -88,6 +88,10 @@ namespace OGDotNet_Analytics.View
             return rowsChanged;
         }
 
+
+        public bool HavePortfolioRows { get { return PortfolioColumns.Count > 0; } }
+        public bool HavePrimitiveRows { get { return PrimitiveColumns.Count > 0; } }
+
         public List<string> PortfolioColumns
         {
             get { return _portfolioColumns; }

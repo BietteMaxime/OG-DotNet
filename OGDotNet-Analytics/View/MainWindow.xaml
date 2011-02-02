@@ -1,7 +1,6 @@
 ﻿<Window x:Class="OGDotNet_Analytics.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525" Closed="Window_Closed" WindowStartupLocation="CenterScreen" Icon="Resources\favicon.ico">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:View="clr-namespace:OGDotNet_Analytics.View" Title="MainWindow" Height="350" Width="525" Closed="Window_Closed" WindowStartupLocation="CenterScreen" Icon="Resources\favicon.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,42 +18,8 @@
             <ComboBox Grid.Column="1" Name="viewSelector" ItemsSource="{Binding}" SelectionChanged="viewSelector_SelectionChanged" Width="Auto" VerticalAlignment="Center"/>
             <ToggleButton Grid.Column="2" Name="pauseToggle" Content="Pause"/>
         </Grid>
-        
-        <TabControl Grid.Row="1" Height="Auto" Name="tabControl1" Width="Auto">
-            <TabItem Header="Portfolio" Name="portfolioTabItem">
-                <Grid>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-
-
-                   
-
-                    <ListView Visibility="Visible" Grid.Row="2"  Name="portfolioTable"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Width="140" Header="Position" DisplayMemberBinding="{Binding Path=PositionName}"/>
-                            </GridView>
-
-                        </ListView.View>
-                    </ListView>
-
-                </Grid>
-            </TabItem>
-            <TabItem Header="Primitives" Name="primitiveTabItem">
-                <ListView Name="primitivesTable"  ItemsSource="{Binding}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Width="140" Header="Target" DisplayMemberBinding="{Binding Path=TargetName}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </TabItem>
-        </TabControl>
+        <View:ComputationResultsTableView Grid.Row="1" x:Name="resultsTableView"/>
         <StatusBar Grid.Row="2" Name="statusBar">
             <TextBlock Name="statusText" />
         </StatusBar>

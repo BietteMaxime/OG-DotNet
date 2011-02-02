@@ -59,11 +59,18 @@ namespace OGDotNet_Analytics
             }
         }
 
+        private void Invoke(Action action, CancellationToken token)
+        {
+            Dispatcher.Invoke(((Action)delegate { if (!token.IsCancellationRequested) { action(); } }));
+            token.ThrowIfCancellationRequested();
+        }
 
         public void RefreshMyData(string viewName, CancellationToken cancellationToken)
         {
             try
             {
+                Invoke(delegate { resultsTableView.DataContext = null; }, cancellationToken);
+
                 cancellationToken.ThrowIfCancellationRequested();
                 var remoteViewResource = _remoteViewProcessor.GetView(viewName);
 
@@ -78,57 +85,14 @@ namespace OGDotNet_Analytics
                 var viewDefinition = remoteViewResource.Definition;
 
                 
-                //TODO bind this by magic
                 var resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource);
-                resultsTable.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
-                                                    {
-                                                        if (cancellationToken.IsCancellationRequested)
-                                                            return;
-                                                        if (e.PropertyName == "PrimitiveRows")
-                                                            Dispatcher.Invoke((Action)(delegate
-                                                                                            {
-                                                                                                primitivesTable.DataContext = resultsTable.PrimitiveRows;
-                                                                                            }));
-                                                        if (e.PropertyName == "PortfolioRows")
-                                                            Dispatcher.Invoke((Action)(delegate
-                                                            {
-                                                                portfolioTable.DataContext = resultsTable.PortfolioRows;
-                                                            }));
-                                                    };
+                Invoke(delegate { resultsTableView.DataContext = resultsTable; }, cancellationToken);
                 
-                var primitiveColumns = resultsTable.PrimitiveColumns;
-                var portfolioColumns = resultsTable.PortfolioColumns;
-
-                Dispatcher.Invoke((Action)(() =>
-                   {
-                       var portfolioView = (GridView)portfolioTable.View;
-                       portfolioTable.DataContext = null;
-
-                       TrimColumns(portfolioView.Columns, 1);
-                       foreach (var column in portfolioColumns)
-                       {
-                           portfolioView.Columns.Add(BuildColumn(column));
-                       }
-
-                       portfolioTabItem.Visibility = viewDefinition.PortfolioIdentifier == null ? Visibility.Hidden : Visibility.Visible;
-
-                       var primitivesView = (GridView)primitivesTable.View;
-                       primitivesTable.DataContext = null;
-
-
-                       TrimColumns(primitivesView.Columns, 1);
-                       foreach (var column in primitiveColumns)
-                       {
-                           primitivesView.Columns.Add(BuildColumn(column));
-                       }
-
-                       primitiveTabItem.Visibility = primitivesView.Columns.Count == 1 ? Visibility.Hidden : Visibility.Visible;
-                   }));
+                
 
                 int count = 0;
 
                 SetStatus("Creating client");
-                cancellationToken.ThrowIfCancellationRequested();
                 using (var client = remoteViewResource.CreateClient())
                 {
                     //TODO get these off the UI thread but with order
