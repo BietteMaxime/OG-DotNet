@@ -75,7 +75,6 @@
     <Compile Include="Mappedtypes\financial\analytics\DoubleLabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrixEntry.cs" />
     <Compile Include="Mappedtypes\LiveData\UserPrincipal.cs" />
-    <Compile Include="Mappedtypes\engine\depgraph\DependencyGraph\ResultOutputMode.cs" />
     <Compile Include="Mappedtypes\Core\Position\Portfolio.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\PortfolioImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\PortfolioNode.cs" />
