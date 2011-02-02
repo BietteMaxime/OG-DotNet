@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet_Analytics.Mappedtypes.math.curve;
 
@@ -73,5 +74,14 @@ namespace OGDotNet_Analytics.View.CellTemplates
             }
         }
 
+        private void UserControl_MouseEnter(object sender, MouseEventArgs e)
+        {
+            detailsPopup.IsOpen = true;
+        }
+
+        private void UserControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            detailsPopup.IsOpen = false;
+        }
     }
 }

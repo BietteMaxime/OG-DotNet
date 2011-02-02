@@ -4,15 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" SizeChanged="UserControl_SizeChanged" DataContextChanged="UserControl_DataContextChanged" Width="235" Height="55">
+             SizeChanged="UserControl_SizeChanged" DataContextChanged="UserControl_DataContextChanged"
+             MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <Line Grid.Column="0" Name="xAxis" Stroke="Gray" StrokeThickness="1" X1="20" Y1="10" StrokeDashArray="10 4"/>
-        <Line Grid.Column="0" Name="yAxis" Stroke="Gray" StrokeThickness="1"  X1="10" Y1="20"  StrokeDashArray="10 4"/>
-        <Polyline Grid.Column="0" Grid.Row="0" Name="myLine" Stroke="Black" StrokeThickness="1" 
-                  Points="0,0 10,20  20,0" />
+        <Canvas Background="White" MinWidth="235" MinHeight="55">
+            <Line Grid.Column="0" Name="xAxis" Stroke="Gray" StrokeThickness="1" X1="20" Y1="10" StrokeDashArray="10 4"/>
+            <Line Grid.Column="0" Name="yAxis" Stroke="Gray" StrokeThickness="1"  X1="10" Y1="20"  StrokeDashArray="10 4"/>
+            <Polyline Grid.Column="0" Grid.Row="0" Name="myLine" Stroke="Black" StrokeThickness="1"  Points="0,0 10,20  20,0" />
+        </Canvas>
+        <Popup Name="detailsPopup">
+            <ListView ItemsSource="{Binding Path=Curve.Data}" Height="Auto" Width="Auto">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="Auto" Header="t (years)" DisplayMemberBinding="{Binding Path=Item1}"/>
+                        <GridViewColumn Width="Auto" Header="Yield" DisplayMemberBinding="{Binding Path=Item2}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Popup>
     </Grid>
 </UserControl>
