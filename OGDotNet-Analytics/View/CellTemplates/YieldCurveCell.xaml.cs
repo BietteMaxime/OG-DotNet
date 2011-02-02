@@ -31,12 +31,12 @@ namespace OGDotNet_Analytics.View.CellTemplates
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateGraph();//TODO use data binding?
+            UpdateGraph();
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            UpdateGraph();//TODO use data binding?
+            UpdateGraph();
         }
 
 
