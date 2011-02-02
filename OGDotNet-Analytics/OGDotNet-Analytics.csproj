@@ -137,8 +137,8 @@
     <Compile Include="Mappedtypes\engine\View\ViewDefinition.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewTargetResultModel.cs" />
     <Compile Include="View\ComputationResultsTables.cs" />
-    <Compile Include="View\ComputationResultsTableview.xaml.cs">
-      <DependentUpon>ComputationResultsTableview.xaml</DependentUpon>
+    <Compile Include="View\ComputationResultsTableView.xaml.cs">
+      <DependentUpon>ComputationResultsTableView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\PortfolioRow.cs" />
     <Compile Include="View\PrimitiveRow.cs" />
@@ -151,7 +151,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ComputationResultsTableview.xaml">
+    <Page Include="View\ComputationResultsTableView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
