@@ -49,8 +49,6 @@ namespace OGDotNet_Analytics.Mappedtypes.engine.View
 
         public ViewComputationResultModel ApplyDelta(ViewComputationResultModel delta)
         {
-            //TODO assert config map same and targetmap subset
-
             var deltaResults = delta._allResults.ToDictionary(r => new Tuple<string, ValueSpecification>(r.CalculationConfiguration, r.ComputedValue.Specification), r => r);
 
 
