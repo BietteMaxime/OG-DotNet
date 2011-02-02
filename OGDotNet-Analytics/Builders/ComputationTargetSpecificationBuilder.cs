@@ -17,7 +17,7 @@ namespace OGDotNet_Analytics.Builders
             ComputationTargetType type;
             if (! Enum.TryParse(msg.GetValue<String>("computationTargetType"), out type))
             {
-                throw new Exception("Unhandled computation target type");
+                throw new ArgumentException("Unhandled computation target type");
             }
             UniqueIdentifier uid = null;
             var ctiField = msg.GetByName("computationTargetIdentifier");

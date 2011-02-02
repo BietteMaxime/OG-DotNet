@@ -17,6 +17,11 @@ namespace OGDotNet_Analytics.Builders
 
         public void Serialize(object obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
         {
+            SerializeImpl(obj, msg, serializer);
+        }
+
+        protected virtual void SerializeImpl(object obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
+        {
             throw new NotImplementedException();
         }
 

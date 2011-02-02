@@ -22,5 +22,42 @@ namespace OGDotNet_Analytics.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://127.0.0.1:8080/jax")]
+        public string ServiceUri {
+            get {
+                return ((string)(this["ServiceUri"]));
+            }
+            set {
+                this["ServiceUri"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public string ConfigId {
+            get {
+                return ((string)(this["ConfigId"]));
+            }
+            set {
+                this["ConfigId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PreviousViewName {
+            get {
+                return ((string)(this["PreviousViewName"]));
+            }
+            set {
+                this["PreviousViewName"] = value;
+            }
+        }
     }
 }
