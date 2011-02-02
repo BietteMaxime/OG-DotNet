@@ -23,7 +23,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
         public VolatilitySurfaceCell()
         {
             InitializeComponent();
-            _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(1000.0)};
+            _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(80.0)};
 
             double speed = 0.08;
 
@@ -35,8 +35,6 @@ namespace OGDotNet_Analytics.View.CellTemplates
 
             _timer.Tick += delegate
                                {
-                                   _timer.Interval = TimeSpan.FromMilliseconds(80.0);
-
                                    if (t > maxT)
                                    {
                                        speed = -Math.Abs(speed);
