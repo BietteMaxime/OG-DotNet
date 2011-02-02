@@ -135,6 +135,8 @@
     <Compile Include="Mappedtypes\engine\View\ViewDefinition.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewTargetResultModel.cs" />
     <Compile Include="View\ComputationResultsTables.cs" />
+    <Compile Include="View\PortfolioRow.cs" />
+    <Compile Include="View\PrimitiveRow.cs" />
     <Compile Include="View\WindowLocationPersister.cs" />
     <Page Include="SecurityExplorer\SecurityWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

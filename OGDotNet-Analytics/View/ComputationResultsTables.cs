@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using OGDotNet_Analytics.Mappedtypes.Core.Position;
@@ -10,56 +11,69 @@ using OGDotNet_Analytics.Model.Resources;
 
 namespace OGDotNet_Analytics.View
 {
-    public class ComputationResultsTables
+    public class ComputationResultsTables : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+
+
+        private readonly ViewDefinition _viewDefinition;
+        private readonly Portfolio _portfolio;
+        private readonly RemoteSecuritySource _remoteSecuritySource;
+        private readonly List<string> _portfolioColumns;
+        private readonly List<string> _primitiveColumns;
+
         #region PropertyBag
-        private readonly List<Row> _portfolioRows;
-        private readonly List<PrimitiveRow> _primitiveRows;
+        private List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
+        private readonly Dictionary<UniqueIdentifier, PrimitiveRow> _primitiveRows = new Dictionary<UniqueIdentifier, PrimitiveRow>();
 
-        private ComputationResultsTables(List<Row> portfolioRows, List<PrimitiveRow> primitiveRows)
+        public ComputationResultsTables(ViewDefinition viewDefinition, Portfolio portfolio, RemoteSecuritySource remoteSecuritySource)
         {
-            _portfolioRows = portfolioRows;
-            _primitiveRows = primitiveRows;
+            _viewDefinition = viewDefinition;
+            _portfolio = portfolio;
+            _remoteSecuritySource = remoteSecuritySource;
+            _portfolioColumns = GetPortfolioColumns(viewDefinition).OrderBy(c=>c).ToList();
+            _primitiveColumns = GetPrimitiveColumns(viewDefinition).OrderBy(c=>c).ToList();
         }
 
-        public List<Row> PortfolioRows
-        {
-            get { return _portfolioRows; }
-        }
 
-        public List<PrimitiveRow> PrimitiveRows
-        {
-            get { return _primitiveRows; }
-        }
-
-        #endregion
-
-
-
-        public static ComputationResultsTables Build(ViewComputationResultModel results, CancellationToken cancellationToken, ViewDefinition viewDefinition, Portfolio portfolio, RemoteSecuritySource remoteSecuritySource)
+        public void Update(ViewComputationResultModel results, CancellationToken cancellationToken)
         {
             var valueIndex = Indexvalues(results);
 
             cancellationToken.ThrowIfCancellationRequested();
-            var portfolioRows = BuildPortfolioRows(viewDefinition, portfolio, valueIndex, remoteSecuritySource).ToList();
+            _portfolioRows= BuildPortfolioRows(_viewDefinition, _portfolio, valueIndex, _remoteSecuritySource).ToList();
+            InvokePropertyChanged("PortfolioRows");
+
 
             cancellationToken.ThrowIfCancellationRequested();
-            var primitiveRows = BuildPrimitiveRows(viewDefinition, valueIndex).ToList();
 
-            return new ComputationResultsTables(portfolioRows, primitiveRows);
+            bool rowsChanged = MergeUpdatePrimitiveRows(valueIndex);
+
+            if (rowsChanged)
+                InvokePropertyChanged("PrimitiveRows");//TODO
+
         }
 
-        private static IEnumerable<PrimitiveRow> BuildPrimitiveRows(ViewDefinition viewDefinition, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
+        private bool MergeUpdatePrimitiveRows(Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
         {
-            var targets = viewDefinition.CalculationConfigurationsByName.SelectMany(conf => conf.Value.SpecificRequirements).Select(s => s.ComputationTargetIdentifier).Distinct();
-            foreach (var target in targets)
+            bool rowsChanged = false;
+            
+            var targets = _viewDefinition.CalculationConfigurationsByName.SelectMany(conf => conf.Value.SpecificRequirements).Select(s => s.ComputationTargetIdentifier).Distinct();
+            foreach (var target in targets.Where(target => !_primitiveRows.ContainsKey(target)))
+            {
+                _primitiveRows.Add(target, new PrimitiveRow(target));
+                rowsChanged = true;
+            }
+
+            foreach (var row in _primitiveRows.Values)
             {
                 var values = new Dictionary<string, object>();
-                foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
+                foreach (var configuration in _viewDefinition.CalculationConfigurationsByName)
                 {
-                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r =>r.ComputationTargetType == ComputationTargetType.PRIMITIVE && r.ComputationTargetIdentifier == target))
+                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.PRIMITIVE && r.ComputationTargetIdentifier == row.TargetId))
                     {
-                        var key = new Tuple<UniqueIdentifier, string, string>(target.ToLatest(),valueReq.ValueName, configuration.Key);
+                        var key = new Tuple<UniqueIdentifier, string, string>(row.TargetId.ToLatest(), valueReq.ValueName, configuration.Key);
 
                         object value;
                         if (valueIndex.TryGetValue(key, out value))
@@ -68,12 +82,46 @@ namespace OGDotNet_Analytics.View
                         }
                     }
                 }
-                yield return new PrimitiveRow(target, values);
-
+                row.Update(values);
             }
+
+            return rowsChanged;
         }
 
-        public static IEnumerable<string> GetPrimitiveColumns(ViewDefinition viewDefinition)
+        public List<string> PortfolioColumns
+        {
+            get { return _portfolioColumns; }
+        }
+
+        public List<string> PrimitiveColumns
+        {
+            get { return _primitiveColumns; }
+        }
+
+        public List<PortfolioRow> PortfolioRows
+        {
+            get { return _portfolioRows; }
+        }
+
+        public List<PrimitiveRow> PrimitiveRows
+        {
+            get { return _primitiveRows.Values.OrderBy(r=>r.TargetName).ToList(); }
+        }
+
+
+        public void InvokePropertyChanged(string propertyName)
+        {
+            InvokePropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+        public void InvokePropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        #endregion
+
+        private static IEnumerable<string> GetPrimitiveColumns(ViewDefinition viewDefinition)
         {
             var valueNames = new HashSet<string>();
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
@@ -86,7 +134,7 @@ namespace OGDotNet_Analytics.View
             return valueNames;
         }
 
-        public static IEnumerable<string> GetPortfolioColumns(ViewDefinition viewDefinition)
+        private static IEnumerable<string> GetPortfolioColumns(ViewDefinition viewDefinition)
         {
 
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
@@ -160,89 +208,7 @@ namespace OGDotNet_Analytics.View
             }
         }
 
-        private static Dictionary<Tuple<UniqueIdentifier, string, string>, object> Indexvalues(ViewComputationResultModel results)
-        {
-            var valueIndex = new Dictionary<Tuple<UniqueIdentifier, string, string>, object>();
-            foreach (var result in results.AllResults)
-            {
-                
-                switch (result.ComputedValue.Specification.TargetSpecification.Type)
-                {
-                    case ComputationTargetType.PRIMITIVE:
-                    case ComputationTargetType.POSITION:
-                    case ComputationTargetType.PORTFOLIO_NODE:
-                        valueIndex.Add(new Tuple<UniqueIdentifier, string, string>(
-                                           result.ComputedValue.Specification.TargetSpecification.Uid.ToLatest(),
-                                           result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
-                                       result.ComputedValue.Value);
-                        break;
-                    case ComputationTargetType.TRADE:
-                    case ComputationTargetType.SECURITY:
-                        //TODO throw new NotImplementedException();
-                        break;
-                }
-            }
-            return valueIndex;
-        }
-
-        public class Row
-        {
-            private readonly string _positionName;
-            private readonly UniqueIdentifier _id;
-            private readonly Dictionary<string, object> _columns;
-
-            public Row(UniqueIdentifier id, string positionName, Dictionary<string, object> columns)
-            {
-                _id = id;
-                _positionName = positionName;
-                _columns = columns;
-            }
-
-            public string PositionName
-            {
-                get
-                {
-                    return _positionName;
-                }
-            }
-
-            public Dictionary<string, object> Columns
-            {
-                get
-                {
-                    return _columns;
-                }
-            }
-
-            public object this[String key]
-            {
-                get { return _columns[key]; }
-            }
-        }
-
-        public class PrimitiveRow
-        {
-            private readonly UniqueIdentifier _targetId;
-            private readonly Dictionary<string, object> _columns;
-
-            public PrimitiveRow(UniqueIdentifier targetId, Dictionary<string, object> columns)
-            {
-                _targetId = targetId;
-                _columns = columns;
-            }
-
-            public string TargetName
-            {
-                get { return _targetId.ToString(); }//This is what the WebUI does
-            }
-
-            public object this[string key]
-            {
-                get { return _columns.ContainsKey(key) ? _columns[key] : null; }
-            }
-        }
-
-        private static IEnumerable<Row> BuildPortfolioRows(ViewDefinition viewDefinition, Portfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex, RemoteSecuritySource remoteSecuritySource)
+        private static IEnumerable<PortfolioRow> BuildPortfolioRows(ViewDefinition viewDefinition, Portfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex, RemoteSecuritySource remoteSecuritySource)
         {
             if (portfolio == null)
                 yield break;
@@ -274,8 +240,33 @@ namespace OGDotNet_Analytics.View
                 }
 
 
-                yield return new Row(position.Identifier, position.Name, values);
+                yield return new PortfolioRow(position.Identifier, position.Name, values);
             }
+        }
+
+        private static Dictionary<Tuple<UniqueIdentifier, string, string>, object> Indexvalues(ViewComputationResultModel results)
+        {
+            var valueIndex = new Dictionary<Tuple<UniqueIdentifier, string, string>, object>();
+            foreach (var result in results.AllResults)
+            {
+
+                switch (result.ComputedValue.Specification.TargetSpecification.Type)
+                {
+                    case ComputationTargetType.PRIMITIVE:
+                    case ComputationTargetType.POSITION:
+                    case ComputationTargetType.PORTFOLIO_NODE:
+                        valueIndex.Add(new Tuple<UniqueIdentifier, string, string>(
+                                           result.ComputedValue.Specification.TargetSpecification.Uid.ToLatest(),
+                                           result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
+                                       result.ComputedValue.Value);
+                        break;
+                    case ComputationTargetType.TRADE:
+                    case ComputationTargetType.SECURITY:
+                        //TODO throw new NotImplementedException();
+                        break;
+                }
+            }
+            return valueIndex;
         }
     }
 }

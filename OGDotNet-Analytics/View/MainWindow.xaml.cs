@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -76,8 +77,27 @@ namespace OGDotNet_Analytics
                 cancellationToken.ThrowIfCancellationRequested();
                 var viewDefinition = remoteViewResource.Definition;
 
-                var primitiveColumns = ComputationResultsTables.GetPrimitiveColumns(viewDefinition).ToList();
-                var portfolioColumns = ComputationResultsTables.GetPortfolioColumns(viewDefinition).ToList();
+                
+                //TODO bind this by magic
+                var resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource);
+                resultsTable.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+                                                    {
+                                                        if (cancellationToken.IsCancellationRequested)
+                                                            return;
+                                                        if (e.PropertyName == "PrimitiveRows")
+                                                            Dispatcher.Invoke((Action)(delegate
+                                                                                            {
+                                                                                                primitivesTable.DataContext = resultsTable.PrimitiveRows;
+                                                                                            }));
+                                                        if (e.PropertyName == "PortfolioRows")
+                                                            Dispatcher.Invoke((Action)(delegate
+                                                            {
+                                                                portfolioTable.DataContext = resultsTable.PortfolioRows;
+                                                            }));
+                                                    };
+                
+                var primitiveColumns = resultsTable.PrimitiveColumns;
+                var portfolioColumns = resultsTable.PortfolioColumns;
 
                 Dispatcher.Invoke((Action)(() =>
                    {
@@ -122,16 +142,7 @@ namespace OGDotNet_Analytics
                         SetStatus("Getting first result");
                         foreach (var results in client.GetResults(cancellationToken))
                         {
-                            ComputationResultsTables resultsTables = ComputationResultsTables.Build(results, cancellationToken, viewDefinition, portfolio, _remoteSecuritySource);
-                            Dispatcher.Invoke((Action)(() =>
-                            {
-                                if (!cancellationToken.IsCancellationRequested)
-                                {
-                                    portfolioTable.DataContext = resultsTables.PortfolioRows;
-                                    primitivesTable.DataContext = resultsTables.PrimitiveRows;
-                                }
-                            }));
-
+                            resultsTable.Update(results, cancellationToken);
                             SetStatus(string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (DateTime.Now - previousTime).TotalMilliseconds, ++count));
                             previousTime = DateTime.Now;
                         }
