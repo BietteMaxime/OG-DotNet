@@ -43,7 +43,9 @@
     </Reference>
     <Reference Include="Fudge, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -67,7 +69,7 @@
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
     <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
-    <Compile Include="DisposableBase.xaml.cs" />
+    <Compile Include="Utils\DisposableBase.xaml.cs" />
     <Compile Include="Model\Resources\ClientResultStream.cs" />
     <Compile Include="Mappedtypes\financial\analytics\DoubleLabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrixEntry.cs" />
@@ -133,6 +135,7 @@
     <Compile Include="Mappedtypes\engine\View\ViewDefinition.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewTargetResultModel.cs" />
     <Compile Include="View\ComputationResultsTables.cs" />
+    <Compile Include="View\WindowLocationPersister.cs" />
     <Page Include="SecurityExplorer\SecurityWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -141,7 +144,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -149,7 +152,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -189,6 +192,12 @@
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="View\Resources\OpenGammaSplash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Resources\favicon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

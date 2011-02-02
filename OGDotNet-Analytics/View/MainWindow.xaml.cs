@@ -24,6 +24,8 @@ namespace OGDotNet_Analytics
         {
             InitializeComponent();
 
+            Title = string.Format("OGDotNet ({0})", Settings.ServiceUri);
+
             var remoteConfig = new RemoteConfig(Settings.ConfigId, Settings.ServiceUri);
 
             var remoteClient = remoteConfig.UserClient;
@@ -33,10 +35,11 @@ namespace OGDotNet_Analytics
             var viewNames = _remoteViewProcessor.ViewNames;
             _remoteSecuritySource = remoteConfig.SecuritySource;
             viewSelector.DataContext = viewNames;
+
+            WindowLocationPersister.InitAndPersistPosition(this, Settings);
+
             var viewToSelect = viewNames.Where(v => Settings.PreviousViewName == v).FirstOrDefault();
             viewSelector.SelectedItem = viewToSelect;
-
-
         }
 
         private void viewSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
