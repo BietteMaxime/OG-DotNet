@@ -17,9 +17,6 @@ namespace OGDotNet_Analytics.View.CellTemplates
     /// </summary>
     public partial class VolatilitySurfaceCell : UserControl
     {
-
-        const double Size = 5.0;
-
         private bool _haveInitedData;
         private readonly DispatcherTimer _timer;
 
@@ -28,26 +25,27 @@ namespace OGDotNet_Analytics.View.CellTemplates
             InitializeComponent();
             _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(1000.0)};
 
-            // Start the timer
-            double t = 0;
-            double direction = 0.08;
-            const double maxTilt= 1.5;
-            SetCamera(0);
+            double speed = 0.08;
+
+            double t = Math.PI / 4.0;
+            const double maxT= Math.PI/2.0;
+            const double minT = 0;
+            SetCamera(t);
             _timer.Start();
 
             _timer.Tick += delegate
                                {
                                    _timer.Interval = TimeSpan.FromMilliseconds(80.0);
 
-                                   if (t > maxTilt)
+                                   if (t > maxT)
                                    {
-                                       direction = -Math.Abs(direction);
+                                       speed = -Math.Abs(speed);
                                    }
-                                   if (t < -maxTilt)
+                                   if (t < minT)
                                    {
-                                       direction = Math.Abs(direction);
+                                       speed = Math.Abs(speed);
                                    }
-                                   t += direction;
+                                   t += speed;
 
                                    SetCamera(t);
                                };
@@ -55,8 +53,13 @@ namespace OGDotNet_Analytics.View.CellTemplates
 
         private void SetCamera(double t)
         {
-            camera.Position = new Point3D(0.5*Size, Size * (0.5 + (Math.Sin(t) * 2)), Size * (0.5 + (Math.Cos(t) * 2)));
-            camera.LookDirection = new Point3D(0.5 * Size, 0.5 * Size, 0.5 * Size) - camera.Position;
+            Point3D center = new Point3D(0.5,0.5,0.5);
+
+            const double circleRadius = 2.2;
+
+            camera.Position = center + new Vector3D(Math.Sin(t), Math.Cos(t), 0) * circleRadius;
+            Point3D lookTarget = center;
+            camera.LookDirection = lookTarget - camera.Position;
         }
 
         private void InitData()
@@ -153,12 +156,12 @@ namespace OGDotNet_Analytics.View.CellTemplates
             var ys = data.Ys.ToList();
 
 
-            double xScale = Size/(xs.Count-1);
-            double yScale = Size / (ys.Count -1);
+            double xScale = 1.0/(xs.Count-1);
+            double yScale = 1.0 / (ys.Count -1);
 
             const double max = 100.0;// xs.SelectMany(x => ys.Select(y => data[x, y])).Max();
             const double colorScale = 1/ max;
-            const double heightScale = Size/max;
+            const double heightScale = 1.0/max;
             
 
 
@@ -195,16 +198,16 @@ namespace OGDotNet_Analytics.View.CellTemplates
 
             group.Children.Add(CreateTriangleModel(
                 new Point3D(0,0,0), 
-                new Point3D(Size,0,0), 
-                new Point3D(0,Size,0), 
+                new Point3D(1,0,0), 
+                new Point3D(0,1,0), 
                 0
-                                   ));
+                ));
             group.Children.Add(CreateTriangleModel(
-                new Point3D(0, Size, 0),                
-                new Point3D(Size, 0, 0),
-                new Point3D(Size, Size, 0),
+                new Point3D(0, 1, 0),                
+                new Point3D(1, 0, 0),
+                new Point3D(1, 1, 0),
                 0
-                                   ));
+                ));
 
             var model = new ModelVisual3D {Content = group};
             
