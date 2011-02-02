@@ -33,12 +33,12 @@ namespace OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface
             get { return _values[new Tuple<Tenor, Tenor>(x, y)]; }
         }
 
-        public IEnumerable<Tenor> Xs
+        public IList<Tenor> Xs
         {
             get { return _xs; }
         }
 
-        public IEnumerable<Tenor> Ys
+        public IList<Tenor> Ys
         {
             get { return _ys; }
         }

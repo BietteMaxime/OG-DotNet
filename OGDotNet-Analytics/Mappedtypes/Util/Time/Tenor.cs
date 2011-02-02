@@ -8,7 +8,7 @@ namespace OGDotNet_Analytics.Mappedtypes.Util.Time
     {
         private readonly string _period;
 
-        private Tenor(string period)
+        private Tenor(string period) 
         {
             _period = period;
         }
@@ -27,6 +27,16 @@ namespace OGDotNet_Analytics.Mappedtypes.Util.Time
             return _period;
         }
 
+        /// <summary>
+        /// This will return a TimeSpan that might vaguelly represent the period of this tenor
+        /// </summary>
+        public TimeSpan TimeSpan
+        {
+            get
+            {
+                return System.Xml.XmlConvert.ToTimeSpan(_period);//This understands the ISO8601 standard, and does something vaguelly sane
+            }
+        }
 
         public bool Equals(Tenor other)
         {

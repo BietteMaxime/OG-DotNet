@@ -10,6 +10,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet_Analytics.Mappedtypes.Util.Time;
+using OGDotNet_Analytics.Properties;
 
 namespace OGDotNet_Analytics.View.CellTemplates
 {
@@ -18,6 +19,8 @@ namespace OGDotNet_Analytics.View.CellTemplates
     /// </summary>
     public partial class VolatilitySurfaceCell : UserControl
     {
+        private static readonly bool _toScale = Settings.Default.ShowVolatilityCurveToScale;
+
         private bool _haveInitedData;
         private readonly DispatcherTimer _timer;
 
@@ -153,49 +156,99 @@ namespace OGDotNet_Analytics.View.CellTemplates
         {
             var group = new Model3DGroup();
 
-            var xs = Surface.Xs.ToList();
-            var ys = Surface.Ys.ToList();
-
-
-            double xScale = 1.0/(xs.Count-1);
-            double yScale = 1.0 / (ys.Count -1);
-
+            var xKeys = Surface.Xs;
+            var yKeys = Surface.Ys;
+            
             const double zRange = 100.0;
             const double colorScale = 1 / zRange;
             const double zScale = 1.0 / zRange;
-            
 
 
 
-            for (int yi   = 0; yi < ys.Count-1; yi++)
+            if (_toScale)
             {
-                for (int xi = 0; xi < xs.Count-1; xi++)
-                {
-                    var at = GetPoint(xi, yi, xs, ys, Surface);
-                    var right = GetPoint(xi+1, yi, xs, ys, Surface);
-                    var above = GetPoint(xi, yi+1, xs, ys, Surface);
+                var xMax = Surface.Xs.Select(GetScaledValue).Max();
+                double xScale = 1.0 / xMax;
+                var yMax = Surface.Ys.Select(GetScaledValue).Max();
+                double yScale = 1.0 / yMax;
 
-                    group.Children.Add(CreateTriangleModel(
-                        new Point3D(xi*xScale, yi*yScale, at*zScale),
-                        new Point3D((xi + 1) * xScale, (yi) * yScale, right * zScale),
-                        new Point3D((xi) * xScale, (yi + 1) * yScale, above * zScale), (float) (colorScale * at)));
+                var scaleMatrix = new Matrix3D(
+                    xScale,     0,      0,      0,
+                    0,          yScale, 0,      0,
+                    0,          0,      zScale, 0,
+
+                    0, 0, 0, 1);
+
+
+                for (int yi = 0; yi < yKeys.Count - 1; yi++)
+                {
+                    for (int xi = 0; xi < xKeys.Count - 1; xi++)
+                    {
+
+                        var zValue = Surface[xKeys[xi], yKeys[yi]];
+
+                        group.Children.Add(CreateTriangleModel(
+                            GetPoint(xi, yi, Surface, scaleMatrix),
+                            GetPoint(xi + 1, yi, Surface, scaleMatrix),
+                            GetPoint(xi, yi + 1, Surface, scaleMatrix)
+                            , (float) (colorScale*zValue)));
+                    }
+                }
+
+                for (int yi = 1; yi < yKeys.Count; yi++)
+                {
+                    for (int xi = 1; xi < xKeys.Count; xi++)
+                    {
+                        var zValue = Surface[xKeys[xi], yKeys[yi]];
+                        group.Children.Add(CreateTriangleModel(
+                            GetPoint(xi, yi, Surface, scaleMatrix),
+                            GetPoint(xi - 1, yi, Surface, scaleMatrix),
+                            GetPoint(xi, yi - 1, Surface, scaleMatrix)
+                            , (float) (colorScale*zValue)));
+                    }
                 }
             }
-            for (int yi = 1; yi < ys.Count; yi++)
+            else
             {
-                for (int xi = 1; xi < xs.Count; xi++)
+                var xs = Surface.Xs.ToList();
+                var ys = Surface.Ys.ToList();
+                
+                double xScale = 1.0 / (xs.Count - 1);
+                double yScale = 1.0 / (ys.Count - 1);
+
+
+
+
+                for (int yi = 0; yi < ys.Count - 1; yi++)
                 {
-                    var at = GetPoint(xi, yi, xs, ys, Surface);
-                    var left = GetPoint(xi - 1, yi, xs, ys, Surface);
-                    var below = GetPoint(xi, yi - 1, xs, ys, Surface);
+                    for (int xi = 0; xi < xs.Count - 1; xi++)
+                    {
+                        var at = GetPoint(xi, yi, xs, ys, Surface);
+                        var right = GetPoint(xi + 1, yi, xs, ys, Surface);
+                        var above = GetPoint(xi, yi + 1, xs, ys, Surface);
 
-                    group.Children.Add(CreateTriangleModel(
-                        new Point3D(xi * xScale, yi * yScale, at * zScale),
-                        new Point3D((xi - 1) * xScale, (yi) * yScale, left * zScale),
-                        new Point3D((xi) * xScale, (yi - 1) * yScale, below * zScale), (float)(colorScale * at)));
+                        group.Children.Add(CreateTriangleModel(
+                            new Point3D(xi * xScale, yi * yScale, at * zScale),
+                            new Point3D((xi + 1) * xScale, (yi) * yScale, right * zScale),
+                            new Point3D((xi) * xScale, (yi + 1) * yScale, above * zScale), (float)(colorScale * at)));
+                    }
                 }
-            }
+                for (int yi = 1; yi < ys.Count; yi++)
+                {
+                    for (int xi = 1; xi < xs.Count; xi++)
+                    {
+                        var at = GetPoint(xi, yi, xs, ys, Surface);
+                        var left = GetPoint(xi - 1, yi, xs, ys, Surface);
+                        var below = GetPoint(xi, yi - 1, xs, ys, Surface);
 
+                        group.Children.Add(CreateTriangleModel(
+                            new Point3D(xi * xScale, yi * yScale, at * zScale),
+                            new Point3D((xi - 1) * xScale, (yi) * yScale, left * zScale),
+                            new Point3D((xi) * xScale, (yi - 1) * yScale, below * zScale), (float)(colorScale * at)));
+                    }
+                }
+
+            }
 
             group.Children.Add(CreateTriangleModel(
                 new Point3D(0,0,0), 
@@ -227,6 +280,11 @@ namespace OGDotNet_Analytics.View.CellTemplates
             
         }
 
+        public static double GetScaledValue(Tenor t)
+        {
+            return t.TimeSpan.TotalMilliseconds;
+        }
+
         private VolatilitySurfaceData Surface
         {
             get { return (VolatilitySurfaceData) DataContext; }
@@ -236,6 +294,17 @@ namespace OGDotNet_Analytics.View.CellTemplates
         {
             return data[xs[xi], ys[yi]];
         }
+
+        private static Point3D GetPoint(int xi, int yi, VolatilitySurfaceData surface, Matrix3D scaleMatrix)
+        {
+            var xTenor = surface.Xs[xi];
+            var yTenor = surface.Ys[yi];
+            var xValue= GetScaledValue(xTenor);
+            var yValue = GetScaledValue(yTenor);
+            var zValue = surface[xTenor, yTenor];
+            return new Point3D(xValue, yValue, zValue) * scaleMatrix;
+        }
+
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {

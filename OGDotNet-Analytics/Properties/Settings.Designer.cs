@@ -71,5 +71,17 @@ namespace OGDotNet_Analytics.Properties {
                 this["WindowLocationPersisterData"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowVolatilityCurveToScale {
+            get {
+                return ((bool)(this["ShowVolatilityCurveToScale"]));
+            }
+            set {
+                this["ShowVolatilityCurveToScale"] = value;
+            }
+        }
     }
 }
