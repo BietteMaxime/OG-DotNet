@@ -7,6 +7,7 @@ using System.Windows.Data;
 using OGDotNet_Analytics.Mappedtypes.financial.analytics;
 using OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve;
+using OGDotNet_Analytics.Utils;
 
 namespace OGDotNet_Analytics.View.CellTemplates
 {
@@ -63,14 +64,11 @@ namespace OGDotNet_Analytics.View.CellTemplates
 
         private static DataTemplate BuildTemplate(string column, Type type)
         {
-            var binding = new Binding(String.Format(".[{0}]", column));//TODO bugs galore
-
-
             Type templateType;
             if (TemplateTypes.TryGetValue(type, out templateType))
             {
                 var comboFactory = new FrameworkElementFactory(templateType);
-                comboFactory.SetValue(FrameworkElement.DataContextProperty, binding);  
+                comboFactory.SetValue(FrameworkElement.DataContextProperty, BindingUtils.GetIndexerBinding(column));  
 
                 var itemsTemplate = new DataTemplate {VisualTree = comboFactory};
 
@@ -79,7 +77,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
             else
             {
                 var comboFactory = new FrameworkElementFactory(typeof(TextBlock));
-                comboFactory.SetValue(TextBlock.TextProperty, binding);
+                comboFactory.SetValue(TextBlock.TextProperty, BindingUtils.GetIndexerBinding(column));
                 var itemsTemplate = new DataTemplate {VisualTree = comboFactory};
                 return itemsTemplate;
             }

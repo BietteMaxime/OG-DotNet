@@ -69,6 +69,7 @@
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
     <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
+    <Compile Include="Utils\BindingUtils.cs" />
     <Compile Include="Utils\DisposableBase.xaml.cs" />
     <Compile Include="Model\Resources\ClientResultStream.cs" />
     <Compile Include="Mappedtypes\financial\analytics\DoubleLabelledMatrix1D.cs" />
