@@ -172,13 +172,7 @@ namespace OGDotNet_Analytics.Mappedtypes.engine.View
 
         private static List<T> GetList<T>(IFudgeFieldContainer ffc, string fieldName, IFudgeDeserializer deserializer) where T : class
         {
-            var specificRequirements = new List<T>();
-            foreach (var fudgeField in ffc.GetAllByName(fieldName))
-            {
-                var specificRequirement = deserializer.FromField<T>(fudgeField);
-                specificRequirements .Add(specificRequirement);
-            }
-            return specificRequirements;
+            return ffc.GetAllByName(fieldName).Select(deserializer.FromField<T>).ToList();
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
