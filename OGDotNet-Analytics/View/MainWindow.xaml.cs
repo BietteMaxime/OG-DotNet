@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -107,7 +106,7 @@ namespace OGDotNet_Analytics
                         foreach (var results in client.GetResults(cancellationToken))
                         {
                             resultsTable.Update(results, cancellationToken);
-                            SetStatus(string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (DateTime.Now - previousTime).TotalMilliseconds, ++count));
+                            SetStatus(string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (results.ResultTimestamp.ToDateTime() - results.ValuationTime.ToDateTime()).TotalMilliseconds, ++count));
                             previousTime = DateTime.Now;
                         }
                     }
