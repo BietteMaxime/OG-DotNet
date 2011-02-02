@@ -51,7 +51,7 @@ namespace OGDotNet_Analytics.View
             bool rowsChanged = MergeUpdatePrimitiveRows(valueIndex);
 
             if (rowsChanged)
-                InvokePropertyChanged("PrimitiveRows");//TODO
+                InvokePropertyChanged("PrimitiveRows");//TODO this could be an ObservableCollection for extra niceness
 
         }
 
