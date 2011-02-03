@@ -19,7 +19,7 @@ namespace OGDotNet_Analytics.Model.Resources
         {
             get
             {
-                var fudgeMsg = _rest.GetSubMagic("viewNames").GetReponse();
+                var fudgeMsg = _rest.Resolve("viewNames").GetReponse();
 
                 return fudgeMsg.GetAllByOrdinal(1).Select(fudgeField => (string) fudgeField.Value);
             }
@@ -27,7 +27,7 @@ namespace OGDotNet_Analytics.Model.Resources
 
         public RemoteViewResource GetView(string viewName)
         {
-            return new RemoteViewResource(_rest.GetSubMagic("views").GetSubMagic(viewName), _activeMqSpec);
+            return new RemoteViewResource(_rest.Resolve("views").Resolve(viewName), _activeMqSpec);
         }
     }
 }

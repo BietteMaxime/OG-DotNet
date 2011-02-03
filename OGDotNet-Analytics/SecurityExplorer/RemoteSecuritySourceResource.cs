@@ -23,7 +23,7 @@ namespace OGDotNet_Analytics.SecurityExplorer
 
             var fudgeSerializer = new FudgeSerializer(FudgeContext);
             var msg = fudgeSerializer.SerializeToMsg(request);
-            var fudgeMsg = _restTarget.GetSubMagic("search").GetReponse(FudgeContext, msg);
+            var fudgeMsg = _restTarget.Resolve("search").Post(FudgeContext, msg);
 
 
             return fudgeSerializer.Deserialize<AbstractSearchResult<SecurityDocument>>(fudgeMsg); 
@@ -39,7 +39,7 @@ namespace OGDotNet_Analytics.SecurityExplorer
 
         public ManageableSecurity GetSecurity(UniqueIdentifier uid)
         {
-            var fudgeMsg = _restTarget.GetSubMagic("security").GetSubMagic(uid.ToString()).GetReponse();
+            var fudgeMsg = _restTarget.Resolve("security").Resolve(uid.ToString()).GetReponse();
             FudgeSerializer fudgeSerializer = new FudgeSerializer(FudgeContext);
             return fudgeSerializer.Deserialize<SecurityDocument>(fudgeMsg).Security;
 

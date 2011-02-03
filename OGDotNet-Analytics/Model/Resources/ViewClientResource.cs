@@ -56,48 +56,46 @@ namespace OGDotNet_Analytics.Model.Resources
 
         public void Start()
         {
-            _rest.GetSubMagic("start").GetReponse("POST");
+            _rest.Resolve("start").Post();
         }
 
         private void Stop()//TODO make this stop the IEnumerables somehow
         {
-            _rest.GetSubMagic("stop").GetReponse("POST");
+            _rest.Resolve("stop").Post();
         }
 
         public void Pause()
         {
-            _rest.GetSubMagic("pause").GetReponse("POST");
+            _rest.Resolve("pause").Post();
         }
 
         private ClientResultStream<ViewComputationResultModel> StartResultStream()
         {
-            var reponse = _rest.GetSubMagic("startJmsResultStream").GetFudgeReponse("POST");
-            var queueName = reponse.GetValue<string>("value");
+            var reponse = _rest.Resolve("startJmsResultStream").Post();
             var queueUri = new Uri(_activeMqSpec);
-            return new ClientResultStream<ViewComputationResultModel>(queueUri, queueName, StopResultStream);
+            return new ClientResultStream<ViewComputationResultModel>(queueUri, reponse.GetValue<string>("value"), StopResultStream);
         }
         private void StopResultStream()
         {
-            _rest.GetSubMagic("startJmsResultStream").GetReponse("POST");
+            _rest.Resolve("startJmsResultStream").Post();
         }
 
         private ClientResultStream<ViewComputationResultModel> StartDeltaStream()
         {
-            var reponse = _rest.GetSubMagic("startJmsDeltaStream").GetFudgeReponse("POST");
-            var queueName = reponse.GetValue<string>("value");
+            var reponse = _rest.Resolve("startJmsDeltaStream").Post();
             var queueUri = new Uri(_activeMqSpec);
-            return new ClientResultStream<ViewComputationResultModel>(queueUri, queueName, StopResultStream);
+            return new ClientResultStream<ViewComputationResultModel>(queueUri, reponse.GetValue<string>("value"), StopResultStream);
         }
         private void StopDeltaStream()
         {
-            _rest.GetSubMagic("startJmsDeltaStream").GetReponse("POST");
+            _rest.Resolve("stopJmsDeltaStream").Post();
         }
 
         private bool ResultAvailable
         {
             get {
 
-                var reponse = _rest.GetSubMagic("resultAvailable").GetReponse();
+                var reponse = _rest.Resolve("resultAvailable").GetReponse();
                 return 1 == (sbyte) (reponse.GetByName("value").Value);
             }
         }
@@ -105,7 +103,7 @@ namespace OGDotNet_Analytics.Model.Resources
         {
             get
             {
-                var restMagic = _rest.GetSubMagic("latestResult").GetReponse();
+                var restMagic = _rest.Resolve("latestResult").GetReponse();
                 //ViewComputationResultModel
                 var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
                 var wrapper = fudgeSerializer.Deserialize<Wrapper>(restMagic);

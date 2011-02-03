@@ -15,13 +15,13 @@ namespace OGDotNet_Analytics.Model.Resources
         public RemoteClient(RestTarget userDataRest, string username, string clientId)
         {
             _clientId = clientId;
-            _rest = userDataRest.GetSubMagic(username).GetSubMagic("clients").GetSubMagic(_clientId);
+            _rest = userDataRest.Resolve(username).Resolve("clients").Resolve(_clientId);
         }
 
 
         public Action HeartbeatSender
         {
-            get { return () => _rest.GetSubMagic("heartbeat").GetReponse("POST"); }
+            get { return () => _rest.Resolve("heartbeat").Post(); }
         }
     }
 }

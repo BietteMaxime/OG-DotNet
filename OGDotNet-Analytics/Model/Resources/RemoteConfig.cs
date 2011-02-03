@@ -22,7 +22,7 @@ namespace OGDotNet_Analytics.Model.Resources
             _rootRest = new RestTarget(rootUri);
             _configId = configId;
 
-            _configsMsg = _rootRest.GetSubMagic("configuration").GetReponse();
+            _configsMsg = _rootRest.Resolve("configuration").GetReponse();
 
             var configMsg = ((IFudgeFieldContainer)_configsMsg.GetByName(_configId).Value);
 

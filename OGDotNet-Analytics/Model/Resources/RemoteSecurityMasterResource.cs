@@ -11,7 +11,7 @@ namespace OGDotNet_Analytics.Model.Resources
 
         public RemoteSecurityMasterResource(string baseUri)
         {
-            _restTarget = new RestTarget(baseUri).GetSubMagic("securityMaster");
+            _restTarget = new RestTarget(baseUri).Resolve("securityMaster");
         }
 
         public IEnumerable<RemoteSecurityMaster> GetSecurityMasters()
@@ -24,7 +24,7 @@ namespace OGDotNet_Analytics.Model.Resources
 
         public RemoteSecurityMaster GetSecurityMaster(string uid)
         {
-            return new RemoteSecurityMaster(_restTarget.GetSubMagic(uid));
+            return new RemoteSecurityMaster(_restTarget.Resolve(uid));
         }
 
 

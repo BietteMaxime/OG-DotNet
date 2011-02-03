@@ -21,14 +21,14 @@ namespace OGDotNet_Analytics.Model.Resources
 
         public void Init()
         {
-            _rest.GetSubMagic("init").GetReponse("POST");
+            _rest.Resolve("init").Post();
         }
 
         public IPortfolio Portfolio
         {
             get
             {
-                var fudgeMsg = _rest.GetSubMagic("portfolio").GetReponse();
+                var fudgeMsg = _rest.Resolve("portfolio").GetReponse();
                 if (fudgeMsg == null)
                 {
                     return null;
@@ -43,7 +43,7 @@ namespace OGDotNet_Analytics.Model.Resources
         {
             get
             {
-                var fudgeMsg = _rest.GetSubMagic("definition").GetReponse();
+                var fudgeMsg = _rest.Resolve("definition").GetReponse();
                 return FudgeConfig.GetFudgeSerializer().Deserialize<ViewDefinition>(fudgeMsg);
             }
         }
@@ -51,7 +51,7 @@ namespace OGDotNet_Analytics.Model.Resources
         public ViewClientResource CreateClient()
         {
             
-            var clientUri = _rest.GetSubMagic("clients").Create(FudgeConfig.GetFudgeContext(), FudgeConfig.GetFudgeSerializer().SerializeToMsg(UserPrincipal.DefaultUser));
+            var clientUri = _rest.Resolve("clients").Create(FudgeConfig.GetFudgeContext(), FudgeConfig.GetFudgeSerializer().SerializeToMsg(UserPrincipal.DefaultUser));
 
             return new ViewClientResource(clientUri, _activeMqSpec);
         }

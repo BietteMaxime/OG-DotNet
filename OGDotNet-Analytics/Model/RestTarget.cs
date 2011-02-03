@@ -8,7 +8,6 @@ namespace OGDotNet_Analytics.Model
 {
     public class RestTarget
     {
-
         private const string FudgeMimeType = "application/vnd.fudgemsg";
 
         private readonly Uri _serviceUri;
@@ -24,7 +23,7 @@ namespace OGDotNet_Analytics.Model
         }
 
 
-        public RestTarget GetSubMagic(string method, params Tuple<string,string>[] queryParams)
+        public RestTarget Resolve(string method, params Tuple<string,string>[] queryParams)
         {
             var safeMethod = Uri.EscapeDataString(method);
             var uriBuilder = new UriBuilder(_serviceUri);
@@ -35,79 +34,46 @@ namespace OGDotNet_Analytics.Model
             return new RestTarget(uriBuilder.Uri);
         }
 
-        public string GetReponse(string method)
+        public FudgeMsg Post(FudgeContext context = null, FudgeMsg reqMsg = null)
         {
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
-            MangleRequest(request);
-            request.Method = Uri.EscapeDataString(method);
-
-            var response = (HttpWebResponse)request.GetResponse();
-
-            return GetString(response);
-        }
-
-        
-        public FudgeMsg GetReponse(FudgeContext context, FudgeMsg reqMsg)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri.ToString());
-            MangleRequest(request);
-
-            request.Method = "POST";
-            using (var requestStream = request.GetRequestStream())
-            {
-                context.Serialize(reqMsg, requestStream);
-            }
-
-            using (var response = (HttpWebResponse) request.GetResponse())
-            using (Stream responseStream = response.GetResponseStream())
-            {
-                return  context.Deserialize(responseStream).Message;
-            }
-        }
-
-        public Uri Create(FudgeContext context, FudgeMsg reqMsg)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri.ToString());
-            MangleRequest(request);
-
-            request.Method = "POST";
-            using (var requestStream = request.GetRequestStream())
-            {
-                context.Serialize(reqMsg, requestStream);
-            }
-
-            using (var response = (HttpWebResponse)request.GetResponse())
-            {
-                if (response.StatusCode != HttpStatusCode.Created)
-                {
-                    throw new ArgumentException();
-                }
-                return new Uri(response.Headers["Location"]);
-            }
-        }
-
-        static string GetString(HttpWebResponse response)
-        {
-            return new StreamReader(response.GetResponseStream()).ReadToEnd();
-        }
-
-        public FudgeMsg GetFudgeReponse(string method)
-        {
-            var fudgeContext = new FudgeContext();
-
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
-            request.Method = Uri.EscapeDataString(method);
-
-            MangleRequest(request);
-            var response = (HttpWebResponse)request.GetResponse();
-            FudgeMsg fudgeMsg;
+            using (HttpWebResponse response = PostImpl(context, reqMsg))
             using (Stream responseStream = response.GetResponseStream())
             using (BufferedStream buff = new BufferedStream(responseStream))
             {
-
-                fudgeMsg = fudgeContext.Deserialize(buff).Message;
+                var fudgeContext = context ?? new FudgeContext();
+                var fudgeMsgEnvelope = fudgeContext.Deserialize(buff);
+                return fudgeMsgEnvelope == null ? null : fudgeMsgEnvelope.Message;
             }
-            return fudgeMsg;
+        }
+
+        public Uri Create(FudgeContext context = null, FudgeMsg reqMsg = null)
+        {
+            using (HttpWebResponse response = PostImpl(context, reqMsg))
+            {
+                if (response.StatusCode == HttpStatusCode.Created)
+                {
+                    return new Uri(response.Headers["Location"]);
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+            }
+        }
+
+        private HttpWebResponse PostImpl(FudgeContext context = null, FudgeMsg reqMsg = null)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
+            MangleRequest(request);
+            request.Method = "POST";
+
+            if (context != null)
+                using (var requestStream = request.GetRequestStream())
+                {
+                    context.Serialize(reqMsg, requestStream);
+                }
+
+            return (HttpWebResponse)request.GetResponse();
         }
 
         public FudgeMsg GetReponse()
