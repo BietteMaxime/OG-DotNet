@@ -10,6 +10,10 @@ using OGDotNet_Analytics.Utils;
 
 namespace OGDotNet_Analytics.View.CellTemplates
 {
+    /// <summary>
+    /// This allows you to bind cell template according to type, late bound.
+    /// Once the template has been selected this selector gets out of the way for this column, and the template doesn't change
+    /// </summary>
     internal class CellTemplateSelector : DataTemplateSelector
     {
         private readonly string _column;
@@ -70,12 +74,9 @@ namespace OGDotNet_Analytics.View.CellTemplates
                 var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
                 return itemsTemplate;
             }
-            else
-            {
-                SetCellTemplate(cellValue);
 
-                return null;    
-            }
+            SetCellTemplate(cellValue);
+            return null;
         }
 
         private void SetCellTemplate(object cellValue)

@@ -4,7 +4,7 @@ using System.Windows.Controls;
 namespace OGDotNet_Analytics.View.CellTemplates
 {
     /// <summary>
-    /// Interaction logic for NullCell.xaml
+    /// This class exists so that <see cref="CellTemplateSelector"/> can defer decisions if it's only seen nulls so far
     /// </summary>
     internal partial class NullCell : UserControl
     {
