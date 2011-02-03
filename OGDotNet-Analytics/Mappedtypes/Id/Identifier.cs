@@ -1,39 +1,23 @@
-﻿using System;
-using Fudge;
-using Fudge.Serialization;
-
-namespace OGDotNet_Analytics.Mappedtypes.Id
+﻿namespace OGDotNet_Analytics.Mappedtypes.Id
 {
     public class Identifier
     {
-        public string Scheme { get; set; }
-        public string Value { get; set; }
-
-        public static Identifier FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        private readonly string _scheme;
+        public string Scheme
         {
-            var r = new Identifier();
-
-            foreach (var field in ffc.GetAllFields())
-            {
-                switch (field.Name)
-                {
-                    case "Scheme":
-                        r.Scheme = (string) field.Value;
-                        break;
-                    case "Value":
-                        r.Value= (string)field.Value;
-                        break;
-                    default:
-                        throw new ArgumentException();
-                }
-            }
-            return r;
+            get { return _scheme; }
         }
 
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        private readonly string _value;
+        public string Value
         {
-            a.Add("Scheme", Scheme);
-            a.Add("Value", Value);
+            get { return _value; }
+        }
+
+        public Identifier(string scheme, string value)
+        {
+            _scheme = scheme;
+            _value = value;
         }
 
         public override string ToString()
