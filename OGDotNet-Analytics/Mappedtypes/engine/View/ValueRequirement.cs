@@ -1,6 +1,7 @@
 ﻿using System;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.Id;
 
@@ -19,10 +20,7 @@ namespace OGDotNet.Mappedtypes.engine.View
         private ValueRequirement(string valueName,string computationTargetType, string computationTargetIdentifier)
         {
             _valueName = valueName;
-            if (!Enum.TryParse(computationTargetType, true, out _computationTargetType))
-            {
-                throw new ArgumentException();
-            }
+            _computationTargetType = ComputationTargetTypeBuilder.GetComputationTargetType(computationTargetType);
             _computationTargetIdentifier = UniqueIdentifier.Parse(computationTargetIdentifier);
         }
 

@@ -14,11 +14,7 @@ namespace OGDotNet.Builders
 
         public override ComputationTargetSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            ComputationTargetType type;
-            if (! Enum.TryParse(msg.GetValue<String>("computationTargetType"), out type))
-            {
-                throw new ArgumentException("Unhandled computation target type");
-            }
+            ComputationTargetType type = ComputationTargetTypeBuilder.GetComputationTargetType(msg.GetValue<String>("computationTargetType"));
             UniqueIdentifier uid = null;
             var ctiField = msg.GetByName("computationTargetIdentifier");
             if (ctiField !=null) {
