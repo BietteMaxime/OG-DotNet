@@ -83,19 +83,12 @@ namespace OGDotNet_Analytics.Model
             var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
 
             MangleRequest(request);
-            var response = (HttpWebResponse)request.GetResponse();
-            if (response.ContentLength == 0)
+            using (var response = (HttpWebResponse) request.GetResponse())
+            using (var responseStream = response.GetResponseStream())
+            using (var buff = new BufferedStream(responseStream))
             {
-                return null;
+                return fudgeContext.Deserialize(buff).Message;
             }
-
-            FudgeMsg fudgeMsg;
-            using (Stream responseStream = response.GetResponseStream())
-            using (BufferedStream buff = new BufferedStream(responseStream))
-            {
-                fudgeMsg = fudgeContext.Deserialize(buff).Message;
-            }
-            return fudgeMsg;
         }
 
         private static void MangleRequest(HttpWebRequest request)
