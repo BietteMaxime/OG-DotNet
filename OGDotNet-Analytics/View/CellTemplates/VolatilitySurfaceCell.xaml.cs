@@ -301,9 +301,9 @@ namespace OGDotNet_Analytics.View.CellTemplates
             
         }
 
-        public static double GetScaledValue(Tenor t)
+        private static double GetScaledValue(Tenor t)
         {
-            return t.TimeSpan.TotalMilliseconds;
+            return t.TimeSpan.TotalDays;
         }
 
         private VolatilitySurfaceData Surface

@@ -39,13 +39,19 @@ namespace OGDotNet_Analytics.Model
 
         public string GetReponse(string method)
         {
-            return GetReponse(method, "");
+            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
+            MangleRequest(request);
+            request.Method = Uri.EscapeDataString(method);
+
+            var response = (HttpWebResponse)request.GetResponse();
+
+            return GetString(response);
         }
 
         
         public FudgeMsg GetReponse(FudgeContext context, FudgeMsg reqMsg)
         {
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri.ToString().Replace("securitySource","securityMaster"));
+            var request = (HttpWebRequest)WebRequest.Create(_serviceUri.ToString());
             MangleRequest(request);
 
             request.Method = "POST";
@@ -63,7 +69,7 @@ namespace OGDotNet_Analytics.Model
 
         public Uri Create(FudgeContext context, FudgeMsg reqMsg)
         {
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri.ToString().Replace("securitySource", "securityMaster"));
+            var request = (HttpWebRequest)WebRequest.Create(_serviceUri.ToString());
             MangleRequest(request);
 
             request.Method = "POST";
@@ -80,24 +86,6 @@ namespace OGDotNet_Analytics.Model
                 }
                 return new Uri(response.Headers["Location"]);
             }
-        }
-
-        public string GetReponse(string method, string body)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
-            MangleRequest(request);
-            request.Method = Uri.EscapeDataString(method);
-
-            using (var requestStream = request.GetRequestStream())
-            using (var writer = new StreamWriter(requestStream))
-            {
-                writer.Write(body);
-            }
-
-            var response = (HttpWebResponse)request.GetResponse();
-
-            return GetString(response);
-
         }
 
         static string GetString(HttpWebResponse response)

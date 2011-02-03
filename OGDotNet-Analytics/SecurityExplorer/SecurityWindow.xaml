@@ -21,7 +21,7 @@
                 <Label HorizontalAlignment="Right" Height="Auto" Width="Auto" Content="Name:"/>
                 <TextBox Height="26" Name="nameBox" Width="100" Text="*" TextChanged="nameBox_TextChanged" />
                 <Label HorizontalAlignment="Right" Height="Auto" Width="Auto" Content="Type:"/>
-                <TextBox Name="typeBox" Text="*" AcceptsReturn="False" TextChanged="typeBox_TextChanged" Width="100" />
+                <TextBox Name="typeBox" Text="BOND" AcceptsReturn="False" TextChanged="typeBox_TextChanged" Width="100" />
             </StackPanel>
         <ListView Grid.Row="1" Width="Auto" Height="450" Name="itemGrid" ItemsSource="{Binding}" MouseDoubleClick="grid_MouseDoubleClick" SelectionChanged="grid_SelectionChanged"  ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectionMode="Single">
 
