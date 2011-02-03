@@ -1,5 +1,6 @@
 ﻿using Fudge;
 using Fudge.Serialization;
+using OGDotNet_Analytics.Mappedtypes.Core.Security;
 using OGDotNet_Analytics.Mappedtypes.Id;
 using OGDotNet_Analytics.Mappedtypes.Master;
 using OGDotNet_Analytics.Mappedtypes.Master.Security;
@@ -39,7 +40,7 @@ namespace OGDotNet_Analytics.Model.Resources
             }
         }
 
-        public ManageableSecurity GetSecurity(UniqueIdentifier uid)
+        public Security GetSecurity(UniqueIdentifier uid)
         {
             var fudgeMsg = _restTarget.Resolve("security").Resolve(uid.ToString()).GetReponse();
             FudgeSerializer fudgeSerializer = new FudgeSerializer(FudgeContext);
