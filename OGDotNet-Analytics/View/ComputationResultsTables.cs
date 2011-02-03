@@ -22,10 +22,11 @@ namespace OGDotNet_Analytics.View
         private readonly RemoteSecuritySource _remoteSecuritySource;
         private readonly List<string> _portfolioColumns;
         private readonly List<string> _primitiveColumns;
-
+        
         #region PropertyBag
         private List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
         private readonly Dictionary<UniqueIdentifier, PrimitiveRow> _primitiveRows = new Dictionary<UniqueIdentifier, PrimitiveRow>();
+        private IEnumerable<TreeNode> _portfolioNodes;
 
         public ComputationResultsTables(ViewDefinition viewDefinition, IPortfolio portfolio, RemoteSecuritySource remoteSecuritySource)
         {
@@ -42,7 +43,7 @@ namespace OGDotNet_Analytics.View
             var valueIndex = Indexvalues(results);
 
             cancellationToken.ThrowIfCancellationRequested();
-            _portfolioRows= BuildPortfolioRows(_viewDefinition, _portfolio, valueIndex, _remoteSecuritySource).ToList();
+            _portfolioRows= BuildPortfolioRows(valueIndex).ToList();
             InvokePropertyChanged("PortfolioRows");
 
 
@@ -161,33 +162,36 @@ namespace OGDotNet_Analytics.View
             return String.Format("{0}/{1}", configuration, valueName);
         }
 
-        private static IEnumerable<TreeNode> GetNodes(IPortfolio portfolio, RemoteSecuritySource remoteSecuritySource)
+        
+        private IEnumerable<TreeNode> GetPortfolioNodes()
         {
-            return  GetNodesInner(portfolio.Root, remoteSecuritySource).ToList();
+            //We cache these in order to cache security names
+            _portfolioNodes = _portfolioNodes ?? GetPortfolioNodesInner(_portfolio.Root).ToList();
+            return _portfolioNodes;
         }
 
-        private static IEnumerable<TreeNode> GetNodesInner(PortfolioNode node, RemoteSecuritySource remoteSecuritySource)
+
+        private IEnumerable<TreeNode> GetPortfolioNodesInner(PortfolioNode node)
         {
             yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name);
             foreach (var position in node.Positions)
             {
-                var securityNames = remoteSecuritySource.GetSecurities(position.SecurityKey).Select(s => s.Name).Distinct().ToList();
-                if (securityNames.Count != 1)
-                {
-                    throw new ArgumentException();
-                }
-
-                string securityName = securityNames[0];
-                yield return new TreeNode(position.Identifier, String.Format("{0} ({1})", securityName, position.Quantity));
+                yield return new TreeNode(position.Identifier, String.Format("{0} ({1})", GetSecurityName(position), position.Quantity));
             }
 
             foreach (var portfolioNode in node.SubNodes)
             {
-                foreach (var treeNode in GetNodesInner(portfolioNode, remoteSecuritySource))
+                foreach (var treeNode in GetPortfolioNodesInner(portfolioNode))
                 {
                     yield return treeNode;
                 }
             }
+        }
+
+
+        private string GetSecurityName(Position position)
+        {
+            return _remoteSecuritySource.GetSecurity(position.SecurityKey).Name;
         }
 
         private class TreeNode
@@ -212,15 +216,15 @@ namespace OGDotNet_Analytics.View
             }
         }
 
-        private static IEnumerable<PortfolioRow> BuildPortfolioRows(ViewDefinition viewDefinition, IPortfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex, RemoteSecuritySource remoteSecuritySource)
+        private IEnumerable<PortfolioRow> BuildPortfolioRows(Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
         {
-            if (portfolio == null)
+            if (_portfolio == null)
                 yield break;
-            foreach (var position in GetNodes(portfolio, remoteSecuritySource))
+            foreach (var position in GetPortfolioNodes())
             {
                 var values = new Dictionary<string, object>();
 
-                foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
+                foreach (var configuration in _viewDefinition.CalculationConfigurationsByName)
                 {
                     foreach (var req in configuration.Value.PortfolioRequirementsBySecurityType)
                     {

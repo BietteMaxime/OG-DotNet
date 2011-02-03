@@ -26,47 +26,29 @@ namespace OGDotNet_Analytics.Model.Resources
 
         public Security GetSecurity(IdentifierBundle bundle)
         {
-            throw new NotImplementedException();
+            Tuple<string, string>[] parameters = GetParameters(bundle);
+            var fudgeMsg = _restTarget.GetSubMagic("securities").GetSubMagic("security", parameters).GetReponse();
+
+            var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
+            return fudgeSerializer.Deserialize<Security>((FudgeMsg) fudgeMsg.GetMessage("security"));
+
         }
-
-
-        private class OrderedComparison<T> : IEqualityComparer<List<T>>
-        {
-            public static readonly OrderedComparison<T> Instance = new OrderedComparison<T>();
-
-            public bool Equals(List<T> x, List<T> y)
-            {
-                return x.SequenceEqual(y);
-            }
-
-            public int GetHashCode(List<T> obj)
-            {
-                return obj[0].GetHashCode();
-            }
-        }
-        readonly Dictionary<List<Identifier>, List<Security>> _securitiesCache = new Dictionary<List<Identifier>, List<Security>>(OrderedComparison<Identifier>.Instance);
 
         public ICollection<Security> GetSecurities(IdentifierBundle bundle)
         {
-            var ids = bundle.Identifiers.ToList();
 
-            List<Security> ret;
-            if (_securitiesCache.TryGetValue(ids, out ret))
-            {
-                return ret;
-            }
-
-
-            var parameters = ids.Select(s => new Tuple<string,string>("id", s.ToString())).ToArray();
+            var parameters = GetParameters(bundle);
             var fudgeMsg = _restTarget.GetSubMagic("securities", parameters).GetReponse();
 
             var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
-            ret = fudgeMsg.GetAllByName("security").Select(f => f.Value).Cast<FudgeMsg>().Select(fudgeSerializer.Deserialize<Security>).ToList();
+            return fudgeMsg.GetAllByName("security").Select(f => f.Value).Cast<FudgeMsg>().Select(fudgeSerializer.Deserialize<Security>).ToList();
+        }
 
+        private static Tuple<string, string>[] GetParameters(IdentifierBundle bundle)
+        {
+            var ids = bundle.Identifiers.ToList();
 
-            _securitiesCache[ids] = ret;
-
-            return ret.ToList();
+            return ids.Select(s => new Tuple<string, string>("id", s.ToString())).ToArray();
         }
     }
 }

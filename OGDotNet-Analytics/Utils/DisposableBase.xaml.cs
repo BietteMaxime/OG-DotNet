@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OGDotNet_Analytics
+namespace OGDotNet_Analytics.Utils
 {
     public abstract class DisposableBase : IDisposable
     {

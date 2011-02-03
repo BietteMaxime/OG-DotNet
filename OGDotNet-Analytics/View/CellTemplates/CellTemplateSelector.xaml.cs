@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using OGDotNet_Analytics.Mappedtypes.financial.analytics;
 using OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve;
@@ -11,7 +10,7 @@ using OGDotNet_Analytics.Utils;
 
 namespace OGDotNet_Analytics.View.CellTemplates
 {
-    public class CellTemplateSelector : DataTemplateSelector
+    internal class CellTemplateSelector : DataTemplateSelector
     {
         private readonly string _column;
 

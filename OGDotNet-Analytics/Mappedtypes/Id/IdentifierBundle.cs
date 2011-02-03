@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 
 namespace OGDotNet_Analytics.Mappedtypes.Id
 {
-    public class IdentifierBundle
+    public class IdentifierBundle : IEquatable<IdentifierBundle>
     {
         private readonly HashSet<Identifier> _identifiers;
 
@@ -14,7 +15,7 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
             _identifiers = identifiers;
         }
 
-        public HashSet<Identifier> Identifiers
+        public IEnumerable<Identifier> Identifiers
         {
             get { return _identifiers; }
         }
@@ -45,5 +46,40 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
                 a.Add("ID", identifier);
             }
         }
+
+        #region Equality
+        public bool Equals(IdentifierBundle other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            
+            if (_identifiers.Count != other._identifiers.Count)
+                return false;
+            return _identifiers.All(i => other.Identifiers.Contains(i));
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof (IdentifierBundle)) return false;
+            return Equals((IdentifierBundle) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return _identifiers.OrderBy(i => i).Aggregate(0, (a,i)=> (a * 397) ^ i.GetHashCode() );
+        }
+
+        public static bool operator ==(IdentifierBundle left, IdentifierBundle right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(IdentifierBundle left, IdentifierBundle right)
+        {
+            return !Equals(left, right);
+        }
+        #endregion
     }
 }
