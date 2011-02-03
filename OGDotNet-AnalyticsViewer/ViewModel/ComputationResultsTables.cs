@@ -72,7 +72,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 var values = new Dictionary<string, object>();
                 foreach (var configuration in _viewDefinition.CalculationConfigurationsByName)
                 {
-                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.PRIMITIVE && r.ComputationTargetIdentifier == row.TargetId))
+                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.Primitive && r.ComputationTargetIdentifier == row.TargetId))
                     {
                         var key = new Tuple<UniqueIdentifier, string, string>(row.TargetId.ToLatest(), valueReq.ValueName, configuration.Key);
 
@@ -132,7 +132,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             var valueNames = new HashSet<string>();
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
-                foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.PRIMITIVE))
+                foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.Primitive))
                 {
                     valueNames.Add(GetColumnHeading(configuration.Key, req.ValueName));
                 }
@@ -261,16 +261,16 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
                 switch (result.ComputedValue.Specification.TargetSpecification.Type)
                 {
-                    case ComputationTargetType.PRIMITIVE:
-                    case ComputationTargetType.POSITION:
-                    case ComputationTargetType.PORTFOLIO_NODE:
+                    case ComputationTargetType.Primitive:
+                    case ComputationTargetType.Position:
+                    case ComputationTargetType.PortfolioNode:
                         valueIndex.Add(new Tuple<UniqueIdentifier, string, string>(
                                            result.ComputedValue.Specification.TargetSpecification.Uid.ToLatest(),
                                            result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
                                        result.ComputedValue.Value);
                         break;
-                    case ComputationTargetType.TRADE:
-                    case ComputationTargetType.SECURITY:
+                    case ComputationTargetType.Trade:
+                    case ComputationTargetType.Security:
                         //TODO throw new NotImplementedException();
                         break;
                 }
