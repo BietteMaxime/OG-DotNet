@@ -20,6 +20,8 @@ namespace OGDotNet_Analytics.View.CellTemplates
     public partial class VolatilitySurfaceCell : UserControl
     {
         private static readonly bool ToScale = Settings.Default.ShowVolatilityCurveToScale;
+        static readonly Point3D Center = new Point3D(0.5, 0.5, 0.5);
+
 
         private bool _haveInitedData;
         private readonly DispatcherTimer _timer;
@@ -56,13 +58,10 @@ namespace OGDotNet_Analytics.View.CellTemplates
 
         private void SetCamera(double t)
         {
-            var center = new Point3D(0.5,0.5,0.5);
-
             const double circleRadius = 2.2;
 
-            camera.Position = center + new Vector3D(Math.Sin(t), Math.Cos(t), 0) * circleRadius;
-            Point3D lookTarget = center;
-            camera.LookDirection = lookTarget - camera.Position;
+            camera.Position = Center + new Vector3D(Math.Sin(t), Math.Cos(t), 0) * circleRadius;
+            camera.LookDirection = Center - camera.Position;
         }
 
         private void InitData()
