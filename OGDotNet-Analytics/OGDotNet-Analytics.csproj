@@ -96,7 +96,6 @@
     <Compile Include="Mappedtypes\Id\IdentifierSearchType.cs" />
     <Compile Include="Mappedtypes\Master\AbstractSearchResult.cs" />
     <Compile Include="Utils\ArgumentChecker.cs" />
-    <Compile Include="Utils\CompareUtils.cs" />
     <Compile Include="Mappedtypes\financial\Security\FinancialSecurity.cs" />
     <Compile Include="Mappedtypes\Id\IdentifierBundle.cs" />
     <Compile Include="Mappedtypes\Id\IdentifierSearch.cs" />

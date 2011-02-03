@@ -12,9 +12,9 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
     public class UniqueIdentifier : IComparable<UniqueIdentifier>, IEquatable<UniqueIdentifier>
     {
 
-        public const String SCHEME_FUDGE_FIELD_NAME = "Scheme";
-        public const String VALUE_FUDGE_FIELD_NAME = "Value";
-        public const String VERSION_FUDGE_FIELD_NAME = "Version";
+        private const String SchemeFudgeFieldName = "Scheme";
+        private const String ValueFudgeFieldName = "Value";
+        private const String VersionFudgeFieldName = "Version";
 
         private readonly String _scheme;
         private readonly String _value;
@@ -38,14 +38,14 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
             switch (split.Length)
             {
                 case 2:
-                    return Of(split[0], split[1], null);
+                    return Of(split[0], split[1]);
                 case 3:
                     return Of(split[0], split[1], split[2]);
             }
             throw new ArgumentException("Invalid identifier format: " + uidStr);
         }
 
-        public UniqueIdentifier(String scheme, String value, String version)
+        private UniqueIdentifier(String scheme, String value, String version)
         {
             ArgumentChecker.NotEmpty(scheme, "scheme");
             ArgumentChecker.NotEmpty(value, "value");
@@ -114,16 +114,23 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
         #region auto generated equality
 
         public int CompareTo(UniqueIdentifier other)
-        {//TODO Aggh, cuulture and CompareTo in java land vs .Net
-            if (_scheme.CompareTo(other._scheme) != 0)
+        {
+            //NOTE: the aim here is to make compare work the same was as in java, which is ~InvariantCulture
+
+            const StringComparison comparison = StringComparison.InvariantCulture;
+
+            var schemeCompare = string.Compare(_scheme, other._scheme, comparison);
+            if (schemeCompare != 0)
             {
-                return _scheme.CompareTo(other._scheme);
+                return schemeCompare;
             }
-            if (_value.CompareTo(other._value) != 0)
+            var valueCompare = string.Compare(_value, other._value, comparison);
+            if (valueCompare != 0)
             {
-                return _value.CompareTo(other._value);
+                return valueCompare;
             }
-            return CompareUtils.CompareWithNull(_version, other._version);
+
+            return string.Compare(_version, other._version, comparison);//This handles null the same as the java CompareUtils class
         }
 
         public bool Equals(UniqueIdentifier other)
@@ -174,13 +181,13 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
             {
                 switch (field.Name)
                 {
-                    case SCHEME_FUDGE_FIELD_NAME:
+                    case SchemeFudgeFieldName:
                         schema = (string) field.Value;
                         break;
-                    case VALUE_FUDGE_FIELD_NAME:
+                    case ValueFudgeFieldName:
                         value = (string) field.Value;
                         break;
-                    case VERSION_FUDGE_FIELD_NAME:
+                    case VersionFudgeFieldName:
                         version = (string)field.Value;
                         break;
                     default:
@@ -192,11 +199,11 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add(SCHEME_FUDGE_FIELD_NAME, Scheme);
-            a.Add(VALUE_FUDGE_FIELD_NAME, Value);
+            a.Add(SchemeFudgeFieldName, Scheme);
+            a.Add(ValueFudgeFieldName, Value);
             if (Version != null)
             {
-                a.Add(VERSION_FUDGE_FIELD_NAME, Version);
+                a.Add(VersionFudgeFieldName, Version);
             }
         }
     }
