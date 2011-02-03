@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet_Analytics.Mappedtypes.engine;
-using OGDotNet_Analytics.Mappedtypes.engine.Value;
-using OGDotNet_Analytics.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Mappedtypes.engine.View;
 
-namespace OGDotNet_Analytics.Builders
+namespace OGDotNet.Builders
 {
     internal class ViewCalculationResultModelBuilder : BuilderBase<ViewCalculationResultModel>
     {

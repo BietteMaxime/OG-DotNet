@@ -1,4 +1,4 @@
-﻿namespace OGDotNet_Analytics.Mappedtypes.Id
+﻿namespace OGDotNet.Mappedtypes.Id
 {
     public enum IdentifierSearchType
     {

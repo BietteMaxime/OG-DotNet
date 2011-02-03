@@ -1,10 +1,10 @@
 ﻿using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet_Analytics.Mappedtypes.engine;
-using OGDotNet_Analytics.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet_Analytics.Builders
+namespace OGDotNet.Builders
 {
     internal class ComputationTargetSpecificationBuilder : BuilderBase<ComputationTargetSpecification>
     {

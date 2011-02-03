@@ -1,4 +1,6 @@
-﻿namespace OGDotNet_Analytics.Mappedtypes.Core.Position
+﻿using OGDotNet.Mappedtypes.Core.Position;
+
+namespace OGDotNet.Mappedtypes.Core.Position
 {
     public interface IPortfolio
     {

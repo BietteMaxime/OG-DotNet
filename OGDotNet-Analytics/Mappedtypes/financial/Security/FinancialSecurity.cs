@@ -1,7 +1,7 @@
-﻿using OGDotNet_Analytics.Mappedtypes.Id;
-using OGDotNet_Analytics.Mappedtypes.Master.Security;
+﻿using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Master.Security;
 
-namespace OGDotNet_Analytics.Mappedtypes.financial.Security
+namespace OGDotNet.Mappedtypes.financial.Security
 {
     /// <summary>
     /// TODO: kill these with the .proto replacement

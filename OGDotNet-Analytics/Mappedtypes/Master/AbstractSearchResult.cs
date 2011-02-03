@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-using OGDotNet_Analytics.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Util.Db;
 
-namespace OGDotNet_Analytics.Mappedtypes.Master
+namespace OGDotNet.Mappedtypes.Master
 {
     public class AbstractSearchResult<TDocument> //where TDocument extends Document
     {

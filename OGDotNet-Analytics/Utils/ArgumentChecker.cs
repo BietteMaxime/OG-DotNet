@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OGDotNet_Analytics.Utils
+namespace OGDotNet.Utils
 {
     internal static class ArgumentChecker
     {

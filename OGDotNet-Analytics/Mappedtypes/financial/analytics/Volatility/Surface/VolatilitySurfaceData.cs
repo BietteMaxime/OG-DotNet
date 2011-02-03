@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet_Analytics.Mappedtypes.Util.Time;
+using OGDotNet.Mappedtypes.Util.Time;
 
-namespace OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface
+namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
 {
     public class VolatilitySurfaceData
     {

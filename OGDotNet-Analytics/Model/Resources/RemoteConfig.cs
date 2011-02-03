@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Fudge;
-using OGDotNet_Analytics.Properties;
+using OGDotNet.Model.Resources;
+using OGDotNet.Properties;
 
 
-namespace OGDotNet_Analytics.Model.Resources
+namespace OGDotNet.Model.Resources
 {
     public class RemoteConfig
     {

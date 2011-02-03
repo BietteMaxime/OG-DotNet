@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet_Analytics.Mappedtypes.Id;
-using OGDotNet_Analytics.Mappedtypes.LiveData;
+using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.LiveData;
 
-namespace OGDotNet_Analytics.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.engine.View
 {
     public class ViewDefinition
     {

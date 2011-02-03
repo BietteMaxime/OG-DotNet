@@ -1,4 +1,4 @@
-﻿namespace OGDotNet_Analytics.Utils
+﻿namespace OGDotNet.Utils
 {
     internal static class StringUtils
     {

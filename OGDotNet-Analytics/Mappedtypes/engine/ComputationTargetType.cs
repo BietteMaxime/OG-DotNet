@@ -1,4 +1,4 @@
-﻿namespace OGDotNet_Analytics.Mappedtypes.engine
+﻿namespace OGDotNet.Mappedtypes.engine
 {
     public enum ComputationTargetType
     {

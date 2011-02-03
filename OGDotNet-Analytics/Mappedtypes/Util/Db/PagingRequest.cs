@@ -1,4 +1,4 @@
-﻿namespace OGDotNet_Analytics.Mappedtypes.Util.Db
+﻿namespace OGDotNet.Mappedtypes.Util.Db
 {
     public class PagingRequest
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet_Analytics.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet_Analytics.Mappedtypes.Core.Position
+namespace OGDotNet.Mappedtypes.Core.Position
 {
     public class Position
     {

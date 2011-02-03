@@ -5,7 +5,7 @@ using System.Net;
 using System.Reflection;
 using Fudge;
 
-namespace OGDotNet_Analytics.Model
+namespace OGDotNet.Model
 {
     public class RestTarget
     {

@@ -1,4 +1,4 @@
-﻿namespace OGDotNet_Analytics.Mappedtypes.engine.Value
+﻿namespace OGDotNet.Mappedtypes.engine.Value
 {
     public class ComputedValue
     {

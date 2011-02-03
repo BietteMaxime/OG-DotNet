@@ -2,7 +2,7 @@
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet_Analytics.Builders
+namespace OGDotNet.Builders
 {
     internal abstract class BuilderBase<T>: IFudgeSerializationSurrogate
     {

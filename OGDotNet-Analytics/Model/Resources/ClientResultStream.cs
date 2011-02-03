@@ -3,9 +3,9 @@ using System.IO;
 using System.Threading;
 using Apache.NMS;
 using Fudge.Encodings;
-using OGDotNet_Analytics.Utils;
+using OGDotNet.Utils;
 
-namespace OGDotNet_Analytics.Model.Resources
+namespace OGDotNet.Model.Resources
 {
     public class ClientResultStream<T> : DisposableBase
     {

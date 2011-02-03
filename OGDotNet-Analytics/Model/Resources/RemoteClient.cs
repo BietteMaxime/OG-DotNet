@@ -1,6 +1,7 @@
 ﻿using System;
+using OGDotNet.Model;
 
-namespace OGDotNet_Analytics.Model.Resources
+namespace OGDotNet.Model.Resources
 {
     public class RemoteClient
     {

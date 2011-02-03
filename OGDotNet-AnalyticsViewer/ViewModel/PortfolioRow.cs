@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using OGDotNet_Analytics.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet_AnalyticsViewer.ViewModel
+namespace OGDotNet.AnalyticsViewer.ViewModel
 {
     public class PortfolioRow //TODO INotifyPropertyChanged
     {

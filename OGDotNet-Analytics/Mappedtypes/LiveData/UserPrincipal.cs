@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
-using OGDotNet_Analytics.Properties;
+using OGDotNet.Properties;
 
-namespace OGDotNet_Analytics.Mappedtypes.LiveData
+namespace OGDotNet.Mappedtypes.LiveData
 {
     public class UserPrincipal
     {

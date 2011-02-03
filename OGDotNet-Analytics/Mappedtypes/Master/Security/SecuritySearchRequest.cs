@@ -1,8 +1,8 @@
 ﻿using System;
-using OGDotNet_Analytics.Mappedtypes.Id;
-using OGDotNet_Analytics.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Util.Db;
 
-namespace OGDotNet_Analytics.Mappedtypes.Master.Security
+namespace OGDotNet.Mappedtypes.Master.Security
 {
     [Serializable]
     internal class SecuritySearchRequest

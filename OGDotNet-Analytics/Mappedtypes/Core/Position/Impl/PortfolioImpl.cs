@@ -1,4 +1,6 @@
-﻿namespace OGDotNet_Analytics.Mappedtypes.Core.Position.Impl
+﻿using OGDotNet.Mappedtypes.Core.Position;
+
+namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
     internal class PortfolioImpl : IPortfolio
     {

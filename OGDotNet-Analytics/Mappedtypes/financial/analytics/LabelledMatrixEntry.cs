@@ -1,4 +1,4 @@
-﻿namespace OGDotNet_Analytics.Mappedtypes.financial.analytics
+﻿namespace OGDotNet.Mappedtypes.financial.analytics
 {
     public class LabelledMatrixEntry
     {

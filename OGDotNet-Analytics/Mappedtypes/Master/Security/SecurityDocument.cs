@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OGDotNet_Analytics.Mappedtypes.Master.Security
+namespace OGDotNet.Mappedtypes.Master.Security
 {
     [Serializable]
     public class SecurityDocument

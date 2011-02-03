@@ -1,6 +1,6 @@
-﻿using OGDotNet_Analytics.Mappedtypes.engine.Value;
+﻿using OGDotNet.Mappedtypes.engine.Value;
 
-namespace OGDotNet_Analytics.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.engine.View
 {
     public class ViewResultEntry
     {

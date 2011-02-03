@@ -2,7 +2,7 @@
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet_Analytics.Model
+namespace OGDotNet.Model
 {
     public static class FudgeConfig
     {
@@ -24,7 +24,7 @@ namespace OGDotNet_Analytics.Model
             if (_fudgeContext == null)
             {
                 _fudgeContext = new FudgeContext();
-                _fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategy("OGDotNet_Analytics.Mappedtypes", "com.opengamma"));
+                _fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategy("OGDotNet.Mappedtypes", "com.opengamma"));
                 _fudgeContext.SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
                 _typeMap = new SerializationTypeMap(_fudgeContext);
             }

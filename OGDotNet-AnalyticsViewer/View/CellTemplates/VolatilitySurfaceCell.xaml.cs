@@ -8,11 +8,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface;
-using OGDotNet_Analytics.Mappedtypes.Util.Time;
-using OGDotNet_AnalyticsViewer.Properties;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
+using OGDotNet.Mappedtypes.Util.Time;
+using OGDotNet.AnalyticsViewer.Properties;
 
-namespace OGDotNet_AnalyticsViewer.View.CellTemplates
+namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {
     /// <summary>
     /// TODO work out how to present this

@@ -1,4 +1,4 @@
-﻿namespace OGDotNet_Analytics.Mappedtypes.engine.View
+﻿namespace OGDotNet.Mappedtypes.engine.View
 {
     public class ResultModelDefinition
     {

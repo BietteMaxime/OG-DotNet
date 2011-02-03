@@ -2,7 +2,7 @@
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet_Analytics.Mappedtypes.Util.Time
+namespace OGDotNet.Mappedtypes.Util.Time
 {
     public class Tenor : IEquatable<Tenor>
     {

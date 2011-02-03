@@ -4,12 +4,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using OGDotNet.WPFUtils;
-using OGDotNet_Analytics.Mappedtypes.financial.analytics;
-using OGDotNet_Analytics.Mappedtypes.financial.analytics.Volatility.Surface;
-using OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve;
-using OGDotNet_Analytics.Utils;
+using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
+using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
+using OGDotNet.Utils;
 
-namespace OGDotNet_AnalyticsViewer.View.CellTemplates
+namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {
     /// <summary>
     /// This allows you to bind cell template according to type, late bound.

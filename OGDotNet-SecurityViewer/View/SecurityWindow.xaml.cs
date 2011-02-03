@@ -3,13 +3,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Model.Resources;
 
-using OGDotNet_Analytics.Mappedtypes.Core.Security;
-using OGDotNet_Analytics.Mappedtypes.Util.Db;
-using OGDotNet_Analytics.Model.Resources;
-using OGDotNet_Analytics.Properties;
-
-namespace OGDotNet_Analytics.SecurityExplorer
+namespace OGDotNet.SecurityViewer.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

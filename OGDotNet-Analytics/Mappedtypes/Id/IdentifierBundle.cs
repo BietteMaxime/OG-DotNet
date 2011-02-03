@@ -5,7 +5,7 @@ using System.Text;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet_Analytics.Mappedtypes.Id
+namespace OGDotNet.Mappedtypes.Id
 {
     public class IdentifierBundle : IEquatable<IdentifierBundle>
     {

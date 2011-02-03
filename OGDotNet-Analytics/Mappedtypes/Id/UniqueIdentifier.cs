@@ -2,9 +2,9 @@
 using System.Text;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet_Analytics.Utils;
+using OGDotNet.Utils;
 
-namespace OGDotNet_Analytics.Mappedtypes.Id
+namespace OGDotNet.Mappedtypes.Id
 {
     /// <summary>
     /// TODO: .netify this and finish it

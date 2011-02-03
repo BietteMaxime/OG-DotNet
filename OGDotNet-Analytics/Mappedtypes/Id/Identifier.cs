@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OGDotNet_Analytics.Mappedtypes.Id
+namespace OGDotNet.Mappedtypes.Id
 {
     public class Identifier : IEquatable<Identifier>, IComparable<Identifier>
     {

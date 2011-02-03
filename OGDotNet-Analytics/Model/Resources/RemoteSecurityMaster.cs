@@ -1,12 +1,12 @@
 ﻿using Fudge;
 using Fudge.Serialization;
-using OGDotNet_Analytics.Mappedtypes.Core.Security;
-using OGDotNet_Analytics.Mappedtypes.Id;
-using OGDotNet_Analytics.Mappedtypes.Master;
-using OGDotNet_Analytics.Mappedtypes.Master.Security;
-using OGDotNet_Analytics.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Master;
+using OGDotNet.Mappedtypes.Master.Security;
+using OGDotNet.Mappedtypes.Util.Db;
 
-namespace OGDotNet_Analytics.Model.Resources
+namespace OGDotNet.Model.Resources
 {
     /// <summary>
     /// TODO: should I be exposing this

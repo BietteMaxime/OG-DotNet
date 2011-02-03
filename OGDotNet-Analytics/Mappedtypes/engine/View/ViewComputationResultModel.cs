@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet_Analytics.Builders;
-using OGDotNet_Analytics.Mappedtypes.engine.Value;
+using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.engine.Value;
 
-namespace OGDotNet_Analytics.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.engine.View
 {
     [FudgeSurrogate(typeof(ViewComputationResultModelBuilder))]
     public class ViewComputationResultModel

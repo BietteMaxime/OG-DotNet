@@ -2,7 +2,7 @@
 using System.Linq;
 
 
-namespace OGDotNet_Analytics.Model.Resources
+namespace OGDotNet.Model.Resources
 {
     public class RemoteViewProcessor
     {

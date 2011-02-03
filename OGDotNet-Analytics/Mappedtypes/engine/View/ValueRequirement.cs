@@ -1,10 +1,10 @@
 ﻿using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet_Analytics.Mappedtypes.engine.Value;
-using OGDotNet_Analytics.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet_Analytics.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.engine.View
 {
     public class ValueRequirement
     {

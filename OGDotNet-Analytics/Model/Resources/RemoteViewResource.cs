@@ -1,12 +1,9 @@
-﻿using System;
-using System.Net;
-using Fudge.Serialization;
-using OGDotNet_Analytics.Mappedtypes.Core.Position;
-using OGDotNet_Analytics.Mappedtypes.engine.View;
-using OGDotNet_Analytics.Mappedtypes.LiveData;
-using OGDotNet_Analytics.Properties;
+﻿using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Core.Position;
+using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.LiveData;
 
-namespace OGDotNet_Analytics.Model.Resources
+namespace OGDotNet.Model.Resources
 {
     public class RemoteViewResource
     {

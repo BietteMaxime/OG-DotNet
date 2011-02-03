@@ -1,6 +1,6 @@
-﻿using OGDotNet_Analytics.Mappedtypes.math.curve;
+﻿using OGDotNet.Mappedtypes.math.curve;
 
-namespace OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve
+namespace OGDotNet.Mappedtypes.financial.model.interestrate.curve
 {
     public class YieldCurve
     {

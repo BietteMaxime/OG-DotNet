@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using OGDotNet_Analytics.Mappedtypes.Core.Position;
-using OGDotNet_Analytics.Mappedtypes.engine;
-using OGDotNet_Analytics.Mappedtypes.engine.View;
-using OGDotNet_Analytics.Mappedtypes.Id;
-using OGDotNet_Analytics.Model.Resources;
+using OGDotNet.Mappedtypes.Core.Position;
+using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Model.Resources;
 
-namespace OGDotNet_AnalyticsViewer.ViewModel
+namespace OGDotNet.AnalyticsViewer.ViewModel
 {
     public class ComputationResultsTables : INotifyPropertyChanged
     {

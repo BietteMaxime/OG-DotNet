@@ -1,9 +1,9 @@
 ﻿using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet_Analytics.Builders;
+using OGDotNet.Builders;
 
-namespace OGDotNet_Analytics.Mappedtypes.engine.Value
+namespace OGDotNet.Mappedtypes.engine.Value
 {
     public class ValueSpecification : IEquatable<ValueSpecification>
     {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 
-using OGDotNet_Analytics.Mappedtypes.Core.Security;
-using OGDotNet_Analytics.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet_Analytics.Model.Resources
+namespace OGDotNet.Model.Resources
 {
     public class RemoteSecuritySource : ISecuritySource
     {

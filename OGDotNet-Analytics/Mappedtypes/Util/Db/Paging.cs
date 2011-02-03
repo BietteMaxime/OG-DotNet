@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OGDotNet_Analytics.Mappedtypes.Util.Db
+namespace OGDotNet.Mappedtypes.Util.Db
 {
     [Serializable]
     public class Paging

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Data;
-using OGDotNet_Analytics.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet_AnalyticsViewer.ViewModel
+namespace OGDotNet.AnalyticsViewer.ViewModel
 {
     public class PrimitiveRow : INotifyPropertyChanged
     {

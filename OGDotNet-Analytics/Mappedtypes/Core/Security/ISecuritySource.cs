@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using OGDotNet_Analytics.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet_Analytics.Mappedtypes.Core.Security
+namespace OGDotNet.Mappedtypes.Core.Security
 {
     public interface ISecuritySource
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet_Analytics.Mappedtypes.math.curve
+namespace OGDotNet.Mappedtypes.math.curve
 {
     public class InterpolatedDoublesCurve
     {

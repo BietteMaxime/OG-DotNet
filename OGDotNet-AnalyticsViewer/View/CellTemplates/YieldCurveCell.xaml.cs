@@ -2,10 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using OGDotNet_Analytics.Mappedtypes.financial.model.interestrate.curve;
-using OGDotNet_Analytics.Mappedtypes.math.curve;
+using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
+using OGDotNet.Mappedtypes.math.curve;
 
-namespace OGDotNet_AnalyticsViewer.View.CellTemplates
+namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {
     /// <summary>
     /// Interaction logic for UserControl1.xaml

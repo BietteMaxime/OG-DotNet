@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OGDotNet_Analytics.Mappedtypes.Core.Position
+namespace OGDotNet.Mappedtypes.Core.Position
 {
     public class PortfolioNode
     {

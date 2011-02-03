@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet_Analytics.Mappedtypes.Id
+namespace OGDotNet.Mappedtypes.Id
 {
     public class IdentifierSearch
     {

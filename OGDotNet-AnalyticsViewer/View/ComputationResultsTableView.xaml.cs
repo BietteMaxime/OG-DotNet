@@ -4,11 +4,11 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using OGDotNet.WPFUtils;
-using OGDotNet_Analytics.Utils;
-using OGDotNet_AnalyticsViewer.View.CellTemplates;
-using OGDotNet_AnalyticsViewer.ViewModel;
+using OGDotNet.Utils;
+using OGDotNet.AnalyticsViewer.View.CellTemplates;
+using OGDotNet.AnalyticsViewer.ViewModel;
 
-namespace OGDotNet_AnalyticsViewer.View
+namespace OGDotNet.AnalyticsViewer.View
 {
     /// <summary>
     /// Interaction logic for ComputationResultsTableview.xaml
