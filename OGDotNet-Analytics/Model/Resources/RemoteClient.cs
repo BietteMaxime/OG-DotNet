@@ -1,5 +1,4 @@
 ﻿using System;
-using OGDotNet.Model;
 
 namespace OGDotNet.Model.Resources
 {
@@ -13,7 +12,7 @@ namespace OGDotNet.Model.Resources
         {
         }
 
-        public RemoteClient(RestTarget userDataRest, string username, string clientId)
+        private RemoteClient(RestTarget userDataRest, string username, string clientId)
         {
             _clientId = clientId;
             _rest = userDataRest.Resolve(username).Resolve("clients").Resolve(_clientId);

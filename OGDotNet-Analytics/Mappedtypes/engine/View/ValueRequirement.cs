@@ -26,7 +26,7 @@ namespace OGDotNet.Mappedtypes.engine.View
             _computationTargetIdentifier = UniqueIdentifier.Parse(computationTargetIdentifier);
         }
 
-        public ComputationTargetSpecification GetTargetSpec()
+        private ComputationTargetSpecification GetTargetSpec()
         {
             return new ComputationTargetSpecification(ComputationTargetType, ComputationTargetIdentifier);
         }

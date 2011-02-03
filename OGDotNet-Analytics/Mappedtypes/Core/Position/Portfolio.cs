@@ -1,6 +1,4 @@
-﻿using OGDotNet.Mappedtypes.Core.Position;
-
-namespace OGDotNet.Mappedtypes.Core.Position
+﻿namespace OGDotNet.Mappedtypes.Core.Position
 {
     public interface IPortfolio
     {

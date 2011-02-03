@@ -41,15 +41,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private static Func<object, string, object> BuildIndexer(Type t)
         {
-            Func<object, string, object> ret;
             var indexerProperty = t.GetProperties().Where(p => p.GetIndexParameters().Length > 0).First();
             var getMethod = indexerProperty.GetGetMethod();
-                
-            ret = delegate(object item, string index)
-                      {
-                          return getMethod.Invoke(item, new object[] {index});
-                      };
-            return ret;
+            
+            return (item, index) => getMethod.Invoke(item, new object[] {index});
         }
 
         internal void UpdateNullTemplate(object item)

@@ -4,7 +4,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using OGDotNet.WPFUtils;
-using OGDotNet.Utils;
 using OGDotNet.AnalyticsViewer.View.CellTemplates;
 using OGDotNet.AnalyticsViewer.ViewModel;
 

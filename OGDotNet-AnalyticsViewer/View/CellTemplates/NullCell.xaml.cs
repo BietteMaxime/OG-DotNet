@@ -15,10 +15,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         public static readonly DependencyProperty CellTemplateSelectorProperty = DependencyProperty.RegisterAttached("CellTemplateSelector", typeof(CellTemplateSelector), typeof(NullCell));
 
-        public CellTemplateSelector CellTemplateSelector
+        private CellTemplateSelector CellTemplateSelector
         {
             get { return (CellTemplateSelector) GetValue(CellTemplateSelectorProperty); }
-            set{SetValue(CellTemplateSelectorProperty, value);}
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

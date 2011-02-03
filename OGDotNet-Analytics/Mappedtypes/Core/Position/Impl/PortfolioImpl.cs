@@ -1,6 +1,4 @@
-﻿using OGDotNet.Mappedtypes.Core.Position;
-
-namespace OGDotNet.Mappedtypes.Core.Position.Impl
+﻿namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
     internal class PortfolioImpl : IPortfolio
     {
