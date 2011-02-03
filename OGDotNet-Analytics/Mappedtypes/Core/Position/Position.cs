@@ -1,10 +1,10 @@
-﻿using Fudge.Serialization;
-using OGDotNet_Analytics.Builders;
+﻿using System;
+using Fudge;
+using Fudge.Serialization;
 using OGDotNet_Analytics.Mappedtypes.Id;
 
 namespace OGDotNet_Analytics.Mappedtypes.Core.Position
 {
-    [FudgeSurrogate(typeof(PositionBuilder))]
     public class Position
     {
         private readonly IdentifierBundle _securityKey;
@@ -31,6 +31,20 @@ namespace OGDotNet_Analytics.Mappedtypes.Core.Position
         public long Quantity
         {
             get { return _quantity; }
+        }
+
+        public static Position FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            var id = ffc.GetValue<string>("identifier");
+            var secKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
+            var quant = ffc.GetValue<string>("quantity");
+
+            return new Position(UniqueIdentifier.Parse(id), long.Parse(quant), secKey);
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            throw new NotImplementedException();
         }
     }
 }

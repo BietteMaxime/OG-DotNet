@@ -79,7 +79,6 @@
     <Compile Include="Mappedtypes\Core\Position\Impl\PortfolioImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\PortfolioNode.cs" />
     <Compile Include="Mappedtypes\Core\Position\Position.cs" />
-    <Compile Include="Builders\PositionBuilder.cs" />
     <Compile Include="Model\Resources\RemoteConfig.cs" />
     <Compile Include="Model\Resources\RemoteSecuritySource.cs" />
     <Compile Include="Model\Resources\RemoteViewProcessor.cs" />
