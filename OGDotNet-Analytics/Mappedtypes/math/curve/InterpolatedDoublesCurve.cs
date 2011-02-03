@@ -22,11 +22,11 @@ namespace OGDotNet_Analytics.Mappedtypes.math.curve
             _yData = yData;
         }
 
-        public double[] XData
+        public IList<double> XData
         {
             get { return _xData; }
         }
-        public double[] YData
+        public IList<double> YData
         {
             get { return _yData; }
         }

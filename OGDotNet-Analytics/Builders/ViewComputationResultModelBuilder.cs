@@ -59,7 +59,7 @@ namespace OGDotNet_Analytics.Builders
             IDictionary<ComputationTargetSpecification, ViewTargetResultModelImpl> targetMap = new Dictionary<ComputationTargetSpecification, ViewTargetResultModelImpl>();
             foreach (var configurationEntry in configurationMap)
             {
-                foreach (ComputationTargetSpecification targetSpec in configurationEntry.Value.getAllTargets())
+                foreach (ComputationTargetSpecification targetSpec in configurationEntry.Value.AllTargets)
                 {
 
                     ViewTargetResultModelImpl targetResult;
@@ -76,7 +76,7 @@ namespace OGDotNet_Analytics.Builders
             var allResults = new List<ViewResultEntry>();
             foreach (var configurationEntry in configurationMap)
             {
-                foreach (var targetSpec in configurationEntry.Value.getAllTargets())
+                foreach (var targetSpec in configurationEntry.Value.AllTargets)
                 {
                     var results = configurationEntry.Value[targetSpec];
                     foreach (var value in results)

@@ -45,7 +45,7 @@ namespace OGDotNet_Analytics.Mappedtypes.engine.View
         public FudgeDateTime ValuationTime { get { return _inputDataTimestamp; } }
         public FudgeDateTime ResultTimestamp { get { return _resultTimestamp; } }
         public String ViewName { get { return _viewName; } }
-        public IList<ViewResultEntry> AllResults { get { return _allResults; } }
+        public IEnumerable<ViewResultEntry> AllResults { get { return _allResults; } }
 
         public ViewComputationResultModel ApplyDelta(ViewComputationResultModel delta)
         {

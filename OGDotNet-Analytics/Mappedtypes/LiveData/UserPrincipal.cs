@@ -1,4 +1,8 @@
-﻿namespace OGDotNet_Analytics.Mappedtypes.LiveData
+﻿using System;
+using System.Net;
+using OGDotNet_Analytics.Properties;
+
+namespace OGDotNet_Analytics.Mappedtypes.LiveData
 {
     public class UserPrincipal
     {
@@ -19,6 +23,22 @@
         {
             _userName = userName;
             _ipAddress = ipAddress;
+        }
+
+        internal static UserPrincipal DefaultUser
+        {
+            get { return new UserPrincipal(Settings.Default.UserName, GetIP()); }
+        }
+
+        private static string GetIP()
+        {
+            String strHostName = Dns.GetHostName();
+            IPHostEntry iphostentry = Dns.GetHostEntry(strHostName);
+            foreach (IPAddress ipaddress in iphostentry.AddressList)
+            {
+                return ipaddress.ToString();
+            }
+            throw new ArgumentException();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace OGDotNet_Analytics.SecurityExplorer
             _restTarget = restTarget;
         }
         
-        public AbstractSearchResult<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest, IdentifierSearch identifierSearch)
+        public AbstractSearchResult<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest, IdentifierSearch identifierSearch = null)
         {
             var request = new SecuritySearchRequest(pagingRequest, name, type, identifierSearch);
 
@@ -27,10 +27,6 @@ namespace OGDotNet_Analytics.SecurityExplorer
 
 
             return fudgeSerializer.Deserialize<AbstractSearchResult<SecurityDocument>>(fudgeMsg); 
-        }
-        public AbstractSearchResult<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest)
-        {
-            return Search(name, type, pagingRequest, null);
         }
 
         private static FudgeContext FudgeContext

@@ -15,9 +15,9 @@ namespace OGDotNet_Analytics.Mappedtypes.engine.View
             _map = map;
         }
 
-        public ICollection<ComputationTargetSpecification> getAllTargets()
+        public IEnumerable<ComputationTargetSpecification> AllTargets
         {
-            return _map.Keys;
+            get { return _map.Keys; }
         }
 
         public Dictionary<string, ComputedValue> this[ComputationTargetSpecification target]

@@ -12,7 +12,7 @@ namespace OGDotNet_Analytics.Mappedtypes.Core.Security
         private readonly UniqueIdentifier _uniqueId;
         private readonly IdentifierBundle _identifiers;
 
-        public Security(string name, string securityType, UniqueIdentifier uniqueId, IdentifierBundle identifiers)
+        protected Security(string name, string securityType, UniqueIdentifier uniqueId, IdentifierBundle identifiers)
         {
             _name = name;
             _securityType = securityType;

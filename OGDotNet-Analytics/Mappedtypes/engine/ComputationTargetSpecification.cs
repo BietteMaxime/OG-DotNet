@@ -1,11 +1,12 @@
-﻿using Fudge.Serialization;
+﻿using System;
+using Fudge.Serialization;
 using OGDotNet_Analytics.Builders;
 using OGDotNet_Analytics.Mappedtypes.Id;
 
 namespace OGDotNet_Analytics.Mappedtypes.engine
 {
     [FudgeSurrogate(typeof(ComputationTargetSpecificationBuilder))]
-    public class ComputationTargetSpecification
+    public class ComputationTargetSpecification : IEquatable<ComputationTargetSpecification>
     {
         private readonly ComputationTargetType _type;
         private readonly UniqueIdentifier _uid;

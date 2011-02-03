@@ -4,8 +4,6 @@ namespace OGDotNet_Analytics.Model.Resources
 {
     public class RemoteClient
     {
-
-
         private readonly string _clientId;
         private readonly RestTarget _rest;
 

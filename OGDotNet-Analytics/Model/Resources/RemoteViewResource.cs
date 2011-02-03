@@ -4,6 +4,7 @@ using Fudge.Serialization;
 using OGDotNet_Analytics.Mappedtypes.Core.Position;
 using OGDotNet_Analytics.Mappedtypes.engine.View;
 using OGDotNet_Analytics.Mappedtypes.LiveData;
+using OGDotNet_Analytics.Properties;
 
 namespace OGDotNet_Analytics.Model.Resources
 {
@@ -20,7 +21,7 @@ namespace OGDotNet_Analytics.Model.Resources
 
         public void Init()
         {
-            var fudgeMsg = _rest.GetSubMagic("init").GetReponse("POST");
+            _rest.GetSubMagic("init").GetReponse("POST");
         }
 
         public IPortfolio Portfolio
@@ -50,20 +51,9 @@ namespace OGDotNet_Analytics.Model.Resources
         public ViewClientResource CreateClient()
         {
             
-            var clientUri = _rest.GetSubMagic("clients").Create(FudgeConfig.GetFudgeContext(), FudgeConfig.GetFudgeSerializer().SerializeToMsg(new UserPrincipal("bbgintegrationtestuser", GetIP())));
+            var clientUri = _rest.GetSubMagic("clients").Create(FudgeConfig.GetFudgeContext(), FudgeConfig.GetFudgeSerializer().SerializeToMsg(UserPrincipal.DefaultUser));
 
             return new ViewClientResource(clientUri, _activeMqSpec);
-        }
-
-        private string GetIP()
-        {
-            String strHostName = Dns.GetHostName();
-            IPHostEntry iphostentry = Dns.GetHostEntry(strHostName);
-            foreach (IPAddress ipaddress in iphostentry.AddressList)
-            {
-                return ipaddress.ToString();
-            }
-            throw new ArgumentException();
         }
     }
 }

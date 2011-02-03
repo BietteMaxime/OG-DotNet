@@ -14,8 +14,8 @@ namespace OGDotNet_Analytics.Model.Resources
         private readonly FudgeMsg _configsMsg;
         private readonly string _userDataUri;
         private readonly string _viewProcessorUri;
-        private string _securitySourceUri;
-        private string _activeMQSpec;
+        private readonly string _securitySourceUri;
+        private readonly string _activeMQSpec;
 
         public RemoteConfig(string configId, string rootUri)
         {

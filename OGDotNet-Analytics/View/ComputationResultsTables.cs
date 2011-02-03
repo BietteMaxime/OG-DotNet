@@ -114,11 +114,12 @@ namespace OGDotNet_Analytics.View
         }
 
 
-        public void InvokePropertyChanged(string propertyName)
+        private void InvokePropertyChanged(string propertyName)
         {
             InvokePropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
-        public void InvokePropertyChanged(PropertyChangedEventArgs e)
+
+        private void InvokePropertyChanged(PropertyChangedEventArgs e)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, e);
