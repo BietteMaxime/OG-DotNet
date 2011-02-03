@@ -27,8 +27,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                                                {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)}
                                                                            };
 
-        private static readonly Dictionary<Tuple<string, Type>, DataTemplate> TemplateCache = new Dictionary<Tuple<string, Type>, DataTemplate>();
-        private static readonly Dictionary<Type, Func<object, string,object>> IndexerCache= new Dictionary<Type, Func<object, string, object>>();
+
+        private static readonly Memoizer<string, Type, DataTemplate> TemplateMemoizer =new Memoizer<string,Type,DataTemplate>(BuildTemplate);
+
+        private static readonly Memoizer<Type, Func<object, string, object>> IndexerMemoizer = new Memoizer<Type, Func<object, string,object>>(BuildIndexer);
+        
 
         public CellTemplateSelector(string column, GridViewColumn gridViewColumn)
         {
@@ -36,20 +39,16 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             _gridViewColumn = gridViewColumn;
         }
 
-        private static Func<object, string,object> GetIndexer(Type t)
+        private static Func<object, string, object> BuildIndexer(Type t)
         {
             Func<object, string, object> ret;
-            if (!IndexerCache.TryGetValue(t, out ret))
-            {
-                var indexerProperty = t.GetProperties().Where(p => p.GetIndexParameters().Length > 0).First();
-                var getMethod = indexerProperty.GetGetMethod();
+            var indexerProperty = t.GetProperties().Where(p => p.GetIndexParameters().Length > 0).First();
+            var getMethod = indexerProperty.GetGetMethod();
                 
-                ret = delegate(object item, string index)
-                          {
-                              return getMethod.Invoke(item, new object[] {index});
-                          };
-                IndexerCache.Add(t, ret);
-            }
+            ret = delegate(object item, string index)
+                      {
+                          return getMethod.Invoke(item, new object[] {index});
+                      };
             return ret;
         }
 
@@ -66,7 +65,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             if (!ReferenceEquals(this, _gridViewColumn.CellTemplateSelector))
                 throw new ArgumentException("I'm about to twiddle the wrong selector");
             
-            var cellValue = GetIndexer(item.GetType())(item, _column);
+            var cellValue = IndexerMemoizer.Get(item.GetType())(item, _column);
             if (cellValue == null)
             {
                 var comboFactory = new FrameworkElementFactory(typeof(NullCell));
@@ -84,18 +83,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             var type = cellValue.GetType();
 
-            var key = new Tuple<string, Type>(_column, type);
 
-            DataTemplate ret;
-            if (!TemplateCache.TryGetValue(key, out ret))
-            {
-                ret = BuildTemplate(_column, type);
-                TemplateCache[key] = ret;
-            }
-
+            var template = TemplateMemoizer.Get(_column, type);
 
             _gridViewColumn.CellTemplateSelector = null;
-            _gridViewColumn.CellTemplate = ret;
+            _gridViewColumn.CellTemplate = template;
         }
 
 
