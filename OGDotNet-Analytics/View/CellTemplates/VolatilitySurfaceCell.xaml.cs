@@ -115,7 +115,19 @@ namespace OGDotNet_Analytics.View.CellTemplates
             _timer.IsEnabled = true;
         }
 
+        /// <summary>
+        /// TODO There is no reason for all these separate model groups, should be reusing the vertices
+        /// </summary>
         private static Model3DGroup CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2, float colorQuotient0, float colorQuotient1, float colorQuotient2)
+        {
+            var color0 = GetColor(colorQuotient0);
+            var color1 = GetColor(colorQuotient1);
+            var color2 = GetColor(colorQuotient2);
+
+            return CreateTriangleModel(p0, p1, p2, color0, color1, color2);
+        }
+
+        private static Model3DGroup CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2, Color color0, Color color1, Color color2)
         {
             var mesh = new MeshGeometry3D();
             mesh.Positions.Add(p0);
@@ -134,16 +146,16 @@ namespace OGDotNet_Analytics.View.CellTemplates
             mesh.TextureCoordinates.Add(new Point(1, 0));
 
             var linearGradientBrush = new LinearGradientBrush(
-                                            new GradientStopCollection
-                                            {
-                                                new GradientStop(GetColor(colorQuotient0), 0),
-                                                new GradientStop(GetColor(colorQuotient1), 0.5),
-                                                new GradientStop(GetColor(colorQuotient2), 1)
-                                            })
-                                            {
-                                                StartPoint = new Point(0, 0),
-                                                EndPoint = new Point(1, 0)
-                                            };
+                new GradientStopCollection
+                    {
+                        new GradientStop(color0, 0),
+                        new GradientStop(color1, 0.5),
+                        new GradientStop(color2, 1)
+                    })
+                                          {
+                                              StartPoint = new Point(0, 0),
+                                              EndPoint = new Point(1, 0)
+                                          };
 
             var diffuseMaterial = new DiffuseMaterial(linearGradientBrush);
 
@@ -178,8 +190,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
             const double zScale = 1.0 / zRange;
 
 
-
-            if (ToScale)
+            if (ToScale)//TODO make a decision about ToScale
             {
                 var xMax = Surface.Xs.Select(GetScaledValue).Max();
                 double xScale = 1.0 / xMax;
@@ -242,9 +253,9 @@ namespace OGDotNet_Analytics.View.CellTemplates
                 {
                     for (int xi = 0; xi < xs.Count - 1; xi++)
                     {
-                        var at = GetPoint(xi, yi, xs, ys, Surface);
-                        var right = GetPoint(xi + 1, yi, xs, ys, Surface);
-                        var above = GetPoint(xi, yi + 1, xs, ys, Surface);
+                        var at = Surface[xs[xi], ys[yi]];
+                        var right = Surface[xs[xi + 1], ys[yi]];
+                        var above = Surface[xs[xi], ys[yi + 1]];
 
                         group.Children.Add(CreateTriangleModel(
                             new Point3D(xi * xScale, yi * yScale, at * zScale),
@@ -256,9 +267,9 @@ namespace OGDotNet_Analytics.View.CellTemplates
                 {
                     for (int xi = 1; xi < xs.Count; xi++)
                     {
-                        var at = GetPoint(xi, yi, xs, ys, Surface);
-                        var left = GetPoint(xi - 1, yi, xs, ys, Surface);
-                        var below = GetPoint(xi, yi - 1, xs, ys, Surface);
+                        var at = Surface[xs[xi], ys[yi]];
+                        var left = Surface[xs[xi - 1], ys[yi]];
+                        var below = Surface[xs[xi], ys[yi - 1]];
 
                         
                         group.Children.Add(CreateTriangleModel(
@@ -309,11 +320,6 @@ namespace OGDotNet_Analytics.View.CellTemplates
         private VolatilitySurfaceData Surface
         {
             get { return (VolatilitySurfaceData) DataContext; }
-        }
-
-        private static double GetPoint(int xi, int yi, List<Tenor> xs, List<Tenor> ys, VolatilitySurfaceData data)
-        {
-            return data[xs[xi], ys[yi]];
         }
 
         private static Point3D GetPoint(int xi, int yi, VolatilitySurfaceData surface, Matrix3D scaleMatrix)
