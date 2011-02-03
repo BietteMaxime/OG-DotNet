@@ -13,6 +13,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
     internal class CellTemplateSelector : DataTemplateSelector
     {
         private readonly string _column;
+        private readonly GridViewColumn _gridViewColumn;
 
         private static readonly Dictionary<Type, Type> TemplateTypes = new Dictionary<Type, Type>
                                                                            {
@@ -24,12 +25,13 @@ namespace OGDotNet_Analytics.View.CellTemplates
         private static readonly Dictionary<Tuple<string, Type>, DataTemplate> TemplateCache = new Dictionary<Tuple<string, Type>, DataTemplate>();
         private static readonly Dictionary<Type, Func<object, string,object>> IndexerCache= new Dictionary<Type, Func<object, string, object>>();
 
-        public CellTemplateSelector(string column)
+        public CellTemplateSelector(string column, GridViewColumn gridViewColumn)
         {
             _column = column;
+            _gridViewColumn = gridViewColumn;
         }
 
-        public static Func<object, string,object> GetIndexer(Type t)
+        private static Func<object, string,object> GetIndexer(Type t)
         {
             Func<object, string, object> ret;
             if (!IndexerCache.TryGetValue(t, out ret))
@@ -45,21 +47,55 @@ namespace OGDotNet_Analytics.View.CellTemplates
             }
             return ret;
         }
+
+        internal void UpdateNullTemplate(object item)
+        {
+            SetCellTemplate(item);
+        }
+
+
+
+
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
+            if (!ReferenceEquals(this, _gridViewColumn.CellTemplateSelector))
+                throw new ArgumentException("I'm about to twiddle the wrong selector");
+            
             var cellValue = GetIndexer(item.GetType())(item, _column);
-            var type = cellValue == null ? typeof(Object) : cellValue.GetType();
+            if (cellValue == null)
+            {
+                var comboFactory = new FrameworkElementFactory(typeof(NullCell));
+                comboFactory.SetValue(NullCell.CellTemplateSelectorProperty, this);
+                comboFactory.SetValue(FrameworkElement.DataContextProperty, BindingUtils.GetIndexerBinding(_column));
+                var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
+                return itemsTemplate;
+            }
+            else
+            {
+                SetCellTemplate(cellValue);
+
+                return null;    
+            }
+        }
+
+        private void SetCellTemplate(object cellValue)
+        {
+            var type = cellValue.GetType();
 
             var key = new Tuple<string, Type>(_column, type);
 
             DataTemplate ret;
-            if (! TemplateCache.TryGetValue(key, out ret))
+            if (!TemplateCache.TryGetValue(key, out ret))
             {
                 ret = BuildTemplate(_column, type);
                 TemplateCache[key] = ret;
             }
-            return ret;
+
+
+            _gridViewColumn.CellTemplateSelector = null;
+            _gridViewColumn.CellTemplate = ret;
         }
+
 
         private static DataTemplate BuildTemplate(string column, Type type)
         {

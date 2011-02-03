@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using OGDotNet_Analytics.Model.Resources;
 using OGDotNet_Analytics.Properties;
 using OGDotNet_Analytics.View;
-using OGDotNet_Analytics.View.CellTemplates;
 
 namespace OGDotNet_Analytics
 {
@@ -46,7 +45,7 @@ namespace OGDotNet_Analytics
             }
             catch (WebException e)
             {
-                var messageBoxResult = MessageBox.Show(e.ToString(), "Failed to connect to server");
+                MessageBox.Show(e.ToString(), "Failed to connect to server");
                 Close();
             }
         }
@@ -73,7 +72,7 @@ namespace OGDotNet_Analytics
             token.ThrowIfCancellationRequested();
         }
 
-        public void RefreshMyData(string viewName, CancellationToken cancellationToken)
+        private void RefreshMyData(string viewName, CancellationToken cancellationToken)
         {
             try
             {
@@ -135,27 +134,9 @@ namespace OGDotNet_Analytics
             }
         }
 
-        private static GridViewColumn BuildColumn(string column)
-        {
-            return new GridViewColumn
-                       {
-                           Width = Double.NaN,
-                           Header = column,
-                           CellTemplateSelector = new CellTemplateSelector(column)
-                       };
-        }
-
         private void SetStatus(string msg)
         {
             Dispatcher.Invoke((Action)(() => { statusText.Text = msg; }));
-        }
-
-        private static void TrimColumns(GridViewColumnCollection gridViewColumnCollection, int length)
-        {
-            while (gridViewColumnCollection.Count > length)
-            {
-                gridViewColumnCollection.RemoveAt(length);
-            }
         }
 
 

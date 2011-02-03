@@ -45,13 +45,15 @@ namespace OGDotNet_Analytics.View
 
         private static GridViewColumn BuildColumn(string column)
         {
-            return new GridViewColumn
-            {
-                Width = Double.NaN,
-                Header = column,
-                CellTemplateSelector = new CellTemplateSelector(column)
-            };
+            var gridViewColumn = new GridViewColumn
+                                    {
+                                        Width = Double.NaN,
+                                        Header = column
+                                    };
+            gridViewColumn.CellTemplateSelector = new CellTemplateSelector(column, gridViewColumn);
+            return gridViewColumn;
         }
+
         private static void TrimColumns(GridViewColumnCollection gridViewColumnCollection, int length)
         {
             while (gridViewColumnCollection.Count > length)

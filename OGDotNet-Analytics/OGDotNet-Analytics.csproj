@@ -124,6 +124,9 @@
     <Compile Include="View\CellTemplates\CellTemplateSelector.xaml.cs" />
     <Compile Include="Mappedtypes\engine\View\ResultModelDefinition.xaml.cs" />
     <Compile Include="Mappedtypes\Util\Time\Tenor.cs" />
+    <Compile Include="View\CellTemplates\NullCell.xaml.cs">
+      <DependentUpon>NullCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CellTemplates\VolatilitySurfaceCell.xaml.cs">
       <DependentUpon>VolatilitySurfaceCell.xaml</DependentUpon>
     </Compile>
@@ -146,6 +149,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\CellTemplates\DoubleLabelledMatrixCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CellTemplates\NullCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
