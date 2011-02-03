@@ -20,12 +20,7 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
         private readonly String _value;
         private readonly String _version;
 
-        public static UniqueIdentifier Of(String scheme, String value)
-        {
-            return Of(scheme, value, null);
-        }
-
-        public static UniqueIdentifier Of(String scheme, String value, String version)
+        public static UniqueIdentifier Of(String scheme, String value, String version = null)
         {
             return new UniqueIdentifier(scheme, value, version);
         }
@@ -34,7 +29,7 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
         {
 
             ArgumentChecker.NotEmpty(uidStr, "uidStr");
-            String[] split = uidStr.Split(new string[] { "::" }, StringSplitOptions.None);
+            String[] split = uidStr.Split(new[] { "::" }, StringSplitOptions.None);
             switch (split.Length)
             {
                 case 2:

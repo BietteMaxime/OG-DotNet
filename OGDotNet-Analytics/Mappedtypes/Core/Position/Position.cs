@@ -11,7 +11,7 @@ namespace OGDotNet_Analytics.Mappedtypes.Core.Position
         private readonly UniqueIdentifier _identifier;
         private readonly long _quantity;
 
-        public Position(UniqueIdentifier identifier, long quantity, IdentifierBundle securityKey)
+        private Position(UniqueIdentifier identifier, long quantity, IdentifierBundle securityKey)
         {
             _securityKey = securityKey;
             _identifier = identifier;

@@ -17,6 +17,11 @@ namespace OGDotNet_Analytics.View
             _columns = columns;
         }
 
+        public UniqueIdentifier Id
+        {
+            get { return _id; }
+        }
+
         public string PositionName
         {
             get

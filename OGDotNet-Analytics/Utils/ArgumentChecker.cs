@@ -10,11 +10,11 @@ namespace OGDotNet_Analytics.Utils
         {
             if (arg == null)
             {
-                throw new ArgumentException("Cannot be null", argName);
+                throw new ArgumentNullException(argName);
             }
             if (!arg.Any())
             {
-                throw new ArgumentException("Cannot be empty", argName);
+                throw new ArgumentOutOfRangeException(argName, "Cannot be empty");
             }
         }
     }

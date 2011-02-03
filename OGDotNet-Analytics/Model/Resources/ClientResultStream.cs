@@ -47,7 +47,7 @@ namespace OGDotNet_Analytics.Model.Resources
             
 
             cancellationToken.ThrowIfCancellationRequested();
-            var bytesMessage = message as IBytesMessage;
+            var bytesMessage = (IBytesMessage) message;
             using (var memoryStream = new MemoryStream(bytesMessage.Content))
             {
                 var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(FudgeConfig.GetFudgeContext(), memoryStream);

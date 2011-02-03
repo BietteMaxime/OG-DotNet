@@ -9,9 +9,7 @@ namespace OGDotNet_Analytics.Model
     public class RestTarget
     {
 
-        private const string FUDGE_MIME_TYPE = "application/vnd.fudgemsg";
-        //private static string s_accept = ("Accept", FUDGE_MIME_TYPE);
-        //private static string s_contentType = ("Content-Type", FUDGE_MIME_TYPE);
+        private const string FudgeMimeType = "application/vnd.fudgemsg";
 
         private readonly Uri _serviceUri;
 
@@ -136,8 +134,8 @@ namespace OGDotNet_Analytics.Model
 
         private static void MangleRequest(HttpWebRequest request)
         {
-            request.Accept = FUDGE_MIME_TYPE;
-            request.ContentType = FUDGE_MIME_TYPE;
+            request.Accept = FudgeMimeType;
+            request.ContentType = FudgeMimeType;
         }
     }
 }

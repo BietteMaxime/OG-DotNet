@@ -6,9 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using OGDotNet_Analytics.Model.Resources;
 using OGDotNet_Analytics.Properties;
-using OGDotNet_Analytics.View;
 
-namespace OGDotNet_Analytics
+namespace OGDotNet_Analytics.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -22,6 +21,7 @@ namespace OGDotNet_Analytics
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         public MainWindow()
         {
+            new SecurityExplorer.SecurityWindow().Show();
             InitializeComponent();
 
             Title = string.Format("OGDotNet ({0})", Settings.ServiceUri);
@@ -109,13 +109,11 @@ namespace OGDotNet_Analytics
                     pauseToggle.Unchecked += unpausedHandler;
                     try
                     {
-                        DateTime previousTime = DateTime.Now;
                         SetStatus("Getting first result");
                         foreach (var results in client.GetResults(cancellationToken))
                         {
                             resultsTable.Update(results, cancellationToken);
                             SetStatus(string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (results.ResultTimestamp.ToDateTime() - results.ValuationTime.ToDateTime()).TotalMilliseconds, ++count));
-                            previousTime = DateTime.Now;
                         }
                     }
                     finally

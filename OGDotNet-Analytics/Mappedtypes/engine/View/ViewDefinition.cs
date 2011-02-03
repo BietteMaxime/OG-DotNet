@@ -104,12 +104,9 @@ namespace OGDotNet_Analytics.Mappedtypes.engine.View
                 minFullCalcPeriod = ffc.GetValue<long>("minFullCalcPeriod");
             }
 
-            var calculationConfigurationsByName = new Dictionary<string, ViewCalculationConfiguration>();
-            foreach (var fudgeField in ffc.GetAllByName("calculationConfiguration"))
-            {
-                var vcc = deserializer.FromField<ViewCalculationConfiguration>(fudgeField);
-                calculationConfigurationsByName.Add(vcc.Name, vcc);
-            }
+            var calculationConfigurationsByName = ffc.GetAllByName("calculationConfiguration")
+                                                    .Select(deserializer.FromField<ViewCalculationConfiguration>)
+                                                    .ToDictionary(vcc => vcc.Name);
 
             var maxFullCalcPeriod = ffc.GetValue<long>("maxFullCalcPeriod");
             return new ViewDefinition(name, portfolioIdentifier, user, resultModelDefinition, currency, minDeltaCalcPeriod, maxDeltaCalcPeriod, minFullCalcPeriod, maxFullCalcPeriod, calculationConfigurationsByName);

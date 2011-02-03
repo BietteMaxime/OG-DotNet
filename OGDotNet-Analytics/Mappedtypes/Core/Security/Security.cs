@@ -7,10 +7,38 @@ namespace OGDotNet_Analytics.Mappedtypes.Core.Security
     /// </summary>
     public class Security
     {
-        public string Name { get; set; }
-        public string SecurityType { get; set; }
-        public UniqueIdentifier UniqueId { get; set; }
-        public IdentifierBundle Identifiers { get; set; }
+        private readonly string _name;
+        private readonly string _securityType;
+        private readonly UniqueIdentifier _uniqueId;
+        private readonly IdentifierBundle _identifiers;
+
+        public Security(string name, string securityType, UniqueIdentifier uniqueId, IdentifierBundle identifiers)
+        {
+            _name = name;
+            _securityType = securityType;
+            _uniqueId = uniqueId;
+            _identifiers = identifiers;
+        }
+
+        public string Name
+        {
+            get { return _name; }
+        }
+
+        public string SecurityType
+        {
+            get { return _securityType; }
+        }
+
+        public UniqueIdentifier UniqueId
+        {
+            get { return _uniqueId; }
+        }
+
+        public IdentifierBundle Identifiers
+        {
+            get { return _identifiers; }
+        }
 
         public override string ToString()
         {

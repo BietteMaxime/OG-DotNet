@@ -10,7 +10,7 @@ namespace OGDotNet_Analytics.SecurityExplorer
 {
     public class RemoteSecurityMaster
     {
-        internal readonly RestTarget _restTarget;
+        private readonly RestTarget _restTarget;
 
         public RemoteSecurityMaster(RestTarget restTarget)
         {
@@ -21,7 +21,7 @@ namespace OGDotNet_Analytics.SecurityExplorer
         {
             var request = new SecuritySearchRequest(pagingRequest, name, type, identifierSearch);
 
-            FudgeSerializer fudgeSerializer = new FudgeSerializer(FudgeContext);
+            var fudgeSerializer = new FudgeSerializer(FudgeContext);
             var msg = fudgeSerializer.SerializeToMsg(request);
             var fudgeMsg = _restTarget.GetSubMagic("search").GetReponse(FudgeContext, msg);
 

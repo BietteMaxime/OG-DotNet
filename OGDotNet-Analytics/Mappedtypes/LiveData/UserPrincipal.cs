@@ -1,29 +1,24 @@
-﻿using System;
-
-namespace OGDotNet_Analytics.Mappedtypes.LiveData
+﻿namespace OGDotNet_Analytics.Mappedtypes.LiveData
 {
-    [Serializable]
     public class UserPrincipal
     {
-        private string userName;
-        private string ipAddress;
+        private readonly string _userName;
+        private readonly string _ipAddress;
 
         public string UserName
         {
-            get { return userName; }
-            set { userName = value; }
+            get { return _userName; }
         }
 
         public string IpAddress
         {
-            get { return ipAddress; }
-            set { ipAddress = value; }
+            get { return _ipAddress; }
         }
 
         public UserPrincipal(string userName, string ipAddress)
         {
-            UserName = userName;
-            IpAddress = ipAddress;
+            _userName = userName;
+            _ipAddress = ipAddress;
         }
     }
 }
