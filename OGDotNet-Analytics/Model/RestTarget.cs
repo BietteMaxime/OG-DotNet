@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using Fudge;
 
 namespace OGDotNet_Analytics.Model
@@ -63,8 +64,7 @@ namespace OGDotNet_Analytics.Model
 
         private HttpWebResponse PostImpl(FudgeContext context = null, FudgeMsg reqMsg = null)
         {
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
-            MangleRequest(request);
+            HttpWebRequest request = GetBasicRequest();
             request.Method = "POST";
 
             if (context != null)
@@ -76,13 +76,13 @@ namespace OGDotNet_Analytics.Model
             return (HttpWebResponse)request.GetResponse();
         }
 
+
         public FudgeMsg GetReponse()
         {
+            var request = GetBasicRequest();
+
             var fudgeContext = new FudgeContext();
 
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
-
-            MangleRequest(request);
             using (var response = (HttpWebResponse) request.GetResponse())
             using (var responseStream = response.GetResponseStream())
             using (var buff = new BufferedStream(responseStream))
@@ -91,10 +91,15 @@ namespace OGDotNet_Analytics.Model
             }
         }
 
-        private static void MangleRequest(HttpWebRequest request)
+
+        private HttpWebRequest GetBasicRequest()
         {
+            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
             request.Accept = FudgeMimeType;
             request.ContentType = FudgeMimeType;
+            var uaAssembly = Assembly.GetEntryAssembly()  ?? Assembly.GetExecutingAssembly();
+            request.UserAgent = string.Format("{0}/{1}", uaAssembly.GetName().Name, uaAssembly.GetName().Version);
+            return request;
         }
     }
 }
