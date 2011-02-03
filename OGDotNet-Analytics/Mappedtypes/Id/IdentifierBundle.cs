@@ -52,10 +52,8 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            
-            if (_identifiers.Count != other._identifiers.Count)
-                return false;
-            return _identifiers.All(i => other.Identifiers.Contains(i));
+
+            return _identifiers.SetEquals(other._identifiers);
         }
 
         public override bool Equals(object obj)
