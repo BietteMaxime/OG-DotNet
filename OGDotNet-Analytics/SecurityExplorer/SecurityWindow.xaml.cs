@@ -7,6 +7,7 @@ using System.Windows;
 using OGDotNet_Analytics.Mappedtypes.Core.Security;
 using OGDotNet_Analytics.Mappedtypes.Util.Db;
 using OGDotNet_Analytics.Model.Resources;
+using OGDotNet_Analytics.Properties;
 
 namespace OGDotNet_Analytics.SecurityExplorer
 {
@@ -17,8 +18,8 @@ namespace OGDotNet_Analytics.SecurityExplorer
     {
         long _cancellationToken = long.MinValue;
 
-        static readonly RemoteSecurityMasterResource RemoteSecuritySource = new RemoteSecurityMasterResource("http://localhost:8080/jax/");
-        static readonly RemoteSecurityMaster SecurityMaster = RemoteSecuritySource.GetSecurityMaster("0");
+        static readonly RemoteSecurityMasterResource RemoteSecuritySource = new RemoteSecurityMasterResource(Settings.Default.ServiceUri);
+        static readonly RemoteSecurityMaster SecurityMaster = RemoteSecuritySource.GetSecurityMaster(Settings.Default.ConfigId);
             
 
 
