@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Fudge;
 using Fudge.Serialization;
 
@@ -45,6 +46,16 @@ namespace OGDotNet_Analytics.Mappedtypes.Id
             {
                 a.Add("ID", identifier);
             }
+        }
+
+        public override string ToString()
+        {
+            return new StringBuilder()
+              .Append("Bundle")
+              .Append("[")
+              .Append(string.Join(", ", _identifiers))
+              .Append("]")
+              .ToString();
         }
 
         #region Equality
