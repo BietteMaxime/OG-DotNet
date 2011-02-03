@@ -8,7 +8,7 @@ using OGDotNet_Analytics.Mappedtypes.Id;
 
 namespace OGDotNet_Analytics.Model.Resources
 {
-    public class RemoteSecuritySource
+    public class RemoteSecuritySource : ISecuritySource
     {
         private readonly RestTarget _restTarget;
 
@@ -18,11 +18,17 @@ namespace OGDotNet_Analytics.Model.Resources
         }
 
         public Security GetSecurity(UniqueIdentifier uid)
-        {//TODO use this
+        {
             var fudgeMsg = _restTarget.GetSubMagic("securities").GetSubMagic("security").GetSubMagic(uid.ToString()).GetReponse();
             var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
             return fudgeSerializer.Deserialize<Security> (fudgeMsg); 
         }
+
+        public Security GetSecurity(IdentifierBundle bundle)
+        {
+            throw new NotImplementedException();
+        }
+
 
         private class OrderedComparison<T> : IEqualityComparer<List<T>>
         {
@@ -40,9 +46,9 @@ namespace OGDotNet_Analytics.Model.Resources
         }
         readonly Dictionary<List<Identifier>, List<Security>> _securitiesCache = new Dictionary<List<Identifier>, List<Security>>(OrderedComparison<Identifier>.Instance);
 
-        public List<Security> GetSecurities(IEnumerable<Identifier> idEnum)
+        public ICollection<Security> GetSecurities(IdentifierBundle bundle)
         {
-            var ids= idEnum.ToList();
+            var ids = bundle.Identifiers.ToList();
 
             List<Security> ret;
             if (_securitiesCache.TryGetValue(ids, out ret))

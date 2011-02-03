@@ -14,11 +14,11 @@ namespace OGDotNet_Analytics.Mappedtypes.engine.View
         private readonly string _viewName;
         private readonly FudgeDateTime _inputDataTimestamp;
         private readonly FudgeDateTime _resultTimestamp;
-        private readonly Dictionary<string, ViewCalculationResultModel> _configurationMap;
-        private readonly Dictionary<ComputationTargetSpecification, ViewTargetResultModelImpl> _targetMap;
+        private readonly IDictionary<string, ViewCalculationResultModel> _configurationMap;
+        private readonly Dictionary<ComputationTargetSpecification, IViewTargetResultModel> _targetMap;
         private readonly List<ViewResultEntry> _allResults;
 
-        public ViewComputationResultModel(string viewName, FudgeDateTime inputDataTimestamp, FudgeDateTime resultTimestamp, Dictionary<string, ViewCalculationResultModel> configurationMap, Dictionary<ComputationTargetSpecification, ViewTargetResultModelImpl> targetMap, List<ViewResultEntry> allResults)
+        public ViewComputationResultModel(string viewName, FudgeDateTime inputDataTimestamp, FudgeDateTime resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, Dictionary<ComputationTargetSpecification, IViewTargetResultModel> targetMap, List<ViewResultEntry> allResults)
         {
             _viewName = viewName;
             _inputDataTimestamp = inputDataTimestamp;
@@ -38,7 +38,7 @@ namespace OGDotNet_Analytics.Mappedtypes.engine.View
         {
             return _configurationMap[calcConfigurationName];
         }
-        public ViewTargetResultModel getTargetResult(ComputationTargetSpecification target)
+        public IViewTargetResultModel GetTargetResult(ComputationTargetSpecification target)
         {
             return _targetMap[target];
         }

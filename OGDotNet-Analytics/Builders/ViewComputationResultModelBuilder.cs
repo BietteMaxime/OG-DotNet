@@ -56,19 +56,19 @@ namespace OGDotNet_Analytics.Builders
                 }
             }
 
-            var targetMap = new Dictionary<ComputationTargetSpecification, ViewTargetResultModelImpl>();
+            IDictionary<ComputationTargetSpecification, ViewTargetResultModelImpl> targetMap = new Dictionary<ComputationTargetSpecification, ViewTargetResultModelImpl>();
             foreach (var configurationEntry in configurationMap)
             {
                 foreach (ComputationTargetSpecification targetSpec in configurationEntry.Value.getAllTargets())
                 {
 
                     ViewTargetResultModelImpl targetResult;
-
                     if (! targetMap.TryGetValue(targetSpec, out targetResult))
                     {
                         targetResult = new ViewTargetResultModelImpl();
                         targetMap.Add(targetSpec, targetResult);
                     }
+
                     targetResult.AddAll(configurationEntry.Key, configurationEntry.Value[targetSpec]);
                 }
             }
@@ -86,7 +86,7 @@ namespace OGDotNet_Analytics.Builders
                 }
             }
             
-            return new ViewComputationResultModel(viewName, inputDataTimestamp, resultTimestamp, configurationMap, targetMap, allResults);
+            return new ViewComputationResultModel(viewName, inputDataTimestamp, resultTimestamp, configurationMap, targetMap.ToDictionary(kvp => kvp.Key, kvp => (IViewTargetResultModel) kvp.Value), allResults);
         }
     }
 }

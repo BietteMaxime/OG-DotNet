@@ -171,7 +171,7 @@ namespace OGDotNet_Analytics.View
             yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name);
             foreach (var position in node.Positions)
             {
-                var securityNames = remoteSecuritySource.GetSecurities(position.SecurityKey.Identifiers).Select(s => s.Name).Distinct().ToList();
+                var securityNames = remoteSecuritySource.GetSecurities(position.SecurityKey).Select(s => s.Name).Distinct().ToList();
                 if (securityNames.Count != 1)
                 {
                     throw new ArgumentException();

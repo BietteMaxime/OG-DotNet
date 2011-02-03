@@ -1,6 +1,6 @@
 ﻿namespace OGDotNet_Analytics.Mappedtypes.Core.Position.Impl
 {
-    public class PortfolioImpl : IPortfolio
+    internal class PortfolioImpl : IPortfolio
     {
         private readonly PortfolioNode _root;
         private readonly string _identifier;

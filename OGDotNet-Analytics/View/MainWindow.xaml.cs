@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,20 +27,28 @@ namespace OGDotNet_Analytics
 
             Title = string.Format("OGDotNet ({0})", Settings.ServiceUri);
 
-            var remoteConfig = new RemoteConfig(Settings.ConfigId, Settings.ServiceUri);
+            try
+            {
+                var remoteConfig = new RemoteConfig(Settings.ConfigId, Settings.ServiceUri);
 
-            var remoteClient = remoteConfig.UserClient;
-            remoteClient.HeartbeatSender();
+                var remoteClient = remoteConfig.UserClient;
+                remoteClient.HeartbeatSender();
 
-            _remoteViewProcessor = remoteConfig.ViewProcessor;
-            var viewNames = _remoteViewProcessor.ViewNames;
-            _remoteSecuritySource = remoteConfig.SecuritySource;
-            viewSelector.DataContext = viewNames;
+                _remoteViewProcessor = remoteConfig.ViewProcessor;
+                var viewNames = _remoteViewProcessor.ViewNames;
+                _remoteSecuritySource = remoteConfig.SecuritySource;
+                viewSelector.DataContext = viewNames;
 
-            WindowLocationPersister.InitAndPersistPosition(this, Settings);
+                WindowLocationPersister.InitAndPersistPosition(this, Settings);
 
-            var viewToSelect = viewNames.Where(v => Settings.PreviousViewName == v).FirstOrDefault();
-            viewSelector.SelectedItem = viewToSelect;
+                var viewToSelect = viewNames.Where(v => Settings.PreviousViewName == v).FirstOrDefault();
+                viewSelector.SelectedItem = viewToSelect;
+            }
+            catch (WebException e)
+            {
+                var messageBoxResult = MessageBox.Show(e.ToString(), "Failed to connect to server");
+                Close();
+            }
         }
 
         private void viewSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
