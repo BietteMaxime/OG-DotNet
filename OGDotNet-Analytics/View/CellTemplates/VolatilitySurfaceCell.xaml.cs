@@ -19,7 +19,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
     /// </summary>
     public partial class VolatilitySurfaceCell : UserControl
     {
-        private static readonly bool _toScale = Settings.Default.ShowVolatilityCurveToScale;
+        private static readonly bool ToScale = Settings.Default.ShowVolatilityCurveToScale;
 
         private bool _haveInitedData;
         private readonly DispatcherTimer _timer;
@@ -56,7 +56,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
 
         private void SetCamera(double t)
         {
-            Point3D center = new Point3D(0.5,0.5,0.5);
+            var center = new Point3D(0.5,0.5,0.5);
 
             const double circleRadius = 2.2;
 
@@ -102,14 +102,14 @@ namespace OGDotNet_Analytics.View.CellTemplates
             detailsList.ItemsSource = rows;
         }
 
-        private void UserControl_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
             InitData();
             detailsPopup.IsOpen = true;
             _timer.IsEnabled = false;
         }
 
-        private void UserControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
             detailsPopup.IsOpen = false;
             toolTip.IsOpen = false;
@@ -134,14 +134,17 @@ namespace OGDotNet_Analytics.View.CellTemplates
             mesh.TextureCoordinates.Add(new Point(0.5, 1));
             mesh.TextureCoordinates.Add(new Point(1, 0));
 
-            var linearGradientBrush = new LinearGradientBrush(new GradientStopCollection
-                                                                  {
-                                                                      new GradientStop(GetColor(colorQuotient0), 0),
-                                                                      new GradientStop(GetColor(colorQuotient1), 0.5),
-                                                                      new GradientStop(GetColor(colorQuotient2), 1)
-                                                                  });
-            linearGradientBrush.StartPoint = new Point(0, 0);
-            linearGradientBrush.EndPoint = new Point(1, 0);
+            var linearGradientBrush = new LinearGradientBrush(
+                                            new GradientStopCollection
+                                            {
+                                                new GradientStop(GetColor(colorQuotient0), 0),
+                                                new GradientStop(GetColor(colorQuotient1), 0.5),
+                                                new GradientStop(GetColor(colorQuotient2), 1)
+                                            })
+                                            {
+                                                StartPoint = new Point(0, 0),
+                                                EndPoint = new Point(1, 0)
+                                            };
 
             var diffuseMaterial = new DiffuseMaterial(linearGradientBrush);
 
@@ -177,7 +180,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
 
 
 
-            if (_toScale)
+            if (ToScale)
             {
                 var xMax = Surface.Xs.Select(GetScaledValue).Max();
                 double xScale = 1.0 / xMax;
@@ -291,12 +294,10 @@ namespace OGDotNet_Analytics.View.CellTemplates
                     i--;
                 }
             }
-            var lightModel = new ModelVisual3D {Content = new DirectionalLight(Colors.White, new Vector3D(-1, -1, -1))};
-            //var lightModel2 = new ModelVisual3D { Content = new DirectionalLight(Colors.White, new Vector3D(0, 0, -1)) };
+            var lightModel = new ModelVisual3D {Content = new DirectionalLight(Colors.White, new Vector3D(0, 0, -1))};
 
             mainViewport.Children.Clear();
             mainViewport.Children.Add(lightModel);
-            //mainViewport.Children.Add(lightModel2);
             mainViewport.Children.Add(model);
             
         }
