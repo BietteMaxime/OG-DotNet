@@ -29,7 +29,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
             InitializeComponent();
             _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(80.0)};
 
-            double speed = 0.06;
+            double speed = 0.01;
 
             double t = Math.PI / 4.0;
             const double maxT= Math.PI/2.0;
@@ -116,7 +116,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
             _timer.IsEnabled = true;
         }
 
-        private static Model3DGroup CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2, float colorQuotient)
+        private static Model3DGroup CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2, float colorQuotient0, float colorQuotient1, float colorQuotient2)
         {
             var mesh = new MeshGeometry3D();
             mesh.Positions.Add(p0);
@@ -130,9 +130,21 @@ namespace OGDotNet_Analytics.View.CellTemplates
             mesh.Normals.Add(normal);
             mesh.Normals.Add(normal);
 
-            var color = GetColor(colorQuotient);
-            var brush = new SolidColorBrush(color);
-            var diffuseMaterial = new DiffuseMaterial(brush);
+            mesh.TextureCoordinates.Add(new Point(0, 0));
+            mesh.TextureCoordinates.Add(new Point(0.5, 1));
+            mesh.TextureCoordinates.Add(new Point(1, 0));
+
+            var linearGradientBrush = new LinearGradientBrush(new GradientStopCollection
+                                                                  {
+                                                                      new GradientStop(GetColor(colorQuotient0), 0),
+                                                                      new GradientStop(GetColor(colorQuotient1), 0.5),
+                                                                      new GradientStop(GetColor(colorQuotient2), 1)
+                                                                  });
+            linearGradientBrush.StartPoint = new Point(0, 0);
+            linearGradientBrush.EndPoint = new Point(1, 0);
+
+            var diffuseMaterial = new DiffuseMaterial(linearGradientBrush);
+
             var model = new GeometryModel3D(mesh, diffuseMaterial) { BackMaterial = diffuseMaterial };
             var group = new Model3DGroup();
             group.Children.Add(model);
@@ -186,12 +198,14 @@ namespace OGDotNet_Analytics.View.CellTemplates
                     {
 
                         var zValue = Surface[xKeys[xi], yKeys[yi]];
+                        var right= Surface[xKeys[xi+1], yKeys[yi]];
+                        var above = Surface[xKeys[xi], yKeys[yi+1]];
 
                         group.Children.Add(CreateTriangleModel(
                             GetPoint(xi, yi, Surface, scaleMatrix),
                             GetPoint(xi + 1, yi, Surface, scaleMatrix),
                             GetPoint(xi, yi + 1, Surface, scaleMatrix)
-                            , (float) (colorScale*zValue)));
+                            , (float)(colorScale * zValue), (float)(colorScale * right), (float)(colorScale * above)));
                     }
                 }
 
@@ -200,11 +214,14 @@ namespace OGDotNet_Analytics.View.CellTemplates
                     for (int xi = 1; xi < xKeys.Count; xi++)
                     {
                         var zValue = Surface[xKeys[xi], yKeys[yi]];
+                        var left = Surface[xKeys[xi - 1], yKeys[yi]];
+                        var below = Surface[xKeys[xi], yKeys[yi - 1]];
+
                         group.Children.Add(CreateTriangleModel(
                             GetPoint(xi, yi, Surface, scaleMatrix),
                             GetPoint(xi - 1, yi, Surface, scaleMatrix),
                             GetPoint(xi, yi - 1, Surface, scaleMatrix)
-                            , (float) (colorScale*zValue)));
+                            , (float)(colorScale * zValue), (float)(colorScale * left), (float)(colorScale * below)));
                     }
                 }
             }
@@ -230,7 +247,7 @@ namespace OGDotNet_Analytics.View.CellTemplates
                         group.Children.Add(CreateTriangleModel(
                             new Point3D(xi * xScale, yi * yScale, at * zScale),
                             new Point3D((xi + 1) * xScale, (yi) * yScale, right * zScale),
-                            new Point3D((xi) * xScale, (yi + 1) * yScale, above * zScale), (float)(colorScale * at)));
+                            new Point3D((xi) * xScale, (yi + 1) * yScale, above * zScale), (float)(colorScale * at), (float)(colorScale * right), (float)(colorScale * above)));
                     }
                 }
                 for (int yi = 1; yi < ys.Count; yi++)
@@ -241,10 +258,11 @@ namespace OGDotNet_Analytics.View.CellTemplates
                         var left = GetPoint(xi - 1, yi, xs, ys, Surface);
                         var below = GetPoint(xi, yi - 1, xs, ys, Surface);
 
+                        
                         group.Children.Add(CreateTriangleModel(
                             new Point3D(xi * xScale, yi * yScale, at * zScale),
                             new Point3D((xi - 1) * xScale, (yi) * yScale, left * zScale),
-                            new Point3D((xi) * xScale, (yi - 1) * yScale, below * zScale), (float)(colorScale * at)));
+                            new Point3D((xi) * xScale, (yi - 1) * yScale, below * zScale), (float)(colorScale * at), (float)(colorScale * left), (float)(colorScale * below)));
                     }
                 }
 
@@ -254,13 +272,13 @@ namespace OGDotNet_Analytics.View.CellTemplates
                 new Point3D(0,0,0), 
                 new Point3D(1,0,0), 
                 new Point3D(0,1,0), 
-                0
+                0,0,0
                 ));
             group.Children.Add(CreateTriangleModel(
                 new Point3D(0, 1, 0),                
                 new Point3D(1, 0, 0),
                 new Point3D(1, 1, 0),
-                0
+                0,0,0
                 ));
 
             var model = new ModelVisual3D {Content = group};
@@ -273,9 +291,12 @@ namespace OGDotNet_Analytics.View.CellTemplates
                     i--;
                 }
             }
-            var lightModel = new ModelVisual3D {Content = new DirectionalLight(Colors.White, new Vector3D(0, 0, -1))};
+            var lightModel = new ModelVisual3D {Content = new DirectionalLight(Colors.White, new Vector3D(-1, -1, -1))};
+            //var lightModel2 = new ModelVisual3D { Content = new DirectionalLight(Colors.White, new Vector3D(0, 0, -1)) };
+
             mainViewport.Children.Clear();
             mainViewport.Children.Add(lightModel);
+            //mainViewport.Children.Add(lightModel2);
             mainViewport.Children.Add(model);
             
         }

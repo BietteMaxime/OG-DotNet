@@ -14,11 +14,6 @@
             <Viewport3D.Camera>
                 <PerspectiveCamera 	  x:Name="camera" FarPlaneDistance="100"	  LookDirection="-11,-10,-9"	  UpDirection="0,0,1"	  NearPlaneDistance="1" 	  Position="11,10,9" 	  FieldOfView="40" />
             </Viewport3D.Camera>
-            <ModelVisual3D>
-                <ModelVisual3D.Content>
-                    <DirectionalLight 	    Color="White" 	    Direction="0,0,-1" />
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
         </Viewport3D>
         <Popup Name="toolTip" IsOpen="False" Placement="Mouse">
             <TextBlock Name="toolTipBox" Background="LightYellow" Foreground="Black"/>
