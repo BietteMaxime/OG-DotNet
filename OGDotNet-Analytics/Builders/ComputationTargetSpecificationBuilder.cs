@@ -6,7 +6,7 @@ using OGDotNet_Analytics.Mappedtypes.Id;
 
 namespace OGDotNet_Analytics.Builders
 {
-    public class ComputationTargetSpecificationBuilder : BuilderBase<ComputationTargetSpecification>
+    internal class ComputationTargetSpecificationBuilder : BuilderBase<ComputationTargetSpecification>
     {
         public ComputationTargetSpecificationBuilder(FudgeContext context, Type type) : base(context, type)
         {

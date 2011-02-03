@@ -9,7 +9,7 @@ using OGDotNet_Analytics.Mappedtypes.engine.View;
 
 namespace OGDotNet_Analytics.Builders
 {
-    public class ViewCalculationResultModelBuilder: BuilderBase<ViewCalculationResultModel>
+    internal class ViewCalculationResultModelBuilder : BuilderBase<ViewCalculationResultModel>
     {
         public ViewCalculationResultModelBuilder(FudgeContext context, Type type) : base(context, type)
         {

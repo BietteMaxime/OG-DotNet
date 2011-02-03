@@ -23,7 +23,7 @@ namespace OGDotNet_Analytics.Model.Resources
             var fudgeMsg = _rest.GetSubMagic("init").GetReponse("POST");
         }
 
-        public Portfolio Portfolio
+        public IPortfolio Portfolio
         {
             get
             {
@@ -34,7 +34,7 @@ namespace OGDotNet_Analytics.Model.Resources
                 }
 
                 FudgeSerializer fudgeSerializer = FudgeConfig.GetFudgeSerializer();
-                return fudgeSerializer.Deserialize<Portfolio>(fudgeMsg);
+                return fudgeSerializer.Deserialize<IPortfolio>(fudgeMsg);
             }
         }
 

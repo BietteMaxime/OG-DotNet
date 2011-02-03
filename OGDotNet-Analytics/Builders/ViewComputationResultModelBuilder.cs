@@ -10,7 +10,7 @@ using OGDotNet_Analytics.Model;
 
 namespace OGDotNet_Analytics.Builders
 {
-    public class ViewComputationResultModelBuilder : BuilderBase<ViewComputationResultModel>
+    internal class ViewComputationResultModelBuilder : BuilderBase<ViewComputationResultModel>
     {
         public ViewComputationResultModelBuilder(FudgeContext context, Type type) : base(context, type)
         {

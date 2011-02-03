@@ -4,7 +4,7 @@ using Fudge.Serialization;
 
 namespace OGDotNet_Analytics.Builders
 {
-    public abstract class BuilderBase<T>: IFudgeSerializationSurrogate
+    internal abstract class BuilderBase<T>: IFudgeSerializationSurrogate
     {
         protected readonly FudgeContext Context;
         protected readonly Type Type;

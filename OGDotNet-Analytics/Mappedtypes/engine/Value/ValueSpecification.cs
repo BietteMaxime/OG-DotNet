@@ -1,10 +1,10 @@
 ﻿using System;
+using Fudge;
 using Fudge.Serialization;
 using OGDotNet_Analytics.Builders;
 
 namespace OGDotNet_Analytics.Mappedtypes.engine.Value
 {
-    [FudgeSurrogate(typeof(ValueSpecificationBuilder))]
     public class ValueSpecification : IEquatable<ValueSpecification>
     {
         private readonly string _valueName;
@@ -26,6 +26,19 @@ namespace OGDotNet_Analytics.Mappedtypes.engine.Value
             get { return _targetSpecification; }
         }
 
+
+        public static ValueSpecification FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            var valueName = ffc.GetValue<String>("valueName");
+            var targetSpecification = new ComputationTargetSpecificationBuilder(deserializer.Context, typeof(ComputationTargetSpecification)).DeserializeImpl(ffc, deserializer); //Can't register twice
+            //TODO properties
+            return new ValueSpecification(valueName, targetSpecification);
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            throw new NotImplementedException();
+        }
 
         public bool Equals(ValueSpecification other)
         {

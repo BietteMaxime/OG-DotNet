@@ -89,7 +89,6 @@
     <Compile Include="Mappedtypes\engine\View\ViewTargetResultModelImpl.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewCalculationResultModel.cs" />
     <Compile Include="Builders\ViewCalculationResultModelBuilder.cs" />
-    <Compile Include="Builders\ValueSpecificationBuilder.cs" />
     <Compile Include="Mappedtypes\engine\Value\ValueSpecification.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewComputationResultModel.cs" />
     <Compile Include="Model\Resources\RemoteClient.cs" />

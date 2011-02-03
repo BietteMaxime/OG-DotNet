@@ -18,7 +18,7 @@ namespace OGDotNet_Analytics.View
 
 
         private readonly ViewDefinition _viewDefinition;
-        private readonly Portfolio _portfolio;
+        private readonly IPortfolio _portfolio;
         private readonly RemoteSecuritySource _remoteSecuritySource;
         private readonly List<string> _portfolioColumns;
         private readonly List<string> _primitiveColumns;
@@ -27,7 +27,7 @@ namespace OGDotNet_Analytics.View
         private List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
         private readonly Dictionary<UniqueIdentifier, PrimitiveRow> _primitiveRows = new Dictionary<UniqueIdentifier, PrimitiveRow>();
 
-        public ComputationResultsTables(ViewDefinition viewDefinition, Portfolio portfolio, RemoteSecuritySource remoteSecuritySource)
+        public ComputationResultsTables(ViewDefinition viewDefinition, IPortfolio portfolio, RemoteSecuritySource remoteSecuritySource)
         {
             _viewDefinition = viewDefinition;
             _portfolio = portfolio;
@@ -161,7 +161,7 @@ namespace OGDotNet_Analytics.View
             return String.Format("{0}/{1}", configuration, valueName);
         }
 
-        private static IEnumerable<TreeNode> GetNodes(Portfolio portfolio, RemoteSecuritySource remoteSecuritySource)
+        private static IEnumerable<TreeNode> GetNodes(IPortfolio portfolio, RemoteSecuritySource remoteSecuritySource)
         {
             return  GetNodesInner(portfolio.Root, remoteSecuritySource).ToList();
         }
@@ -212,7 +212,7 @@ namespace OGDotNet_Analytics.View
             }
         }
 
-        private static IEnumerable<PortfolioRow> BuildPortfolioRows(ViewDefinition viewDefinition, Portfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex, RemoteSecuritySource remoteSecuritySource)
+        private static IEnumerable<PortfolioRow> BuildPortfolioRows(ViewDefinition viewDefinition, IPortfolio portfolio, Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex, RemoteSecuritySource remoteSecuritySource)
         {
             if (portfolio == null)
                 yield break;

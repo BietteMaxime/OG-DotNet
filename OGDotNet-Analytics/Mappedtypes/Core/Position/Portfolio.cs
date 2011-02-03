@@ -1,9 +1,9 @@
 ﻿namespace OGDotNet_Analytics.Mappedtypes.Core.Position
 {
-    public class Portfolio
+    public interface IPortfolio
     {
-        public string Identifier { get; set; }
-        public string Name { get; set; }
-        public PortfolioNode Root { get; set; }
+        string Identifier { get; }
+        string Name { get;  }
+        PortfolioNode Root { get;  }
     }
 }
