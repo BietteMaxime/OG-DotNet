@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OGDotNet_Analytics.Properties {
+namespace OGDotNet_AnalyticsViewer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -25,38 +25,37 @@ namespace OGDotNet_Analytics.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://127.0.0.1:8080/jax")]
-        public string ServiceUri {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowVolatilityCurveToScale {
             get {
-                return ((string)(this["ServiceUri"]));
+                return ((bool)(this["ShowVolatilityCurveToScale"]));
             }
             set {
-                this["ServiceUri"] = value;
+                this["ShowVolatilityCurveToScale"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("bbgintegrationtestuser")]
-        public string UserName {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PreviousViewName {
             get {
-                return ((string)(this["UserName"]));
+                return ((string)(this["PreviousViewName"]));
             }
             set {
-                this["UserName"] = value;
+                this["PreviousViewName"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public string ConfigId {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WindowLocationPersisterData {
             get {
-                return ((string)(this["ConfigId"]));
+                return ((string)(this["WindowLocationPersisterData"]));
             }
             set {
-                this["ConfigId"] = value;
+                this["WindowLocationPersisterData"] = value;
             }
         }
     }

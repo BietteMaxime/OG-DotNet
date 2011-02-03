@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Fudge;
+using OGDotNet_Analytics.Properties;
 
 
 namespace OGDotNet_Analytics.Model.Resources
 {
     public class RemoteConfig
     {
+        private static readonly Settings Settings = Settings.Default;
+        public static readonly RemoteConfig DefaultConfig = new RemoteConfig(Settings.ConfigId, Settings.ServiceUri);
+
         private readonly string _configId;
+        private readonly Uri _rootUri;
         private readonly RestTarget _rootRest;
         private readonly FudgeMsg _configsMsg;
         private readonly string _userDataUri;
@@ -17,10 +22,14 @@ namespace OGDotNet_Analytics.Model.Resources
         private readonly string _securitySourceUri;
         private readonly string _activeMQSpec;
 
+
+
+        
         public RemoteConfig(string configId, string rootUri)
         {
             _rootRest = new RestTarget(rootUri);
             _configId = configId;
+            _rootUri = new Uri(rootUri);
 
             _configsMsg = _rootRest.Resolve("configuration").GetReponse();
 
@@ -36,7 +45,10 @@ namespace OGDotNet_Analytics.Model.Resources
             
         }
 
-
+        public Uri RootUri
+        {
+            get { return _rootUri; }
+        }
 
         public RemoteClient UserClient
         {
@@ -58,6 +70,14 @@ namespace OGDotNet_Analytics.Model.Resources
         {
             get {
                 return new RemoteSecuritySource(new RestTarget(_securitySourceUri));
+            }
+        }
+
+        public RemoteSecurityMaster SecurityMaster
+        {//TODO this is a hack, should I even be exposing this?
+            get
+            {
+                return new RemoteSecurityMaster(new RestTarget(_securitySourceUri.Replace("securitySource", "securityMaster")));
             }
         }
 
