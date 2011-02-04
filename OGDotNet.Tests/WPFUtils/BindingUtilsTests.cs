@@ -18,6 +18,7 @@ namespace OGDotNet.Tests.WPFUtils
         }
 
 
+        [Theory]
         [InlineData("")]
         [InlineData(" ")]
         [InlineData("\t")]
