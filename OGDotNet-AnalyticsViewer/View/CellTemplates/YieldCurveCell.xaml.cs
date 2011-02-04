@@ -22,8 +22,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             get { return (DataContext as YieldCurve); }
         }
-        
-        protected InterpolatedDoublesCurve Curve
+
+        private InterpolatedDoublesCurve Curve
         {
             get { return YieldCurve.Curve; }
         }
