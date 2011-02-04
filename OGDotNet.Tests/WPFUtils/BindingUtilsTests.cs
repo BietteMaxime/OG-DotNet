@@ -1,40 +1,39 @@
 ﻿using System;
 using System.Windows.Controls;
 using System.Windows.Data;
-using NUnit.Framework;
 using OGDotNet.WPFUtils;
+using Xunit;
+using Xunit.Extensions;
 
 namespace OGDotNet.Tests.WPFUtils
 {
 
-    [TestFixture]
     public class BindingUtilsTests
     {
-        [Test]
+        [Fact]
         public void BindingModeIsOneWay()
         {
             var indexerBinding = BindingUtils.GetIndexerBinding("");
-            Assert.AreEqual(BindingMode.OneWay, indexerBinding.Mode);
+            Assert.Equal(BindingMode.OneWay, indexerBinding.Mode);
         }
 
 
-        [Test]                           
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase("\t")]
-        [TestCase("Abba/FestFolk")]
-        [TestCase("Abba\\FestFolk")]
-        [TestCase("Abba/Fest Folk")]
-        [TestCase("Abba/[FestFolk]")]
-        [TestCase("Abba/[FestFolk")]
-        [TestCase("Abba/[FestFolk]")]
-        [TestCase("Abba/Fest%Folk")]
-        [TestCase("Abba/Fest^Folk")]
-        [TestCase("Abba/Fest[[[^]]]Folk")]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("\t")]
+        [InlineData("Abba/FestFolk")]
+        [InlineData("Abba\\FestFolk")]
+        [InlineData("Abba/Fest Folk")]
+        [InlineData("Abba/[FestFolk]")]
+        [InlineData("Abba/[FestFolk")]
+        [InlineData("Abba/[FestFolk]")]
+        [InlineData("Abba/Fest%Folk")]
+        [InlineData("Abba/Fest^Folk")]
+        [InlineData("Abba/Fest[[[^]]]Folk")]
         public void IndexValueTests(string indexer)
         {
             string boundValue = RoundTripBinding(indexer);
-            Assert.AreEqual(indexer, boundValue);
+            Assert.Equal(indexer, boundValue);
         }
 
         private static string RoundTripBinding(string indexer)

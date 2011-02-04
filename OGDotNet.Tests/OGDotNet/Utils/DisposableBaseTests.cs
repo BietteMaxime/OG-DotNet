@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Threading;
-using NUnit.Framework;
 using OGDotNet.Utils;
+using Xunit;
 
 namespace OGDotNet.Tests.OGDotNet.Utils
 {
-    [TestFixture]
-	public class DisposableBaseTests
+    public class DisposableBaseTests
 	{
-        [Test]
+        [Fact]
         public void ManualDispose_CalledExactlyOnce()
         {
             var r = CountDisposedCalls(d => d.Dispose());
 
-            Assert.AreEqual(1, r.Item1);
-            Assert.AreEqual(0, r.Item2);
+            Assert.Equal(1, r.Item1);
+            Assert.Equal(0, r.Item2);
         }
 
-        [Test]
+        [Fact]
         public void Finalize_CalledExactlyOnce()
         {
             var r = CountDisposedCalls(d => {});
 
-            Assert.AreEqual(0, r.Item1);
-            Assert.AreEqual(1, r.Item2);
+            Assert.Equal(0, r.Item1);
+            Assert.Equal(1, r.Item2);
         }
         
 
