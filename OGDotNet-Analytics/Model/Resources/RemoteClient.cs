@@ -27,7 +27,7 @@ namespace OGDotNet.Model.Resources
 
         private void QueueHeartbeat(CancellationToken cancellationToken)
         {
-            ThreadPool.RegisterWaitForSingleObject(cancellationToken.WaitHandle, SendHeartBeats, cancellationToken, TimeSpan.FromSeconds(5), true);
+            ThreadPool.RegisterWaitForSingleObject(cancellationToken.WaitHandle, SendHeartBeats, cancellationToken, TimeSpan.FromMinutes(5), true);
         }
 
         private  void SendHeartBeats(object context, bool timedOut)
