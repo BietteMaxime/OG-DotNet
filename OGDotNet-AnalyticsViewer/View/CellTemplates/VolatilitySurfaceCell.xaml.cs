@@ -240,22 +240,17 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
             else
             {
-                var xs = Surface.Xs.ToList();
-                var ys = Surface.Ys.ToList();
+                double xScale = 1.0 / (xKeys.Count - 1);
+                double yScale = 1.0 / (yKeys.Count - 1);
+
                 
-                double xScale = 1.0 / (xs.Count - 1);
-                double yScale = 1.0 / (ys.Count - 1);
-
-
-
-
-                for (int yi = 0; yi < ys.Count - 1; yi++)
+                for (int yi = 0; yi < yKeys.Count - 1; yi++)
                 {
-                    for (int xi = 0; xi < xs.Count - 1; xi++)
+                    for (int xi = 0; xi < xKeys.Count - 1; xi++)
                     {
-                        var at = Surface[xs[xi], ys[yi]];
-                        var right = Surface[xs[xi + 1], ys[yi]];
-                        var above = Surface[xs[xi], ys[yi + 1]];
+                        var at = Surface[xKeys[xi], yKeys[yi]];
+                        var right = Surface[xKeys[xi + 1], yKeys[yi]];
+                        var above = Surface[xKeys[xi], yKeys[yi + 1]];
 
                         group.Children.Add(CreateTriangleModel(
                             new Point3D(xi * xScale, yi * yScale, at * zScale),
@@ -263,13 +258,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                             new Point3D((xi) * xScale, (yi + 1) * yScale, above * zScale), (float)(colorScale * at), (float)(colorScale * right), (float)(colorScale * above)));
                     }
                 }
-                for (int yi = 1; yi < ys.Count; yi++)
+                for (int yi = 1; yi < yKeys.Count; yi++)
                 {
-                    for (int xi = 1; xi < xs.Count; xi++)
+                    for (int xi = 1; xi < xKeys.Count; xi++)
                     {
-                        var at = Surface[xs[xi], ys[yi]];
-                        var left = Surface[xs[xi - 1], ys[yi]];
-                        var below = Surface[xs[xi], ys[yi - 1]];
+                        var at = Surface[xKeys[xi], yKeys[yi]];
+                        var left = Surface[xKeys[xi - 1], yKeys[yi]];
+                        var below = Surface[xKeys[xi], yKeys[yi - 1]];
 
                         
                         group.Children.Add(CreateTriangleModel(
