@@ -186,16 +186,18 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             if (ToScale)
             {
                 var xMax = Surface.Xs.Select(GetScaledValue).Max();
-                double xScale = 1.0 / xMax;
+                var xMin = Surface.Xs.Select(GetScaledValue).Min();
+                double xScale = 1.0 / (xMax-xMin);
                 var yMax = Surface.Ys.Select(GetScaledValue).Max();
-                double yScale = 1.0 / yMax;
+                var yMin = Surface.Ys.Select(GetScaledValue).Min();
+                double yScale = 1.0 / (yMax-yMin);
 
                 var scaleMatrix = new Matrix3D(
                     xScale, 0, 0, 0,
                     0, yScale, 0, 0,
                     0, 0, zScale, 0,
 
-                    0, 0, 0, 1);
+                    -xMin*xScale, -yMin*yScale, 0, 1);
 
                 for (int yi = 0; yi < yKeys.Count; yi++)
                 {
@@ -323,7 +325,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private static double GetScaledValue(Tenor t)
         {
-            return t.TimeSpan.TotalDays;
+            return Math.Log(t.TimeSpan.TotalDays);
         }
 
         private VolatilitySurfaceData Surface
