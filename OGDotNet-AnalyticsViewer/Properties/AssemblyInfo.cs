@@ -8,9 +8,9 @@ using System.Windows;
 [assembly: AssemblyTitle("OGDotNet-AnalyticsViewer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("OpenGamma Limited")]
 [assembly: AssemblyProduct("OGDotNet-AnalyticsViewer")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCopyright("Copyright © OpenGamma Limited 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
