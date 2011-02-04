@@ -10,7 +10,7 @@ namespace OGDotNet.Model
         private static FudgeContext _fudgeContext;
 
         [ThreadStatic]
-        private static SerializationTypeMap _typeMap;
+        private static SerializationTypeMap _typeMap;//This is kept around becuase of its very useful cache
 
         public static FudgeSerializer GetFudgeSerializer()
         {
