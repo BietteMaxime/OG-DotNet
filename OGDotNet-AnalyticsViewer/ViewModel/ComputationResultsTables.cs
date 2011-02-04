@@ -74,7 +74,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 {
                     foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.Primitive && r.ComputationTargetIdentifier == row.TargetId))
                     {
-                        var key = new Tuple<UniqueIdentifier, string, string>(row.TargetId.ToLatest(), valueReq.ValueName, configuration.Key);
+                        var key = new Tuple<UniqueIdentifier, string, string>(row.TargetId, valueReq.ValueName, configuration.Key);
 
                         object value;
                         if (valueIndex.TryGetValue(key, out value))
@@ -234,7 +234,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                         {
                             string header = String.Format("{0}/{1}", configuration.Key, portfolioReq);
                             
-                            var key = new Tuple<UniqueIdentifier, string, string>(position.Identifier.ToLatest(), portfolioReq, configuration.Key);
+                            var key = new Tuple<UniqueIdentifier, string, string>(position.Identifier, portfolioReq, configuration.Key);
                             object value;
                             if (valueIndex.TryGetValue(key, out value))
                             {
@@ -265,7 +265,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                     case ComputationTargetType.Position:
                     case ComputationTargetType.PortfolioNode:
                         valueIndex.Add(new Tuple<UniqueIdentifier, string, string>(
-                                           result.ComputedValue.Specification.TargetSpecification.Uid.ToLatest(),
+                                           result.ComputedValue.Specification.TargetSpecification.Uid,
                                            result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
                                        result.ComputedValue.Value);
                         break;
