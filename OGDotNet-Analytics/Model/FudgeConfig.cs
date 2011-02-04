@@ -15,6 +15,10 @@ namespace OGDotNet.Model
         public static FudgeSerializer GetFudgeSerializer()
         {
             FudgeContext fudgeContext = GetFudgeContext();
+            if (_typeMap == null)
+            {
+                _typeMap = new SerializationTypeMap(_fudgeContext);
+            }
             return new FudgeSerializer(fudgeContext, _typeMap);
         }
 
@@ -26,7 +30,6 @@ namespace OGDotNet.Model
                 _fudgeContext = new FudgeContext();
                 _fudgeContext.SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategy("OGDotNet.Mappedtypes", "com.opengamma"));
                 _fudgeContext.SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
-                _typeMap = new SerializationTypeMap(_fudgeContext);
             }
             return _fudgeContext;
         }
