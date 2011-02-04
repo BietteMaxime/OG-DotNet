@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using OGDotNet.AnalyticsViewer.View;
 using OGDotNet.SecurityViewer.View;
-using OGDotNet.Utils;
-using OGDotNet.WPFUtils;
 using Xunit;
-using Xunit.Extensions;
 
 namespace OGDotNet.Tests
 {
     public class AssemblyTests
     {
-        private static readonly IEnumerable<Assembly> Assemblies =
-            new [] {typeof (DisposableBase), typeof (MainWindow), typeof (SecurityWindow), typeof (BindingUtils)}.
-                Select(t => t.Assembly);
+        private static readonly  Type[] ForcedReferences = new[]{typeof(MainWindow), typeof(SecurityWindow)};
+        private static readonly string Namespace = typeof (AssemblyTests).Namespace.Replace(".Tests","");
+        private static readonly IEnumerable<Assembly> Assemblies =GetAssemblies();
+
         [Fact]
         public void CopyrightIsSane()
         {
@@ -29,6 +26,38 @@ namespace OGDotNet.Tests
                 var copyright = GetLoneAttribute<AssemblyCopyrightAttribute>(assembly);
 
                 Assert.Equal(string.Format("Copyright © {0} {1}", companyName, DateTime.Now.Year), copyright.Copyright);
+            }
+        }
+
+        [Fact]
+        public void VersionsMatch()
+        {
+            Assert.Equal(1, Assemblies.Select(a => a.GetName().Version).Distinct().Count());
+        }
+
+        private static IEnumerable<Assembly> GetAssemblies()
+        {
+            foreach (var variable in ForcedReferences)
+            {
+                //These are here to avoid the compiler trimming the references
+            }
+
+            return GetAllDependencies(n => n.Name.StartsWith(Namespace), Assembly.GetExecutingAssembly().GetName()).Distinct().ToList();
+            
+        }
+
+        private static IEnumerable<Assembly> GetAllDependencies(Predicate<AssemblyName> filter, AssemblyName root)
+        {
+            if (!filter(root))
+                yield break;
+            var rootAssembly = Assembly.Load(root);
+            yield return rootAssembly;
+            foreach (var referencedAssembly in rootAssembly.GetReferencedAssemblies())
+            {
+                foreach (var recurse in GetAllDependencies(filter, referencedAssembly))
+                {
+                    yield return recurse;
+                }
             }
         }
 
