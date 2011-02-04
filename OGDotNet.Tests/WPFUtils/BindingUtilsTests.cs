@@ -30,6 +30,7 @@ namespace OGDotNet.Tests.WPFUtils
         [TestCase("Abba/[FestFolk]")]
         [TestCase("Abba/Fest%Folk")]
         [TestCase("Abba/Fest^Folk")]
+        [TestCase("Abba/Fest[[[^]]]Folk")]
         public void IndexValueTests(string indexer)
         {
             string boundValue = RoundTripBinding(indexer);

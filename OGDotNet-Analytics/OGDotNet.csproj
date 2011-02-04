@@ -67,7 +67,7 @@
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Utils\DisposableBase.xaml.cs" />
+    <Compile Include="Utils\DisposableBase.cs" />
     <Compile Include="Model\Resources\ClientResultStream.cs" />
     <Compile Include="Mappedtypes\financial\analytics\DoubleLabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrixEntry.cs" />
