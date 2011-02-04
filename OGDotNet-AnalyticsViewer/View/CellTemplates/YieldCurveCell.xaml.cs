@@ -70,7 +70,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 yAxis.X2 = 0;
                 yAxis.Y1 = 0;
                 yAxis.Y2 = ActualHeight;
-
+                canvas.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                canvas.Visibility = Visibility.Hidden;
             }
         }
 
