@@ -31,7 +31,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             InitializeComponent();
             _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(80.0)};
 
-            double speed = 0.01;
+            double speed = 0.02;
 
             double t = Math.PI / 4.0;
             const double maxT= Math.PI/2.0;
@@ -64,7 +64,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             camera.LookDirection = Center - camera.Position;
         }
 
-        private void InitData()
+        private void InitTableData()
         {
             if (_haveInitedData) return;
             _haveInitedData = true;
@@ -103,7 +103,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
-            InitData();
+            InitTableData();
             detailsPopup.IsOpen = true;
             _timer.IsEnabled = false;
         }
@@ -115,60 +115,202 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             _timer.IsEnabled = true;
         }
 
-        /// <summary>
-        /// TODO There is no reason for all these separate model groups, should be reusing the vertices
-        /// </summary>
-        private static Model3DGroup CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2, float colorQuotient0, float colorQuotient1, float colorQuotient2)
+        private void BuildModel()
         {
-            var color0 = GetColor(colorQuotient0);
-            var color1 = GetColor(colorQuotient1);
-            var color2 = GetColor(colorQuotient2);
+            var models = new Model3DCollection
+                            {
+                                new DirectionalLight(Colors.White, new Vector3D(0, 0, -1)),
+                                BuildBaseModel(),
+                                BuildSurfaceModel()
+                            };
 
-            return CreateTriangleModel(p0, p1, p2, color0, color1, color2);
+            var groupModel = new ModelVisual3D { Content = new Model3DGroup { Children = models } };
+
+            mainViewport.Children.Clear();
+            mainViewport.Children.Add(groupModel);
+
         }
 
-        private static Model3DGroup CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2, Color color0, Color color1, Color color2)
+        private static GeometryModel3D BuildBaseModel()
         {
+            var brush = new SolidColorBrush(Colors.WhiteSmoke);
+            var material = new DiffuseMaterial(brush);
+
+            var normal = new Vector3D(0, 0, 1);
+
+
+            var mesh = new MeshGeometry3D
+                           {
+                               Positions = new Point3DCollection
+                                               {
+                                                   new Point3D(0, 0, 0),
+                                                   new Point3D(1, 0, 0),
+                                                   new Point3D(0, 1, 0),
+                                                   new Point3D(1, 1, 0)
+                                               },
+                               Normals = new Vector3DCollection
+                                             {
+                                                 normal,
+                                                 normal,
+                                                 normal,
+                                                 normal
+                                             },
+                               TriangleIndices = new Int32Collection
+                                                     {
+                                                         0,1,3,
+                                                         0,3,2
+                                                     }
+                           };
+
+
+            return new GeometryModel3D(mesh, material) { BackMaterial = material };
+        }
+
+        private GeometryModel3D BuildSurfaceModel()
+        {
+            const double zRange = 100.0;
+            const double zScale = 1.0 / zRange;
+
             var mesh = new MeshGeometry3D();
-            mesh.Positions.Add(p0);
-            mesh.Positions.Add(p1);
-            mesh.Positions.Add(p2);
-            mesh.TriangleIndices.Add(0);
-            mesh.TriangleIndices.Add(1);
-            mesh.TriangleIndices.Add(2);
-            Vector3D normal = CalculateNormal(p0, p1, p2);
-            mesh.Normals.Add(normal);
-            mesh.Normals.Add(normal);
-            mesh.Normals.Add(normal);
 
-            mesh.TextureCoordinates.Add(new Point(0, 0));
-            mesh.TextureCoordinates.Add(new Point(0.5, 1));
-            mesh.TextureCoordinates.Add(new Point(1, 0));
+            var xKeys = Surface.Xs;
+            var yKeys = Surface.Ys;
 
-            var linearGradientBrush = new LinearGradientBrush(
-                new GradientStopCollection
-                    {
-                        new GradientStop(color0, 0),
-                        new GradientStop(color1, 0.5),
-                        new GradientStop(color2, 1)
-                    })
-                                          {
-                                              StartPoint = new Point(0, 0),
-                                              EndPoint = new Point(1, 0)
-                                          };
-
+            
+            //TODO this should really be a texture generated by interpolating the surface
+            var linearGradientBrush = new LinearGradientBrush(GetColor(0), GetColor(1), new Point(0,0), new Point(1,0));
             var diffuseMaterial = new DiffuseMaterial(linearGradientBrush);
+            
 
-            var model = new GeometryModel3D(mesh, diffuseMaterial) { BackMaterial = diffuseMaterial };
-            var group = new Model3DGroup();
-            group.Children.Add(model);
-            return group;
+            //Points
+            if (ToScale)
+            {
+                var xMax = Surface.Xs.Select(GetScaledValue).Max();
+                double xScale = 1.0 / xMax;
+                var yMax = Surface.Ys.Select(GetScaledValue).Max();
+                double yScale = 1.0 / yMax;
+
+                var scaleMatrix = new Matrix3D(
+                    xScale, 0, 0, 0,
+                    0, yScale, 0, 0,
+                    0, 0, zScale, 0,
+
+                    0, 0, 0, 1);
+
+                for (int yi = 0; yi < yKeys.Count; yi++)
+                {
+                    for (int xi = 0; xi < xKeys.Count; xi++)
+                    {
+                        var xValue= GetScaledValue(xKeys[xi]);
+                        var yValue = GetScaledValue(yKeys[yi]);
+                        var zValue = Surface[xKeys[xi], yKeys[yi]];
+                        var point3D = new Point3D(xValue, yValue, zValue) * scaleMatrix;
+
+                        mesh.Positions.Add(point3D);
+                    }
+                }
+            }
+            else
+            {
+                double xScale = 1.0 / (xKeys.Count - 1);
+                double yScale = 1.0 / (yKeys.Count - 1);
+
+                var scaleMatrix = new Matrix3D(
+                    xScale, 0, 0, 0,
+                    0, yScale, 0, 0,
+                    0, 0, zScale, 0,
+
+                    0, 0, 0, 1);
+
+                for (int yi = 0; yi < yKeys.Count; yi++)
+                {
+                    for (int xi = 0; xi < xKeys.Count; xi++)
+                    {
+                        var zValue = Surface[xKeys[xi], yKeys[yi]];
+
+                        mesh.Positions.Add(new Point3D(xi, yi, zValue) * scaleMatrix);
+                    }
+                }
+            }
+
+            //Triangles and normals
+            for (int yi = 0; yi < yKeys.Count; yi++)
+            {
+                for (int xi = 0; xi < xKeys.Count; xi++)
+                {
+                    var normals = new List<Vector3D>(4);
+                   
+                    if (yi < yKeys.Count - 1 && xi < xKeys.Count-1)
+                    {
+                        var p0 = xi + (yi * xKeys.Count);
+                        var p1 = xi + 1 + (yi * xKeys.Count);
+                        var p2 = xi + ((yi + 1) * xKeys.Count);
+
+                        mesh.TriangleIndices.Add(p0);
+                        mesh.TriangleIndices.Add(p1);
+                        mesh.TriangleIndices.Add(p2);
+
+                        normals.Add(CalculateNormal(mesh.Positions[p0], mesh.Positions[p1], mesh.Positions[p2]));
+                    }
+                    if (yi >0 && xi >0)
+                    {
+                        var p0 = xi + (yi * xKeys.Count);
+                        var p1 = xi - 1 + (yi * xKeys.Count);
+                        var p2 = xi + ((yi - 1) * xKeys.Count);
+
+                        mesh.TriangleIndices.Add(p0);
+                        mesh.TriangleIndices.Add(p1);
+                        mesh.TriangleIndices.Add(p2);
+
+                        normals.Add(CalculateNormal(mesh.Positions[p0], mesh.Positions[p1], mesh.Positions[p2]));
+                    }
+
+                    //We don't need triangles here, but we need normals
+                    if (yi>0 && xi < xKeys.Count-1)
+                    {
+                        var p0 = xi + (yi * xKeys.Count);
+                        var p1 = xi + ((yi - 1) * xKeys.Count);
+                        var p2 = xi + 1 + (yi * xKeys.Count);
+                        
+                        normals.Add(CalculateNormal(mesh.Positions[p0], mesh.Positions[p1], mesh.Positions[p2]));
+                    }
+                    if (yi < yKeys.Count-1 && xi >0)
+                    {
+                        var p0 = xi + (yi * xKeys.Count);
+                        var p1 = xi + ((yi + 1) * xKeys.Count);
+                        var p2 = xi - 1 + (yi * xKeys.Count);
+
+                        normals.Add(CalculateNormal(mesh.Positions[p0], mesh.Positions[p1], mesh.Positions[p2]));
+                    }
+
+                    mesh.Normals.Add(normals.Aggregate(new Vector3D(0, 0, 0), (a, b) => a + b));
+                }
+            }
+
+            //Texture co-ordinates
+            const double colorScale = 1 / zRange;
+            for (int yi = 0; yi < yKeys.Count; yi++)
+            {
+                for (int xi = 0; xi < xKeys.Count; xi++)
+                {
+                    var zValue = Surface[xKeys[xi], yKeys[yi]];
+
+                    //Try and make sure all the triangles are real in texture space
+                    var fakeYValue = (xi / (float)xKeys.Count + yi / (float)yKeys.Count) * 0.5;
+
+                    var point = new Point(zValue * colorScale, fakeYValue);
+                    mesh.TextureCoordinates.Add(point);
+
+                }
+            }
+
+            return new GeometryModel3D(mesh, diffuseMaterial) { BackMaterial = diffuseMaterial };
         }
+
 
         private static Color GetColor(float colorQuotient)
         {
-
-            return (Colors.White * (1-colorQuotient) + Colors.Red* colorQuotient);
+            return (Colors.White * (1 - colorQuotient) + Colors.Red * colorQuotient);
         }
 
         private static Vector3D CalculateNormal(Point3D p0, Point3D p1, Point3D p2)
@@ -178,134 +320,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             return Vector3D.CrossProduct(v0, v1);
         }
 
-        private void BuildModel()
-        {
-            var group = new Model3DGroup();
-
-            var xKeys = Surface.Xs;
-            var yKeys = Surface.Ys;
-            
-            const double zRange = 100.0;
-            const double colorScale = 1 / zRange;
-            const double zScale = 1.0 / zRange;
-
-
-            if (ToScale)//TODO make a decision about ToScale
-            {
-                var xMax = Surface.Xs.Select(GetScaledValue).Max();
-                double xScale = 1.0 / xMax;
-                var yMax = Surface.Ys.Select(GetScaledValue).Max();
-                double yScale = 1.0 / yMax;
-
-                var scaleMatrix = new Matrix3D(
-                    xScale,     0,      0,      0,
-                    0,          yScale, 0,      0,
-                    0,          0,      zScale, 0,
-
-                    0, 0, 0, 1);
-
-
-                for (int yi = 0; yi < yKeys.Count - 1; yi++)
-                {
-                    for (int xi = 0; xi < xKeys.Count - 1; xi++)
-                    {
-
-                        var zValue = Surface[xKeys[xi], yKeys[yi]];
-                        var right= Surface[xKeys[xi+1], yKeys[yi]];
-                        var above = Surface[xKeys[xi], yKeys[yi+1]];
-
-                        group.Children.Add(CreateTriangleModel(
-                            GetPoint(xi, yi, Surface, scaleMatrix),
-                            GetPoint(xi + 1, yi, Surface, scaleMatrix),
-                            GetPoint(xi, yi + 1, Surface, scaleMatrix)
-                            , (float)(colorScale * zValue), (float)(colorScale * right), (float)(colorScale * above)));
-                    }
-                }
-
-                for (int yi = 1; yi < yKeys.Count; yi++)
-                {
-                    for (int xi = 1; xi < xKeys.Count; xi++)
-                    {
-                        var zValue = Surface[xKeys[xi], yKeys[yi]];
-                        var left = Surface[xKeys[xi - 1], yKeys[yi]];
-                        var below = Surface[xKeys[xi], yKeys[yi - 1]];
-
-                        group.Children.Add(CreateTriangleModel(
-                            GetPoint(xi, yi, Surface, scaleMatrix),
-                            GetPoint(xi - 1, yi, Surface, scaleMatrix),
-                            GetPoint(xi, yi - 1, Surface, scaleMatrix)
-                            , (float)(colorScale * zValue), (float)(colorScale * left), (float)(colorScale * below)));
-                    }
-                }
-            }
-            else
-            {
-                double xScale = 1.0 / (xKeys.Count - 1);
-                double yScale = 1.0 / (yKeys.Count - 1);
-
-                
-                for (int yi = 0; yi < yKeys.Count - 1; yi++)
-                {
-                    for (int xi = 0; xi < xKeys.Count - 1; xi++)
-                    {
-                        var at = Surface[xKeys[xi], yKeys[yi]];
-                        var right = Surface[xKeys[xi + 1], yKeys[yi]];
-                        var above = Surface[xKeys[xi], yKeys[yi + 1]];
-
-                        group.Children.Add(CreateTriangleModel(
-                            new Point3D(xi * xScale, yi * yScale, at * zScale),
-                            new Point3D((xi + 1) * xScale, (yi) * yScale, right * zScale),
-                            new Point3D((xi) * xScale, (yi + 1) * yScale, above * zScale), (float)(colorScale * at), (float)(colorScale * right), (float)(colorScale * above)));
-                    }
-                }
-                for (int yi = 1; yi < yKeys.Count; yi++)
-                {
-                    for (int xi = 1; xi < xKeys.Count; xi++)
-                    {
-                        var at = Surface[xKeys[xi], yKeys[yi]];
-                        var left = Surface[xKeys[xi - 1], yKeys[yi]];
-                        var below = Surface[xKeys[xi], yKeys[yi - 1]];
-
-                        
-                        group.Children.Add(CreateTriangleModel(
-                            new Point3D(xi * xScale, yi * yScale, at * zScale),
-                            new Point3D((xi - 1) * xScale, (yi) * yScale, left * zScale),
-                            new Point3D((xi) * xScale, (yi - 1) * yScale, below * zScale), (float)(colorScale * at), (float)(colorScale * left), (float)(colorScale * below)));
-                    }
-                }
-
-            }
-
-            group.Children.Add(CreateTriangleModel(
-                new Point3D(0,0,0), 
-                new Point3D(1,0,0), 
-                new Point3D(0,1,0), 
-                0,0,0
-                ));
-            group.Children.Add(CreateTriangleModel(
-                new Point3D(0, 1, 0),                
-                new Point3D(1, 0, 0),
-                new Point3D(1, 1, 0),
-                0,0,0
-                ));
-
-            var model = new ModelVisual3D {Content = group};
-            
-            for (int i = 0; i < mainViewport.Children.Count; i++)
-            {
-                if (mainViewport.Children[i] is ModelVisual3D)
-                {
-                    mainViewport.Children.RemoveAt(i);
-                    i--;
-                }
-            }
-            var lightModel = new ModelVisual3D {Content = new DirectionalLight(Colors.White, new Vector3D(0, 0, -1))};
-
-            mainViewport.Children.Clear();
-            mainViewport.Children.Add(lightModel);
-            mainViewport.Children.Add(model);
-            
-        }
 
         private static double GetScaledValue(Tenor t)
         {
@@ -315,16 +329,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private VolatilitySurfaceData Surface
         {
             get { return (VolatilitySurfaceData) DataContext; }
-        }
-
-        private static Point3D GetPoint(int xi, int yi, VolatilitySurfaceData surface, Matrix3D scaleMatrix)
-        {
-            var xTenor = surface.Xs[xi];
-            var yTenor = surface.Ys[yi];
-            var xValue= GetScaledValue(xTenor);
-            var yValue = GetScaledValue(yTenor);
-            var zValue = surface[xTenor, yTenor];
-            return new Point3D(xValue, yValue, zValue) * scaleMatrix;
         }
 
 
