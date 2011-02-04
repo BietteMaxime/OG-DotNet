@@ -60,18 +60,25 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             if (!ReferenceEquals(this, _gridViewColumn.CellTemplateSelector))
                 throw new ArgumentException("I'm about to twiddle the wrong selector");
             
-            var cellValue = IndexerMemoizer.Get(item.GetType())(item, _column);
+            object cellValue = GetCellValue(item);
             if (cellValue == null)
-            {
+            {//Let's late bind when we get a value
                 var comboFactory = new FrameworkElementFactory(typeof(NullCell));
                 comboFactory.SetValue(NullCell.CellTemplateSelectorProperty, this);
                 comboFactory.SetValue(FrameworkElement.DataContextProperty, BindingUtils.GetIndexerBinding(_column));
                 var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
                 return itemsTemplate;
             }
+            else
+            {
+                SetCellTemplate(cellValue);
+                return null;
+            }
+        }
 
-            SetCellTemplate(cellValue);
-            return null;
+        private object GetCellValue(object item)
+        {
+            return IndexerMemoizer.Get(item.GetType())(item, _column);
         }
 
         private void SetCellTemplate(object cellValue)
