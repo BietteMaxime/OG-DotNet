@@ -63,6 +63,8 @@
     <Compile Include="Mappedtypes\engine\View\ValueProperties.cs" />
     <Compile Include="Mappedtypes\engine\View\ValueRequirement.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewCalculationConfiguration.cs" />
+    <Compile Include="Model\Context\Config.cs" />
+    <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utils\DisposableBase.xaml.cs" />
@@ -74,7 +76,7 @@
     <Compile Include="Mappedtypes\Core\Position\Impl\PortfolioImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\PortfolioNode.cs" />
     <Compile Include="Mappedtypes\Core\Position\Position.cs" />
-    <Compile Include="Model\Resources\RemoteConfig.cs" />
+    <Compile Include="Model\Context\RemoteEngineContext.cs" />
     <Compile Include="Model\Resources\RemoteSecuritySource.cs" />
     <Compile Include="Model\Resources\RemoteViewProcessor.cs" />
     <Compile Include="Model\Resources\RemoteViewResource.cs" />

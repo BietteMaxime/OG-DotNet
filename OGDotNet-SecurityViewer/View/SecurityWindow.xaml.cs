@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.SecurityViewer.View
@@ -16,7 +17,7 @@ namespace OGDotNet.SecurityViewer.View
     {
         long _cancellationToken = long.MinValue;
 
-        static readonly RemoteSecurityMaster SecurityMaster = RemoteConfig.DefaultConfig.SecurityMaster;
+        static readonly RemoteSecurityMaster SecurityMaster =RemoteEngineContextFactory.DefaultRemoteEngineContextFactory.CreateRemoteEngineContext().SecurityMaster;
             
 
 

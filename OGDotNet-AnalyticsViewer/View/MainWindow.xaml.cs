@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using OGDotNet.Model.Context;
 using OGDotNet.WPFUtils;
 using OGDotNet.Model.Resources;
 using OGDotNet.AnalyticsViewer.ViewModel;
@@ -26,13 +27,10 @@ namespace OGDotNet.AnalyticsViewer.View
 
             try
             {
-                var remoteConfig = RemoteConfig.DefaultConfig;
+                var remoteConfig = RemoteEngineContextFactory.DefaultRemoteEngineContextFactory.CreateRemoteEngineContext();
 
                 Title = string.Format("OGDotNet ({0})", remoteConfig.RootUri);
 
-
-                var remoteClient = remoteConfig.UserClient;
-                remoteClient.HeartbeatSender();
 
                 _remoteViewProcessor = remoteConfig.ViewProcessor;
                 var viewNames = _remoteViewProcessor.ViewNames;
