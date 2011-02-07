@@ -12,3 +12,4 @@ Help/
 # ReSharper stuff
 _ReSharper.*
 *.ReSharper.user
+test-reports
