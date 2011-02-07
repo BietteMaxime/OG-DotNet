@@ -9,23 +9,22 @@ namespace OGDotNet.Model.Resources
 {
     public class ClientResultStream<T> : DisposableBase
     {
-        private readonly Uri _serviceUri;
         private readonly Action _stopAction;
         private readonly IConnection _connection;
         private readonly ISession _session;
         private readonly IDestination _destination;
         private readonly IMessageConsumer _consumer;
+        private readonly MQTemplate _mqTemplate;
 
-        public ClientResultStream(Uri serviceUri, string topicName, Action stopAction)
+        public ClientResultStream(MQTemplate mqTemplate, string topicName, Action stopAction)
         {
-            _serviceUri = serviceUri;
             _stopAction = stopAction;
 
 
-            var oldSkooluri = _serviceUri.LocalPath.Replace("(", "").Replace(")", "");
-            IConnectionFactory factory = new NMSConnectionFactory(oldSkooluri);
+            _mqTemplate = mqTemplate;
 
-            _connection = factory.CreateConnection();
+
+            _connection = _mqTemplate.CreateConnection();
             _session = _connection.CreateSession();
 
             _destination = _session.GetDestination("topic://"+topicName);

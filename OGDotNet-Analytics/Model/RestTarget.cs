@@ -77,6 +77,22 @@ namespace OGDotNet.Model
         }
 
 
+        public void Post(string obj)
+        {
+            HttpWebRequest request = GetBasicRequest();
+            request.Method = "POST";
+
+            request.ContentType = null;
+            using (var requestStream = request.GetRequestStream())
+            using (var sw = new StreamWriter(requestStream))
+            {
+                sw.Write(obj);
+            }
+
+            request.GetResponse();
+        }
+
+
         public FudgeMsg GetReponse()
         {
             var request = GetBasicRequest();

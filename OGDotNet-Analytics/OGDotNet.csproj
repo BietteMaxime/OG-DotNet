@@ -67,6 +67,7 @@
     <Compile Include="Mappedtypes\engine\View\ViewCalculationConfiguration.cs" />
     <Compile Include="Model\Context\Config.cs" />
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
+    <Compile Include="Model\MQTemplate.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utils\DisposableBase.cs" />

@@ -11,12 +11,12 @@ namespace OGDotNet.Model.Resources
     /// </summary>
     public class ViewClientResource : DisposableBase  //TODO IObservable<ViewComputationResultModel>
     {
-        private readonly string _activeMqSpec;
+        private readonly MQTemplate _mqTemplate;
         private readonly RestTarget _rest;
 
-        public ViewClientResource(Uri clientUri, string activeMqSpec)
+        public ViewClientResource(Uri clientUri, MQTemplate mqTemplate)
         {
-            _activeMqSpec = activeMqSpec;
+            _mqTemplate = mqTemplate;
             _rest = new RestTarget(clientUri);
         }
 
@@ -72,8 +72,7 @@ namespace OGDotNet.Model.Resources
         private ClientResultStream<ViewComputationResultModel> StartResultStream()
         {
             var reponse = _rest.Resolve("startJmsResultStream").Post();
-            var queueUri = new Uri(_activeMqSpec);
-            return new ClientResultStream<ViewComputationResultModel>(queueUri, reponse.GetValue<string>("value"), StopResultStream);
+            return new ClientResultStream<ViewComputationResultModel>(_mqTemplate, reponse.GetValue<string>("value"), StopResultStream);
         }
         private void StopResultStream()
         {
@@ -83,8 +82,7 @@ namespace OGDotNet.Model.Resources
         private ClientResultStream<ViewComputationResultModel> StartDeltaStream()
         {
             var reponse = _rest.Resolve("startJmsDeltaStream").Post();
-            var queueUri = new Uri(_activeMqSpec);
-            return new ClientResultStream<ViewComputationResultModel>(queueUri, reponse.GetValue<string>("value"), StopResultStream);
+            return new ClientResultStream<ViewComputationResultModel>(_mqTemplate, reponse.GetValue<string>("value"), StopResultStream);
         }
         private void StopDeltaStream()
         {
