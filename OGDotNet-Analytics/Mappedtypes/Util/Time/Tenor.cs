@@ -8,7 +8,7 @@ namespace OGDotNet.Mappedtypes.Util.Time
     {
         private readonly string _period;
 
-        private Tenor(string period) 
+        internal Tenor(string period) 
         {
             _period = period;
         }
