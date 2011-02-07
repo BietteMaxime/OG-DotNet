@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -48,7 +49,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 var doubleMaxX = Curve.XData.Max();
                 double xScale = ActualWidth/(doubleMaxX - doubleMinX);
 
-                var doubleMinY = Curve.YData.Min();
+                var doubleMinY = Math.Min(Curve.YData.Min(), 0);
                 var doubleMaxY = Curve.YData.Max();
                 double yScale = ActualHeight / (doubleMaxY - doubleMinY);
 
@@ -68,8 +69,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
                 yAxis.X1 = 0;
                 yAxis.X2 = 0;
-                yAxis.Y1 = 0;
-                yAxis.Y2 = ActualHeight;
+                yAxis.Y1 = ActualHeight;
+                yAxis.Y2 = 0;
                 canvas.Visibility = Visibility.Visible;
             }
             else
