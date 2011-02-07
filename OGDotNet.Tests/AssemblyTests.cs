@@ -19,13 +19,15 @@ namespace OGDotNet.Tests
         {
             const string companyName = "OpenGamma Limited";
 
+            var expected = string.Format("Copyright © {0} {1}", companyName, DateTime.Now.Year);
+
             foreach (var assembly in Assemblies)
             {
                 var company = GetLoneAttribute<AssemblyCompanyAttribute>(assembly);
                 Assert.Equal(companyName, company.Company);
                 var copyright = GetLoneAttribute<AssemblyCopyrightAttribute>(assembly);
 
-                Assert.Equal(string.Format("Copyright © {0} {1}", companyName, DateTime.Now.Year), copyright.Copyright);
+                Assert.Equal(expected, copyright.Copyright);
             }
         }
 
