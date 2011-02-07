@@ -45,9 +45,11 @@ namespace OGDotNet.Mappedtypes.engine.View
             var portfolioRequirementsBySecurityType = new Dictionary<string, ValueProperties>();
             foreach (var portfolioReqField in ffc.GetAllByName("portfolioRequirementsBySecurityType"))
             {
-                var securityType = ((IFudgeFieldContainer) portfolioReqField.Value).GetValue<String>("securityType");
+                const string securitytypeKey = "securityType";
+
+                var securityType = ((IFudgeFieldContainer) portfolioReqField.Value).GetValue<String>(securitytypeKey);
                 var valueProperties = deserializer.FromField<ValueProperties>(portfolioReqField);
-                portfolioRequirementsBySecurityType.Add(securityType, valueProperties);
+                portfolioRequirementsBySecurityType.Add(securityType, valueProperties.Filter(p => p.Key != securitytypeKey));
             }
 
             

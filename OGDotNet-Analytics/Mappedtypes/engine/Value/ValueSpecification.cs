@@ -2,6 +2,7 @@
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.engine.View;
 
 namespace OGDotNet.Mappedtypes.engine.Value
 {
@@ -9,11 +10,13 @@ namespace OGDotNet.Mappedtypes.engine.Value
     {
         private readonly string _valueName;
         private readonly ComputationTargetSpecification _targetSpecification;
+        private readonly ValueProperties _properties;
 
-        public ValueSpecification(string valueName, ComputationTargetSpecification targetSpecification)
+        public ValueSpecification(string valueName, ComputationTargetSpecification targetSpecification, ValueProperties properties)
         {
             _valueName = valueName;
             _targetSpecification = targetSpecification;
+            _properties = properties;
         }
 
         public string ValueName
@@ -31,8 +34,9 @@ namespace OGDotNet.Mappedtypes.engine.Value
         {
             var valueName = ffc.GetValue<String>("valueName");
             var targetSpecification = new ComputationTargetSpecificationBuilder(deserializer.Context, typeof(ComputationTargetSpecification)).DeserializeImpl(ffc, deserializer); //Can't register twice
-            //TODO properties
-            return new ValueSpecification(valueName, targetSpecification);
+            var properties = deserializer.FromField<ValueProperties>(ffc.GetByName("properties"));
+
+            return new ValueSpecification(valueName, targetSpecification, properties);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

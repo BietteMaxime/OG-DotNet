@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 
@@ -9,7 +10,11 @@ namespace OGDotNet.Mappedtypes.engine.View
     {
         private readonly Dictionary<string, HashSet<string>> _properties;
 
-        private ValueProperties(Dictionary<string, HashSet<string>> properties)
+        internal ValueProperties() : this(new Dictionary<string, HashSet<string>>())
+        {
+            
+        }
+        internal ValueProperties(Dictionary<string, HashSet<string>> properties)
         {
             _properties = properties;
         }
@@ -21,18 +26,21 @@ namespace OGDotNet.Mappedtypes.engine.View
 
         public static ValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            //TODO this properly
             var properties = new Dictionary<string, HashSet<string>>();
-            foreach (var field in ffc.GetAllByName("portfolioRequirement"))
+            foreach (var field in ffc)
             {
+                var name = field.Name;
+                var value = (string) field.Value;
+
                 HashSet<string> propertyValueSet;
-                if (! properties.TryGetValue(field.Name, out propertyValueSet))
+                if (!properties.TryGetValue(name, out propertyValueSet))
                 {
                     propertyValueSet = new HashSet<string>();
-                    properties[field.Name] = propertyValueSet;
+                    properties[name] = propertyValueSet;
                 }
-                propertyValueSet.Add((string)field.Value);
+                propertyValueSet.Add(value);
             }
+
             return new ValueProperties(properties);
         }
 
@@ -41,5 +49,9 @@ namespace OGDotNet.Mappedtypes.engine.View
             throw new NotImplementedException();
         }
 
+        public ValueProperties Filter(Func<KeyValuePair<string,HashSet<string>>, bool> predicate)
+        {
+            return new ValueProperties(_properties.Where(predicate).ToDictionary(k => k.Key, v => v.Value));
+        }
     }
 }
