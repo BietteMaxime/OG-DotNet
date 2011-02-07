@@ -164,4 +164,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+
+  <Import Project="..\MSBuild\Common.Targets" />
 </Project>

@@ -99,11 +99,10 @@
   </Target>
   -->
 
+  <Import Project="..\MSBuild\Common.Targets"/>
+  
   <UsingTask AssemblyFile="..\lib\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit"/>
-
-  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
-
- 
+   
   <Target Name="Test" DependsOnTargets="Build">
     <MakeDir Directories="test-reports" />
     <xunit Assembly="bin\Debug\OGDotNet.Tests.dll" Xml="test-reports\OGDotNet.Tests.xunit.xml" />
