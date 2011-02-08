@@ -8,7 +8,9 @@ using Xunit.Extensions;
 namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {
     /// <summary>
-    /// This is a slightly modified version of <see cref="PropertyDataAttribute"/> which allows better typing
+    /// This is a slightly modified version of <see cref="PropertyDataAttribute"/> which allows better typing.
+    /// It accepts <see cref="IEnumerable{T}"/> return types for one argument methods
+    /// It also allows properties from the base class to be used
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class TypedPropertyDataAttribute : DataAttribute
@@ -23,13 +25,26 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
         public override IEnumerable<object[]> GetData(MethodInfo methodUnderTest, Type[] parameterTypes)
         {
             Type declaringType = methodUnderTest.DeclaringType;
+            PropertyInfo property = GetProperty(declaringType);
+            object valueSource = property.GetValue(null, null);
+            return TypeCooerceValues(methodUnderTest, declaringType, valueSource);
+        }
+
+        private PropertyInfo GetProperty(Type declaringType)
+        {
             PropertyInfo property = declaringType.GetProperty(_propertyName, BindingFlags.Public | BindingFlags.Static);
             if (property == null)
             {
-                throw new ArgumentException(string.Format("Could not find public static property {0} on {1}", _propertyName, declaringType.FullName));
+                if (declaringType.BaseType == null)
+                {
+                    throw new ArgumentException(string.Format("Could not find public static property {0} on {1}", _propertyName, declaringType.FullName));
+                }
+                else
+                {
+                    return GetProperty(declaringType.BaseType);
+                }
             }
-            object valueSource = property.GetValue(null, null);
-            return TypeCooerceValues(methodUnderTest, declaringType, valueSource);
+            return property;
         }
 
         private IEnumerable<object[]> TypeCooerceValues(MethodInfo methodUnderTest, Type declaringType, object valueSource)

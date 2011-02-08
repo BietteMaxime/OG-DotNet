@@ -7,7 +7,7 @@ using Xunit.Extensions;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
-    public class RemoteViewProcessorTests : TestWithContextBase
+    public class RemoteViewProcessorTests : ViewTestsBase
     {
         [Fact]
         public void CanGet()
@@ -24,20 +24,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.NotEmpty(viewNames);
             Assert.DoesNotContain(null, viewNames);
             Assert.DoesNotContain("", viewNames);
-        }
-
-        public static IEnumerable<string> ViewNames
-        {
-            get { return GetContext().ViewProcessor.ViewNames; }
-        }
-
-        public static IEnumerable<RemoteView> Views
-        {
-            get
-            {
-                var remoteEngineContext = GetContext();
-                return remoteEngineContext.ViewProcessor.ViewNames.Select(n => remoteEngineContext.ViewProcessor.GetView(n));
-            }
         }
 
         [Theory]

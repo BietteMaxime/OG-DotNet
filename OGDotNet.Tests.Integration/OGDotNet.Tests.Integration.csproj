@@ -72,6 +72,7 @@
     <Compile Include="OGDotNet\Resources\RemoteViewClientTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewProcessorTests.cs" />
     <Compile Include="OGDotNet\Resources\TestWithContextBase.cs" />
+    <Compile Include="OGDotNet\Resources\ViewTestsBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
