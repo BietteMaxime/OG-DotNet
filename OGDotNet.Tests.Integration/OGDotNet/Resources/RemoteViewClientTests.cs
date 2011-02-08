@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using OGDotNet.Model.Resources;
+using OGDotNet.Tests.Integration.Properties;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
@@ -12,6 +13,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteViewClientTests: TestWithContextBase
     {
+
+        private static readonly HashSet<string> BannedViews = new HashSet<string>
+                                                                  {
+                                                                      "10K Swap Test View",//Slow
+                                                                      "TestDefinition"//Broken
+                                                                  };
+
         [Theory]
         [TypedPropertyData("Views")]
         public void CanGet(RemoteView view)
@@ -27,14 +35,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("Views")]
         public void CanStartAndGetAResult(RemoteView view)
         {
-            if (view.Name.Contains("10K"))
-                return;//Skip this, it's sloooow
-
             view.Init();
             using (var remoteViewClient = view.CreateClient())
             {
-                remoteViewClient.Start();
-
                 var cts = new CancellationTokenSource();
                 var resultsEnum = remoteViewClient.GetResults(cts.Token);
                 using (var enumerator = resultsEnum.GetEnumerator())
@@ -45,12 +48,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        //TODO pause tests
+
         public static IEnumerable<RemoteView> Views
         {
             get
             {
                 var remoteEngineContext = GetContext();
-                return remoteEngineContext.ViewProcessor.ViewNames.Select(n => remoteEngineContext.ViewProcessor.GetView(n));
+                return remoteEngineContext.ViewProcessor.ViewNames.Where(n => !BannedViews.Contains(n)).Select(n => remoteEngineContext.ViewProcessor.GetView(n));
             }
         }
 
