@@ -103,7 +103,10 @@ namespace OGDotNet.Model
             using (var responseStream = response.GetResponseStream())
             using (var buff = new BufferedStream(responseStream))
             {
-                return fudgeContext.Deserialize(buff).Message;
+                var fudgeMsgEnvelope = fudgeContext.Deserialize(buff);
+                if (fudgeMsgEnvelope == null)
+                    return null;
+                return fudgeMsgEnvelope.Message;
             }
         }
 

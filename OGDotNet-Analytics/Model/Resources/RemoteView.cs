@@ -7,17 +7,24 @@ using OGDotNet.Mappedtypes.LiveData;
 
 namespace OGDotNet.Model.Resources
 {
-    public class RemoteViewResource
+    public class RemoteView
     {
         private readonly RestTarget _rest;
         private readonly string _activeMqSpec;
+        private readonly string _name;
         private readonly MQTemplate _mqTemplate;
 
-        public RemoteViewResource(RestTarget rest, string activeMqSpec)
+        public RemoteView(RestTarget rest, string activeMqSpec, string name)
         {
             _rest = rest;
             _activeMqSpec = activeMqSpec;
+            _name = name;
             _mqTemplate = new MQTemplate(_activeMqSpec);
+        }
+
+        public string Name
+        {
+            get { return _name; }
         }
 
         public void Init()

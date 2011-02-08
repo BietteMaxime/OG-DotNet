@@ -68,12 +68,16 @@
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteClientTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteSecuritySourceTests.cs" />
+    <Compile Include="OGDotNet\Resources\RemoteViewClientTests.cs" />
+    <Compile Include="OGDotNet\Resources\RemoteViewProcessorTests.cs" />
+    <Compile Include="OGDotNet\Resources\TestWithContextBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Xunit.Extensions\TypedPropertyDataAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OGDotNet-AnalyticsViewer\OGDotNet.AnalyticsViewer.csproj">
@@ -94,6 +98,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using Fudge.Types;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
@@ -30,7 +31,20 @@ namespace OGDotNet.Mappedtypes.engine.View
             foreach (var field in ffc)
             {
                 var name = field.Name;
-                var value = (string) field.Value;
+
+                string value;
+                if (field.Value is string || field.Value == null)
+                {
+                    value = (string) field.Value;
+                }
+                else if (IsIndicatorType(field.Value))
+                {
+                    value = null;
+                }
+                else
+                {
+                    throw new ArgumentException(string.Format("Unexpected value {0}",field.Value));
+                }
 
                 HashSet<string> propertyValueSet;
                 if (!properties.TryGetValue(name, out propertyValueSet))
@@ -42,6 +56,20 @@ namespace OGDotNet.Mappedtypes.engine.View
             }
 
             return new ValueProperties(properties);
+        }
+
+        private static bool IsIndicatorType(object value)
+        {
+            var msg = value as IFudgeFieldContainer;
+            if (msg == null)
+                return false;
+
+            if (msg.GetAllFields().Count != 1)
+                return false;
+            var fudgeField = msg.GetByName(null);
+            if (fudgeField == null)
+                return false;
+            return fudgeField.Value is IndicatorType;
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

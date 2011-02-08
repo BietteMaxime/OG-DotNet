@@ -1,45 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Model.Context;
-using OGDotNet.Tests.Integration.OGDotNet.Model.Context;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
-    public class RemoteSecuritySourceTests
+    public class RemoteSecuritySourceTests : TestWithContextBase
     {
-        private readonly RemoteEngineContext _context;
-
-        public RemoteSecuritySourceTests()
-        {
-            _context = RemoteEngineContextTests.GetContext();
-        }
         [Fact]
         public void CanCreate()
         {
-            var remoteSecuritySource = _context.SecuritySource;
+            var remoteSecuritySource = Context.SecuritySource;
             Assert.NotNull(remoteSecuritySource);
         }
 
         [Fact]
         public void CanDoEmptyBundleMultiQuery()
         {
-            var remoteSecuritySource = _context.SecuritySource;
+            var remoteSecuritySource = Context.SecuritySource;
             Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurities(new IdentifierBundle(new HashSet<Identifier>())));
         }
 
         [Fact]
         public void CanDoEmptyBundleSingleQuery()
         {
-            var remoteSecuritySource = _context.SecuritySource;
+            var remoteSecuritySource = Context.SecuritySource;
             Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurity(new IdentifierBundle(new HashSet<Identifier>())));
         }
 
         [Fact(Skip = "Known fault - [TODO add JIRA ID]")]
         public void CanDoMissingUidQuery()
         {
-            var remoteSecuritySource = _context.SecuritySource;
+            var remoteSecuritySource = Context.SecuritySource;
             var security = remoteSecuritySource.GetSecurity(StupidUid);
             Assert.Null(security);
         }
@@ -47,7 +39,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CanDoEmptyMissingBundleQuery()
         {
-            var remoteSecuritySource = _context.SecuritySource;
+            var remoteSecuritySource = Context.SecuritySource;
             var collection = remoteSecuritySource.GetSecurities(new IdentifierBundle(new HashSet<Identifier> {StupidIdentifier}));
             Assert.Empty(collection);
         }

@@ -25,9 +25,9 @@ namespace OGDotNet.Model.Resources
             }
         }
 
-        public RemoteViewResource GetView(string viewName)
+        public RemoteView GetView(string viewName)
         {
-            return new RemoteViewResource(_rest.Resolve("views").Resolve(viewName), _activeMqSpec);
+            return new RemoteView(_rest.Resolve("views").Resolve(viewName), _activeMqSpec, viewName);
         }
     }
 }
