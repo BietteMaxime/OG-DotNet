@@ -64,6 +64,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OGDotNet\Mappedtypes\EmptyTypesWarner.cs" />
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextFactoryTests.cs" />
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteClientTests.cs" />
