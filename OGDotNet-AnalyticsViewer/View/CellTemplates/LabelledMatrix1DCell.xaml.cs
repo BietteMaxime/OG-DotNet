@@ -3,9 +3,9 @@ using System.Windows.Input;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {
-    public partial class DoubleLabelledMatrixCell : UserControl
+    public partial class LabelledMatrix1DCell : UserControl
     {
-        public DoubleLabelledMatrixCell()
+        public LabelledMatrix1DCell()
         {
             InitializeComponent();
         }

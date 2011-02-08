@@ -62,8 +62,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="View\CellTemplates\CellTemplateSelector.xaml.cs" />
-    <Compile Include="View\CellTemplates\DoubleLabelledMatrixCell.xaml.cs">
-      <DependentUpon>DoubleLabelledMatrixCell.xaml</DependentUpon>
+    <Compile Include="View\CellTemplates\LabelledMatrix1DCell.xaml.cs">
+      <DependentUpon>LabelledMatrix1DCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CellTemplates\NullCell.xaml.cs">
       <DependentUpon>NullCell.xaml</DependentUpon>
@@ -87,7 +87,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\CellTemplates\DoubleLabelledMatrixCell.xaml">
+    <Page Include="View\CellTemplates\LabelledMatrix1DCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -164,6 +164,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
   <Import Project="..\MSBuild\Common.Targets" />
 </Project>

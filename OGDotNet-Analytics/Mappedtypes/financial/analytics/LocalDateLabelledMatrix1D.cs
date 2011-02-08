@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using Fudge.Serialization;
+using Fudge.Types;
+using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.financial.analytics
 {
-    //TODO
-    public class LocalDateLabelledMatrix1D
+    [FudgeSurrogate(typeof(LabelledMatrix1DBuilder<FudgeDate, LocalDateLabelledMatrix1D>))]
+    public class LocalDateLabelledMatrix1D : LabelledMatrix1D<FudgeDate>
     {
+        public LocalDateLabelledMatrix1D(IList<FudgeDate> keys, IList<object> labels, IList<double> values) : base(keys, labels, values)
+        {
+        }
     }
 }

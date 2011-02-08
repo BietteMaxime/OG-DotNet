@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="OGDotNet.AnalyticsViewer.View.CellTemplates.DoubleLabelledMatrixCell"
+﻿<UserControl x:Class="OGDotNet.AnalyticsViewer.View.CellTemplates.LabelledMatrix1DCell"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

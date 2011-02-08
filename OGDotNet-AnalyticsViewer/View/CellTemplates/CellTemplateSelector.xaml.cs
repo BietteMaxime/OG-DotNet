@@ -23,7 +23,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private static readonly Dictionary<Type, Type> TemplateTypes = new Dictionary<Type, Type>
                                                                            {
                                                                                {typeof(YieldCurve), typeof(YieldCurveCell)},
-                                                                               {typeof(DoubleLabelledMatrix1D), typeof(DoubleLabelledMatrixCell)},
+                                                                               //TODO turn these into a predicate
+                                                                               {typeof(DoubleLabelledMatrix1D), typeof(LabelledMatrix1DCell)},
+                                                                               {typeof(LocalDateLabelledMatrix1D), typeof(LabelledMatrix1DCell)},
                                                                                {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)}
                                                                            };
 
