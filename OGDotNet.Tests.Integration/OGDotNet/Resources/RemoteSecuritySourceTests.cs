@@ -36,7 +36,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurity(new IdentifierBundle(new HashSet<Identifier>())));
         }
 
-        [Fact(Skip = "Known fault - [TODO add JIRA ID")]
+        [Fact(Skip = "Known fault - [TODO add JIRA ID]")]
         public void CanDoMissingUidQuery()
         {
             var remoteSecuritySource = _context.SecuritySource;
