@@ -26,7 +26,7 @@ namespace OGDotNet.Tests.Integration.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://devsvr-lx-2:8080/jax")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://devsvr-lx-2.hq.opengamma.com:8080/jax")]
         public string ServiceUri {
             get {
                 return ((string)(this["ServiceUri"]));
