@@ -5,6 +5,7 @@ using Fudge;
 
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {
@@ -19,13 +20,16 @@ namespace OGDotNet.Model.Resources
 
         public Security GetSecurity(UniqueIdentifier uid)
         {
-            var fudgeMsg = _restTarget.Resolve("securities").Resolve("security").Resolve(uid.ToString()).GetReponse();
+            var target = _restTarget.Resolve("securities").Resolve("security").Resolve(uid.ToString());
+            var fudgeMsg = target.GetReponse();
             var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
             return fudgeSerializer.Deserialize<Security> (fudgeMsg); 
         }
 
         public Security GetSecurity(IdentifierBundle bundle)
         {
+            ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
+
             Tuple<string, string>[] parameters = GetParameters(bundle);
             var fudgeMsg = _restTarget.Resolve("securities").Resolve("security", parameters).GetReponse();
 
@@ -36,6 +40,7 @@ namespace OGDotNet.Model.Resources
 
         public ICollection<Security> GetSecurities(IdentifierBundle bundle)
         {
+            ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
 
             var parameters = GetParameters(bundle);
             var fudgeMsg = _restTarget.Resolve("securities", parameters).GetReponse();
