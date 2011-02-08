@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGDotNet.WPFUtils", "OGDotN
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGDotNet.Tests", "OGDotNet.Tests\OGDotNet.Tests.csproj", "{E0720E55-0A15-4D4A-AFFD-FA3C232F4589}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGDotNet.Tests.Integration", "OGDotNet.Tests.Integration\OGDotNet.Tests.Integration.csproj", "{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,16 @@ Global
 		{E0720E55-0A15-4D4A-AFFD-FA3C232F4589}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E0720E55-0A15-4D4A-AFFD-FA3C232F4589}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E0720E55-0A15-4D4A-AFFD-FA3C232F4589}.Release|x86.ActiveCfg = Release|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

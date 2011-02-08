@@ -7,7 +7,7 @@ namespace OGDotNet.Model.Context
     {
         private readonly Config _config;
 
-        public RemoteEngineContext(Config config)
+        internal RemoteEngineContext(Config config)
         {
             _config = config;
         }
