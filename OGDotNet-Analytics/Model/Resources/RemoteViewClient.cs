@@ -9,12 +9,12 @@ namespace OGDotNet.Model.Resources
     /// <summary>
     /// DataViewClientResource
     /// </summary>
-    public class ViewClientResource : DisposableBase  //TODO IObservable<ViewComputationResultModel>
+    public class RemoteViewClient : DisposableBase  //TODO IObservable<ViewComputationResultModel>
     {
         private readonly MQTemplate _mqTemplate;
         private readonly RestTarget _rest;
 
-        public ViewClientResource(Uri clientUri, MQTemplate mqTemplate)
+        public RemoteViewClient(Uri clientUri, MQTemplate mqTemplate)
         {
             _mqTemplate = mqTemplate;
             _rest = new RestTarget(clientUri);

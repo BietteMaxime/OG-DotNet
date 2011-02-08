@@ -74,12 +74,12 @@ namespace OGDotNet.Model.Resources
             }
         }
 
-        public ViewClientResource CreateClient()
+        public RemoteViewClient CreateClient()
         {
             
             var clientUri = _rest.Resolve("clients").Create(FudgeConfig.GetFudgeContext(), FudgeConfig.GetFudgeSerializer().SerializeToMsg(UserPrincipal.DefaultUser));
 
-            return new ViewClientResource(clientUri, _mqTemplate);
+            return new RemoteViewClient(clientUri, _mqTemplate);
         }
     }
 }

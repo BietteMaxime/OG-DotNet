@@ -83,7 +83,7 @@
     <Compile Include="Model\Resources\RemoteSecuritySource.cs" />
     <Compile Include="Model\Resources\RemoteViewProcessor.cs" />
     <Compile Include="Model\Resources\RemoteViewResource.cs" />
-    <Compile Include="Model\Resources\ViewClientResource.cs" />
+    <Compile Include="Model\Resources\RemoteViewClient.cs" />
     <Compile Include="Builders\ViewComputationResultModelBuilder.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewResultEntry.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewTargetResultModelImpl.cs" />
