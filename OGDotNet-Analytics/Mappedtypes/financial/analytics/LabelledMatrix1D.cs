@@ -4,10 +4,6 @@ using System.Linq;
 
 namespace OGDotNet.Mappedtypes.financial.analytics
 {
-    /// <summary>
-    /// TODO variance, and match mapped types
-    /// </summary>
-    /// <typeparam name="TKey"></typeparam>
     public class LabelledMatrix1D<TKey> : IEnumerable<LabelledMatrixEntry>
     {
         private readonly IList<TKey> _keys;
