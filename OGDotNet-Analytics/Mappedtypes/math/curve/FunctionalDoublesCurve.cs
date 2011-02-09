@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.financial.model.interestrate;
 
 namespace OGDotNet.Mappedtypes.math.curve
 {
-    //TODO
     public class FunctionalDoublesCurve : Curve
     {
         private readonly Func<double, double> _function;
