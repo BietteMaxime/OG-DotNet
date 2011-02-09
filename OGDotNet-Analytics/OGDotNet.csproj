@@ -69,7 +69,9 @@
     <Compile Include="Builders\LabelledMatrix1DBuilder.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LocalDateLabelledMatrix1D.cs" />
+    <Compile Include="Mappedtypes\math\curve\Curve.cs" />
     <Compile Include="Mappedtypes\math\curve\FunctionalDoublesCurve.cs" />
+    <Compile Include="Mappedtypes\financial\model\interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />
     <Compile Include="Model\Context\Config.cs" />
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
     <Compile Include="Model\MQTemplate.cs" />

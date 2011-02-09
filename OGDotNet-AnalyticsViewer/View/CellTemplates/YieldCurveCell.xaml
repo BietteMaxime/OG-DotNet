@@ -16,7 +16,7 @@
             <Polyline Grid.Column="0" Grid.Row="0" Name="myLine" Stroke="Black" StrokeThickness="1"  Points="0,0 10,20  20,0" />
         </Canvas>
         <Popup Name="detailsPopup">
-            <ListView ItemsSource="{Binding Path=Curve.Data}" Height="Auto" Width="Auto">
+            <ListView ItemsSource="{Binding}" Height="Auto" Width="Auto">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="Auto" Header="t (years)" DisplayMemberBinding="{Binding Path=Item1}"/>
