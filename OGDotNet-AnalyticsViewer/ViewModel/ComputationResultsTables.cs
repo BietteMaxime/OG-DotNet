@@ -242,7 +242,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                             }
                             else
                             {
-                                values.Add(header, "undefined");
+                                values.Add(header, null);
                             }
                         }
                     }
