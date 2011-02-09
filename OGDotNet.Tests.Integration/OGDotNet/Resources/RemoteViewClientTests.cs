@@ -123,6 +123,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     foreach (var viewResultEntry in viewComputationResultModel.AllResults)
                     {
+                        Assert.NotNull(viewResultEntry.ComputedValue.Value);
                         AssertDefinitionContains(view, viewResultEntry);
                     }
 
