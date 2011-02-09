@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 
 namespace OGDotNet.Mappedtypes.math.curve
 {
-    public class InterpolatedDoublesCurve
+    public class InterpolatedDoublesCurve : Curve
     {
         private readonly double[] _xData;
         private readonly double[] _yData;
 
-        private InterpolatedDoublesCurve(double[] xData, double[] yData)
+        private InterpolatedDoublesCurve(string name, double[] xData, double[] yData) : base(name)
         {
             if (xData.Length != yData.Length)
             {
@@ -22,29 +21,34 @@ namespace OGDotNet.Mappedtypes.math.curve
             _yData = yData;
         }
 
-        public IList<double> XData
+        public override IList<double> XData
         {
             get { return _xData; }
         }
-        public IList<double> YData
+        public override IList<double> YData
         {
             get { return _yData; }
         }
-
-        public IEnumerable<Tuple<double,double>> Data
+        public int Size
         {
             get
             {
-                return _xData.Zip(_yData, (x,y) => new Tuple<double,double>(x,y));
+                return _xData.Length;
             }
+        }
+
+        public override double GetYValue(double x)
+        {
+            throw new NotImplementedException();
         }
         
         public static InterpolatedDoublesCurve FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
+            string name = GetName(ffc);
             var xData = ffc.GetValue<double[]>("x data");
             var yData = ffc.GetValue<double[]>("y data");
 
-            return new InterpolatedDoublesCurve(xData, yData);
+            return new InterpolatedDoublesCurve(name, xData, yData);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

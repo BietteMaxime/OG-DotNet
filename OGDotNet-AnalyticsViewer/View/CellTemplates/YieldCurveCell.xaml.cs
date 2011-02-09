@@ -24,7 +24,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             get { return (DataContext as YieldCurve); }
         }
 
-        private InterpolatedDoublesCurve Curve
+        private Curve Curve
         {
             get { return YieldCurve.Curve; }
         }
@@ -45,6 +45,15 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             if (YieldCurve != null)
             {
+                YieldCurve yieldCurve = YieldCurve;
+                if (IsVirtual(yieldCurve.Curve))
+                {//We can't display this
+                    IsEnabled = false;
+                    ShowDisabled();
+                    canvas.Visibility = Visibility.Visible;
+                    return;
+                }
+
                 var doubleMinX = Curve.XData.Min();
                 var doubleMaxX = Curve.XData.Max();
                 double xScale = ActualWidth/(doubleMaxX - doubleMinX);
@@ -54,7 +63,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 double yScale = ActualHeight / (doubleMaxY - doubleMinY);
 
                 myLine.Points.Clear();
-                foreach (var tuple in    Curve.Data)
+                foreach (var tuple in    Curve.GetData())
                 {
                     var x = (tuple.Item1 - doubleMinX) * xScale;
                     var y = ActualHeight - ((tuple.Item2 - doubleMinY) * yScale);
@@ -71,6 +80,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 yAxis.X2 = 0;
                 yAxis.Y1 = ActualHeight;
                 yAxis.Y2 = 0;
+                IsEnabled = true;
                 canvas.Visibility = Visibility.Visible;
             }
             else
@@ -79,9 +89,42 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
         }
 
+        private void ShowDisabled()
+        {
+            xAxis.X1 = 0;
+            xAxis.X2 = ActualWidth;
+
+            xAxis.Y1 = ActualHeight;
+            xAxis.Y2 = 0;
+
+            yAxis.X1 = 0;
+            yAxis.X2 = ActualWidth;
+            yAxis.Y1 = 0;
+            yAxis.Y2 = ActualHeight;
+
+            myLine.Points.Clear();
+        }
+
+        private static bool IsVirtual(Curve curve)
+        {//TODO where should this live.  Probably on the curves themselves
+            try
+            {
+                var xData = curve.XData;
+                return false;
+            }
+            catch (InvalidOperationException)
+            {
+                return true;
+            }
+        }
+
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
-            detailsPopup.IsOpen = true;
+            if (IsEnabled)
+            {
+                detailsPopup.DataContext = Curve.GetData();
+                detailsPopup.IsOpen = true;
+            }
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)

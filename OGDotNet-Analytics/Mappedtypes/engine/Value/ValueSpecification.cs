@@ -19,6 +19,11 @@ namespace OGDotNet.Mappedtypes.engine.Value
             _properties = properties;
         }
 
+        public ValueProperties Properties
+        {
+            get { return _properties; }
+        }
+
         public string ValueName
         {
             get { return _valueName; }
