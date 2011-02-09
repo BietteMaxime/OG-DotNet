@@ -60,7 +60,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         {
             bool rowsChanged = false;
             
-            var targets = _viewDefinition.CalculationConfigurationsByName.SelectMany(conf => conf.Value.SpecificRequirements).Select(s => s.ComputationTargetIdentifier).Distinct();
+            var targets = _viewDefinition.CalculationConfigurationsByName.SelectMany(conf => conf.Value.SpecificRequirements).Select(s => s.TargetSpecification.Uid).Distinct();
             foreach (var target in targets.Where(target => !_primitiveRows.ContainsKey(target)))
             {
                 _primitiveRows.Add(target, new PrimitiveRow(target));
@@ -72,7 +72,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 var values = new Dictionary<string, object>();
                 foreach (var configuration in _viewDefinition.CalculationConfigurationsByName)
                 {
-                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.Primitive && r.ComputationTargetIdentifier == row.TargetId))
+                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r => r.TargetSpecification.Type == ComputationTargetType.Primitive && r.TargetSpecification.Uid == row.TargetId))
                     {
                         var key = new Tuple<UniqueIdentifier, string, string>(row.TargetId, valueReq.ValueName, configuration.Key);
 
@@ -132,7 +132,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             var valueNames = new HashSet<string>();
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
-                foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.ComputationTargetType == ComputationTargetType.Primitive))
+                foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.TargetSpecification.Type == ComputationTargetType.Primitive))
                 {
                     valueNames.Add(GetColumnHeading(configuration.Key, req.ValueName));
                 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
@@ -10,27 +9,23 @@ namespace OGDotNet.Mappedtypes.engine.View
     public class ValueRequirement
     {
         private readonly string _valueName;
-        private readonly ComputationTargetType _computationTargetType;
-        private readonly UniqueIdentifier _computationTargetIdentifier;
+        private readonly ComputationTargetSpecification _targetSpecification;
+
         private readonly ValueProperties _constraints;
 
         public string ValueName { get { return _valueName; } }
-        public ComputationTargetType ComputationTargetType { get { return _computationTargetType; } }
-        public UniqueIdentifier ComputationTargetIdentifier { get { return _computationTargetIdentifier; } }
+
+
         public ValueProperties Constraints { get { return _constraints; } }
-        private ComputationTargetSpecification TargetSpecification
-        {
-            get { return new ComputationTargetSpecification(ComputationTargetType, ComputationTargetIdentifier); }
-        }
+        public ComputationTargetSpecification TargetSpecification{get { return _targetSpecification; }}
 
-        
 
-        private ValueRequirement(string valueName,string computationTargetType, string computationTargetIdentifier, ValueProperties constraints)
+
+        private ValueRequirement(string valueName, ComputationTargetSpecification targetSpecification, ValueProperties constraints)
         {
             _valueName = valueName;
             _constraints = constraints;
-            _computationTargetType = ComputationTargetTypeBuilder.GetComputationTargetType(computationTargetType);
-            _computationTargetIdentifier = UniqueIdentifier.Parse(computationTargetIdentifier);
+            _targetSpecification = targetSpecification;
         }
 
 
@@ -38,7 +33,13 @@ namespace OGDotNet.Mappedtypes.engine.View
         public static ValueRequirement FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             ValueProperties constraints = deserializer.FromField<ValueProperties>(ffc.GetByName("constraints")) ?? new ValueProperties();
-            return new ValueRequirement(ffc.GetValue<string>("valueName"), ffc.GetValue<string>("computationTargetType"), ffc.GetValue<string>("computationTargetIdentifier"), constraints);
+
+            var computationTargetType = ffc.GetValue<string>("computationTargetType");
+            var computationTargetIdentifier = ffc.GetValue<string>("computationTargetIdentifier");
+            var targetSpec = new ComputationTargetSpecification(ComputationTargetTypeBuilder.GetComputationTargetType(computationTargetType), UniqueIdentifier.Parse(computationTargetIdentifier));
+            var valueName = ffc.GetValue<string>("valueName");
+
+            return new ValueRequirement(valueName, targetSpec , constraints);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

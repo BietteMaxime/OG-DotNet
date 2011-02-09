@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
+using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
@@ -148,9 +150,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             foreach (var req in configuration.SpecificRequirements)
             {
-                bool matches = (req.ComputationTargetIdentifier ==
+                bool matches = (req.TargetSpecification.Uid ==
                                 valueSpecification.TargetSpecification.Uid
-                                && req.ComputationTargetType == valueSpecification.TargetSpecification.Type
+                                && req.TargetSpecification.Type == valueSpecification.TargetSpecification.Type
                                 && req.ValueName == valueSpecification.ValueName);
                 //TODO constraints?
                 if (matches)
