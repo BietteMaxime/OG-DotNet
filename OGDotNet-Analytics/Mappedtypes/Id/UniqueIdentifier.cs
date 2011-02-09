@@ -6,11 +6,9 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Id
 {
-    /// <summary>
-    /// TODO: .netify this and finish it
-    /// </summary>
     public class UniqueIdentifier : IComparable<UniqueIdentifier>, IEquatable<UniqueIdentifier>
     {
+        private const string Separator = "::";
 
         private const String SchemeFudgeFieldName = "Scheme";
         private const String ValueFudgeFieldName = "Value";
@@ -29,7 +27,7 @@ namespace OGDotNet.Mappedtypes.Id
         {
 
             ArgumentChecker.NotEmpty(uidStr, "uidStr");
-            String[] split = uidStr.Split(new[] { "::" }, StringSplitOptions.None);
+            String[] split = uidStr.Split(new[] { Separator }, StringSplitOptions.None);
             switch (split.Length)
             {
                 case 2:
@@ -93,10 +91,10 @@ namespace OGDotNet.Mappedtypes.Id
         public override String ToString()
         {
             StringBuilder buf = new StringBuilder()
-                .Append(_scheme).Append(':').Append(':').Append(_value);
+                .Append(_scheme).Append(Separator).Append(_value);
             if (_version != null)
             {
-                buf.Append(':').Append(':').Append(_version);
+                buf.Append(Separator).Append(_version);
             }
             return buf.ToString();
         }
