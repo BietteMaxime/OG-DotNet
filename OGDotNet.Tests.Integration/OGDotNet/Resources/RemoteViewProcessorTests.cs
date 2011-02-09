@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using OGDotNet.Model.Resources;
+﻿using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
