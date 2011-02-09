@@ -20,7 +20,7 @@ namespace OGDotNet.Model.Resources
             _restTarget = restTarget;
         }
         
-        public AbstractSearchResult<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest, IdentifierSearch identifierSearch = null)
+        public SearchResult<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest, IdentifierSearch identifierSearch = null)
         {
             var request = new SecuritySearchRequest(pagingRequest, name, type, identifierSearch);
 
@@ -29,7 +29,7 @@ namespace OGDotNet.Model.Resources
             var fudgeMsg = _restTarget.Resolve("search").Post(FudgeContext, msg);
 
 
-            return fudgeSerializer.Deserialize<AbstractSearchResult<SecurityDocument>>(fudgeMsg); 
+            return fudgeSerializer.Deserialize<SearchResult<SecurityDocument>>(fudgeMsg); 
         }
 
         private static FudgeContext FudgeContext

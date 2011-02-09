@@ -100,7 +100,7 @@
     <Compile Include="Mappedtypes\engine\View\ViewComputationResultModel.cs" />
     <Compile Include="Model\Resources\RemoteClient.cs" />
     <Compile Include="Mappedtypes\Id\IdentifierSearchType.cs" />
-    <Compile Include="Mappedtypes\Master\AbstractSearchResult.cs" />
+    <Compile Include="Mappedtypes\Master\SearchResult.cs" />
     <Compile Include="Utils\ArgumentChecker.cs" />
     <Compile Include="Mappedtypes\financial\Security\FinancialSecurity.cs" />
     <Compile Include="Mappedtypes\Id\IdentifierBundle.cs" />
