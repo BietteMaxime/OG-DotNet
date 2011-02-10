@@ -1,5 +1,4 @@
-﻿using System;
-using OGDotNet.Mappedtypes.Id;
+﻿using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Db;
 
 namespace OGDotNet.Mappedtypes.Master.Security
