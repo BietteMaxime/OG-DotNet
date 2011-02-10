@@ -2,11 +2,18 @@
 
 namespace OGDotNet.Mappedtypes.Master.Security
 {
-    [Serializable]
     public class SecurityDocument
     {
-        public string UniqueId;
-        public ManageableSecurity Security;
+        private readonly string _uniqueId;
+        private readonly ManageableSecurity _security;
+        public string UniqueId { get { return _uniqueId; } }
+        public ManageableSecurity Security{ get { return _security; }}//TODO type this with proto replacement
+
+        public SecurityDocument(string uniqueId, ManageableSecurity security)
+        {
+            _uniqueId = uniqueId;
+            _security = security;
+        }
 
         public override string ToString()
         {
