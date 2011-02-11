@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
@@ -27,17 +28,23 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("Views")]
         public void CanStartAndGetAResult(RemoteView view)
         {
-            GetSomeResults(view,1);
+            view.Init();
+            using (var remoteViewClient = view.CreateClient())
+            {
+                var cts = new CancellationTokenSource();
+                var resultsEnum = remoteViewClient.GetResults(cts.Token);
+
+                foreach (var viewComputationResultModel in resultsEnum)
+                {
+                    Assert.NotNull(viewComputationResultModel);
+                    break;
+                }
+            }
         }
 
         [Theory]
         [TypedPropertyData("Views")]
         public void CanGetManyResults(RemoteView view)
-        {
-            GetSomeResults(view, 3);
-        }
-
-        private static void GetSomeResults(RemoteView view, int resultsToGet)
         {
             view.Init();
             using (var remoteViewClient = view.CreateClient())
@@ -45,17 +52,27 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var cts = new CancellationTokenSource();
                 var resultsEnum = remoteViewClient.GetResults(cts.Token);
 
-                int i = 0;
-                foreach (var viewComputationResultModel in resultsEnum)
+                using (var enumerator = resultsEnum.GetEnumerator())
                 {
-                    Assert.NotNull(viewComputationResultModel);
-                    
-                    i++;
+                    enumerator.MoveNext();
+                    Assert.NotNull(enumerator.Current);
 
-                    if (i >= resultsToGet)
-                        break;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        enumerator.MoveNext();
+                        Assert.NotNull(enumerator.Current);
+
+                        Assert.Equal(enumerator.Current.ValuationTime.ToDateTimeOffset().Offset, DateTimeOffset.Now.Offset);
+
+                        var valuation = enumerator.Current.ValuationTime.ToDateTime();
+                        var result = enumerator.Current.ResultTimestamp.ToDateTime();
+                        var now = DateTime.Now;
+
+                        var timeToTransmit = now-result;
+                        var timeToCalculate = result-valuation;
+                        Assert.InRange(timeToTransmit, TimeSpan.Zero, timeToCalculate);
+                    }
                 }
-
             }
         }
 
