@@ -348,6 +348,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UpdateToolTip(Point position)
         {
+            //TODO this isn't right if we're 'ToScale'ing
             var xs = Surface.Xs.ToList();
             var ys = Surface.Ys.ToList();
 
