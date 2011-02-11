@@ -32,6 +32,9 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="200" />
+                    </Grid.RowDefinitions>
                     <Charts:CurveControl Grid.Column="0" x:Name="leftCurveControl" />
                     <Charts:CurveControl Grid.Column="1" x:Name="rightCurveControl" />
                 </Grid>
