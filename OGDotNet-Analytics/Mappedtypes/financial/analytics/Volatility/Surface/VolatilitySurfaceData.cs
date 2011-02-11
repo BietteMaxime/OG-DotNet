@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.Util.Time;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
@@ -41,6 +42,22 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
         public IList<Tenor> Ys
         {
             get { return _ys; }
+        }
+
+        public Curve GetXSlice(Tenor x)
+        {
+            return new InterpolatedDoublesCurve(string.Format("Expiry {0}", x),
+                                                Ys.Select(t => t.TimeSpan.TotalMilliseconds).ToList(),
+                                                Ys.Select(y => this[x, y]).ToList()
+                );
+        }
+
+        public Curve GetYSlice(Tenor y)
+        {
+            return new InterpolatedDoublesCurve(string.Format("Swap length {0}", y),
+                                                Xs.Select(t => t.TimeSpan.TotalMilliseconds).ToList(),
+                                                Xs.Select(x => this[x, y]).ToList()
+                );
         }
 
         public static VolatilitySurfaceData FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
