@@ -79,6 +79,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ValueAssertions.cs" />
     <Compile Include="Xunit.Extensions\TypedPropertyDataAttribute.cs" />
   </ItemGroup>
   <ItemGroup>

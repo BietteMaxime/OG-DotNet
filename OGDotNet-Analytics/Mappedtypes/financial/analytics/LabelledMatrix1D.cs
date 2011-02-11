@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,6 +13,13 @@ namespace OGDotNet.Mappedtypes.financial.analytics
 
         protected LabelledMatrix1D(IList<TKey> keys, IList<object> labels, IList<double> values)
         {
+            if (keys == null) throw new ArgumentNullException("keys");
+            if (labels == null) throw new ArgumentNullException("labels");
+            if (values == null) throw new ArgumentNullException("values");
+            if (keys.Count != labels.Count || keys.Count != values.Count)
+            {
+                throw new ArgumentException("Labelled matrix is the wrong shape");
+            }
             _keys = keys;
             _labels = labels;
             _values = values;

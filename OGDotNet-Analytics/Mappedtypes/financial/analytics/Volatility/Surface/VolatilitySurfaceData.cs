@@ -47,16 +47,16 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
         public Curve GetXSlice(Tenor x)
         {
             return new InterpolatedDoublesCurve(string.Format("Expiry {0}", x),
-                                                Ys.Select(t => t.TimeSpan.TotalMilliseconds).ToList(),
-                                                Ys.Select(y => this[x, y]).ToList()
+                                                Ys.Select(t => t.TimeSpan.TotalMilliseconds).ToArray(),
+                                                Ys.Select(y => this[x, y]).ToArray()
                 );
         }
 
         public Curve GetYSlice(Tenor y)
         {
             return new InterpolatedDoublesCurve(string.Format("Swap length {0}", y),
-                                                Xs.Select(t => t.TimeSpan.TotalMilliseconds).ToList(),
-                                                Xs.Select(x => this[x, y]).ToList()
+                                                Xs.Select(t => t.TimeSpan.TotalMilliseconds).ToArray(),
+                                                Xs.Select(x => this[x, y]).ToArray()
                 );
         }
 

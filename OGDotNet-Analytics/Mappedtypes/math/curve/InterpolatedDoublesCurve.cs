@@ -7,13 +7,15 @@ namespace OGDotNet.Mappedtypes.math.curve
 {
     public class InterpolatedDoublesCurve : Curve
     {
-        private readonly IList<double> _xData;
-        private readonly IList<double> _yData;
+        private readonly double[] _xData;
+        private readonly double[] _yData;
 
-        public InterpolatedDoublesCurve(string name, IList<double> xData, IList<double> yData)
+        public InterpolatedDoublesCurve(string name, double[] xData, double[] yData)
             : base(name)
         {
-            if (xData.Count != yData.Count)
+            if (xData == null) throw new ArgumentNullException("xData");
+            if (yData == null) throw new ArgumentNullException("yData");
+            if (xData.Length != yData.Length)
             {
                 throw new ArgumentException("Graph is not square");
             }
@@ -34,15 +36,21 @@ namespace OGDotNet.Mappedtypes.math.curve
         {
             get
             {
-                return _xData.Count;
+                return _xData.Length;
             }
         }
 
         public override double GetYValue(double x)
         {
-            throw new NotImplementedException();
+            var index = Array.BinarySearch(_xData, x);//Using equals on double is ridiculous, this only works if they've read our x value out
+            if (index < 0 )
+            {
+                throw new NotImplementedException("I'm not sure if the interpolation should happen client side");
+            }
+
+            return YData[index];
         }
-        
+
         public static InterpolatedDoublesCurve FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             string name = GetName(ffc);

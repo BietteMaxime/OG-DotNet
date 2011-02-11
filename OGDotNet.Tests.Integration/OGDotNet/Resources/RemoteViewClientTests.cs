@@ -2,9 +2,7 @@
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
-using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
@@ -142,6 +140,28 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        [Theory]
+        [TypedPropertyData("Views")]
+        public void ViewResultsHaveSaneValues(RemoteView view)
+        {
+            view.Init();
+            using (var remoteViewClient = view.CreateClient())
+            {
+                var cts = new CancellationTokenSource();
+                var resultsEnum = remoteViewClient.GetResults(cts.Token);
+
+                foreach (var viewComputationResultModel in resultsEnum)
+                {
+                    foreach (var viewResultEntry in viewComputationResultModel.AllResults)
+                    {
+                        ValueAssertions.AssertSensibleValue(viewResultEntry.ComputedValue.Value);
+                    }
+                    break;
+                }
+
+            }
+        }
+        
         private static void AssertDefinitionContains(RemoteView view, ViewResultEntry viewResultEntry)
         {
             var configuration = view.Definition.CalculationConfigurationsByName[viewResultEntry.CalculationConfiguration];
@@ -185,6 +205,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static int CountRows(IPortfolio portfolio)
         {
+            if (portfolio == null)
+                return 0;
             return CountRows(portfolio.Root);
         }
 

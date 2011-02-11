@@ -18,6 +18,7 @@ namespace OGDotNet.Mappedtypes.math.curve
 
         protected Curve(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
             _name = name;
         }
 
