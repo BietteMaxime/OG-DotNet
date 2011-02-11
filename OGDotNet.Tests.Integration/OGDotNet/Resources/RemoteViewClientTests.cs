@@ -42,7 +42,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Theory(Skip = "The timing stuff needs to be fixed to work with clock drift")]
         [TypedPropertyData("Views")]
         public void CanGetManyResults(RemoteView view)
         {
