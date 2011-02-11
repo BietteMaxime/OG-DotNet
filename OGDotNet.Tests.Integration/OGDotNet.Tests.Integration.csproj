@@ -38,6 +38,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Fudge, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore">
       <Private>True</Private>
     </Reference>
