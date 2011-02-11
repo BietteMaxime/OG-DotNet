@@ -62,11 +62,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         enumerator.MoveNext();
                         Assert.NotNull(enumerator.Current);
 
-                        Assert.Equal(enumerator.Current.ValuationTime.ToDateTimeOffset().Offset, DateTimeOffset.Now.Offset);
-
-                        var valuation = enumerator.Current.ValuationTime.ToDateTime();
-                        var result = enumerator.Current.ResultTimestamp.ToDateTime();
-                        var now = DateTime.Now;
+                        
+                        var valuation = enumerator.Current.ValuationTime.ToDateTimeOffset();
+                        var result = enumerator.Current.ResultTimestamp.ToDateTimeOffset();
+                        var now = DateTimeOffset.Now;
 
                         var timeToTransmit = now-result;
                         var timeToCalculate = result-valuation;
