@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
+using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.AnalyticsViewer.Properties;
 
@@ -372,13 +373,36 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 floor = Math.Min((int)Math.Round(point.Y / yScale), ys.Count - 1);
                 var y = ys[floor];
 
-                toolTipBox.Text = string.Format("{0},{1},{2}", x,y, Surface[x,y]);
-                toolTip.IsOpen = true;
+                UpdateToolTip(x, y);
             }
             else
             {
                 toolTip.IsOpen = false;
             }
+        }
+
+        private void UpdateToolTip(Tenor x, Tenor y)
+        {
+            toolTipBox.Text = string.Format("{0},{1},{2}", x,y, Surface[x,y]);
+            toolTip.IsOpen = true;
+            leftCurveControl.DataContext = GetXSlice(Surface, x);
+            rightCurveControl.DataContext = GetYSlice(Surface, y);
+        }
+
+        private static Curve GetXSlice(VolatilitySurfaceData surface, Tenor x)
+        {
+            return new InterpolatedDoublesCurve(string.Format("Expiry {0}", x),
+                                                surface.Ys.Select(t => t.TimeSpan.TotalMilliseconds).ToList(),
+                                                surface.Ys.Select(y => surface[x, y]).ToList()
+                );
+        }
+
+        private static Curve GetYSlice(VolatilitySurfaceData surface, Tenor y)
+        {
+            return new InterpolatedDoublesCurve(string.Format("Swap length {0}", y),
+                                                surface.Xs.Select(t => t.TimeSpan.TotalMilliseconds).ToList(),
+                                                surface.Xs.Select(x => surface[x, y]).ToList()
+                );
         }
     }
 }

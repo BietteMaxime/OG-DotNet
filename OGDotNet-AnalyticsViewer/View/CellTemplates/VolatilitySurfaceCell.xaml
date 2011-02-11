@@ -2,8 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" DataContextChanged="UserControl_DataContextChanged">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Charts="clr-namespace:OGDotNet.AnalyticsViewer.View.Charts" mc:Ignorable="d" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" DataContextChanged="UserControl_DataContextChanged">
     <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -20,13 +19,23 @@
         </Popup >
 
         <Popup Name="detailsPopup" >
-            <ListView Name="detailsList" Height="Auto" Width="Auto">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Width="Auto" Header="Swap Length/Expiry" DisplayMemberBinding="{Binding Path=[Length]}"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+            <StackPanel>
+                <ListView Name="detailsList" Height="Auto" Width="Auto">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="Auto" Header="Swap Length/Expiry" DisplayMemberBinding="{Binding Path=[Length]}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <Grid Background="White">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Charts:CurveControl Grid.Column="0" x:Name="leftCurveControl" />
+                    <Charts:CurveControl Grid.Column="1" x:Name="rightCurveControl" />
+                </Grid>
+            </StackPanel>
         </Popup>
     </Grid>
 </UserControl>

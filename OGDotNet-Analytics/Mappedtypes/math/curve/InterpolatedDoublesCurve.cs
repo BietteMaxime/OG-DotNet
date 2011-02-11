@@ -7,12 +7,13 @@ namespace OGDotNet.Mappedtypes.math.curve
 {
     public class InterpolatedDoublesCurve : Curve
     {
-        private readonly double[] _xData;
-        private readonly double[] _yData;
+        private readonly IList<double> _xData;
+        private readonly IList<double> _yData;
 
-        private InterpolatedDoublesCurve(string name, double[] xData, double[] yData) : base(name)
+        public InterpolatedDoublesCurve(string name, IList<double> xData, IList<double> yData)
+            : base(name)
         {
-            if (xData.Length != yData.Length)
+            if (xData.Count != yData.Count)
             {
                 throw new ArgumentException("Graph is not square");
             }
@@ -33,7 +34,7 @@ namespace OGDotNet.Mappedtypes.math.curve
         {
             get
             {
-                return _xData.Length;
+                return _xData.Count;
             }
         }
 

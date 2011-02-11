@@ -40,29 +40,29 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
 
                 var doubleMinX = Curve.XData.Min();
                 var doubleMaxX = Curve.XData.Max();
-                double xScale = ActualWidth / (doubleMaxX - doubleMinX);
+                double xScale = canvas.ActualWidth / (doubleMaxX - doubleMinX);
 
                 var doubleMinY = Math.Min(Curve.YData.Min(), 0);
                 var doubleMaxY = Curve.YData.Max();
-                double yScale = ActualHeight / (doubleMaxY - doubleMinY);
+                double yScale = canvas.ActualHeight / (doubleMaxY - doubleMinY);
 
                 myLine.Points.Clear();
                 foreach (var tuple in Curve.GetData())
                 {
                     var x = (tuple.Item1 - doubleMinX) * xScale;
-                    var y = ActualHeight - ((tuple.Item2 - doubleMinY) * yScale);
+                    var y = canvas.ActualHeight - ((tuple.Item2 - doubleMinY) * yScale);
                     myLine.Points.Add(new Point(x, y));
                 }
 
                 xAxis.X1 = 0;
-                xAxis.X2 = ActualWidth;
+                xAxis.X2 = canvas.ActualWidth;
 
-                xAxis.Y1 = ActualHeight - ((-doubleMinY) * yScale);
+                xAxis.Y1 = canvas.ActualHeight - ((-doubleMinY) * yScale);
                 xAxis.Y2 = xAxis.Y1;
 
                 yAxis.X1 = 0;
                 yAxis.X2 = 0;
-                yAxis.Y1 = ActualHeight;
+                yAxis.Y1 = canvas.ActualHeight;
                 yAxis.Y2 = 0;
                 IsEnabled = true;
                 canvas.Visibility = Visibility.Visible;
@@ -71,6 +71,7 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
             {
                 canvas.Visibility = Visibility.Hidden;
             }
+            nameGroup.Visibility = canvas.Visibility;
         }
 
         private Curve Curve
@@ -81,15 +82,15 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
         private void ShowDisabled()
         {
             xAxis.X1 = 0;
-            xAxis.X2 = ActualWidth;
+            xAxis.X2 = canvas.ActualWidth;
 
-            xAxis.Y1 = ActualHeight;
+            xAxis.Y1 = canvas.ActualHeight;
             xAxis.Y2 = 0;
 
             yAxis.X1 = 0;
-            yAxis.X2 = ActualWidth;
+            yAxis.X2 = canvas.ActualWidth;
             yAxis.Y1 = 0;
-            yAxis.Y2 = ActualHeight;
+            yAxis.Y2 = canvas.ActualHeight;
 
             myLine.Points.Clear();
         }

@@ -7,13 +7,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+        
         </Grid.RowDefinitions>
         <Charts:CurveControl x:Name="curveControl" DataContext="{Binding Path=Curve}"/>
-        <StackPanel Grid.Row="1"  Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock Text="Name:"/>
-            <TextBlock Text="{Binding Path=Curve.Name}"/>
-        </StackPanel>
         <Popup Name="detailsPopup">
             <ListView ItemsSource="{Binding}" Height="Auto" Width="Auto">
                 <ListView.View>
