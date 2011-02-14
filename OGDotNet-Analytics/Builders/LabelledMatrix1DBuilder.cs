@@ -16,11 +16,11 @@ namespace OGDotNet.Builders
     /// <typeparam name="TMatrix"></typeparam>
     internal class LabelledMatrix1DBuilder<TKey, TMatrix> :  BuilderBase<TMatrix> where TMatrix : LabelledMatrix1D<TKey>
     {
-        private const string MATRIX_FIELD = "matrix";
-        private const int LABEL_TYPE_ORDINAL = 0;
-        private const int KEY_ORDINAL = 1;
-        private const int LABEL_ORDINAL = 2;
-        private const int VALUE_ORDINAL = 3;
+        private const string MatrixField = "matrix";
+        private const int LabelTypeOrdinal = 0;
+        private const int KeyOrdinal = 1;
+        private const int LabelOrdinal = 2;
+        private const int ValueOrdinal = 3;
 
 
         public LabelledMatrix1DBuilder(FudgeContext context, Type type) : base(context, type)
@@ -29,7 +29,7 @@ namespace OGDotNet.Builders
 
         public override TMatrix DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var msg = ffc.GetMessage(MATRIX_FIELD);
+            var msg = ffc.GetMessage(MatrixField);
 
             var labelTypes = new Queue<string>();
             var labelValues = new Queue<IFudgeField>();
@@ -42,16 +42,16 @@ namespace OGDotNet.Builders
             {
                 switch (field.Ordinal)
                 {
-                    case LABEL_TYPE_ORDINAL:
+                    case LabelTypeOrdinal:
                         labelTypes.Enqueue((string)field.Value);
                         break;
-                    case KEY_ORDINAL:
+                    case KeyOrdinal:
                         keys.Add((TKey) field.Value);
                         break;
-                    case LABEL_ORDINAL:
+                    case LabelOrdinal:
                         labelValues.Enqueue(field);
                         break;
-                    case VALUE_ORDINAL:
+                    case ValueOrdinal:
                         values.Add((double)field.Value);
                         break;
                 }
@@ -86,7 +86,7 @@ namespace OGDotNet.Builders
             var constructorInfo = typeof(TMatrix).GetConstructor(new[]
                                                                      {
                                                                          typeof(IList<TKey>),
-                                                                         typeof(IList<object>),//TODO type up this
+                                                                         typeof(IList<object>),//TODO type up this (if the java side does)
                                                                          typeof(IList<double>)
                                                                      });
             return (TMatrix) constructorInfo.Invoke(new object[] { keys, labels, values });
