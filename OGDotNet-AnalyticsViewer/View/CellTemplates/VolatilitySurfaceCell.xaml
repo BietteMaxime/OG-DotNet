@@ -21,15 +21,14 @@
             <TextBlock Name="toolTipBox" Background="LightYellow" Foreground="Black"/>
         </Popup >
 
-        <Popup Name="detailsPopup" >
+        <Popup Name="detailsPopup" StaysOpen="false" Closed="detailsPopup_Closed">
             <StackPanel>
-                <ListView Name="detailsList" Height="Auto" Width="Auto">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Width="Auto" Header="Swap Length/Expiry" DisplayMemberBinding="{Binding Path=[Length]}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                <DataGrid Name="detailsList" Height="Auto" Width="Auto" AutoGenerateColumns="False" CanUserAddRows="false" CanUserDeleteRows="false" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="Auto" Header="Swap Length/Expiry" Binding="{Binding Path=[Length]}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                
                 <Grid Background="White">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>

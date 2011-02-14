@@ -72,15 +72,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
             var data = (VolatilitySurfaceData)DataContext;
 
-            var view = (GridView)detailsList.View;
-
             foreach (var x in data.Xs)
             {
-                view.Columns.Add(new GridViewColumn
+                detailsList.Columns.Add(new DataGridTextColumn
                                      {
-                                         Width = Double.NaN,
+                                         Width=60,
                                          Header = x,
-                                         DisplayMemberBinding = new Binding(string.Format("[{0}]", x))
+                                         Binding = new Binding(string.Format("[{0}]", x))
                                      });
             }
 
@@ -125,6 +123,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             detailsPopup.IsOpen = false;
         }
 
+        private void detailsPopup_Closed(object sender, EventArgs e)
+        {
+            detailsButton.IsChecked = false;
+        }
 
         private void BuildModel()
         {
