@@ -76,17 +76,17 @@ namespace OGDotNet.Model.Resources
         }
         private void StopResultStream()
         {
-            _rest.Resolve("startJmsResultStream").Post();
+            _rest.Resolve("endJmsResultStream").Post();
         }
 
         private ClientResultStream<ViewComputationResultModel> StartDeltaStream()
         {
             var reponse = _rest.Resolve("startJmsDeltaStream").Post();
-            return new ClientResultStream<ViewComputationResultModel>(_mqTemplate, reponse.GetValue<string>("value"), StopResultStream);
+            return new ClientResultStream<ViewComputationResultModel>(_mqTemplate, reponse.GetValue<string>("value"), StopDeltaStream);
         }
         private void StopDeltaStream()
         {
-            _rest.Resolve("stopJmsDeltaStream").Post();
+            _rest.Resolve("endJmsDeltaStream").Post();
         }
 
         private bool ResultAvailable
