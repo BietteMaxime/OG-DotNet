@@ -98,7 +98,7 @@ namespace OGDotNet.Model.Context
                         try
                         {
                             var webRequest = WebRequest.Create(uri);
-                            //webRequest.Timeout = 5000;
+                            webRequest.Timeout = 5000;
                             using (webRequest.GetResponse())
                             { }
                         }
