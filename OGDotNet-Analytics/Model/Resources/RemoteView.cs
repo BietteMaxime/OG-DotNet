@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Apache.NMS;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Position;
@@ -27,7 +28,7 @@ namespace OGDotNet.Model.Resources
             get { return _name; }
         }
 
-        public void Init()
+        public void Init(CancellationToken cancellationToken = new CancellationToken())
         {
             _mqTemplate.Do(delegate(ISession session)
                 {
@@ -39,8 +40,14 @@ namespace OGDotNet.Model.Resources
                             //This post responds via JMS
                             //See the java comments for explanation
                             _rest.Resolve("init").Post(temporaryTopic.TopicName);
-                            IMessage message = consumer.Receive();
-                            
+                            IMessage message= null;
+                            while (message == null)//TODO make this cancelabble in a more sane way
+                            {
+                                message = consumer.Receive(TimeSpan.FromMilliseconds(1000));
+                                cancellationToken.ThrowIfCancellationRequested();
+                            }
+
+
                             bool value = (bool) message.Properties["init"];
 
                             if (!value)
