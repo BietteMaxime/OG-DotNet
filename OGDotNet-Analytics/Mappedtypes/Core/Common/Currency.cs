@@ -60,7 +60,7 @@ namespace OGDotNet.Mappedtypes.Core.Common
 
         public override int GetHashCode()
         {
-            return (_identifier != null ? _identifier.GetHashCode() : 0);
+            return _identifier.GetHashCode();
         }
     }
 }
