@@ -14,6 +14,9 @@
                 <PerspectiveCamera 	  x:Name="camera" FarPlaneDistance="100"	  LookDirection="-11,-10,-9"	  UpDirection="0,0,1"	  NearPlaneDistance="1" 	  Position="11,10,9" 	  FieldOfView="40" />
             </Viewport3D.Camera>
         </Viewport3D>
+
+        <ToggleButton Content="\/" Height="23" Name="detailsButton" Width="23" HorizontalAlignment="Right" VerticalAlignment="Bottom" Checked="detailsButton_Checked" Unchecked="detailsButton_Unchecked" />
+        
         <Popup Name="toolTip" IsOpen="False" Placement="Mouse">
             <TextBlock Name="toolTipBox" Background="LightYellow" Foreground="Black"/>
         </Popup >

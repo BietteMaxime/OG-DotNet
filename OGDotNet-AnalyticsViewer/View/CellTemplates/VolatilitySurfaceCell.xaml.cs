@@ -104,17 +104,27 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
-            InitTableData();
-            detailsPopup.IsOpen = true;
             _timer.IsEnabled = false;
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
-            detailsPopup.IsOpen = false;
             toolTip.IsOpen = false;
             _timer.IsEnabled = true;
         }
+
+
+        private void detailsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            InitTableData();
+            detailsPopup.IsOpen = true;
+        }
+
+        private void detailsButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            detailsPopup.IsOpen = false;
+        }
+
 
         private void BuildModel()
         {
@@ -388,5 +398,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             leftCurveControl.DataContext = Surface.GetXSlice(x);
             rightCurveControl.DataContext = Surface.GetYSlice(y);
         }
+
     }
 }
