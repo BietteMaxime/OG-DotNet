@@ -5,20 +5,21 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.Util.Time;
+using OGDotNet.Mappedtypes.Core.Common;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
 {
     public class VolatilitySurfaceData
     {
-        private String _definitionName;
-        private String _specificationName;
-        private string _currency;//TODO type
-        private String _interpolatorName;
+        private readonly String _definitionName;
+        private readonly String _specificationName;
+        private readonly Currency _currency;
+        private readonly String _interpolatorName;
         private readonly Dictionary<Tuple<Tenor, Tenor>, double> _values;
         private readonly IList<Tenor> _xs;
         private readonly IList<Tenor> _ys;
 
-        private VolatilitySurfaceData(string definitionName, string specificationName, string currency, string interpolatorName, IList<Tenor> xs, IList<Tenor> ys, Dictionary<Tuple<Tenor, Tenor>, double> values)
+        private VolatilitySurfaceData(string definitionName, string specificationName, Currency currency, string interpolatorName, IList<Tenor> xs, IList<Tenor> ys, Dictionary<Tuple<Tenor, Tenor>, double> values)
         {
             _definitionName = definitionName;
             _specificationName = specificationName;
@@ -32,6 +33,26 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
         public double this[Tenor x, Tenor y]
         {
             get { return _values[new Tuple<Tenor, Tenor>(x, y)]; }
+        }
+
+        public Currency Currency
+        {
+            get { return _currency; }
+        }
+
+        public string DefinitionName
+        {
+            get { return _definitionName; }
+        }
+
+        public string SpecificationName
+        {
+            get { return _specificationName; }
+        }
+
+        public string InterpolatorName
+        {
+            get { return _interpolatorName; }
         }
 
         public IList<Tenor> Xs
@@ -62,7 +83,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
 
         public static VolatilitySurfaceData FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            string currency = ffc.GetValue<string>("currency");
+            string currencyName = ffc.GetValue<string>("currency");
+            Currency currency = Currency.GetInstance(currencyName);
             string definitionName = ffc.GetValue<String>("definitionName");
             string specificationName = ffc.GetValue<String>("specificationName");
             string interpolatorName = ffc.GetValue<String>("interpolatorName");

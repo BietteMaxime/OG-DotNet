@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
 
@@ -14,14 +15,14 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly UniqueIdentifier _portfolioIdentifier;
         private readonly UserPrincipal _user;
         private readonly ResultModelDefinition _resultModelDefinition;
-        private readonly string _currency;
+        private readonly Currency _currency;
         private readonly long _minDeltaCalcPeriod;
         private readonly long _maxDeltaCalcPeriod;
         private readonly long _minFullCalcPeriod;
         private readonly long _maxFullCalcPeriod;
         private readonly Dictionary<string, ViewCalculationConfiguration> _calculationConfigurationsByName;
 
-        private ViewDefinition(string name, UniqueIdentifier portfolioIdentifier, UserPrincipal user, ResultModelDefinition resultModelDefinition, string currency, long minDeltaCalcPeriod, long maxDeltaCalcPeriod, long minFullCalcPeriod, long maxFullCalcPeriod, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName)
+        private ViewDefinition(string name, UniqueIdentifier portfolioIdentifier, UserPrincipal user, ResultModelDefinition resultModelDefinition, Currency currency, long minDeltaCalcPeriod, long maxDeltaCalcPeriod, long minFullCalcPeriod, long maxFullCalcPeriod, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName)
         {
             _name = name;
             _portfolioIdentifier = portfolioIdentifier;
@@ -55,7 +56,7 @@ namespace OGDotNet.Mappedtypes.engine.View
             get { return _resultModelDefinition; }
         }
 
-        public string Currency
+        public Currency Currency
         {
             get { return _currency; }
         }
@@ -92,7 +93,7 @@ namespace OGDotNet.Mappedtypes.engine.View
             var portfolioIdentifier =ffc.GetAllByName("identifier").Any()  ? UniqueIdentifier.Parse(ffc.GetValue<String>("identifier")) : null;
             var user = deserializer.FromField<UserPrincipal>(ffc.GetByName("user"));
 
-            var currency= ffc.GetValue<string>("currency");
+            var currency = Core.Common.Currency.GetInstance(ffc.GetValue<string>("currency"));
 
             var minDeltaCalcPeriod = ffc.GetValue<long>("minDeltaCalcPeriod");
             var maxDeltaCalcPeriod = ffc.GetValue<long>("maxDeltaCalcPeriod");
