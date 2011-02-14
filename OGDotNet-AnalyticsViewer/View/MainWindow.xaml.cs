@@ -82,7 +82,7 @@ namespace OGDotNet.AnalyticsViewer.View
 
                 cancellationToken.ThrowIfCancellationRequested();
                 SetStatus("Initializing view...");
-                remoteViewResource.Init();
+                remoteViewResource.Init(cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
                 var portfolio = remoteViewResource.Portfolio;
