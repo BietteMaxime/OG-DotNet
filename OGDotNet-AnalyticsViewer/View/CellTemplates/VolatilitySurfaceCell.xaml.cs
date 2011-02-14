@@ -9,7 +9,6 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
-using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.AnalyticsViewer.Properties;
 
@@ -88,7 +87,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             foreach (var y in data.Ys)
             {
                 var row = new Dictionary<string, object>();
-                row["Length"] = y.ToString();
+                row["Length"] = y;
 
                 foreach (var x in data.Xs)
                 {
@@ -386,6 +385,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 var y = ys[floor];
 
                 UpdateToolTip(x, y);
+                UpdateCellSelection(x, y);
+                SetXSliceGraph(x);
+                SetYSliceGraph(y);
             }
             else
             {
@@ -393,13 +395,54 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
         }
 
+        private void UpdateCellSelection(Tenor x, Tenor y)
+        {
+            InitTableData();
+
+            Func<Dictionary<string, object>, bool> rowPredicate = row=> row["Length"].Equals(y);
+
+            Func<DataGridColumn, bool> columnPredicate = c => c.Header.Equals(x);
+
+            DataGridColumn myColumn = detailsList.Columns.Where(columnPredicate).First();
+            Dictionary<string, object> myRow = detailsList.Items.Cast<Dictionary<string, object>>().Where(rowPredicate).First();
+
+            detailsList.SelectedCells.Clear();
+            detailsList.SelectedCells.Add(new DataGridCellInfo(myRow, myColumn));
+        }
+
         private void UpdateToolTip(Tenor x, Tenor y)
         {
             toolTipBox.Text = string.Format("{0},{1},{2}", x,y, Surface[x,y]);
             toolTip.IsOpen = true;
-            leftCurveControl.DataContext = Surface.GetXSlice(x);
+        }
+
+        private void SetYSliceGraph(Tenor y)
+        {
             rightCurveControl.DataContext = Surface.GetYSlice(y);
         }
 
+        private void SetXSliceGraph(Tenor x)
+        {
+            leftCurveControl.DataContext = Surface.GetXSlice(x);
+        }
+
+
+        private void detailsList_CurrentCellChanged(object sender, EventArgs e)
+        {
+            var dataGridCellInfo = detailsList.CurrentCell;
+
+            var x = dataGridCellInfo.Column == null ? null : dataGridCellInfo.Column.Header as Tenor;
+            var y = dataGridCellInfo.Item as Dictionary<string, object>;
+
+            if (x != null)
+            {
+                SetXSliceGraph(x);
+            }
+            if (y != null)
+            {
+                SetYSliceGraph((Tenor) y["Length"]);
+            }
+
+        }
     }
 }
