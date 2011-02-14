@@ -41,7 +41,7 @@ namespace OGDotNet.Model.Resources
                             //See the java comments for explanation
                             _rest.Resolve("init").Post(temporaryTopic.TopicName);
                             IMessage message= null;
-                            while (message == null)//TODO make this cancelabble in a more sane way
+                            while (message == null)//TODO make this cancellable in a more sane way
                             {
                                 message = consumer.Receive(TimeSpan.FromMilliseconds(1000));
                                 cancellationToken.ThrowIfCancellationRequested();
