@@ -360,7 +360,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UpdateToolTip(Point position)
         {
-            //TODO this isn't right if we're 'ToScale'ing
+            if (ToScale)
+            {
+                //TODO this isn't right if we're 'ToScale'ing
+                toolTip.IsOpen = false;
+                return;
+            }
             var xs = Surface.Xs.ToList();
             var ys = Surface.Ys.ToList();
 
@@ -378,10 +383,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
                 var point = result.PointHit;
 
-                var floor = Math.Min((int) Math.Round(point.X/xScale), xs.Count-1);
-
+                var floor = (int) Math.Round(point.X/xScale);
                 var x = xs[floor];
-                floor = Math.Min((int)Math.Round(point.Y / yScale), ys.Count - 1);
+                floor = (int) Math.Round(point.Y / yScale);
                 var y = ys[floor];
 
                 UpdateToolTip(x, y);
