@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace OGDotNet.Utils
 {
@@ -23,7 +23,7 @@ namespace OGDotNet.Utils
     /// </summary>
     public class Memoizer<TArg,TValue>
     {
-        private readonly Dictionary<TArg,TValue> _values = new Dictionary<TArg, TValue>();
+        private readonly ConcurrentDictionary<TArg, TValue> _values = new ConcurrentDictionary<TArg, TValue>();
         private readonly Func<TArg, TValue> _func;
 
         public Memoizer(Func<TArg,TValue> func)
@@ -34,13 +34,7 @@ namespace OGDotNet.Utils
 
         public TValue Get(TArg arg)
         {
-            TValue ret;
-            if (! _values.TryGetValue(arg, out ret))
-            {
-                ret = _func(arg);
-                _values[arg] = ret;
-            }
-            return ret;
+            return _values.GetOrAdd(arg, _func);
         }
     }
 }
