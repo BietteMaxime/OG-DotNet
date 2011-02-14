@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 
@@ -14,7 +15,10 @@ namespace OGDotNet.Mappedtypes.math.curve
             : base(name)
         {
             if (xData == null) throw new ArgumentNullException("xData");
+            if (!xData.Any()) throw new ArgumentNullException("xData");
             if (yData == null) throw new ArgumentNullException("yData");
+            if (!yData.Any()) throw new ArgumentNullException("yData");
+
             if (xData.Length != yData.Length)
             {
                 throw new ArgumentException("Graph is not square");

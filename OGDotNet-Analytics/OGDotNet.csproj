@@ -58,6 +58,7 @@
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
     <Compile Include="Builders\ComputationTargetTypeBuilder.cs" />
+    <Compile Include="Mappedtypes\Core\Common\Currency.cs" />
     <Compile Include="Mappedtypes\Core\Security\Security.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
@@ -67,6 +68,9 @@
     <Compile Include="Mappedtypes\engine\View\ValueRequirement.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewCalculationConfiguration.cs" />
     <Compile Include="Builders\LabelledMatrix1DBuilder.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStrip.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\ircurve\StripInstrumentType.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LocalDateLabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\math\curve\Curve.cs" />
@@ -75,7 +79,9 @@
     <Compile Include="Model\Context\Config.cs" />
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
     <Compile Include="Model\MQTemplate.cs" />
+    <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMaster.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinitionDocument.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utils\DisposableBase.cs" />
     <Compile Include="Model\Resources\ClientResultStream.cs" />

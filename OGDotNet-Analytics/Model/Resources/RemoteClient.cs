@@ -60,6 +60,14 @@ namespace OGDotNet.Model.Resources
             }
         }
 
+        public InterpolatedYieldCurveDefinitionMaster InterpolatedYieldCurveDefinitionMaster
+        {
+            get
+            {
+                return new InterpolatedYieldCurveDefinitionMaster(_rest.Resolve("interpolatedYieldCurveDefinitions"));
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             _cts.Cancel();

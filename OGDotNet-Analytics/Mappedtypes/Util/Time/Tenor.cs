@@ -8,7 +8,7 @@ namespace OGDotNet.Mappedtypes.Util.Time
     {
         private readonly string _period;
 
-        internal Tenor(string period) 
+        public Tenor(string period) 
         {
             _period = period;
         }
@@ -20,7 +20,7 @@ namespace OGDotNet.Mappedtypes.Util.Time
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            throw new NotImplementedException();
+            a.Add("tenor", _period);
         }
         public override string ToString()
         {

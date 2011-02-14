@@ -5,7 +5,16 @@ namespace OGDotNet.Mappedtypes.financial.model.interestrate.curve
 {
     public class YieldCurve
     {
-        public Curve Curve { get; set; }
+        private readonly Curve _curve;
+        public Curve Curve
+        {
+            get { return _curve; }
+        }
+
+        public YieldCurve(Curve curve)
+        {
+            _curve = curve;
+        }
 
 
         public double GetInterestRate(double t)
