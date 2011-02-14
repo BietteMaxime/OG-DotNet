@@ -1,13 +1,11 @@
-﻿using System;
-using OGDotNet.Mappedtypes.Id;
+﻿using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 {
-    [Serializable]
     public class YieldCurveDefinitionDocument
     {
-        public UniqueIdentifier UniqueId;
+        public YieldCurveDefinition YieldCurveDefinition { get; set; }
 
-        public YieldCurveDefinition YieldCurveDefinition;
+        public UniqueIdentifier UniqueId { get; set; }
     }
 }
