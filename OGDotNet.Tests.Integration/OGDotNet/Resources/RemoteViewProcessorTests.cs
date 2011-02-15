@@ -1,7 +1,6 @@
 ﻿using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
-using Xunit.Extensions;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {

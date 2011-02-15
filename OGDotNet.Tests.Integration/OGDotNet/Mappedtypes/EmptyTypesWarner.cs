@@ -5,7 +5,6 @@ using System.Reflection;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
-using Xunit.Extensions;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Mappedtypes
 {
