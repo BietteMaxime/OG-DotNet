@@ -9,7 +9,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static readonly HashSet<string> BannedViews = new HashSet<string>
                                                                   {
                                                                       "10K Swap Test View",//Slow
-                                                                      "TestDefinition"//Broken
+                                                                      "TestDefinition",//Broken
+                                                                      "jonathan/b1232530-38ed-11e0-8000-541213631ee5/Test Bond View (0)"
                                                                   };
 
         private static bool IsSlowTickingView(RemoteView view)

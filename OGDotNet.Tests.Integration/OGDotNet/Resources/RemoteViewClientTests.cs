@@ -80,45 +80,100 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViews")]
         public void CanPauseAndRestart(RemoteView view)
         {
+            Console.WriteLine(string.Format("Checking view {0}", view.Name));
             const int forbiddenAfterPause = 3;
 
-            var timeout = TimeSpan.FromMilliseconds(5000 * forbiddenAfterPause);
+            var timeout = TimeSpan.FromMilliseconds(60000);
 
             view.Init();
             using (var remoteViewClient = view.CreateClient())
             {
-                var cts = new CancellationTokenSource();
-                var resultsEnum = remoteViewClient.GetResults(cts.Token);
-
-                using (var enumerator = resultsEnum.GetEnumerator())
+                using (var cts = new CancellationTokenSource())
                 {
-                    enumerator.MoveNext();
-                    Assert.NotNull(enumerator.Current);
+                    var resultsEnum = remoteViewClient.GetResults(cts.Token);
 
-                    remoteViewClient.Pause();
-
-                    var mre = new ManualResetEvent(false);
-                    ThreadPool.QueueUserWorkItem(delegate
+                    using (var enumerator = resultsEnum.GetEnumerator())
                     {
-                        for (int i = 0; i < forbiddenAfterPause; i++)
+                        bool endOfStream = false;
+                        Action act = delegate
                         {
-                            enumerator.MoveNext();
-                            Assert.NotNull(enumerator.Current);
+                            if (enumerator.MoveNext())
+                            {
+                                Assert.NotNull(enumerator.Current);
+                            }
+                            else
+                            {
+                                endOfStream = true;
+                            }
+                                
+                        };
+
+                        IAsyncResult pendingResult = null;
+
+                        Assert.True(InvokeWithTimeout(act, timeout, ref pendingResult));
+                        Assert.False(endOfStream);
+                        remoteViewClient.Pause();
+
+                        {
+                            int got = 0;
+                            for (int i = 0; i < forbiddenAfterPause;i++)
+                            {
+                                if (InvokeWithTimeout(act, timeout, ref pendingResult))
+                                {
+                                    got++;
+                                    Assert.False(endOfStream);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            Assert.True(got < forbiddenAfterPause, string.Format("I got {0} results for view {1} within {2} after pausing", got, view.Name, timeout));
                         }
-                        mre.Set();
-                    });
+                        remoteViewClient.Start();
+                        {
+                            int got = 0;
+                            for (int i = 0; i < forbiddenAfterPause; i++)
+                            {
+                                if (InvokeWithTimeout(act, timeout, ref pendingResult))
+                                {
+                                    Assert.False(endOfStream);
+                                    got++;
+                                }
+                            }
+                            Assert.True(got == forbiddenAfterPause, string.Format("I got {0} results for view {1} within {2} after pausing", got, view.Name, timeout));
+                        }
 
-                    bool gotResults = mre.WaitOne(timeout);
-                    Assert.False(gotResults, string.Format("I got {0} results for view {1} within {2} after pausing", forbiddenAfterPause, view.Name, timeout));
+                        cts.Cancel();
 
-                    remoteViewClient.Start();
-                    gotResults = mre.WaitOne(timeout);
-                    Assert.True(gotResults, string.Format("I didn't {0} results for view {1} within {2} after starting", forbiddenAfterPause, view.Name, timeout));
+                        Assert.True(InvokeWithTimeout(act, timeout, ref pendingResult));
+                        Assert.True(endOfStream);
+                    }
                 }
-
             }
+            Console.WriteLine(string.Format("Checked view {0}", view.Name));
         }
 
+        private static bool InvokeWithTimeout(Action act, TimeSpan timeout, ref IAsyncResult result)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            result = result ?? act.BeginInvoke(null,null);
+            var waitOne = result.AsyncWaitHandle.WaitOne(timeout);
+            stopwatch.Stop();
+            if (waitOne)
+            {
+                Console.Out.WriteLine("Invoked after {0}", stopwatch.Elapsed);
+                act.EndInvoke(result);
+                result = null;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
 
         [Theory]
