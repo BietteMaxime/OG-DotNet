@@ -45,22 +45,21 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     using (var enumerator = viewComputationResultModels.GetEnumerator())
                     {
 
-                        var value = WaitFor(enumerator, valueRequirement, o => 100.0 != (double) o );
-                        Assert.NotEqual(value, 100.0);
+                        WaitFor(enumerator, valueRequirement, o => 100.0 != (double) o );
 
                         liveDataOverrideInjector.AddValue(valueRequirement, 100.0);
-                        value = WaitFor(enumerator, valueRequirement, o => 100.0 == (double)o);
-                        Assert.Equal(value, 100.0);
+                        WaitFor(enumerator, valueRequirement, o => 100.0 == (double)o);
+                        WaitFor(enumerator, valueRequirement, o => 100.0 == (double)o);
 
                         liveDataOverrideInjector.RemoveValue(valueRequirement);
-                        value = WaitFor(enumerator, valueRequirement, o => 100.0 != (double)o);
-                        Assert.NotEqual(value, 100.0);
+                        WaitFor(enumerator, valueRequirement, o => 100.0 != (double)o);
+                        WaitFor(enumerator, valueRequirement, o => 100.0 != (double)o);
                     }
                 }
             }
         }
 
-        private static object WaitFor(IEnumerator<ViewComputationResultModel> enumerator, ValueRequirement valueRequirement, Predicate<object> match)
+        private static void  WaitFor(IEnumerator<ViewComputationResultModel> enumerator, ValueRequirement valueRequirement, Predicate<object> match)
         {
 
             for (int i = 0;;i++ )
@@ -70,7 +69,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 object result;
                 if (enumerator.Current.TryGetValue("Default", valueRequirement, out result) && match(result))
                 {
-                    return result;
+                    return;
                 }
                 Assert.InRange<int>(i,0,100);
             }
