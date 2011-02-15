@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+ <Import Project="Common.Targets" />
+ 
+ <UsingTask AssemblyFile="..\lib\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
+  <Target Name="Test" DependsOnTargets="Build">
+    <MakeDir Directories="test-reports" />
+    <xunit Assembly="$(OutputPath)\$(AssemblyName).dll" Xml="test-reports\$(AssemblyName).xunit.xml" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" ItemName="XUnitExitCodes"/>
+    </xunit>
+
+    <MSBuild.Community.Tasks.Xslt Inputs="test-reports\$(AssemblyName).xunit.xml" Xsl="..\lib\NUnitXml.xslt" RootTag="" RootAttributes="" Output="test-reports\$(AssemblyName).NUnit.xml" />
+    
+	<Error Text="Test error(s) occured" Code="%(XUnitExitCodes.Identity)" Condition=" '%(XUnitExitCodes.Identity)' != '0'"/>
+  </Target>
+</Project>

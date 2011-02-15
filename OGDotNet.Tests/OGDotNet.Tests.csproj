@@ -98,11 +98,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\MSBuild\Common.Targets" />
-  <UsingTask AssemblyFile="..\lib\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
-  <Target Name="Test" DependsOnTargets="Build">
-    <MakeDir Directories="test-reports" />
-    <xunit Assembly="bin\Debug\OGDotNet.Tests.dll" Xml="test-reports\OGDotNet.Tests.xunit.xml" />
-    <MSBuild.Community.Tasks.Xslt Inputs="test-reports\OGDotNet.Tests.xunit.xml" Xsl="..\lib\NUnitXml.xslt" RootTag="" RootAttributes="" Output="test-reports\FudgeTests.NUnit.xml" />
-  </Target>
+  <Import Project="..\MSBuild\Test.Targets" />
+  
 </Project>
