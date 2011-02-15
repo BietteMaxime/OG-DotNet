@@ -80,6 +80,7 @@
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
     <Compile Include="Model\MQTemplate.cs" />
     <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMaster.cs" />
+    <Compile Include="Model\Resources\RemoteLiveDataInjector.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinitionDocument.cs" />
     <Compile Include="Settings.cs" />

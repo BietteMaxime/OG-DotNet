@@ -62,20 +62,32 @@ namespace OGDotNet.Model
             }
         }
 
-        private HttpWebResponse PostImpl(FudgeContext context = null, FudgeMsg reqMsg = null)
+        private HttpWebResponse PostImpl(FudgeContext context = null, FudgeMsg reqMsg = null, string method="POST")
         {
             HttpWebRequest request = GetBasicRequest();
-            request.Method = "POST";
+            request.Method = method;
 
             if (context != null)
+            {
                 using (var requestStream = request.GetRequestStream())
                 {
                     context.Serialize(reqMsg, requestStream);
                 }
+            }
 
             return (HttpWebResponse)request.GetResponse();
         }
 
+
+        public void Delete()
+        {
+            PostImpl(method:"DELETE");
+        }
+
+        public void Put(FudgeContext context = null, FudgeMsg reqMsg = null)
+        {
+            PostImpl(method: "PUT", context: context, reqMsg: reqMsg);
+        }
 
         public void Post(string obj)
         {
@@ -120,5 +132,7 @@ namespace OGDotNet.Model
             request.UserAgent = string.Format("{0}/{1}", uaAssembly.GetName().Name, uaAssembly.GetName().Version);
             return request;
         }
+
+
     }
 }

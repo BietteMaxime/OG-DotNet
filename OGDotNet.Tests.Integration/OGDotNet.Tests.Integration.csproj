@@ -70,6 +70,7 @@
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextFactoryTests.cs" />
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteClientTests.cs" />
+    <Compile Include="OGDotNet\Resources\RemoteLiveDataInjectorTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteSecuritySourceTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewClientTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewProcessorTests.cs" />

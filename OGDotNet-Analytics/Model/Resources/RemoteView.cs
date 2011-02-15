@@ -88,6 +88,13 @@ namespace OGDotNet.Model.Resources
             }
         }
 
+        public RemoteLiveDataInjector LiveDataOverrideInjector {
+            get
+            {
+                return new RemoteLiveDataInjector(_rest.Resolve("liveDataOverrideInjector"));
+            }
+        }
+
         public RemoteViewClient CreateClient()
         {
             
