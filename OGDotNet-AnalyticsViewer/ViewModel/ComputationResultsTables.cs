@@ -40,23 +40,21 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         public void Update(ViewComputationResultModel results, CancellationToken cancellationToken)
         {
-            var valueIndex = Indexvalues(results);
-
             cancellationToken.ThrowIfCancellationRequested();
-            _portfolioRows= BuildPortfolioRows(valueIndex).ToList();
+            _portfolioRows= BuildPortfolioRows(results).ToList();
             InvokePropertyChanged("PortfolioRows");
 
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            bool rowsChanged = MergeUpdatePrimitiveRows(valueIndex);
+            bool rowsChanged = MergeUpdatePrimitiveRows(results);
 
             if (rowsChanged)
                 InvokePropertyChanged("PrimitiveRows");//TODO this could be an ObservableCollection for extra niceness
 
         }
 
-        private bool MergeUpdatePrimitiveRows(Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
+        private bool MergeUpdatePrimitiveRows(ViewComputationResultModel results)
         {
             bool rowsChanged = false;
             
@@ -74,12 +72,10 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 {
                     foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r => r.TargetSpecification.Type == ComputationTargetType.Primitive && r.TargetSpecification.Uid == row.TargetId))
                     {
-                        var key = new Tuple<UniqueIdentifier, string, string>(row.TargetId, valueReq.ValueName, configuration.Key);
-
-                        object value;
-                        if (valueIndex.TryGetValue(key, out value))
+                        object result;
+                        if (results.TryGetValue(configuration.Key, valueReq, out result ))
                         {
-                            values.Add(GetColumnHeading(configuration.Key, valueReq.ValueName), value);
+                            values.Add(GetColumnHeading(configuration.Key, valueReq.ValueName), result);
                         }
                     }
                 }
@@ -174,10 +170,10 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private IEnumerable<TreeNode> GetPortfolioNodesInner(PortfolioNode node)
         {
-            yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name);
+            yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name, ComputationTargetType.PortfolioNode);
             foreach (var position in node.Positions)
             {
-                yield return new TreeNode(position.Identifier, String.Format("{0} ({1})", GetSecurityName(position), position.Quantity));
+                yield return new TreeNode(position.Identifier, String.Format("{0} ({1})", GetSecurityName(position), position.Quantity), ComputationTargetType.Position);
             }
 
             foreach (var portfolioNode in node.SubNodes)
@@ -199,25 +195,27 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         {
             private readonly UniqueIdentifier _identifier;
             private readonly string _name;
+            private readonly ComputationTargetType _targetType;
 
-            public TreeNode(UniqueIdentifier identifier, string name)
+            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType)
             {
                 _identifier = identifier;
                 _name = name;
-            }
-
-            public UniqueIdentifier Identifier
-            {
-                get { return _identifier; }
+                _targetType = targetType;
             }
 
             public string Name
             {
                 get { return _name; }
             }
+
+            public ComputationTargetSpecification ComputationTargetSpecification
+            {
+                get { return new ComputationTargetSpecification(_targetType, _identifier); }
+            }
         }
 
-        private IEnumerable<PortfolioRow> BuildPortfolioRows(Dictionary<Tuple<UniqueIdentifier, string, string>, object> valueIndex)
+        private IEnumerable<PortfolioRow> BuildPortfolioRows(ViewComputationResultModel results)
         {
             if (_portfolio == null)
                 yield break;
@@ -229,16 +227,14 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 {
                     foreach (var req in configuration.Value.PortfolioRequirementsBySecurityType)
                     {
-                        //TODO respect security type
                         foreach (var portfolioReq in req.Value.Properties["portfolioRequirement"])
                         {
                             string header = String.Format("{0}/{1}", configuration.Key, portfolioReq);
                             
-                            var key = new Tuple<UniqueIdentifier, string, string>(position.Identifier, portfolioReq, configuration.Key);
-                            object value;
-                            if (valueIndex.TryGetValue(key, out value))
+                            object result;
+                            if (results.TryGetValue(configuration.Key, new ValueRequirement(portfolioReq, position.ComputationTargetSpecification), out result))
                             {
-                                values.Add(header, value);
+                                values.Add(header, result);
                             }
                             else
                             {
@@ -249,33 +245,8 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 }
 
 
-                yield return new PortfolioRow(position.Identifier, position.Name, values);
+                yield return new PortfolioRow(position.Name, values);
             }
-        }
-
-        private static Dictionary<Tuple<UniqueIdentifier, string, string>, object> Indexvalues(ViewComputationResultModel results)
-        {
-            var valueIndex = new Dictionary<Tuple<UniqueIdentifier, string, string>, object>();
-            foreach (var result in results.AllResults)
-            {
-
-                switch (result.ComputedValue.Specification.TargetSpecification.Type)
-                {
-                    case ComputationTargetType.Primitive:
-                    case ComputationTargetType.Position:
-                    case ComputationTargetType.PortfolioNode:
-                        valueIndex.Add(new Tuple<UniqueIdentifier, string, string>(
-                                           result.ComputedValue.Specification.TargetSpecification.Uid,
-                                           result.ComputedValue.Specification.ValueName, result.CalculationConfiguration),
-                                       result.ComputedValue.Value);
-                        break;
-                    case ComputationTargetType.Trade:
-                    case ComputationTargetType.Security:
-                        //TODO throw new NotImplementedException();
-                        break;
-                }
-            }
-            return valueIndex;
         }
     }
 }

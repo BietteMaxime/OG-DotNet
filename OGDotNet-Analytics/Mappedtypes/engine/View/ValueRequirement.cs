@@ -2,6 +2,7 @@
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine.View
@@ -20,8 +21,11 @@ namespace OGDotNet.Mappedtypes.engine.View
         public ComputationTargetSpecification TargetSpecification{get { return _targetSpecification; }}
 
 
+        public ValueRequirement(string valueName, ComputationTargetSpecification targetSpecification) : this(valueName, targetSpecification, new ValueProperties())
+        {
+        }
 
-        private ValueRequirement(string valueName, ComputationTargetSpecification targetSpecification, ValueProperties constraints)
+        public ValueRequirement(string valueName, ComputationTargetSpecification targetSpecification, ValueProperties constraints)
         {
             _valueName = valueName;
             _constraints = constraints;

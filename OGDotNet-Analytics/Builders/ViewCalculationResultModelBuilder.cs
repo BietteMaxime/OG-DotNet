@@ -16,7 +16,7 @@ namespace OGDotNet.Builders
         }
         public override ViewCalculationResultModel DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            var map = new Dictionary<ComputationTargetSpecification, Dictionary<string, ComputedValue>>();
+            var map = new Dictionary<ComputationTargetSpecification, IDictionary<string, ComputedValue>>();
             foreach (var field in msg)
             {
                 var subMsg = (IFudgeFieldContainer) field.Value;

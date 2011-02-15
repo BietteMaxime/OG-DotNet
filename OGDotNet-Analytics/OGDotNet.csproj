@@ -83,6 +83,7 @@
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinitionDocument.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Utils\DictionaryExtensionMethods.cs" />
     <Compile Include="Utils\DisposableBase.cs" />
     <Compile Include="Model\Resources\ClientResultStream.cs" />
     <Compile Include="Mappedtypes\financial\analytics\DoubleLabelledMatrix1D.cs" />

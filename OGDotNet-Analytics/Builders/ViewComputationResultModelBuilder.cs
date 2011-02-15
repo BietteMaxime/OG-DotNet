@@ -56,37 +56,7 @@ namespace OGDotNet.Builders
                 }
             }
 
-            IDictionary<ComputationTargetSpecification, ViewTargetResultModelImpl> targetMap = new Dictionary<ComputationTargetSpecification, ViewTargetResultModelImpl>();
-            foreach (var configurationEntry in configurationMap)
-            {
-                foreach (ComputationTargetSpecification targetSpec in configurationEntry.Value.AllTargets)
-                {
-
-                    ViewTargetResultModelImpl targetResult;
-                    if (! targetMap.TryGetValue(targetSpec, out targetResult))
-                    {
-                        targetResult = new ViewTargetResultModelImpl();
-                        targetMap.Add(targetSpec, targetResult);
-                    }
-
-                    targetResult.AddAll(configurationEntry.Key, configurationEntry.Value[targetSpec]);
-                }
-            }
-    
-            var allResults = new List<ViewResultEntry>();
-            foreach (var configurationEntry in configurationMap)
-            {
-                foreach (var targetSpec in configurationEntry.Value.AllTargets)
-                {
-                    var results = configurationEntry.Value[targetSpec];
-                    foreach (var value in results)
-                    {
-                        allResults.Add(new ViewResultEntry(configurationEntry.Key, value.Value));
-                    }
-                }
-            }
-            
-            return new ViewComputationResultModel(viewName, inputDataTimestamp, resultTimestamp, configurationMap, targetMap.ToDictionary(kvp => kvp.Key, kvp => (IViewTargetResultModel) kvp.Value), allResults);
+            return new ViewComputationResultModel(viewName, inputDataTimestamp, resultTimestamp, configurationMap);
         }
     }
 }

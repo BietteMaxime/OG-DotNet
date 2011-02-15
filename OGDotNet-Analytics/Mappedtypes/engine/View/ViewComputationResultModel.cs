@@ -5,6 +5,7 @@ using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
@@ -15,64 +16,57 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly FudgeDateTime _inputDataTimestamp;
         private readonly FudgeDateTime _resultTimestamp;
         private readonly IDictionary<string, ViewCalculationResultModel> _configurationMap;
-        private readonly Dictionary<ComputationTargetSpecification, IViewTargetResultModel> _targetMap;
-        private readonly List<ViewResultEntry> _allResults;
 
-        public ViewComputationResultModel(string viewName, FudgeDateTime inputDataTimestamp, FudgeDateTime resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, Dictionary<ComputationTargetSpecification, IViewTargetResultModel> targetMap, List<ViewResultEntry> allResults)
+        public ViewComputationResultModel(string viewName, FudgeDateTime inputDataTimestamp, FudgeDateTime resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap)
         {
             _viewName = viewName;
             _inputDataTimestamp = inputDataTimestamp;
             _resultTimestamp = resultTimestamp;
             _configurationMap = configurationMap;
-            _targetMap = targetMap;
-            _allResults = allResults;
         }
 
-        public ICollection<ComputationTargetSpecification> AllTargets
-        {
-            get { return _targetMap.Keys; }
-        }
 
-        public ICollection<string> CalculationConfigurationNames { get { return _configurationMap.Keys; } }
-        public ViewCalculationResultModel GetCalculationResult(string calcConfigurationName)
-        {
-            return _configurationMap[calcConfigurationName];
-        }
-        public IViewTargetResultModel GetTargetResult(ComputationTargetSpecification target)
-        {
-            return _targetMap[target];
-        }
         public FudgeDateTime ValuationTime { get { return _inputDataTimestamp; } }
         public FudgeDateTime ResultTimestamp { get { return _resultTimestamp; } }
         public String ViewName { get { return _viewName; } }
-        public IEnumerable<ViewResultEntry> AllResults { get { return _allResults; } }
+
+        public bool TryGetValue(string calculationConfiguration, ValueRequirement valueRequirement, out object result)
+        {            
+            result = null;
+            
+            ViewCalculationResultModel model;
+            if (!_configurationMap.TryGetValue(calculationConfiguration, out model))
+            {
+                return false;
+            }
+            ComputedValue computedValue;
+            if (!model.TryGetValue(valueRequirement.TargetSpecification, valueRequirement.ValueName, out computedValue))
+            {
+                return false;
+            }
+            result = computedValue.Value;
+            return true;
+        }
+
+        public IEnumerable<ViewResultEntry> AllResults
+        {
+            get { return _configurationMap.SelectMany(config => config.Value.AllResults.Select(cv => new ViewResultEntry(config.Key, cv))); }
+        }
+
 
         public ViewComputationResultModel ApplyDelta(ViewComputationResultModel delta)
         {
-            var deltaResults = delta._allResults.ToDictionary(r => new Tuple<string, ValueSpecification>(r.CalculationConfiguration, r.ComputedValue.Specification), r => r);
+            if (!string.IsNullOrEmpty(delta._viewName) && delta._viewName != _viewName)
+                throw new ArgumentException("View name changed unexpectedly");
 
+            var viewCalculationResultModels = _configurationMap.Merge(delta._configurationMap, (a,b) =>a.ApplyDelta(b));
 
-            var results = new List<ViewResultEntry>(_allResults.Count);
-
-            foreach (var pair in _allResults.Select(r => new Tuple<Tuple<string, ValueSpecification>, ViewResultEntry>(
-                                                             new Tuple<string, ValueSpecification>(r.CalculationConfiguration, r.ComputedValue.Specification), r)))
-            {
-                var key = pair.Item1;
-                var vre = pair.Item2;
-                ViewResultEntry newValue;
-                if (deltaResults.TryGetValue(key, out newValue))
-                {
-                    deltaResults.Remove(key);
-                }
-                else
-                {
-                    newValue = vre;
-                }
-                results.Add(newValue);
-            }
-            results.AddRange(deltaResults.Select(kvp => kvp.Value));
-
-            return new ViewComputationResultModel(_viewName, delta._inputDataTimestamp, delta._resultTimestamp, _configurationMap, _targetMap, results);
+            return new ViewComputationResultModel(
+                _viewName, 
+                delta._inputDataTimestamp, 
+                delta._resultTimestamp, 
+                viewCalculationResultModels
+                );
         }
     }
 }

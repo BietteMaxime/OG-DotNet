@@ -77,7 +77,7 @@ namespace OGDotNet.Mappedtypes.engine.View
             throw new NotImplementedException();
         }
 
-        public ValueProperties Filter(Func<KeyValuePair<string,HashSet<string>>, bool> predicate)
+        internal ValueProperties Filter(Func<KeyValuePair<string,HashSet<string>>, bool> predicate)
         {
             return new ValueProperties(_properties.Where(predicate).ToDictionary(k => k.Key, v => v.Value));
         }
