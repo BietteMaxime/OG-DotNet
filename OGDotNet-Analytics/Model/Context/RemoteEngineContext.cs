@@ -30,7 +30,7 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        public RemoteSecuritySource SecuritySource
+        public ISecuritySource SecuritySource
         {
             get {
                 return new RemoteSecuritySource(new RestTarget(_config.SecuritySourceUri));

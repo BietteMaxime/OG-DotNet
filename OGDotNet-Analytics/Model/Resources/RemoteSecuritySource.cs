@@ -9,7 +9,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {
-    public class RemoteSecuritySource : ISecuritySource
+    internal class RemoteSecuritySource : ISecuritySource
     {
         private readonly RestTarget _restTarget;
 

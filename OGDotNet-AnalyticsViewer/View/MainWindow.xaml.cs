@@ -17,7 +17,7 @@ namespace OGDotNet.AnalyticsViewer.View
     public partial class MainWindow : Window
     {
         private static readonly Properties.Settings Settings = Properties.Settings.Default;
-        private readonly RemoteSecuritySource _remoteSecuritySource;
+        private readonly ISecuritySource _remoteSecuritySource;
         private readonly RemoteViewProcessor _remoteViewProcessor;
 
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();

@@ -19,7 +19,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private readonly ViewDefinition _viewDefinition;
         private readonly IPortfolio _portfolio;
-        private readonly RemoteSecuritySource _remoteSecuritySource;
+        private readonly ISecuritySource _remoteSecuritySource;
         private readonly List<string> _portfolioColumns;
         private readonly List<string> _primitiveColumns;
         
@@ -28,7 +28,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         private readonly Dictionary<UniqueIdentifier, PrimitiveRow> _primitiveRows = new Dictionary<UniqueIdentifier, PrimitiveRow>();
         private IEnumerable<TreeNode> _portfolioNodes;
 
-        public ComputationResultsTables(ViewDefinition viewDefinition, IPortfolio portfolio, RemoteSecuritySource remoteSecuritySource)
+        public ComputationResultsTables(ViewDefinition viewDefinition, IPortfolio portfolio, ISecuritySource remoteSecuritySource)
         {
             _viewDefinition = viewDefinition;
             _portfolio = portfolio;
