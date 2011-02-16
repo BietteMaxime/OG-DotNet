@@ -82,7 +82,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Console.WriteLine(string.Format("Checking view {0}", view.Name));
             const int forbiddenAfterPause = 3;
 
-            var timeout = TimeSpan.FromMilliseconds(60000);
+            var timeout = TimeSpan.FromMilliseconds(20000);
 
             view.Init();
             using (var remoteViewClient = view.CreateClient())
