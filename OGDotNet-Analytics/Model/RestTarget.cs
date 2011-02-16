@@ -126,6 +126,7 @@ namespace OGDotNet.Model
         private HttpWebRequest GetBasicRequest()
         {
             var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
+            request.Timeout = 20000;
             request.Accept = FudgeMimeType;
             request.ContentType = FudgeMimeType;
             var uaAssembly = Assembly.GetEntryAssembly()  ?? Assembly.GetExecutingAssembly();
