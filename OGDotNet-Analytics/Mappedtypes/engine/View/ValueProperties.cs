@@ -32,27 +32,27 @@ namespace OGDotNet.Mappedtypes.engine.View
             {
                 var name = field.Name;
 
-                string value;
-                if (field.Value is string || field.Value == null)
+                if (field.Value is string)
                 {
-                    value = (string) field.Value;
+                    string value = (string) field.Value;
+
+                    HashSet<string> propertyValueSet;
+                    if (!properties.TryGetValue(name, out propertyValueSet))
+                    {
+                        propertyValueSet = new HashSet<string>();
+                        properties.Add(name, propertyValueSet);
+                    }
+                    propertyValueSet.Add(value);
                 }
                 else if (IsIndicatorType(field.Value))
                 {
-                    value = null;
+                    properties.Add(name, new HashSet<string>());
                 }
                 else
                 {
                     throw new ArgumentException(string.Format("Unexpected value {0}",field.Value));
                 }
 
-                HashSet<string> propertyValueSet;
-                if (!properties.TryGetValue(name, out propertyValueSet))
-                {
-                    propertyValueSet = new HashSet<string>();
-                    properties[name] = propertyValueSet;
-                }
-                propertyValueSet.Add(value);
             }
 
             return new ValueProperties(properties);
@@ -60,6 +60,8 @@ namespace OGDotNet.Mappedtypes.engine.View
 
         private static bool IsIndicatorType(object value)
         {
+            if (value is IndicatorType)
+                return true;
             var msg = value as IFudgeFieldContainer;
             if (msg == null)
                 return false;
