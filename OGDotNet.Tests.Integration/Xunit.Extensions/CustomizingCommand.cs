@@ -43,7 +43,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             {
                 if (innerEx != null)
                 {
-                    throw new Exception("Exception occured in MUT",innerEx);
+                    ExceptionUtility.RethrowWithNoStackTraceLoss(innerEx);
                 }
                 Assert.NotNull(innerResult);
                 return innerResult;
