@@ -41,7 +41,7 @@ namespace OGDotNet.Model.Context
         {//TODO this is a hack, should I even be exposing this?
             get
             {
-                return new RemoteSecurityMaster(new RestTarget(_config.SecuritySourceUri.Replace("securitySource", "securityMaster")));
+                return new RemoteSecurityMaster(new RestTarget(_config.SecuritySourceUri.ToString().Replace("securitySource", "securityMaster")));
             }
         }
 

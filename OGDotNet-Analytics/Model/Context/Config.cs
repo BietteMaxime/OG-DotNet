@@ -6,11 +6,11 @@ namespace OGDotNet.Model.Context
     {
         private readonly Uri _rootUri;
         private readonly string _activeMQSpec;
-        private readonly string _userDataUri;
-        private readonly string _viewProcessorUri;
-        private readonly string _securitySourceUri;
+        private readonly Uri _userDataUri;
+        private readonly Uri _viewProcessorUri;
+        private readonly Uri _securitySourceUri;
 
-        public Config(Uri rootUri, string activeMQSpec, string userDataUri, string viewProcessorUri, string securitySourceUri)
+        public Config(Uri rootUri, string activeMQSpec, Uri userDataUri, Uri viewProcessorUri, Uri securitySourceUri)
         {
             _rootUri = rootUri;
             _activeMQSpec = activeMQSpec;
@@ -29,17 +29,17 @@ namespace OGDotNet.Model.Context
             get { return _activeMQSpec; }
         }
 
-        public string UserDataUri
+        public Uri UserDataUri
         {
             get { return _userDataUri; }
         }
 
-        public string ViewProcessorUri
+        public Uri ViewProcessorUri
         {
             get { return _viewProcessorUri; }
         }
 
-        public string SecuritySourceUri
+        public Uri SecuritySourceUri
         {
             get { return _securitySourceUri; }
         }

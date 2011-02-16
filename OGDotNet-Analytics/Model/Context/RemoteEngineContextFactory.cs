@@ -57,15 +57,85 @@ namespace OGDotNet.Model.Context
         }
 
 
-        private static Dictionary<string, string> GetServiceUris(IFudgeFieldContainer configMsg, params string[] serviceId)
+        private static IDictionary<string, Uri> GetServiceUris(IFudgeFieldContainer configMsg, params string[] serviceIds)
         {
-            return serviceId.AsParallel().ToDictionary(s => s, s => GetServiceUri(configMsg, s));
+            var validServiceUris = new Dictionary<string, Uri>();
+
+            var asyncRequests = new List<Tuple<String,WebRequest, IAsyncResult>>();
+            
+            foreach (var serviceId in serviceIds)
+            {
+                foreach (var uri in GetPotentialUris(configMsg, serviceId))
+                {
+                    var webRequest = WebRequest.Create(uri);
+                    webRequest.Timeout = 5000;
+
+                    var result = webRequest.BeginGetResponse(null,serviceId);
+                    asyncRequests.Add(new Tuple<string, WebRequest,IAsyncResult>(serviceId,webRequest,result));
+                }
+            }
+
+            
+            while (validServiceUris.Count < serviceIds.Length)
+            {
+                if (! asyncRequests.Any())
+                {
+                    var missingKeys = string.Join(",", serviceIds.Except(validServiceUris.Keys));
+                    throw new ArgumentException(string.Format("Couldn't get service Uri for {0}", missingKeys));
+                }
+
+                var waitHandles = asyncRequests.Select(kvp => kvp.Item3.AsyncWaitHandle).ToArray();
+                var index = WaitHandle.WaitAny(waitHandles);
+                var completedRequest = asyncRequests[index];
+                asyncRequests.RemoveAt(index);
+
+                if (IsValidResponse(completedRequest))
+                {
+                    //TODO: does it matter if another uri was faster (from this one sample)?
+                    validServiceUris[completedRequest.Item1] = completedRequest.Item2.RequestUri;
+                }
+            }
+
+            
+
+            //We need to clear up, but we don't care about waiting.
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                foreach (var tuple in asyncRequests)
+                {
+                    IsValidResponse(tuple);
+                }
+            });
+
+            return validServiceUris;
         }
-        
-        private static string GetServiceUri(IFudgeFieldContainer configMsg, string serviceId)
+
+        private static bool IsValidResponse(Tuple<string, WebRequest, IAsyncResult> tuple)
         {
+            try
+            {
+                tuple.Item2.EndGetResponse(tuple.Item3).Close();
+                return true;
+            }
+            catch (WebException e)
+            {
+                if (e.Response is HttpWebResponse && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.MethodNotAllowed)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
-
+        private static IEnumerable<string> GetPotentialUris(IFudgeFieldContainer configMsg, string serviceId)
+        {
             var userDataField = (FudgeMsg)configMsg.GetByName(serviceId).Value;
 
             var uris = new List<string>();
@@ -86,57 +156,9 @@ namespace OGDotNet.Model.Context
                         throw new ArgumentOutOfRangeException();
                 }
             }
-
-            return GetWorkingUri(uris);
+            return uris;
         }
 
-        private static string GetWorkingUri(IEnumerable<string> uris)
-        {
-            return uris.OrderBy(PrefferenceOrder).Select(
-                uri =>
-                    {
-                        try
-                        {
-                            var webRequest = WebRequest.Create(uri);
-                            webRequest.Timeout = 5000;
-                            using (webRequest.GetResponse())
-                            { }
-                        }
-                        catch (WebException e)
-                        {
-                            if (e.Response is HttpWebResponse && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.MethodNotAllowed)
-                            {
-                                return uri;
-                            }
-                            else
-                            {
-                                return null;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            return null;
-                        }
-                        return uri;
-
-                    }).Where(u => u != null).First();
-        }
-        private static int PrefferenceOrder(string uri)
-        {
-            switch (new Uri(uri).HostNameType)
-            {
-                case UriHostNameType.IPv4:
-                    return 0;
-                case UriHostNameType.Basic:
-                case UriHostNameType.Dns:
-                    return 5;
-                case UriHostNameType.Unknown:
-                case UriHostNameType.IPv6:
-                    return 10;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
         #endregion
 
     }
