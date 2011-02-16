@@ -4,6 +4,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.Util.Time;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
 {
@@ -60,23 +61,23 @@ namespace OGDotNet.Builders
                 {
                     // Have a type and a value, which can be consumed
                     string labelTypeName = labelTypes.Dequeue();
-                    var typeMapper = (IFudgeTypeMappingStrategy)deserializer.Context.GetProperty(ContextProperties.TypeMappingStrategyProperty);
-                    Type labelType = typeMapper.GetType(labelTypeName);
-
                     IFudgeField labelValue = labelValues.Dequeue();
 
-                    if (labelType == typeof(Tenor))
+                    if (labelTypeName == "java.lang.String")
+                    {
+                        labels.Add((string)labelValue.Value);
+                    }
+                    else if (labelTypeName == "com.opengamma.util.time.Tenor")
                     {
                         //TODO hack hack hack, this seems to get serialized as a string :S
                         string period = (string)labelValue.Value;
                         labels.Add(new Tenor(period));
                     }
-                    else if (labelTypeName == "java.lang.String")
-                    {
-                        labels.Add((string)labelValue.Value);
-                    }
                     else
-                    {//TODO work out whether this is right in the general case
+                    {//TODO work out whether this is right (and fast enough) in the general case
+                        var typeMapper = (IFudgeTypeMappingStrategy) deserializer.Context.GetProperty(ContextProperties.TypeMappingStrategyProperty);
+                        Type labelType = typeMapper.GetType(labelTypeName);
+                        
                         object label = deserializer.FromField(labelValue, labelType);
                         labels.Add(label);
                     }
