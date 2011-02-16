@@ -78,11 +78,15 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(YieldCurve value)
         {
             AssertSensibleValue(value.Curve);
-            var interestRate = value.GetInterestRate(value.Curve.XData[0]);
-            AssertSensibleValue(interestRate);
-            var discountFactor = value.GetDiscountFactor(value.Curve.XData[0]);
-            AssertSensibleValue(discountFactor);
-            Assert.InRange(discountFactor, 0, 1);
+            if (!value.Curve.IsVirtual)
+            {
+                var interestRate = value.GetInterestRate(value.Curve.XData[0]);
+                AssertSensibleValue(interestRate);
+                Assert.InRange(interestRate, 0, 1);
+                var discountFactor = value.GetDiscountFactor(value.Curve.XData[0]);
+                AssertSensibleValue(discountFactor);
+                Assert.InRange(discountFactor, 0, 1);
+            }
         }
         public static void AssertSensibleValue(Curve value)
         {
