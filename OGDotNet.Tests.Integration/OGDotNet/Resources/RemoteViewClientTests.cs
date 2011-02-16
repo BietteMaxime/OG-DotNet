@@ -41,8 +41,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory(Skip = "The timing stuff needs to be fixed to work with clock drift")]
-        [TypedPropertyData("Views")]
+        [Theory]
+        [TypedPropertyData("FastTickingViews")]
         public void CanGetManyResults(RemoteView view)
         {
             view.Init();
@@ -56,8 +56,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     enumerator.MoveNext();
                     Assert.NotNull(enumerator.Current);
 
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < 5; i++)
                     {
+                        var requested= DateTimeOffset.Now;
                         enumerator.MoveNext();
                         Assert.NotNull(enumerator.Current);
 
@@ -66,9 +67,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         var result = enumerator.Current.ResultTimestamp.ToDateTimeOffset();
                         var now = DateTimeOffset.Now;
 
-                        var timeToTransmit = now-result;
+                        //Make sure we're not being shown up too much by the server
+                        var timeToReceive = now-requested;
                         var timeToCalculate = result-valuation;
-                        Assert.InRange(timeToTransmit, TimeSpan.Zero, timeToCalculate);
+                        Assert.InRange(timeToReceive, TimeSpan.Zero, TimeSpan.FromMilliseconds(timeToCalculate.TotalMilliseconds*2.0));
                     }
                 }
             }
