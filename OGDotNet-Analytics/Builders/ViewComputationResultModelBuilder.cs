@@ -4,7 +4,6 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Model;
 

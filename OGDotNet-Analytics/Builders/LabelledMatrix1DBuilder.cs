@@ -4,7 +4,6 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.Util.Time;
-using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
 {

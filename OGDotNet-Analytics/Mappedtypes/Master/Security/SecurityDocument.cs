@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OGDotNet.Mappedtypes.Master.Security
+﻿namespace OGDotNet.Mappedtypes.Master.Security
 {
     public class SecurityDocument
     {
