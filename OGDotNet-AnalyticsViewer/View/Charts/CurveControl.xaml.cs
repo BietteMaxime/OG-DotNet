@@ -30,7 +30,7 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
         {
             if (Curve != null)
             {
-                if (IsVirtual(Curve))
+                if (Curve.IsVirtual)
                 {//We can't display this
                     IsEnabled = false;
                     ShowDisabled();
@@ -94,21 +94,5 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
 
             myLine.Points.Clear();
         }
-
-        private static bool IsVirtual(Curve curve)
-        {//TODO where should this live.  Probably on the curves themselves
-            try
-            {
-                var xData = curve.XData;
-                return false;
-            }
-            catch (InvalidOperationException)
-            {
-                return true;
-            }
-        }
-
-        
-
     }
 }

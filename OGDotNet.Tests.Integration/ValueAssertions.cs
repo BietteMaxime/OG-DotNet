@@ -87,9 +87,17 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(Curve value)
         {
             Assert.NotNull(value);
-            Assert.Equal(value.XData.Count, value.YData.Count);
-            Assert.Equal(value.XData.Count, value.GetData().Count());
             Assert.NotNull(value.Name);
+            if (value.IsVirtual)
+            {
+                Assert.Throws<InvalidOperationException>(() => value.XData);
+                Assert.Throws<InvalidOperationException>(() => value.YData);
+            }
+            else
+            {
+                Assert.Equal(value.XData.Count, value.YData.Count);
+                Assert.Equal(value.XData.Count, value.GetData().Count());
+            }
         }
 
         public static void AssertSensibleValue(VolatilitySurfaceData value)

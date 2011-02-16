@@ -36,6 +36,12 @@ namespace OGDotNet.Mappedtypes.math.curve
         {
             get { return _yData; }
         }
+
+        public override bool IsVirtual
+        {
+            get { return false; }
+        }
+
         public int Size
         {
             get

@@ -38,6 +38,11 @@ namespace OGDotNet.Mappedtypes.math.curve
             }
         }
 
+        public override bool IsVirtual
+        {
+            get { return true; }
+        }
+
 
         public override double GetYValue(double x)
         {

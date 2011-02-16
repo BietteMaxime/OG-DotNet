@@ -30,6 +30,8 @@ namespace OGDotNet.Mappedtypes.math.curve
         public abstract IList<double> XData { get; }
         public abstract IList<double> YData { get; }
 
+        public abstract bool IsVirtual { get; }
+
         public abstract double GetYValue(double x);
 
         protected static string GetName(IFudgeFieldContainer ffc)
