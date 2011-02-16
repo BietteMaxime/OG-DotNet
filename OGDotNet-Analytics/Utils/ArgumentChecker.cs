@@ -11,7 +11,7 @@ namespace OGDotNet.Utils
             NotNull(arg,argName);
             if (!arg.Any())
             {
-                throw new ArgumentException(argName, "Cannot be empty");
+                throw new ArgumentException("Cannot be empty", argName);
             }
         }
 
