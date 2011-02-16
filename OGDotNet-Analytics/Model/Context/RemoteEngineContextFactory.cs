@@ -61,17 +61,17 @@ namespace OGDotNet.Model.Context
         {
             var validServiceUris = new Dictionary<string, Uri>();
 
-            var asyncRequests = new List<Tuple<String,WebRequest, IAsyncResult>>();
+            var asyncRequests = new List<Tuple<String,HttpWebRequest, IAsyncResult>>();
             
             foreach (var serviceId in serviceIds)
             {
                 foreach (var uri in GetPotentialUris(configMsg, serviceId))
                 {
-                    var webRequest = WebRequest.Create(uri);
+                    var webRequest = (HttpWebRequest) WebRequest.Create(uri);
                     webRequest.Timeout = 5000;
 
                     var result = webRequest.BeginGetResponse(null,serviceId);
-                    asyncRequests.Add(new Tuple<string, WebRequest,IAsyncResult>(serviceId,webRequest,result));
+                    asyncRequests.Add(new Tuple<string, HttpWebRequest,IAsyncResult>(serviceId,webRequest,result));
                 }
             }
 
@@ -96,21 +96,21 @@ namespace OGDotNet.Model.Context
                 }
             }
 
-            
 
-            //We need to clear up, but we don't care about waiting.
-            ThreadPool.QueueUserWorkItem(delegate
+            //We need to clear up, but we don't care about the results
+            foreach (var req in asyncRequests)
             {
-                foreach (var tuple in asyncRequests)
-                {
-                    IsValidResponse(tuple);
-                }
-            });
+                req.Item2.Abort();
+            }
+            foreach (var req in asyncRequests)
+            {
+                IsValidResponse(req);
+            }
 
             return validServiceUris;
         }
 
-        private static bool IsValidResponse(Tuple<string, WebRequest, IAsyncResult> tuple)
+        private static bool IsValidResponse(Tuple<string, HttpWebRequest, IAsyncResult> tuple)
         {
             try
             {
