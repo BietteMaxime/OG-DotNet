@@ -102,5 +102,10 @@ namespace OGDotNet.Model.Resources
 
             return new RemoteViewClient(clientUri, _mqTemplate);
         }
+
+        public override string ToString()
+        {
+            return string.Format("[View {0}]", _name);
+        }
     }
 }
