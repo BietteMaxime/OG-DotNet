@@ -16,6 +16,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Bond Future Test View",
                                                                       "Cash Equity Detailed Test View",
                                                                       "Cash Equity Test View",
+                                                                      "Swap Test View",
                                                                   };
 
         private static bool IsSlowTickingView(RemoteView view)
