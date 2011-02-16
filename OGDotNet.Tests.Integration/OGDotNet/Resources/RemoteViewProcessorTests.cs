@@ -1,6 +1,7 @@
 ﻿using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
+using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {

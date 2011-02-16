@@ -1,5 +1,5 @@
 ﻿using OGDotNet.Tests.Integration.OGDotNet.Model.Context;
-using Xunit;
+using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {

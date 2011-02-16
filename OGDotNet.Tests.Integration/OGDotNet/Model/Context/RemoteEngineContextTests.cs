@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OGDotNet.Model.Context;
 using OGDotNet.Tests.Integration.Properties;
 using Xunit;
+using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Model.Context
 {

@@ -5,6 +5,7 @@ using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
+using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -71,7 +72,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     return;
                 }
-                Assert.InRange<int>(i,0,100);
+                Assert.InRange(i,0,100);
             }
         }
 

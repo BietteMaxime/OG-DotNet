@@ -75,6 +75,8 @@
     <Compile Include="OGDotNet\Resources\RemoteViewClientTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewProcessorTests.cs" />
     <Compile Include="OGDotNet\Resources\TestWithContextBase.cs" />
+    <Compile Include="Xunit.Extensions\CustomizingCommand.cs" />
+    <Compile Include="Xunit.Extensions\FactAttribute.cs" />
     <Compile Include="Xunit.Extensions\TheoryAttribute.cs" />
     <Compile Include="OGDotNet\Resources\ViewTestsBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
+using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
