@@ -134,8 +134,5 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                            Definition = yieldCurveDefinition
                        };
         }
-
-        //TODO: test strips
-        //TODO: test regions
     }
 }
