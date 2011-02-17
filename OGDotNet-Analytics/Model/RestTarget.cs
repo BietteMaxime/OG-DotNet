@@ -57,7 +57,7 @@ namespace OGDotNet.Model
         public TRet Get<TRet>()
         {
             FudgeMsg retMsg = GetFudge();
-            return Deserialize<TRet>(retMsg);
+            return retMsg == null ? default(TRet) : Deserialize<TRet>(retMsg);
         }
 
         public FudgeMsg GetFudge()
