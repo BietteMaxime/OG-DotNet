@@ -24,6 +24,9 @@
       </Compile>
     </ItemGroup>
     
+    	<PropertyGroup>
+    <ReferencePath>$(MSBuildProjectDirectory)\..\lib\</ReferencePath>
+  </PropertyGroup >
     
   </Target>
 
