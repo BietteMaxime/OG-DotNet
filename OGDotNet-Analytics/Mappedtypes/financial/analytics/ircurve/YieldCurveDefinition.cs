@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Common;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 {
@@ -12,14 +13,13 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         private readonly String _name;
         private readonly String _interpolatorName;
         private readonly List<FixedIncomeStrip> _strips = new List<FixedIncomeStrip>();
-        private readonly string _region;
+        private Identifier _region;
 
-        public YieldCurveDefinition(Currency currency, string region, string name, string interpolatorName)
+        public YieldCurveDefinition(Currency currency, string name, string interpolatorName)
         {
             this._currency = currency;
             this._name = name;
             this._interpolatorName = interpolatorName;
-            this._region = region;
         }
 
         public void AddStrip(params FixedIncomeStrip[] newStrips)
@@ -50,9 +50,10 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             get { return new SortedSet<FixedIncomeStrip>(_strips); }
         }
 
-        public string Region
+        public Identifier Region
         {
             get { return _region; }
+            set { _region = value; }
         }
 
         public static YieldCurveDefinition FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)

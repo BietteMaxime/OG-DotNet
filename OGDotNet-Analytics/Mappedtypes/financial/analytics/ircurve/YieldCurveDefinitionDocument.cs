@@ -4,7 +4,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 {
     public class YieldCurveDefinitionDocument
     {
-        public YieldCurveDefinition YieldCurveDefinition { get; set; }
+        public YieldCurveDefinition Definition { get; set; }
 
         public UniqueIdentifier UniqueId { get; set; }
     }
