@@ -33,8 +33,8 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             _viewDefinition = viewDefinition;
             _portfolio = portfolio;
             _remoteSecuritySource = remoteSecuritySource;
-            _portfolioColumns = GetPortfolioColumns(viewDefinition).OrderBy(c=>c).ToList();
-            _primitiveColumns = GetPrimitiveColumns(viewDefinition).OrderBy(c=>c).ToList();
+            _portfolioColumns = GetPortfolioColumns(viewDefinition).ToList();
+            _primitiveColumns = GetPrimitiveColumns(viewDefinition).ToList();
         }
 
 
