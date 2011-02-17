@@ -28,7 +28,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (IsEnabled)
+            if (IsEnabled && ! Curve.IsVirtual)
             {
                 detailsPopup.DataContext = Curve.GetData();
                 detailsPopup.IsOpen = true;
