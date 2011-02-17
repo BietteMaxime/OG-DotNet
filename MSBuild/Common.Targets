@@ -24,7 +24,9 @@
       </Compile>
     </ItemGroup>
     
-    
+    <CreateProperty  Value="$(MSBuildProjectDirectory)\..\lib\;$(AssemblySearchPaths)">  
+		<Output TaskParameter="Value" PropertyName="AssemblySearchPaths" />  
+	</CreateProperty>  
   </Target>
 
   <Target Name="AfterBuild" Condition=" '$(BuildingInsideVisualStudio)'!='true' ">
