@@ -4,31 +4,19 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using Fudge;
-using OGDotNet.Properties;
 
 namespace OGDotNet.Model.Context
 {
     public class RemoteEngineContextFactory
     {
-        /// <summary>
-        /// TODO: this is a hack, kill it
-        /// </summary>
-        public static RemoteEngineContextFactory DefaultRemoteEngineContextFactory
-        {
-              get
-              {
-                  return new RemoteEngineContextFactory(Settings.Default.ServiceUri, Settings.Default.ConfigId);
-              }  
-        } 
-
         private readonly Uri _rootUri;
         private readonly string _configId;
         private readonly RestTarget _rootRest;
         private readonly Config _config;
-        
-        public RemoteEngineContextFactory(string rootUri, string configId)
+
+        public RemoteEngineContextFactory(Uri rootUri, string configId)
         {
-            _rootUri = new Uri(rootUri);
+            _rootUri = rootUri;
             _configId = configId;
             _rootRest = new RestTarget(rootUri);
             _config = InitConfig();

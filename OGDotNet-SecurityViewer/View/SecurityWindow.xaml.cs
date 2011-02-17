@@ -17,8 +17,7 @@ namespace OGDotNet.SecurityViewer.View
     {
         long _cancellationToken = long.MinValue;
 
-        static readonly RemoteSecurityMaster SecurityMaster =RemoteEngineContextFactory.DefaultRemoteEngineContextFactory.CreateRemoteEngineContext().SecurityMaster;
-            
+        RemoteSecurityMaster _securityMaster;
 
 
         public SecurityWindow()
@@ -27,6 +26,15 @@ namespace OGDotNet.SecurityViewer.View
             itemGrid.Items.Clear();
         }
 
+        public RemoteSecurityMaster Context
+        {
+            set
+            {
+                if (_securityMaster != null)
+                    throw new NotImplementedException("Can't handle context changing yet");
+                _securityMaster = value;
+            }
+        }
         
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -55,7 +63,7 @@ namespace OGDotNet.SecurityViewer.View
                                                  try
                                                  {
                                                      CancelIfCancelled(token);
-                                                     var results = SecurityMaster.Search(name, type, new PagingRequest(currentPage, 20));
+                                                     var results = _securityMaster.Search(name, type, new PagingRequest(currentPage, 20));
                                                      CancelIfCancelled(token);
                                                      Dispatcher.Invoke((Action) (() =>
                                                                                           {
@@ -133,7 +141,7 @@ namespace OGDotNet.SecurityViewer.View
             if (itemGrid.SelectedItem != null)
             {
                 var uniqueIdentifier = ((Security) itemGrid.SelectedItem).UniqueId;
-                var security = SecurityMaster.GetSecurity(uniqueIdentifier);
+                var security = _securityMaster.GetSecurity(uniqueIdentifier);
 
                 StringBuilder sb = new StringBuilder();
                 foreach (var propertyInfo in security.GetType().GetProperties())

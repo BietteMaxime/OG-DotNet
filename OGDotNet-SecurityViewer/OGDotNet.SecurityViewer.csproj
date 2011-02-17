@@ -39,6 +39,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
+    <Reference Include="Castle.Windsor, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="Fudge">
       <HintPath>..\OGDotNet-Analytics\bin\Debug\Fudge.dll</HintPath>
     </Reference>
@@ -118,6 +120,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
   <Import Project="..\MSBuild\Common.Targets" />
 </Project>

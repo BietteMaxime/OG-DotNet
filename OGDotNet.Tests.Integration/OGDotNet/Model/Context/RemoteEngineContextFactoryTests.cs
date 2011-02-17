@@ -1,4 +1,5 @@
-﻿using OGDotNet.Model.Context;
+﻿using System;
+using OGDotNet.Model.Context;
 using OGDotNet.Tests.Integration.Properties;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
@@ -14,7 +15,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Model.Context
 
         internal static RemoteEngineContextFactory GetContextFactory()
         {
-            return new RemoteEngineContextFactory(Settings.Default.ServiceUri, Settings.Default.ConfigId);
+            return new RemoteEngineContextFactory(new Uri(Settings.Default.ServiceUri), Settings.Default.ConfigId);
         }
     }
 }
