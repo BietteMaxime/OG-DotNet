@@ -37,6 +37,8 @@ namespace OGDotNet.Model.Resources
             return PostDefinition(document, "addOrUpdate");
         }
 
+
+
         private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
         {
             var respMsg = _restTarget.Resolve(path).Post<UniqueIdentifier>(document, "uniqueId");
@@ -53,21 +55,15 @@ namespace OGDotNet.Model.Resources
 
         public YieldCurveDefinitionDocument Get(UniqueIdentifier uniqueId)
         {
-            YieldCurveDefinitionDocumentResponse resp =
-                _restTarget.Resolve("curves").Resolve(uniqueId.ToString()).Get
-                    <YieldCurveDefinitionDocumentResponse>();
+            var resp = _restTarget.Resolve("curves").Resolve(uniqueId.ToString()).Get<YieldCurveDefinitionDocument>();
             if (resp == null || resp.UniqueId == null || resp.Definition == null)
             {
                 throw new ArgumentException("Not found");
             }
-            return new YieldCurveDefinitionDocument() {Definition = resp.Definition, UniqueId = resp.UniqueId};
+            return resp;
         }
-    
-        public class YieldCurveDefinitionDocumentResponse
-        {
-            public YieldCurveDefinition Definition { get; set; }
-            public UniqueIdentifier UniqueId { get; set; }
 
-        }
+
+        //TODO Update, Remove
     }
 }
