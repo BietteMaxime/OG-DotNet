@@ -58,7 +58,34 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 
         public static YieldCurveDefinition FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            throw new NotImplementedException();
+            Currency currency = null;
+            string name = null;
+            string interpolatorName=null;
+            var strips = new List<FixedIncomeStrip>();
+            foreach (var fudgeField in ffc.GetAllFields())
+            {
+                switch (fudgeField.Name)
+                {
+                    case "currency":
+                        currency = Currency.GetInstance((string) fudgeField.Value);
+                        break;
+                    case "name":
+                        name = (string) fudgeField.Value;
+                        break;
+                    case "interpolatorName":
+                        interpolatorName = (string) fudgeField.Value;
+                        break;
+                    case "region":
+                        throw new NotImplementedException();
+                    case "strip":
+                        strips.Add(deserializer.FromField<FixedIncomeStrip>(fudgeField));
+                        break;
+                }
+            }
+
+            var yieldCurveDefinition = new YieldCurveDefinition(currency,name,interpolatorName);
+            yieldCurveDefinition.AddStrip(strips.ToArray());
+            return yieldCurveDefinition;
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

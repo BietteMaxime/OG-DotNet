@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
+using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Model.Resources;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
-using Currency=OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -28,11 +27,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (RemoteClient remoteClient = Context.CreateUserClient())
             {
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
-                var yieldCurveDefinition = new YieldCurveDefinition(Currency.GetInstance("USD"), "My very special curve" + Guid.NewGuid(), "dummo");
-                var yieldCurveDefinitionDocument = new YieldCurveDefinitionDocument
-                                                                                {
-                                                                                    Definition = yieldCurveDefinition
-                                                                                };
+                var yieldCurveDefinitionDocument = GenerateDocument();
                 var newDoc = interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
 
                 Assert.True(ReferenceEquals(newDoc, yieldCurveDefinitionDocument));
@@ -46,14 +41,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (RemoteClient remoteClient = Context.CreateUserClient())
             {
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
-                var yieldCurveDefinition = new YieldCurveDefinition(Currency.GetInstance("USD"), "My very special curve" + Guid.NewGuid(), "dummo");
-                var yieldCurveDefinitionDocument = new YieldCurveDefinitionDocument
-                {
-                    Definition = yieldCurveDefinition
-                };
+                var yieldCurveDefinitionDocument = GenerateDocument();
                 interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
                 Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument));
-                
+
             }
         }
 
@@ -63,11 +54,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (RemoteClient remoteClient = Context.CreateUserClient())
             {
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
-                var yieldCurveDefinition = new YieldCurveDefinition(Currency.GetInstance("USD"), "My very special curve" + Guid.NewGuid(), "dummo");
-                var yieldCurveDefinitionDocument = new YieldCurveDefinitionDocument()
-                {
-                    Definition = yieldCurveDefinition
-                };
+                var yieldCurveDefinitionDocument = GenerateDocument();
                 interpolatedYieldCurveDefinitionMaster.AddOrUpdate(yieldCurveDefinitionDocument);
             }
         }
@@ -77,15 +64,52 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (RemoteClient remoteClient = Context.CreateUserClient())
             {
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
-                var yieldCurveDefinition = new YieldCurveDefinition(Currency.GetInstance("USD"), "My very special curve" + Guid.NewGuid(), "dummo");
-                var yieldCurveDefinitionDocument = new YieldCurveDefinitionDocument()
-                {
-                    Definition = yieldCurveDefinition
-                };
+                var yieldCurveDefinitionDocument = GenerateDocument();
                 interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
                 interpolatedYieldCurveDefinitionMaster.AddOrUpdate(yieldCurveDefinitionDocument);
 
             }
         }
+
+        [Fact]
+        public void CanAddAndGet()
+        {
+            using (RemoteClient remoteClient = Context.CreateUserClient())
+            {
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+
+                YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
+                interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
+                
+                YieldCurveDefinitionDocument roundtrippedDoc = interpolatedYieldCurveDefinitionMaster.Get(yieldCurveDefinitionDocument.UniqueId);
+
+                YieldCurveDefinition roundTripped = roundtrippedDoc.Definition;
+
+
+                var yieldCurveDefinition = yieldCurveDefinitionDocument.Definition;
+                Assert.Equal(yieldCurveDefinition.Name, roundTripped.Name);
+                Assert.Equal(yieldCurveDefinition.InterpolatorName, roundTripped.InterpolatorName);
+                Assert.Equal(yieldCurveDefinition.Currency, roundTripped.Currency);
+                Assert.Equal(roundTripped.Region, roundTripped.Region);
+
+                Assert.True(roundTripped.Strips.SequenceEqual(roundTripped.Strips));
+            }
+        }
+
+        private static YieldCurveDefinitionDocument GenerateDocument()
+        {
+            string curveName = "My very special curve" + Guid.NewGuid();
+
+            var yieldCurveDefinition = new YieldCurveDefinition(Currency.GetInstance("USD"), curveName, "dunno");
+            yieldCurveDefinition.AddStrip(new FixedIncomeStrip(){ConventionName = "Somthing", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.CASH});
+            yieldCurveDefinition.AddStrip(new FixedIncomeStrip() { ConventionName = "Somthing", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.FUTURE, NthFutureFromTenor = 23});
+            return new YieldCurveDefinitionDocument
+                       {
+                           Definition = yieldCurveDefinition
+                       };
+        }
+
+        //TODO: test strips
+        //TODO: test regions
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Fudge;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.Id;
 
@@ -15,27 +16,28 @@ namespace OGDotNet.Model.Resources
             _restTarget = restTarget;
         }
 
-          public YieldCurveDefinitionDocument Add(YieldCurveDefinitionDocument document) {
-              try
-              {
-                  return PostDefinition(document, "add");
-              }
-              catch (WebException e)
-              {
-                  if (e.Status == WebExceptionStatus.ProtocolError) //TODO I'd like more from java land than this
-                  {
-                      throw new ArgumentException("Duplicate argument");
-                  }
-                  throw;
-              }
-          }
+        public YieldCurveDefinitionDocument Add(YieldCurveDefinitionDocument document)
+        {
+            try
+            {
+                return PostDefinition(document, "add");
+            }
+            catch (WebException e)
+            {
+                if (e.Status == WebExceptionStatus.ProtocolError) //TODO I'd like more from java land than this
+                {
+                    throw new ArgumentException("Duplicate argument");
+                }
+                throw;
+            }
+        }
 
-          public YieldCurveDefinitionDocument AddOrUpdate(YieldCurveDefinitionDocument document)
-          {
-              return PostDefinition(document, "addOrUpdate");
-          }
+        public YieldCurveDefinitionDocument AddOrUpdate(YieldCurveDefinitionDocument document)
+        {
+            return PostDefinition(document, "addOrUpdate");
+        }
 
-          private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
+        private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
         {
             var respMsg = _restTarget.Resolve(path).Post<UniqueIdentifier>(document, "uniqueId");
             var uid = respMsg.UniqueId;
@@ -47,6 +49,25 @@ namespace OGDotNet.Model.Resources
             document.UniqueId = uid;
 
             return document;
+        }
+
+        public YieldCurveDefinitionDocument Get(UniqueIdentifier uniqueId)
+        {
+            YieldCurveDefinitionDocumentResponse resp =
+                _restTarget.Resolve("curves").Resolve(uniqueId.ToString()).Get
+                    <YieldCurveDefinitionDocumentResponse>();
+            if (resp == null || resp.UniqueId == null || resp.Definition == null)
+            {
+                throw new ArgumentException("Not found");
+            }
+            return new YieldCurveDefinitionDocument() {Definition = resp.Definition, UniqueId = resp.UniqueId};
+        }
+    
+        public class YieldCurveDefinitionDocumentResponse
+        {
+            public YieldCurveDefinition Definition { get; set; }
+            public UniqueIdentifier UniqueId { get; set; }
+
         }
     }
 }
