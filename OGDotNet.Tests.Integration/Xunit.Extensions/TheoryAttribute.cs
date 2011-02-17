@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using Xunit.Sdk;
 using TimeoutException = System.TimeoutException;
 
