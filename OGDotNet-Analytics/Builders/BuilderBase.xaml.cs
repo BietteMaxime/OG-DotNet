@@ -17,10 +17,10 @@ namespace OGDotNet.Builders
 
         public void Serialize(object obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
         {
-            SerializeImpl(obj, msg, serializer);
+            SerializeImpl((T) obj, msg, serializer);
         }
 
-        protected virtual void SerializeImpl(object obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
+        protected virtual void SerializeImpl(T obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
         {
             throw new NotImplementedException();
         }

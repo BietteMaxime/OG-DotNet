@@ -1,7 +1,10 @@
 ﻿using System;
+using Fudge.Serialization;
+using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.Id
 {
+    [FudgeSurrogate(typeof(IdentifierBuilder))]
     public class Identifier : IEquatable<Identifier>, IComparable<Identifier>
     {
         private readonly string _scheme;
@@ -20,6 +23,12 @@ namespace OGDotNet.Mappedtypes.Id
         {
             _scheme = scheme;
             _value = value;
+        }
+
+        public static Identifier Parse(string s)
+        {
+            string[] strings = s.Split(new[]{"::"},StringSplitOptions.None);
+            return new Identifier(strings[0],strings[1]);
         }
 
         public int CompareTo(Identifier other)

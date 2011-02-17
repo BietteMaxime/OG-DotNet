@@ -62,6 +62,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             string name = null;
             string interpolatorName=null;
             var strips = new List<FixedIncomeStrip>();
+            Identifier region = null;
             foreach (var fudgeField in ffc.GetAllFields())
             {
                 switch (fudgeField.Name)
@@ -76,7 +77,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
                         interpolatorName = (string) fudgeField.Value;
                         break;
                     case "region":
-                        throw new NotImplementedException();
+                        region = Identifier.Parse((string) fudgeField.Value);
+                        break;
                     case "strip":
                         strips.Add(deserializer.FromField<FixedIncomeStrip>(fudgeField));
                         break;
@@ -84,6 +86,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             }
 
             var yieldCurveDefinition = new YieldCurveDefinition(currency,name,interpolatorName);
+            yieldCurveDefinition.Region = region;
             yieldCurveDefinition.AddStrip(strips.ToArray());
             return yieldCurveDefinition;
         }

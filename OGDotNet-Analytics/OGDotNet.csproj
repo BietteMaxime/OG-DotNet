@@ -58,6 +58,7 @@
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
     <Compile Include="Builders\ComputationTargetTypeBuilder.cs" />
+    <Compile Include="Builders\IdentifierBuilder.cs" />
     <Compile Include="Mappedtypes\Core\Common\Currency.cs" />
     <Compile Include="Mappedtypes\Core\Security\Security.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
