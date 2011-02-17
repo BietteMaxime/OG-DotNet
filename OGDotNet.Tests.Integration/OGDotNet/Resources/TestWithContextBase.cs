@@ -5,12 +5,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class TestWithContextBase
     {
-        protected readonly RemoteEngineContext Context;
-
-        public TestWithContextBase()
-        {
-            Context = GetContext();
+        private RemoteEngineContext _context;
+        protected RemoteEngineContext Context { 
+            get
+            {
+                _context = _context ?? GetContext();
+                return _context ?? GetContext();
+            }
         }
+
         protected static RemoteEngineContext GetContext()
         {
             return RemoteEngineContextTests.GetContext();
