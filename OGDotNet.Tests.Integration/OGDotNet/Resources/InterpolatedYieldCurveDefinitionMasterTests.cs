@@ -80,12 +80,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
 
                 YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
-                interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
                 
-                YieldCurveDefinitionDocument roundtrippedDoc = interpolatedYieldCurveDefinitionMaster.Get(yieldCurveDefinitionDocument.UniqueId);
-
-                YieldCurveDefinition roundTripped = roundtrippedDoc.Definition;
-
 
                 AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
             }
