@@ -5,7 +5,6 @@ using System.Threading;
 using System.Windows;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Util.Db;
-using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.SecurityViewer.View
