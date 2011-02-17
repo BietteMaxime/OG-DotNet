@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Apache.NMS;
-using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.LiveData;
@@ -10,13 +9,15 @@ namespace OGDotNet.Model.Resources
 {
     public class RemoteView
     {
+        private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly RestTarget _rest;
         private readonly string _activeMqSpec;
         private readonly string _name;
         private readonly MQTemplate _mqTemplate;
 
-        public RemoteView(RestTarget rest, string activeMqSpec, string name)
+        public RemoteView(OpenGammaFudgeContext fudgeContext, RestTarget rest, string activeMqSpec, string name)
         {
+            _fudgeContext = fudgeContext;
             _rest = rest;
             _activeMqSpec = activeMqSpec;
             _name = name;
@@ -68,14 +69,7 @@ namespace OGDotNet.Model.Resources
         {
             get
             {
-                var fudgeMsg = _rest.Resolve("portfolio").GetReponse();
-                if (fudgeMsg == null)
-                {
-                    return null;
-                }
-
-                FudgeSerializer fudgeSerializer = FudgeConfig.GetFudgeSerializer();
-                return fudgeSerializer.Deserialize<IPortfolio>(fudgeMsg);
+                return _rest.Resolve("portfolio").Get<IPortfolio>();
             }
         }
 
@@ -83,8 +77,7 @@ namespace OGDotNet.Model.Resources
         {
             get
             {
-                var fudgeMsg = _rest.Resolve("definition").GetReponse();
-                return FudgeConfig.GetFudgeSerializer().Deserialize<ViewDefinition>(fudgeMsg);
+                return _rest.Resolve("definition").Get <ViewDefinition>();
             }
         }
 
@@ -98,9 +91,9 @@ namespace OGDotNet.Model.Resources
         public RemoteViewClient CreateClient()
         {
             
-            var clientUri = _rest.Resolve("clients").Create(FudgeConfig.GetFudgeContext(), FudgeConfig.GetFudgeSerializer().SerializeToMsg(UserPrincipal.DefaultUser));
+            var clientUri = _rest.Resolve("clients").Create(UserPrincipal.DefaultUser);
 
-            return new RemoteViewClient(clientUri, _mqTemplate);
+            return new RemoteViewClient(_fudgeContext, clientUri, _mqTemplate);
         }
 
         public override string ToString()

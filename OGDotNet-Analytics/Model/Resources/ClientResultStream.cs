@@ -2,7 +2,9 @@
 using System.IO;
 using System.Threading;
 using Apache.NMS;
+using Fudge;
 using Fudge.Encodings;
+using Fudge.Serialization;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -15,9 +17,11 @@ namespace OGDotNet.Model.Resources
         private readonly IDestination _destination;
         private readonly IMessageConsumer _consumer;
         private readonly MQTemplate _mqTemplate;
+        private readonly OpenGammaFudgeContext _fudgeContext;
 
-        public ClientResultStream(MQTemplate mqTemplate, string topicName, Action stopAction)
+        public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate, string topicName, Action stopAction)
         {
+            _fudgeContext = fudgeContext;
             _stopAction = stopAction;
 
 
@@ -49,8 +53,8 @@ namespace OGDotNet.Model.Resources
             var bytesMessage = (IBytesMessage) message;
             using (var memoryStream = new MemoryStream(bytesMessage.Content))
             {
-                var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(FudgeConfig.GetFudgeContext(), memoryStream);
-                return FudgeConfig.GetFudgeSerializer().Deserialize<T>(fudgeEncodedStreamReader);
+                var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(_fudgeContext, memoryStream);
+                return _fudgeContext.GetSerializer().Deserialize<T>(fudgeEncodedStreamReader);
             }
         }
 

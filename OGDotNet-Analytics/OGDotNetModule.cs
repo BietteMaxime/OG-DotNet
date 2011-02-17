@@ -1,6 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using OGDotNet.Model;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
 
@@ -13,6 +14,9 @@ namespace OGDotNet
             container.Register(Component.For<RemoteEngineContext>().UsingFactory((RemoteEngineContextFactory fac) => fac.CreateRemoteEngineContext()));
 
             container.Register(Component.For<RemoteSecurityMaster>().UsingFactory((RemoteEngineContext context) => context.SecurityMaster));
+
+
+            container.Register(new ComponentRegistration<OpenGammaFudgeContext>());
         }
     }
 }

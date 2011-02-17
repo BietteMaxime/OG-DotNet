@@ -5,10 +5,12 @@ namespace OGDotNet.Model.Context
 {
     public class RemoteEngineContext
     {
+        private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly Config _config;
 
-        internal RemoteEngineContext(Config config)
+        internal RemoteEngineContext(OpenGammaFudgeContext fudgeContext, Config config)
         {
+            _fudgeContext = fudgeContext;
             _config = config;
         }
 
@@ -19,21 +21,21 @@ namespace OGDotNet.Model.Context
 
         public RemoteClient CreateUserClient()
         {
-            return new RemoteClient(new RestTarget(_config.UserDataUri));
+            return new RemoteClient(new RestTarget(_fudgeContext, _config.UserDataUri));
         }
 
         public RemoteViewProcessor ViewProcessor
         {
             get
             {
-                return new RemoteViewProcessor(new RestTarget(_config.ViewProcessorUri), _config.ActiveMQSpec);
+                return new RemoteViewProcessor(_fudgeContext, new RestTarget(_fudgeContext, _config.ViewProcessorUri), _config.ActiveMQSpec);
             }
         }
 
         public ISecuritySource SecuritySource
         {
             get {
-                return new RemoteSecuritySource(new RestTarget(_config.SecuritySourceUri));
+                return new RemoteSecuritySource(_fudgeContext, new RestTarget(_fudgeContext, _config.SecuritySourceUri));
             }
         }
 
@@ -41,7 +43,7 @@ namespace OGDotNet.Model.Context
         {//TODO this is a hack, should I even be exposing this?
             get
             {
-                return new RemoteSecurityMaster(new RestTarget(_config.SecuritySourceUri.ToString().Replace("securitySource", "securityMaster")));
+                return new RemoteSecurityMaster(new RestTarget(_fudgeContext, _config.SecuritySourceUri.ToString().Replace("securitySource", "securityMaster")));
             }
         }
 

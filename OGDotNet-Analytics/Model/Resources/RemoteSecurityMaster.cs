@@ -23,29 +23,13 @@ namespace OGDotNet.Model.Resources
         public SearchResult<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest, IdentifierSearch identifierSearch = null)
         {
             var request = new SecuritySearchRequest(pagingRequest, name, type, identifierSearch);
-
-            var fudgeSerializer = new FudgeSerializer(FudgeContext);
-            var msg = fudgeSerializer.SerializeToMsg(request);
-            var fudgeMsg = _restTarget.Resolve("search").Post(FudgeContext, msg);
-
-
-            return fudgeSerializer.Deserialize<SearchResult<SecurityDocument>>(fudgeMsg); 
-        }
-
-        private static FudgeContext FudgeContext
-        {
-            get
-            {
-                return FudgeConfig.GetFudgeContext();
-            }
+            return _restTarget.Resolve("search").Post<SearchResult<SecurityDocument>>(request);
         }
 
         public Security GetSecurity(UniqueIdentifier uid)
         {
-            var fudgeMsg = _restTarget.Resolve("security").Resolve(uid.ToString()).GetReponse();
-            FudgeSerializer fudgeSerializer = new FudgeSerializer(FudgeContext);
-            return fudgeSerializer.Deserialize<SecurityDocument>(fudgeMsg).Security;
-
+            SecurityDocument securityDocument = _restTarget.Resolve("security").Resolve(uid.ToString()).Get<SecurityDocument>();
+            return securityDocument.Security;
         }
     }
 }

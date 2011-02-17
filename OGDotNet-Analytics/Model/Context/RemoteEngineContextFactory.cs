@@ -9,28 +9,30 @@ namespace OGDotNet.Model.Context
 {
     public class RemoteEngineContextFactory
     {
+        private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly Uri _rootUri;
         private readonly string _configId;
         private readonly RestTarget _rootRest;
         private readonly Config _config;
 
-        public RemoteEngineContextFactory(Uri rootUri, string configId)
+        public RemoteEngineContextFactory(OpenGammaFudgeContext fudgeContext, Uri rootUri, string configId)
         {
+            _fudgeContext = fudgeContext;
             _rootUri = rootUri;
             _configId = configId;
-            _rootRest = new RestTarget(rootUri);
+            _rootRest = new RestTarget(_fudgeContext, rootUri);
             _config = InitConfig();
         }
 
         public RemoteEngineContext CreateRemoteEngineContext()
         {
-            return new RemoteEngineContext(_config);
+            return new RemoteEngineContext(_fudgeContext, _config);
         }
 
         #region ConfigReading
         private Config InitConfig()
         {
-            var configsMsg = _rootRest.Resolve("configuration").GetReponse();
+            var configsMsg = _rootRest.Resolve("configuration").GetFudge();
 
             var configMsg = ((IFudgeFieldContainer)configsMsg.GetByName(_configId).Value);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Fudge.Serialization;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Utils;
 
@@ -11,13 +12,15 @@ namespace OGDotNet.Model.Resources
     /// </summary>
     public class RemoteViewClient : DisposableBase  //TODO IObservable<ViewComputationResultModel>
     {
+        private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly MQTemplate _mqTemplate;
         private readonly RestTarget _rest;
 
-        public RemoteViewClient(Uri clientUri, MQTemplate mqTemplate)
+        public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate)
         {
+            _fudgeContext = fudgeContext;
             _mqTemplate = mqTemplate;
-            _rest = new RestTarget(clientUri);
+            _rest = clientUri;
         }
 
         public IEnumerable<ViewComputationResultModel> GetResults(CancellationToken token)
@@ -72,7 +75,7 @@ namespace OGDotNet.Model.Resources
         private ClientResultStream<ViewComputationResultModel> StartResultStream()
         {
             var reponse = _rest.Resolve("startJmsResultStream").Post();
-            return new ClientResultStream<ViewComputationResultModel>(_mqTemplate, reponse.GetValue<string>("value"), StopResultStream);
+            return new ClientResultStream<ViewComputationResultModel>(_fudgeContext, _mqTemplate, reponse.GetValue<string>("value"), StopResultStream);
         }
         private void StopResultStream()
         {
@@ -82,7 +85,7 @@ namespace OGDotNet.Model.Resources
         private ClientResultStream<ViewComputationResultModel> StartDeltaStream()
         {
             var reponse = _rest.Resolve("startJmsDeltaStream").Post();
-            return new ClientResultStream<ViewComputationResultModel>(_mqTemplate, reponse.GetValue<string>("value"), StopDeltaStream);
+            return new ClientResultStream<ViewComputationResultModel>(_fudgeContext, _mqTemplate, reponse.GetValue<string>("value"), StopDeltaStream);
         }
         private void StopDeltaStream()
         {
@@ -93,7 +96,7 @@ namespace OGDotNet.Model.Resources
         {
             get {
 
-                var reponse = _rest.Resolve("resultAvailable").GetReponse();
+                var reponse = _rest.Resolve("resultAvailable").GetFudge();
                 return 1 == (sbyte) (reponse.GetByName("value").Value);
             }
         }
@@ -101,16 +104,8 @@ namespace OGDotNet.Model.Resources
         {
             get
             {
-                var restMagic = _rest.Resolve("latestResult").GetReponse();
-                //ViewComputationResultModel
-                var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
-                var wrapper = fudgeSerializer.Deserialize<Wrapper>(restMagic);
-                return wrapper.LatestResult;
+                return _rest.Resolve("latestResult").Get<ViewComputationResultModel>("latestResult");
             }
-        }
-        private class Wrapper
-        {
-            public ViewComputationResultModel LatestResult { get; set; }
         }
 
         protected override void Dispose(bool disposing)

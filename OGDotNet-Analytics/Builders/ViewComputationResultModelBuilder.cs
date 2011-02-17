@@ -5,7 +5,6 @@ using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Model;
 
 namespace OGDotNet.Builders
 {
@@ -40,7 +39,10 @@ namespace OGDotNet.Builders
                         }
                         break;
                     case 2:
-                        var value = FudgeConfig.GetFudgeSerializer().Deserialize<ViewCalculationResultModel>((FudgeMsg) field.Value);
+                        //We need to use the maintain OpenGammaFudgeContext because the optimization is important here
+                        // but we can't accidentaly register this twice with our serializer
+                        ViewCalculationResultModelBuilder viewCalculationResultModelBuilder = new ViewCalculationResultModelBuilder(deserializer.Context, typeof(ViewCalculationResultModel));
+                        var value = viewCalculationResultModelBuilder.DeserializeImpl((FudgeMsg)field.Value, deserializer);
                         if (!keys.Any())
                         {
                             values.Enqueue(value);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Fudge;
+using Fudge.Serialization;
 
 namespace OGDotNet.Model
 {
@@ -11,18 +12,18 @@ namespace OGDotNet.Model
     {
         private const string FudgeMimeType = "application/vnd.fudgemsg";
 
+        private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly Uri _serviceUri;
 
-        public RestTarget(Uri serviceUri)
+        public RestTarget(OpenGammaFudgeContext fudgeContext, string serviceUri) :this(fudgeContext, new Uri(serviceUri))
         {
+            
+        }
+        public RestTarget(OpenGammaFudgeContext fudgeContext, Uri serviceUri)
+        {
+            _fudgeContext = fudgeContext;
             _serviceUri = serviceUri;
         }
-
-        public RestTarget(string serviceUri)
-        {
-            _serviceUri = new Uri(serviceUri);
-        }
-
 
         public RestTarget Resolve(string method, params Tuple<string,string>[] queryParams)
         {
@@ -30,30 +31,20 @@ namespace OGDotNet.Model
             var uriBuilder = new UriBuilder(_serviceUri);
             uriBuilder.Path = Path.Combine(uriBuilder.Path, safeMethod);
             uriBuilder.Query = String.Join("&",
-                                           queryParams.Select(
-                                               p => string.Format("{0}={1}", Uri.EscapeDataString(p.Item1), Uri.EscapeDataString(p.Item2))));
-            return new RestTarget(uriBuilder.Uri);
+                                           queryParams.Select(p => string.Format("{0}={1}", Uri.EscapeDataString(p.Item1), Uri.EscapeDataString(p.Item2))));
+            return new RestTarget(_fudgeContext, uriBuilder.Uri);
         }
 
-        public FudgeMsg Post(FudgeContext context = null, FudgeMsg reqMsg = null)
+        public RestTarget Create(object reqObj)
         {
-            using (HttpWebResponse response = PostImpl(context, reqMsg))
-            using (Stream responseStream = response.GetResponseStream())
-            using (BufferedStream buff = new BufferedStream(responseStream))
-            {
-                var fudgeContext = context ?? new FudgeContext();
-                var fudgeMsgEnvelope = fudgeContext.Deserialize(buff);
-                return fudgeMsgEnvelope == null ? null : fudgeMsgEnvelope.Message;
-            }
-        }
+            FudgeSerializer fudgeSerializer = _fudgeContext.GetSerializer();
+            var reqMsg = fudgeSerializer.SerializeToMsg(reqObj);
 
-        public Uri Create(FudgeContext context = null, FudgeMsg reqMsg = null)
-        {
-            using (HttpWebResponse response = PostImpl(context, reqMsg))
+            using (HttpWebResponse response = RequestImpl("POST", reqMsg))
             {
                 if (response.StatusCode == HttpStatusCode.Created)
                 {
-                    return new Uri(response.Headers["Location"]);
+                    return new RestTarget(_fudgeContext, new Uri(response.Headers["Location"]));
                 }
                 else
                 {
@@ -62,31 +53,68 @@ namespace OGDotNet.Model
             }
         }
 
-        private HttpWebResponse PostImpl(FudgeContext context = null, FudgeMsg reqMsg = null, string method="POST")
-        {
-            HttpWebRequest request = GetBasicRequest();
-            request.Method = method;
 
-            if (context != null)
+        public TRet Get<TRet>()
+        {
+            FudgeMsg retMsg = GetFudge();
+            return Deserialize<TRet>(retMsg);
+        }
+
+        public FudgeMsg GetFudge()
+        {
+            var request = GetBasicRequest();
+
+            var fudgeContext = new FudgeContext();
+
+            using (var response = (HttpWebResponse)request.GetResponse())
+            using (var responseStream = response.GetResponseStream())
+            using (var buff = new BufferedStream(responseStream))
             {
-                using (var requestStream = request.GetRequestStream())
-                {
-                    context.Serialize(reqMsg, requestStream);
-                }
+                var fudgeMsgEnvelope = fudgeContext.Deserialize(buff);
+                if (fudgeMsgEnvelope == null)
+                    return null;
+                return fudgeMsgEnvelope.Message;
             }
-
-            return (HttpWebResponse)request.GetResponse();
         }
 
-
-        public void Delete()
+        public TRet Post<TRet>(object reqObj)
         {
-            PostImpl(method:"DELETE");
+            FudgeMsg retMsg = Post(reqObj);
+            return Deserialize<TRet>(retMsg);
         }
 
-        public void Put(FudgeContext context = null, FudgeMsg reqMsg = null)
+        public TRet Post<TRet>(object reqObj, string subMessageField)
         {
-            PostImpl(method: "PUT", context: context, reqMsg: reqMsg);
+            FudgeMsg retMsg = Post(reqObj);
+            return Deserialize<TRet>((FudgeMsg)retMsg.GetMessage(subMessageField));
+        }
+
+        public FudgeMsg Post(object reqObj = null)
+        {
+            if (reqObj is IFudgeFieldContainer)
+                throw new ArgumentException();
+
+            if (reqObj == null)
+            {
+                return PostFudge(null);
+            }
+            else
+            {
+                var reqMsg = _fudgeContext.GetSerializer().SerializeToMsg(reqObj);
+                return PostFudge(reqMsg);    
+            }
+        }
+
+        private FudgeMsg PostFudge(FudgeMsg reqMsg)
+        {
+            using (var response = RequestImpl("POST", reqMsg))
+            using (var responseStream = response.GetResponseStream())
+            using (var buff = new BufferedStream(responseStream))
+            {
+                var fudgeMsgEnvelope = _fudgeContext.Deserialize(buff);
+                FudgeMsg retMsg = fudgeMsgEnvelope == null ? null : fudgeMsgEnvelope.Message;
+                return retMsg;
+            }
         }
 
         public void Post(string obj)
@@ -101,25 +129,46 @@ namespace OGDotNet.Model
                 sw.Write(obj);
             }
 
-            request.GetResponse();
+            using (request.GetResponse())
+            {
+            }
         }
 
 
-        public FudgeMsg GetReponse()
+        
+        
+
+        public void Delete()
         {
-            var request = GetBasicRequest();
+            RequestImpl("DELETE");
+        }
 
-            var fudgeContext = new FudgeContext();
+        public void Put(FudgeMsg reqMsg = null)
+        {
+            RequestImpl("PUT", reqMsg);
+        }
 
-            using (var response = (HttpWebResponse) request.GetResponse())
-            using (var responseStream = response.GetResponseStream())
-            using (var buff = new BufferedStream(responseStream))
+        public TRet Get<TRet>(string subMessageField)
+        {
+            FudgeSerializer fudgeSerializer = _fudgeContext.GetSerializer();
+            FudgeMsg retMsg = GetFudge();
+            return fudgeSerializer.Deserialize<TRet>((FudgeMsg)retMsg.GetMessage(subMessageField));
+        }
+
+        private HttpWebResponse RequestImpl(string method, FudgeMsg reqMsg = null)
+        {
+            HttpWebRequest request = GetBasicRequest();
+            request.Method = method;
+
+            if (reqMsg != null)
             {
-                var fudgeMsgEnvelope = fudgeContext.Deserialize(buff);
-                if (fudgeMsgEnvelope == null)
-                    return null;
-                return fudgeMsgEnvelope.Message;
+                using (var requestStream = request.GetRequestStream())
+                {
+                    _fudgeContext.Serialize(reqMsg, requestStream);
+                }
             }
+
+            return (HttpWebResponse)request.GetResponse();
         }
 
 
@@ -134,6 +183,9 @@ namespace OGDotNet.Model
             return request;
         }
 
-
+        private TRet Deserialize<TRet>(FudgeMsg retMsg)
+        {
+            return _fudgeContext.GetSerializer().Deserialize<TRet>(retMsg);
+        }
     }
 }

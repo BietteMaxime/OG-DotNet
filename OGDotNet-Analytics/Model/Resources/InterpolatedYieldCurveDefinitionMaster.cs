@@ -1,5 +1,4 @@
 ﻿using System;
-using Fudge;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.Id;
 
@@ -26,12 +25,8 @@ namespace OGDotNet.Model.Resources
 
           private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
         {
-            var fudgeSerializer = FudgeConfig.GetFudgeSerializer();
-            var msg = fudgeSerializer.SerializeToMsg(document.YieldCurveDefinition);
-            FudgeMsg reqMsg = new FudgeMsg(new Field("definition", msg));
-            var respMsg = _restTarget.Resolve(path).Post(FudgeContext, reqMsg);
-
-            UniqueIdentifier uid = fudgeSerializer.Deserialize<UniqueIdentifier>((FudgeMsg)respMsg.GetMessage("uniqueId"));
+            var respMsg = _restTarget.Resolve(path).Post <UniqueIdentifier>(document.YieldCurveDefinition, "uniqueId");
+            var uid = respMsg.UniqueId;
             if (uid == null)
             {
                 throw new ArgumentException("No UID returned");
@@ -40,14 +35,6 @@ namespace OGDotNet.Model.Resources
             document.UniqueId = uid;
 
             return document;
-        }
-
-        private static FudgeContext FudgeContext
-        {
-            get
-            {
-                return FudgeConfig.GetFudgeContext();
-            }
         }
     }
 }
