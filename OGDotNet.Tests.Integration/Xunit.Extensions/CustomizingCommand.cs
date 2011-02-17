@@ -1,5 +1,4 @@
-﻿using Xunit;
-using Xunit.Sdk;
+﻿using Xunit.Sdk;
 
 namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {
@@ -15,7 +14,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             //We have to do timeout ourselves, because xunit can't handle the fact that it's own TimeOutCommand returns exceptions with null stack traces
             //It also leaves the method executing, which hangs the build.
 
-            return Extensions.ManualTimeout.ExecuteWithTimeout(() => InnerCommand.Execute(testClass));
+            return ManualTimeout.ExecuteWithTimeout(() => InnerCommand.Execute(testClass));
         }
     }
 }
