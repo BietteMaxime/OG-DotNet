@@ -48,7 +48,7 @@ namespace OGDotNet.Model.Resources
             var resp = _restTarget.Resolve("curves").Resolve(uniqueId.ToString()).Get<YieldCurveDefinitionDocument>();
             if (resp == null || resp.UniqueId == null || resp.Definition == null)
             {
-                throw new ArgumentException("Not found");
+                throw new ArgumentException("Not found","uniqueId");
             }
             return resp;
         }

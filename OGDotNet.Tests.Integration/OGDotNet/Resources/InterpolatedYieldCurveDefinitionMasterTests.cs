@@ -86,6 +86,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        [Fact]
+        public void CantGetMissing()
+        {
+            using (RemoteClient remoteClient = Context.CreateUserClient())
+            {
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+
+                var argumentException = Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Get(UniqueIdentifier.Of("XX", "Mising" + Guid.NewGuid())));
+                Assert.True(argumentException.Message.StartsWith("Not found"));
+            }
+        }
+
 
         [Fact]
         public void CanAddAndGetRegions()

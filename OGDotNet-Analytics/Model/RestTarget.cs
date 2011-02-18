@@ -58,19 +58,13 @@ namespace OGDotNet.Model
             return retMsg == null ? default(TRet) : Deserialize<TRet>(retMsg);
         }
 
+        
+        
         public FudgeMsg GetFudge()
         {
-            using (var response = RequestImpl())
-            using (var responseStream = response.GetResponseStream())
-            using (var buff = new BufferedStream(responseStream))
-            {
-                var fudgeMsgEnvelope = _fudgeContext.Deserialize(buff);
-                if (fudgeMsgEnvelope == null)
-                    return null;
-                return fudgeMsgEnvelope.Message;
-            }
+            return FudgeRequestImpl();
         }
-
+        
         public TRet Post<TRet>(object reqObj)
         {
             FudgeMsg retMsg = Post(reqObj);
@@ -99,16 +93,12 @@ namespace OGDotNet.Model
             }
         }
 
+
+
+
         private FudgeMsg PostFudge(FudgeMsg reqMsg)
         {
-            using (var response = RequestImpl("POST", reqMsg))
-            using (var responseStream = response.GetResponseStream())
-            using (var buff = new BufferedStream(responseStream))
-            {
-                var fudgeMsgEnvelope = _fudgeContext.Deserialize(buff);
-                FudgeMsg retMsg = fudgeMsgEnvelope == null ? null : fudgeMsgEnvelope.Message;
-                return retMsg;
-            }
+            return FudgeRequestImpl("POST", reqMsg);
         }
 
         public void Post(string obj)
@@ -150,6 +140,42 @@ namespace OGDotNet.Model
             FudgeSerializer fudgeSerializer = _fudgeContext.GetSerializer();
             FudgeMsg retMsg = GetFudge();
             return fudgeSerializer.Deserialize<TRet>((FudgeMsg)retMsg.GetMessage(subMessageField));
+        }
+
+        private FudgeMsg FudgeRequestImpl(string method = "GET", FudgeMsg reqMsg = null)
+        {
+            try
+            {
+                using (var response = RequestImpl(method, reqMsg))
+                using (var responseStream = response.GetResponseStream())
+                using (var buff = new BufferedStream(responseStream))
+                {
+                    if (!FudgeMimeType.Equals(response.ContentType))
+                    {
+                        throw new Exception("Unexpected content type " + response.ContentType);
+                    }
+
+                    var fudgeMsgEnvelope = _fudgeContext.Deserialize(buff);
+                    if (fudgeMsgEnvelope == null)
+                        return null;
+                    return fudgeMsgEnvelope.Message;
+                }
+            }
+            catch (WebException e)
+            {//See RestClient.getMsgEnvelope
+                if (e.Response == null)
+                    throw;
+                var httpWebResponse = (HttpWebResponse) e.Response;
+                switch (httpWebResponse.StatusCode)
+                {
+                    case HttpStatusCode.NoContent://204
+                        return new FudgeMsg(_fudgeContext);
+                    case HttpStatusCode.NotFound://404
+                        return null;
+                    default:
+                        throw;
+                }
+            }
         }
 
         private HttpWebResponse RequestImpl(string method = "GET", FudgeMsg reqMsg = null)
