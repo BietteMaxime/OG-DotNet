@@ -3,13 +3,6 @@ using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 
 namespace OGDotNet.Model.Resources
 {
-    public static class UriEncoding
-    {
-        public static string ToString(DateTimeOffset curveDate)
-        {
-            return curveDate.ToString("yyyy-MM-dd");
-        }
-    }
     public class RemoteInterpolatedYieldCurveSpecificationBuilder   
     {
         private readonly OpenGammaFudgeContext _context;

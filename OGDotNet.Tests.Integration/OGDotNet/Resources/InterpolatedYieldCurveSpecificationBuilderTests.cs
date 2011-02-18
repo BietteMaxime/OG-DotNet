@@ -44,7 +44,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var fixedIncomeStripWithIdentifier = matches.First();
                 Assert.NotNull(fixedIncomeStripWithIdentifier.Security);
 
-                var security = Context.SecuritySource.GetSecurity(new IdentifierBundle(new HashSet<Identifier> { fixedIncomeStripWithIdentifier.Security }));
+                var security = Context.SecuritySource.GetSecurity(new IdentifierBundle(fixedIncomeStripWithIdentifier.Security));
                 if (fixedIncomeStrip.InstrumentType == StripInstrumentType.FUTURE)
                 {
                     Assert.Equal(fixedIncomeStrip.InstrumentType.ToString(), security.SecurityType);

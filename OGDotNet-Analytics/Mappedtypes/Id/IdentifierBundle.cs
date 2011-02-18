@@ -11,6 +11,9 @@ namespace OGDotNet.Mappedtypes.Id
     {
         private readonly HashSet<Identifier> _identifiers;
 
+        public IdentifierBundle(params Identifier[] identifiers) : this (new HashSet<Identifier>(identifiers)){}
+        public IdentifierBundle(IEnumerable<Identifier> identifiers) : this (new HashSet<Identifier>(identifiers)){}
+
         public IdentifierBundle(HashSet<Identifier> identifiers)
         {
             _identifiers = identifiers;

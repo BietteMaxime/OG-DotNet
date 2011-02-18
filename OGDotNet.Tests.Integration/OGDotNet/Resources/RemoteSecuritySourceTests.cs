@@ -19,14 +19,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanDoEmptyBundleMultiQuery()
         {
             var remoteSecuritySource = Context.SecuritySource;
-            Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurities(new IdentifierBundle(new HashSet<Identifier>())));
+            Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurities(new IdentifierBundle()));
         }
 
         [Fact]
         public void CanDoEmptyBundleSingleQuery()
         {
             var remoteSecuritySource = Context.SecuritySource;
-            Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurity(new IdentifierBundle(new HashSet<Identifier>())));
+            Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurity(new IdentifierBundle()));
         }
 
         [Fact(Skip = "Known fault - [TODO add JIRA ID]")]
@@ -41,7 +41,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanDoEmptyMissingBundleQuery()
         {
             var remoteSecuritySource = Context.SecuritySource;
-            var collection = remoteSecuritySource.GetSecurities(new IdentifierBundle(new HashSet<Identifier> {StupidIdentifier}));
+            var collection = remoteSecuritySource.GetSecurities(new IdentifierBundle(StupidIdentifier));
             Assert.Empty(collection);
         }
 

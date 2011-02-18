@@ -29,7 +29,7 @@ namespace OGDotNet.Model.Resources
         {
             ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
 
-            Tuple<string, string>[] parameters = GetParameters(bundle);
+            Tuple<string, string>[] parameters = UriEncoding.GetParameters(bundle);
             return _restTarget.Resolve("securities").Resolve("security", parameters).Get<Security>("security");
         }
 
@@ -37,18 +37,11 @@ namespace OGDotNet.Model.Resources
         {
             ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
 
-            var parameters = GetParameters(bundle);
+            var parameters = UriEncoding.GetParameters(bundle);
             var fudgeMsg = _restTarget.Resolve("securities", parameters).GetFudge();
 
             var fudgeSerializer = _fudgeContext.GetSerializer();
             return fudgeMsg.GetAllByName("security").Select(f => f.Value).Cast<FudgeMsg>().Select(fudgeSerializer.Deserialize<Security>).ToList();
-        }
-
-        private static Tuple<string, string>[] GetParameters(IdentifierBundle bundle)
-        {
-            var ids = bundle.Identifiers.ToList();
-
-            return ids.Select(s => new Tuple<string, string>("id", s.ToString())).ToArray();
         }
     }
 }
