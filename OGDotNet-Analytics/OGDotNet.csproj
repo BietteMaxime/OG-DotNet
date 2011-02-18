@@ -77,8 +77,8 @@
     <Compile Include="Mappedtypes\math\curve\Curve.cs" />
     <Compile Include="Mappedtypes\math\curve\FunctionalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\financial\model\interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />
-    <Compile Include="Model\Context\Config.cs" />
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
+    <Compile Include="Model\Resources\RemoteInterpolatedYieldCurveSpecificationBuilder.cs" />
     <Compile Include="Model\MQTemplate.cs" />
     <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMaster.cs" />
     <Compile Include="Model\Resources\RemoteLiveDataInjector.cs" />

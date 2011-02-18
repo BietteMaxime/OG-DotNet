@@ -13,7 +13,9 @@ namespace OGDotNet.Model.Context
         private readonly Uri _rootUri;
         private readonly string _configId;
         private readonly RestTarget _rootRest;
-        private readonly Config _config;
+
+        private readonly string _activeMQSpec;
+        private readonly IDictionary<string, Uri> _serviceUris;
 
         public RemoteEngineContextFactory(OpenGammaFudgeContext fudgeContext, Uri rootUri, string configId)
         {
@@ -21,58 +23,86 @@ namespace OGDotNet.Model.Context
             _rootUri = rootUri;
             _configId = configId;
             _rootRest = new RestTarget(_fudgeContext, rootUri);
-            _config = InitConfig();
+
+
+            var configsMsg = _rootRest.Resolve("configuration").GetFudge();
+            var configMsg = ((IFudgeFieldContainer)configsMsg.GetByName(_configId).Value);
+
+            _activeMQSpec = configMsg.GetValue<string>("activeMQ");
+            _serviceUris = GetServiceUris(configMsg);
         }
 
         public RemoteEngineContext CreateRemoteEngineContext()
         {
-            return new RemoteEngineContext(_fudgeContext, _config);
+            return new RemoteEngineContext(_fudgeContext, _rootUri, _activeMQSpec, _serviceUris);
         }
 
         #region ConfigReading
-        private Config InitConfig()
+
+        private static IDictionary<string, Uri> GetServiceUris(IFudgeFieldContainer configMsg)
         {
-            var configsMsg = _rootRest.Resolve("configuration").GetFudge();
+            Dictionary<string, List<string>> potentialServiceIds = GetPotentialServiceUris(configMsg);
 
-            var configMsg = ((IFudgeFieldContainer)configsMsg.GetByName(_configId).Value);
-
-            var activeMQSpec = configMsg.GetValue<string>("activeMQ");
-
-            var serviceUris = GetServiceUris(configMsg, "userData", "viewProcessor", "securitySource");
-            var userDataUri = serviceUris["userData"];
-            var viewProcessorUri = serviceUris["viewProcessor"];
-            var securitySourceUri = serviceUris["securitySource"];
-
-            return new Config(_rootUri, activeMQSpec, userDataUri, viewProcessorUri, securitySourceUri);
+            return GetValidServiceUris(potentialServiceIds);
         }
 
+        private static Dictionary<string, List<string>> GetPotentialServiceUris(IFudgeFieldContainer configMsg)
+        {
+            var potentialServiceIds =new Dictionary<string, List<string>>();
+            foreach (var userDataField in configMsg)
+            {
+                if (!(userDataField.Value is IFudgeFieldContainer))
+                {
+                    continue;
+                }
 
-        private static IDictionary<string, Uri> GetServiceUris(IFudgeFieldContainer configMsg, params string[] serviceIds)
+
+                var uris = new List<string>();
+                foreach (var field in ((IFudgeFieldContainer) userDataField.Value).GetAllFields())
+                {
+                    switch (field.Name)
+                    {
+                        case "type":
+                            if (!"Uri".Equals((string)field.Value))
+                            {
+                                continue;
+                            }
+                            break;
+                        case "uri":
+                            uris.Add((string)field.Value);
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+                
+                potentialServiceIds.Add(userDataField.Name, uris);
+            }
+            return potentialServiceIds;
+        }
+
+        private static IDictionary<string, Uri> GetValidServiceUris(Dictionary<string, List<string>> potentialServiceIds)
         {
             var validServiceUris = new Dictionary<string, Uri>();
 
-            var asyncRequests = new List<Tuple<String,HttpWebRequest, IAsyncResult>>();
-            
-            foreach (var serviceId in serviceIds)
+            var asyncRequests = new List<Tuple<String, HttpWebRequest, IAsyncResult>>();
+
+            foreach (var potentialServiceId in potentialServiceIds)
             {
-                foreach (var uri in GetPotentialUris(configMsg, serviceId))
+                var serviceId = potentialServiceId.Key;
+                foreach (var uri in potentialServiceId.Value)
                 {
-                    var webRequest = (HttpWebRequest) WebRequest.Create(uri);
+                    var webRequest = (HttpWebRequest)WebRequest.Create(uri);
                     webRequest.Timeout = 5000;
 
-                    var result = webRequest.BeginGetResponse(null,serviceId);
-                    asyncRequests.Add(new Tuple<string, HttpWebRequest,IAsyncResult>(serviceId,webRequest,result));
+                    var result = webRequest.BeginGetResponse(null, serviceId);
+                    asyncRequests.Add(new Tuple<string, HttpWebRequest, IAsyncResult>(serviceId, webRequest, result));
                 }
             }
 
-            
-            while (validServiceUris.Count < serviceIds.Length)
+
+            while (asyncRequests.Any())
             {
-                if (! asyncRequests.Any())
-                {
-                    var missingKeys = string.Join(",", serviceIds.Except(validServiceUris.Keys));
-                    throw new ArgumentException(string.Format("Couldn't get service Uri for {0}", missingKeys));
-                }
 
                 var waitHandles = asyncRequests.Select(kvp => kvp.Item3.AsyncWaitHandle).ToArray();
                 var index = WaitHandle.WaitAny(waitHandles);
@@ -81,20 +111,13 @@ namespace OGDotNet.Model.Context
 
                 if (IsValidResponse(completedRequest))
                 {
-                    //TODO: does it matter if another uri was faster (from this one sample)?
                     validServiceUris[completedRequest.Item1] = completedRequest.Item2.RequestUri;
+
+                    foreach (var req in asyncRequests.Where(r => r.Item1 == completedRequest.Item1))
+                    {
+                        req.Item2.Abort();
+                    }
                 }
-            }
-
-
-            //We need to clear up, but we don't care about the results
-            foreach (var req in asyncRequests)
-            {
-                req.Item2.Abort();
-            }
-            foreach (var req in asyncRequests)
-            {
-                IsValidResponse(req);
             }
 
             return validServiceUris;
