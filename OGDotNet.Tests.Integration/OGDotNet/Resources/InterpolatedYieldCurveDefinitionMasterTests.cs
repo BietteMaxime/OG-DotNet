@@ -45,7 +45,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var yieldCurveDefinitionDocument = GenerateDocument();
                 interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
                 var exception = Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument));
-                Assert.True(exception.Message.Contains("Duplicate"));
+                Assert.True(exception.Message.Contains("Duplicate definition"));
             }
         }
 

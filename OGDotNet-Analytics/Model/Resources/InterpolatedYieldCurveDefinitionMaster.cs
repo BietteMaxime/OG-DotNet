@@ -20,7 +20,7 @@ namespace OGDotNet.Model.Resources
 
         public YieldCurveDefinitionDocument Add(YieldCurveDefinitionDocument document)
         {
-                return RestExceptionMapping.DoWithExceptionMapping(() => PostDefinition(document, "add"));
+                return PostDefinition(document, "add");
         }
 
         public YieldCurveDefinitionDocument AddOrUpdate(YieldCurveDefinitionDocument document)

@@ -6,7 +6,11 @@ namespace OGDotNet.Model
 {
     public static class RestExceptionMapping
     {
-        public static TRet DoWithExceptionMapping<TRet>(Func<TRet> func)
+        public static void DoWithExceptionMapping(Action action)
+        {
+            GetWithExceptionMapping(() => { action();return 0;});
+        }
+        public static TRet GetWithExceptionMapping<TRet>(Func<TRet> func)
         {
             try
             {
@@ -14,19 +18,21 @@ namespace OGDotNet.Model
             }
             catch (WebException e)
             {
-                string[] types = e.Response.Headers.GetValues("X-OpenGamma-ExceptionType");
-
-                if (types != null)
+                if (e.Response != null)
                 {
-                    if (types.Length > 1)
-                        throw new ArgumentException("Too many exception types");
-                    string[] messages = e.Response.Headers.GetValues("X-OpenGamma-ExceptionMessage");
-                    if (messages.Length > 1)
-                        throw new ArgumentException("Too many exception messages");
-                    string type = types[0];
-                    string message = messages[0];
+                    string[] types = e.Response.Headers.GetValues("X-OpenGamma-ExceptionType");
+                    if (types != null)
+                    {
+                        if (types.Length > 1)
+                            throw new ArgumentException("Too many exception types");
+                        string[] messages = e.Response.Headers.GetValues("X-OpenGamma-ExceptionMessage");
+                        if (messages.Length > 1)
+                            throw new ArgumentException("Too many exception messages");
+                        string type = types[0];
+                        string message = messages[0];
 
-                    throw BuildException(type, message);
+                        throw BuildException(type, message);
+                    }
                 }
                 throw;//TODO should probably wrap in this in something generic and less Webby
             }

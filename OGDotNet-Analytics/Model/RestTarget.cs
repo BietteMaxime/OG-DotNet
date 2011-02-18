@@ -42,14 +42,12 @@ namespace OGDotNet.Model
 
             using (HttpWebResponse response = RequestImpl("POST", reqMsg))
             {
-                if (response.StatusCode == HttpStatusCode.Created)
+                if (response.StatusCode != HttpStatusCode.Created)
                 {
-                    return new RestTarget(_fudgeContext, new Uri(response.Headers["Location"]));
+                    throw new ArgumentException(string.Format("Response was not created {0}", response.StatusCode));
                 }
-                else
-                {
-                    throw new ArgumentException(string.Format("Response was not created {0}",response.StatusCode));
-                }
+
+                return new RestTarget(_fudgeContext, new Uri(response.Headers["Location"]));
             }
         }
 
@@ -115,19 +113,22 @@ namespace OGDotNet.Model
 
         public void Post(string obj)
         {
-            HttpWebRequest request = GetBasicRequest();
-            request.Method = "POST";
-
-            request.ContentType = null;
-            using (var requestStream = request.GetRequestStream())
-            using (var sw = new StreamWriter(requestStream))
+            RestExceptionMapping.DoWithExceptionMapping(delegate()
             {
-                sw.Write(obj);
-            }
+                HttpWebRequest request = GetBasicRequest();
+                request.Method = "POST";
 
-            using (request.GetResponse())
-            {
-            }
+                request.ContentType = null;
+                using (var requestStream = request.GetRequestStream())
+                using (var sw = new StreamWriter(requestStream))
+                {
+                    sw.Write(obj);
+                }
+
+                using (request.GetResponse())
+                {
+                }
+            });
         }
 
 
@@ -153,18 +154,21 @@ namespace OGDotNet.Model
 
         private HttpWebResponse RequestImpl(string method = "GET", FudgeMsg reqMsg = null)
         {
-            HttpWebRequest request = GetBasicRequest();
-            request.Method = method;
-
-            if (reqMsg != null)
+            return RestExceptionMapping.GetWithExceptionMapping(delegate()
             {
-                using (var requestStream = request.GetRequestStream())
-                {
-                    _fudgeContext.Serialize(reqMsg, requestStream);
-                }
-            }
+                HttpWebRequest request = GetBasicRequest();
+                request.Method = method;
 
-            return (HttpWebResponse)request.GetResponse();
+                if (reqMsg != null)
+                {
+                    using (var requestStream = request.GetRequestStream())
+                    {
+                        _fudgeContext.Serialize(reqMsg, requestStream);
+                    }
+                }
+
+                return (HttpWebResponse)request.GetResponse();
+            });
         }
 
 
