@@ -104,6 +104,33 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        [Fact]
+        public void CanAddAndGetAllInstrumentTypes()
+        {
+            using (RemoteClient remoteClient = Context.CreateUserClient())
+            {
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster =
+                    remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
+
+                foreach (StripInstrumentType stripInstrumentType in Enum.GetValues(typeof(StripInstrumentType)))
+                {
+                    FixedIncomeStrip fixedIncomeStrip = new FixedIncomeStrip()
+                    {
+                        ConventionName = "someConvention",
+                        CurveNodePointTime = Tenor.Day,
+                        InstrumentType = stripInstrumentType
+                    };
+                    if (stripInstrumentType == StripInstrumentType.FUTURE)
+                        fixedIncomeStrip.NthFutureFromTenor = 12;
+
+                    yieldCurveDefinitionDocument.Definition.AddStrip(fixedIncomeStrip);
+                }
+                
+                AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
+            }
+        }
+
         private static void AssertRoundTrip(InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster, YieldCurveDefinitionDocument yieldCurveDefinitionDocument)
         {
             interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
