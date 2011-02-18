@@ -15,6 +15,13 @@ namespace OGDotNet.Model.Resources
             _rest = rest;
         }
 
+        public ILocalDateDoubleTimeSeries GetHistoricalData(UniqueIdentifier uid)
+        {
+            RestTarget target = _rest.Resolve("uid")
+                .Resolve(uid.ToString());
+            return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
+        }
+
         public ILocalDateDoubleTimeSeries GetHistoricalData(UniqueIdentifier uid, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
         {
             RestTarget target = _rest.Resolve("uidByDate")

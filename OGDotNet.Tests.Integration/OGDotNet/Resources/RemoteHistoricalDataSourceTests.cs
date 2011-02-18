@@ -32,5 +32,23 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.InRange(value.Item1, start,end);
             }
         }
+
+        [FactAttribute]
+        public void CanGetACompleteTimeSeries()
+        {
+            var historicalDataSource = Context.HistoricalDataSource;
+
+            var end = DateTimeOffset.Now;
+
+            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Parse("Tss::3580"));
+            Assert.NotNull(series);
+            Assert.NotNull(series.DateTimeConverter);
+            Assert.NotEmpty(series.Values);
+
+            foreach (var value in series.Values)
+            {
+                Assert.InRange(value.Item1, DateTime.FromFileTimeUtc(0), end);
+            }
+        }
     }
 }
