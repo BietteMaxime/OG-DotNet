@@ -68,7 +68,7 @@ namespace OGDotNet.Model
         public TRet Post<TRet>(object reqObj)
         {
             FudgeMsg retMsg = Post(reqObj);
-            return Deserialize<TRet>(retMsg);
+            return retMsg == null ? default(TRet) : Deserialize<TRet>(retMsg);
         }
 
         public TRet Post<TRet>(object reqObj, string subMessageField)
@@ -201,7 +201,6 @@ namespace OGDotNet.Model
         private HttpWebRequest GetBasicRequest()
         {
             var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
-            request.Timeout = 20000;
             request.Accept = FudgeMimeType;
             request.ContentType = FudgeMimeType;
             var uaAssembly = Assembly.GetEntryAssembly()  ?? Assembly.GetExecutingAssembly();

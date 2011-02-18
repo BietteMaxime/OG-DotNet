@@ -1,15 +1,24 @@
-﻿namespace OGDotNet.Model.Resources
+﻿using System;
+using OGDotNet.Mappedtypes.financial.analytics.ircurve;
+
+namespace OGDotNet.Model.Resources
 {
-    /// <summary>
-    /// TODO this
-    /// </summary>
+    
     public class RemoteInterpolatedYieldCurveSpecificationBuilder   
     {
+        private readonly OpenGammaFudgeContext _context;
         private readonly RestTarget _rest;
 
-        public RemoteInterpolatedYieldCurveSpecificationBuilder(RestTarget rest)
+        public RemoteInterpolatedYieldCurveSpecificationBuilder(OpenGammaFudgeContext context, RestTarget rest)
         {
+            _context = context;
             _rest = rest;
+        }
+
+        public InterpolatedYieldCurveSpecification BuildCurve(DateTimeOffset curveDate, YieldCurveDefinition curveDefinition)
+        {
+            RestTarget target = _rest.Resolve(curveDate.ToString("yyyy-MM-dd"));
+            return  target.Post<InterpolatedYieldCurveSpecification>(new YieldCurveDefinitionDocument{Definition =  curveDefinition}, "specification");
         }
     }
 }

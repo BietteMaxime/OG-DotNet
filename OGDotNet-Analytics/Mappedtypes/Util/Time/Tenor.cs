@@ -6,10 +6,11 @@ namespace OGDotNet.Mappedtypes.Util.Time
 {
     public class Tenor : IEquatable<Tenor>
     {
-        public static Tenor Day = new Tenor("P1D");
+        public static readonly Tenor Day = new Tenor("P1D");
+        public static readonly Tenor TwoYears = new Tenor("P2Y");
 
         private readonly string _period;
-
+        
         public Tenor(string period) 
         {
             _period = period;

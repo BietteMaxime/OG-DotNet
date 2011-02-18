@@ -67,6 +67,7 @@
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextFactoryTests.cs" />
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextTests.cs" />
     <Compile Include="OGDotNet\Resources\InterpolatedYieldCurveDefinitionMasterTests.cs" />
+    <Compile Include="OGDotNet\Resources\InterpolatedYieldCurveSpecificationBuilderTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteClientTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteLiveDataInjectorTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteSecuritySourceTests.cs" />

@@ -70,6 +70,7 @@
     <Compile Include="Mappedtypes\engine\View\ViewCalculationConfiguration.cs" />
     <Compile Include="Builders\LabelledMatrix1DBuilder.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStrip.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStripWithIdentifier.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\StripInstrumentType.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrix1D.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Mappedtypes\math\curve\FunctionalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\financial\model\interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\ircurve\InterpolatedYieldCurveSpecification.cs" />
     <Compile Include="Model\Resources\RemoteInterpolatedYieldCurveSpecificationBuilder.cs" />
     <Compile Include="Model\MQTemplate.cs" />
     <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMaster.cs" />

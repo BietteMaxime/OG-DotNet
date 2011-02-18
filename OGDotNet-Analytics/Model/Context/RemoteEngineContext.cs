@@ -56,7 +56,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteInterpolatedYieldCurveSpecificationBuilder(new RestTarget(_fudgeContext, _serviceUris["interpolatedYieldCurveSpecificationBuilder"]));
+                return new RemoteInterpolatedYieldCurveSpecificationBuilder(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["interpolatedYieldCurveSpecificationBuilder"]));
             }
         }
        

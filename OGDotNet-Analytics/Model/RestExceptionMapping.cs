@@ -25,10 +25,16 @@ namespace OGDotNet.Model
                     {
                         if (types.Length > 1)
                             throw new ArgumentException("Too many exception types");
+                        string type = types[0];
+
+
                         string[] messages = e.Response.Headers.GetValues("X-OpenGamma-ExceptionMessage");
+
+                        if (messages==null)
+                            throw BuildException(type);
                         if (messages.Length > 1)
                             throw new ArgumentException("Too many exception messages");
-                        string type = types[0];
+                        
                         string message = messages[0];
 
                         throw BuildException(type, message);
@@ -36,6 +42,16 @@ namespace OGDotNet.Model
                 }
                 throw;//TODO should probably wrap in this in something generic and less Webby
             }
+        }
+
+        private static Exception BuildException(string javaType)
+        {
+            Type exceptionType = GetExceptionType(javaType);
+
+            ConstructorInfo constructorInfo = exceptionType.GetConstructor(new Type[] {});
+            if (constructorInfo == null)
+                throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
+            return (Exception)constructorInfo.Invoke(new object[] {});
         }
 
         private static Exception BuildException(string javaType, string message)
@@ -56,6 +72,10 @@ namespace OGDotNet.Model
             {
                 case "java.lang.IllegalArgumentException":
                     return typeof (ArgumentException);
+                case "java.lang.NullPointerException":
+                    return typeof (NullReferenceException);
+                case "com.opengamma.OpenGammaRuntimeException":
+                    return typeof (Exception);
                 default:
                     throw new ArgumentException(String.Format("Don't know how to map java exception {0} to .net land", javaType),"javaType");
             }
