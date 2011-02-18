@@ -129,7 +129,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     FixedIncomeStrip fixedIncomeStrip = new FixedIncomeStrip()
                     {
-                        ConventionName = "someConvention",
+                        ConventionName = "DEFAULT",
                         CurveNodePointTime = Tenor.Day,
                         InstrumentType = stripInstrumentType
                     };
@@ -179,13 +179,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.True(roundTripped.Strips.SequenceEqual(roundTripped.Strips));
         }
 
-        private static YieldCurveDefinitionDocument GenerateDocument()
+        public static YieldCurveDefinitionDocument GenerateDocument()
         {
             string curveName = "My very special curve" + Guid.NewGuid();
 
-            var yieldCurveDefinition = new YieldCurveDefinition(Currency.GetInstance("USD"), curveName, "dunno");
-            yieldCurveDefinition.AddStrip(new FixedIncomeStrip {ConventionName = "Somthing", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.CASH});
-            yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "Somthing", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.FUTURE, NthFutureFromTenor = 23});
+            var yieldCurveDefinition = new YieldCurveDefinition(Currency.GetInstance("USD"), curveName, "Linear"){Region = new Identifier("SOMEWHERE","Europe")};
+            yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.CASH });
+            yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.TwoYears, InstrumentType = StripInstrumentType.FUTURE, NthFutureFromTenor = 23 });
             return new YieldCurveDefinitionDocument
                        {
                            Definition = yieldCurveDefinition
