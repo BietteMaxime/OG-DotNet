@@ -143,6 +143,24 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        [Fact]
+        public void CanAddAndRemove()
+        {
+            using (RemoteClient remoteClient = Context.CreateUserClient())
+            {
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+
+                YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
+
+
+                AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
+                interpolatedYieldCurveDefinitionMaster.Remove(yieldCurveDefinitionDocument.UniqueId);
+
+                var argumentException = Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Get(yieldCurveDefinitionDocument.UniqueId));
+                Assert.True(argumentException.Message.StartsWith("Not found"));
+            }
+        }
+
         private static void AssertRoundTrip(InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster, YieldCurveDefinitionDocument yieldCurveDefinitionDocument)
         {
             interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);

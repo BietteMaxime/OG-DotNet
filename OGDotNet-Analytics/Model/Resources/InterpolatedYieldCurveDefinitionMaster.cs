@@ -53,7 +53,10 @@ namespace OGDotNet.Model.Resources
             return resp;
         }
 
-
-        //TODO Update, Remove
+        public void Remove(UniqueIdentifier uniqueId)
+        {
+            _restTarget.Resolve("curves").Resolve(uniqueId.ToString()).Delete();
+        }
+        //TODO Update, correct
     }
 }
