@@ -75,7 +75,9 @@ namespace OGDotNet.Model
                 case "java.lang.NullPointerException":
                     return typeof (NullReferenceException);
                 case "com.opengamma.OpenGammaRuntimeException":
-                    return typeof (Exception);
+                case "org.fudgemsg.FudgeRuntimeException":
+                    //TODO
+                    return typeof(Exception);
                 default:
                     throw new ArgumentException(String.Format("Don't know how to map java exception {0} to .net land", javaType),"javaType");
             }
