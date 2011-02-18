@@ -48,7 +48,7 @@ namespace OGDotNet.Model
                 }
                 else
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException(string.Format("Response was not created {0}",response.StatusCode));
                 }
             }
         }
@@ -62,15 +62,11 @@ namespace OGDotNet.Model
 
         public FudgeMsg GetFudge()
         {
-            var request = GetBasicRequest();
-
-            var fudgeContext = new FudgeContext();
-
-            using (var response = (HttpWebResponse)request.GetResponse())
+            using (var response = RequestImpl())
             using (var responseStream = response.GetResponseStream())
             using (var buff = new BufferedStream(responseStream))
             {
-                var fudgeMsgEnvelope = fudgeContext.Deserialize(buff);
+                var fudgeMsgEnvelope = _fudgeContext.Deserialize(buff);
                 if (fudgeMsgEnvelope == null)
                     return null;
                 return fudgeMsgEnvelope.Message;
@@ -155,7 +151,7 @@ namespace OGDotNet.Model
             return fudgeSerializer.Deserialize<TRet>((FudgeMsg)retMsg.GetMessage(subMessageField));
         }
 
-        private HttpWebResponse RequestImpl(string method, FudgeMsg reqMsg = null)
+        private HttpWebResponse RequestImpl(string method = "GET", FudgeMsg reqMsg = null)
         {
             HttpWebRequest request = GetBasicRequest();
             request.Method = method;
