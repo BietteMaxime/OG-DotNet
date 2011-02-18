@@ -1,5 +1,6 @@
 ﻿using System;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Util.Db;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
 using Xunit;
 
@@ -53,12 +54,37 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var end = DateTimeOffset.Now;
             var result = historicalDataSource.GetHistoricalData(new IdentifierBundle(new Identifier("BLOOMBERG_BUID", "IX289029-0")));
+            AssertSane(result);
+        }
+
+        [FactAttribute]
+        public void CanGetSeriesForSomeFutures()
+        {
+            var historicalDataSource = Context.HistoricalDataSource;
+
+
+            var remoteSecurityMaster = Context.SecurityMaster;
+            var searchResult = remoteSecurityMaster.Search("*","FUTURE",new PagingRequest(1,10));
+            foreach (var securityDocument in searchResult.Documents)
+            {
+                var identifierBundle = securityDocument.Security.Identifiers;
+                var result = historicalDataSource.GetHistoricalData(identifierBundle);
+                AssertSane(result);
+            }
+        }
+
+        private static void AssertSane(Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> result)
+        {
             var uniqueIdentifier = result.Item1;
             ILocalDateDoubleTimeSeries series = result.Item2;
             Assert.NotNull(uniqueIdentifier);
-            AssertSane(series, end);
+            AssertSane(series);
         }
 
+        private static void AssertSane(ILocalDateDoubleTimeSeries series)
+        {
+            AssertSane(series, DateTimeOffset.Now);
+        }
 
         private static void AssertSane(ILocalDateDoubleTimeSeries series, DateTimeOffset end)
         {
