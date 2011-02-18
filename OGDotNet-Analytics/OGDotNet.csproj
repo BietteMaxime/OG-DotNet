@@ -78,8 +78,14 @@
     <Compile Include="Mappedtypes\math\curve\Curve.cs" />
     <Compile Include="Mappedtypes\math\curve\FunctionalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\financial\model\interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />
+    <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ArrayLocalDateDoubleTimeSeries.cs" />
+    <Compile Include="Mappedtypes\Util\Timeseries\Localdate\DateTimeNumericEncoding.cs" />
+    <Compile Include="Mappedtypes\Util\Timeseries\Localdate\FastArrayIntDoubleTimeSeries.cs" />
+    <Compile Include="Mappedtypes\Util\Timeseries\Localdate\LocalDateEpochDaysConverter.cs" />
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\InterpolatedYieldCurveSpecification.cs" />
+    <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ILocalDateDoubleTimeSeries.cs" />
+    <Compile Include="Model\Resources\RemoteHistoricalDataSource.cs" />
     <Compile Include="Model\Resources\RemoteInterpolatedYieldCurveSpecificationBuilder.cs" />
     <Compile Include="Model\MQTemplate.cs" />
     <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMaster.cs" />

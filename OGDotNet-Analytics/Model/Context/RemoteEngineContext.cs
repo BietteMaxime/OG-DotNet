@@ -59,6 +59,14 @@ namespace OGDotNet.Model.Context
                 return new RemoteInterpolatedYieldCurveSpecificationBuilder(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["interpolatedYieldCurveSpecificationBuilder"]));
             }
         }
+
+        public RemoteHistoricalDataSource HistoricalDataSource
+        {
+            get
+            {
+                return new RemoteHistoricalDataSource(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["historicalData"]));
+            }
+        }
        
     }
 }
