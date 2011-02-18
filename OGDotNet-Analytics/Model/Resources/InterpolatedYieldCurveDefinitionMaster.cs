@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Reflection;
 using Fudge;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.Id;
@@ -18,26 +20,14 @@ namespace OGDotNet.Model.Resources
 
         public YieldCurveDefinitionDocument Add(YieldCurveDefinitionDocument document)
         {
-            try
-            {
-                return PostDefinition(document, "add");
-            }
-            catch (WebException e)
-            {
-                if (e.Status == WebExceptionStatus.ProtocolError) //TODO I'd like more from java land than this
-                {
-                    throw new ArgumentException("Duplicate argument");
-                }
-                throw;
-            }
+                return RestExceptionMapping.DoWithExceptionMapping(() => PostDefinition(document, "add"));
         }
 
         public YieldCurveDefinitionDocument AddOrUpdate(YieldCurveDefinitionDocument document)
         {
             return PostDefinition(document, "addOrUpdate");
         }
-
-
+        
 
         private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
         {

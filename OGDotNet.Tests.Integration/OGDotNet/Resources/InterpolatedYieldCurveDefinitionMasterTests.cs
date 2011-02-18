@@ -44,8 +44,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
                 var yieldCurveDefinitionDocument = GenerateDocument();
                 interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
-                Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument));
-
+                var exception = Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument));
+                Assert.True(exception.Message.Contains("Duplicate"));
             }
         }
 
