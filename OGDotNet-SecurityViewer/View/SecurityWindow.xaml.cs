@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.SecurityViewer.View
@@ -16,7 +17,9 @@ namespace OGDotNet.SecurityViewer.View
     {
         long _cancellationToken = long.MinValue;
 
+        private RemoteEngineContext _context;
         RemoteSecurityMaster _securityMaster;
+        
 
 
         public SecurityWindow()
@@ -25,13 +28,14 @@ namespace OGDotNet.SecurityViewer.View
             itemGrid.Items.Clear();
         }
 
-        public RemoteSecurityMaster Context
+        public RemoteEngineContext Context
         {
             set
             {
                 if (_securityMaster != null)
                     throw new NotImplementedException("Can't handle context changing yet");
-                _securityMaster = value;
+                _context = value;
+                _securityMaster = _context.SecurityMaster;
             }
         }
         
@@ -142,13 +146,13 @@ namespace OGDotNet.SecurityViewer.View
                 var uniqueIdentifier = ((Security) itemGrid.SelectedItem).UniqueId;
                 var security = _securityMaster.GetSecurity(uniqueIdentifier);
 
-                StringBuilder sb = new StringBuilder();
-                foreach (var propertyInfo in security.GetType().GetProperties())
-                {
-                    sb.AppendFormat(string.Format("{0}: {1}",propertyInfo.Name, propertyInfo.GetGetMethod().Invoke(security, null)));
-                    sb.Append(Environment.NewLine);
-                }
-                MessageBox.Show(sb.ToString(), security.Name);
+                var securityTimeSeriesWindow = new SecurityTimeSeriesWindow
+                                                   {
+                                                       DataContext = security,
+                                                       Context = _context,
+                                                       Owner = this,
+                                                   };
+                securityTimeSeriesWindow.ShowDialog();
 
             }
         }
