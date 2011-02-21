@@ -139,7 +139,6 @@ namespace OGDotNet.SecurityViewer.View
 
         private void chart_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            chart.RenderTransform = null;
 
             var endDragPosition = e.GetPosition(canvas);
 
@@ -168,8 +167,10 @@ namespace OGDotNet.SecurityViewer.View
                 SetYRange(_startDragPosition, endDragPosition);
 
 
-                zoomRectangle.Visibility = Visibility.Hidden;
             }
+
+            ResetDrag();
+
         }
 
         private void chart_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
