@@ -43,8 +43,25 @@ namespace OGDotNet.Model.Resources
         public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset currentDate, string configDocName)
         {
             RestTarget target = _rest.Resolve("default")
-                                      .Resolve((currentDate != default(DateTimeOffset)) ? UriEncoding.ToString(currentDate) : "null")
+                                      .Resolve(EncodeDate(currentDate))
                                       .Resolve(configDocName ?? "null", UriEncoding.GetParameters(identifiers));
+            return DecodePairMessage(target.GetFudge());
+        }
+
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd, String configDocName=null)
+        {
+            return GetHistoricalData(identifiers, default(DateTimeOffset), configDocName, start, inclusiveStart, end, exclusiveEnd);
+        }
+
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset currentDate, String configDocName, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
+        {
+            RestTarget target = _rest.Resolve("defaultByDate")
+                                .Resolve(EncodeDate(currentDate))
+                                .Resolve(configDocName ?? "null")
+                                .Resolve(EncodeDate(start))
+                                .Resolve(inclusiveStart.ToString())
+                                .Resolve(EncodeDate(end))
+                                .Resolve(exclusiveEnd.ToString(), UriEncoding.GetParameters(identifiers));
             return DecodePairMessage(target.GetFudge());
         }
 
@@ -68,6 +85,11 @@ namespace OGDotNet.Model.Resources
             return Tuple.Create(UniqueIdentifier.Parse(uniqueIdString), _fudgeContext.GetSerializer().Deserialize<ILocalDateDoubleTimeSeries>(timeSeriesField));
         }
 
-        
+
+        private static string EncodeDate(DateTimeOffset currentDate)
+        {
+            return (currentDate != default(DateTimeOffset)) ? UriEncoding.ToString(currentDate) : "null";
+        }
+
     }
 }

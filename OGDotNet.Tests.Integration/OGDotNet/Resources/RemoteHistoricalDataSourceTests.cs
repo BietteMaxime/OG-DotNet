@@ -71,6 +71,26 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 AssertSane(result);
             }
         }
+        [FactAttribute]
+        public void CanGetSeriesForSomeFuturesAlt()
+        {
+            var historicalDataSource = Context.HistoricalDataSource;
+
+
+            var remoteSecurityMaster = Context.SecurityMaster;
+            var searchResult = remoteSecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 10));
+            foreach (var securityDocument in searchResult.Documents)
+            {
+                var identifierBundle = securityDocument.Security.Identifiers;
+                
+                var end = DateTimeOffset.Now.Date;
+                var start = end-TimeSpan.FromDays(3650);
+
+                var result = historicalDataSource.GetHistoricalData(identifierBundle,start, false, end, true);
+                AssertSane(result);
+                AssertSane(result.Item2, start, end);
+            }
+        }
 
         private static void AssertSane(Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> result)
         {
@@ -97,7 +117,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             foreach (var value in series.Values)
             {
-                Assert.InRange(value.Item1, DateTime.FromFileTimeUtc(0), end);
+                Assert.InRange(value.Item1, start, end);
             }
         }
     }
