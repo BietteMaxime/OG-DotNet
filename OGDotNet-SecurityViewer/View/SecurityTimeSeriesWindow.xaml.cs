@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Threading;
 using OGDotNet.Mappedtypes.Core.Security;
-using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
 
@@ -36,7 +28,6 @@ namespace OGDotNet.SecurityViewer.View
                 if (_dataSource != null)
                     throw new NotImplementedException("Can't handle context changing yet");
                 _dataSource = value.HistoricalDataSource;
-                Update();
             }
         }
 
@@ -44,16 +35,20 @@ namespace OGDotNet.SecurityViewer.View
         {
             get { return (Security) DataContext; }
         }
-        private void Window_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Update();
+            Title = Security.Name;
+            UpdateDetailsBlock();
+            BeginInvokeOnIdle(delegate
+                                  {
+                                      UpdateChart();
+                                      BeginInvokeOnIdle(() => Cursor = null);
+                                  });
         }
 
-        private void Update()
+        private void UpdateDetailsBlock()
         {
-            if (_dataSource == null || Security == null)
-                return;
-
             var sb = new StringBuilder();
             foreach (var propertyInfo in Security.GetType().GetProperties())
             {
@@ -61,19 +56,24 @@ namespace OGDotNet.SecurityViewer.View
                 sb.Append(Environment.NewLine);
             }
             detailsBlock.Text = sb.ToString();
+        }
 
-            var timeSeries = _dataSource.GetHistoricalData(Security.Identifiers).Item2;
-            var tuples = timeSeries.Values;
-            //TODO this is a hack, this is not really a curve
-            var timeSeriesAsCurve = new InterpolatedDoublesCurve(string.Format("Time Series for {0}", Security.Name),
-                                                                 tuples.Select(
-                                                                     t => (t.Item1 - DateTimeOffset.FromFileTime(0)).TotalMilliseconds
-                                                                     ).ToArray(),
-                                                                 tuples.Select(
-                                                                     t => t.Item2
-                                                                     ).ToArray()
-                );
-            curveControl.DataContext = timeSeriesAsCurve;
+        private void UpdateChart()
+        {
+            var historicalData = _dataSource.GetHistoricalData(Security.Identifiers);
+            var timeSeries = historicalData.Item2;
+
+            //NOTE: the chart understands DateTime, but not DateTime Offset
+            var tuples = timeSeries.Values.Select(t => Tuple.Create(t.Item1.LocalDateTime, t.Item2)).ToList();
+
+            lineSeries.ItemsSource = tuples;
+            lineSeries.Title = historicalData.Item1.ToString();
+        }
+
+
+        private void BeginInvokeOnIdle(Action act)
+        {
+            Dispatcher.BeginInvoke(act, DispatcherPriority.ContextIdle);
         }
     }
 }
