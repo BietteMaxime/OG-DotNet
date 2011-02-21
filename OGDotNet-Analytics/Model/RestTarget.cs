@@ -153,15 +153,18 @@ namespace OGDotNet.Model
                 using (var responseStream = response.GetResponseStream())
                 using (var buff = new BufferedStream(responseStream))
                 {
-                    if (!FudgeMimeType.Equals(response.ContentType))
+                    switch (response.ContentType)
                     {
-                        throw new Exception("Unexpected content type " + response.ContentType);
+                        case FudgeMimeType:
+                            var fudgeMsgEnvelope = _fudgeContext.Deserialize(buff);
+                            if (fudgeMsgEnvelope == null)
+                                return null;
+                            return fudgeMsgEnvelope.Message;
+                        case "":
+                            return null;
+                        default:
+                            throw new Exception("Unexpected content type " + response.ContentType);
                     }
-
-                    var fudgeMsgEnvelope = _fudgeContext.Deserialize(buff);
-                    if (fudgeMsgEnvelope == null)
-                        return null;
-                    return fudgeMsgEnvelope.Message;
                 }
             }
             catch (WebException e)
