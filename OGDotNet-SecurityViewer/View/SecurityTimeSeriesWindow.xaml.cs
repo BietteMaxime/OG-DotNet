@@ -86,7 +86,7 @@ namespace OGDotNet.SecurityViewer.View
 
         private Point _startDragPosition;
 
-        private void chart_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void chart_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _startDragPosition = e.GetPosition(canvas);
 
@@ -104,7 +104,7 @@ namespace OGDotNet.SecurityViewer.View
             chart_MouseMove(sender,e);
         }
 
-        private void chart_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void chart_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton != MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)
             {
@@ -137,9 +137,8 @@ namespace OGDotNet.SecurityViewer.View
             }
         }
 
-        private void chart_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void chart_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-
             var endDragPosition = e.GetPosition(canvas);
 
             bool moving = (Keyboard.Modifiers & ModifierKeys.Control) == 0;
