@@ -43,6 +43,7 @@ namespace OGDotNet.SecurityViewer.View
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Title = Security.Name;
+            chart.Title = Title;
             UpdateDetailsBlock();
             BeginInvokeOnIdle(delegate
                                   {
