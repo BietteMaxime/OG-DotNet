@@ -143,8 +143,7 @@ namespace OGDotNet.SecurityViewer.View
         {
             if (itemGrid.SelectedItem != null)
             {
-                var uniqueIdentifier = ((Security) itemGrid.SelectedItem).UniqueId;
-                var security = _securityMaster.GetSecurity(uniqueIdentifier);
+                Security security = (Security) itemGrid.SelectedItem;
 
                 var securityTimeSeriesWindow = new SecurityTimeSeriesWindow
                                                    {
