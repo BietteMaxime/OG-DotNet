@@ -42,9 +42,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CantGetATimeSeriesByEmptyIdentifierBundle()
         {
             var historicalDataSource = Context.HistoricalDataSource;
-            var response = historicalDataSource.GetHistoricalData(new IdentifierBundle());
-            Assert.Null(response.Item1);
-            Assert.Null(response.Item2);
+            Assert.Throws<ArgumentException>(() => historicalDataSource.GetHistoricalData(new IdentifierBundle()));
+            
         }
 
         [FactAttribute]
