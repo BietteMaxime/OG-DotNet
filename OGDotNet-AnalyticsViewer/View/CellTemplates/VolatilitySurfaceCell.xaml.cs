@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+using OGDotNet.AnalyticsViewer.View.Charts;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.AnalyticsViewer.Properties;
@@ -22,9 +23,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private static readonly bool ToScale = Settings.Default.ShowVolatilityCurveToScale;
         static readonly Point3D Center = new Point3D(0.5, 0.5, 0.5);
 
+        const double ZRange = 100.0;
 
         private bool _haveInitedData;
         private readonly DispatcherTimer _timer;
+        
 
         public VolatilitySurfaceCell()
         {
@@ -58,7 +61,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void SetCamera(double t)
         {
-            const double circleRadius = 2.2;
+            const double circleRadius = 3.8;
 
             camera.Position = Center + new Vector3D(Math.Sin(t), Math.Cos(t), 0) * circleRadius;
             camera.LookDirection = Center - camera.Position;
@@ -133,7 +136,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                             {
                                 new DirectionalLight(Colors.White, new Vector3D(-1, -1, -1)),
                                 BuildBaseModel(),
-                                BuildSurfaceModel()
+                                BuildSurfaceModel(),
+                                BuildGraphModel()
                             };
 
             var groupModel = new ModelVisual3D { Content = new Model3DGroup { Children = models } };
@@ -142,6 +146,114 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             mainViewport.Children.Add(groupModel);
 
         }
+
+        const double GraphOffset=0.8;
+        private Model3DGroup BuildGraphModel()
+        {
+            return new Model3DGroup
+                       {
+                        Children = new Model3DCollection
+                                        {
+                                            BuildXSliceGraphModel(),
+                                            BuildYSliceGraphModel(),
+                                        }
+                       };
+        }
+
+        const int projectedCurveSize = 400;
+        private CurveControl _xSliceCurveControl;
+        private GeometryModel3D BuildXSliceGraphModel()
+        {
+            _xSliceCurveControl = new CurveControl { Width = projectedCurveSize, Height = projectedCurveSize, YMin = 0, YMax = ZRange, StrokeThickness = 5.0, ShowName = false };
+            var brush = new VisualBrush(_xSliceCurveControl);
+
+
+            var material = new DiffuseMaterial(brush);
+
+            var normal = new Vector3D(1, 0, 0);
+
+
+            var mesh = new MeshGeometry3D
+            {
+                Positions = new Point3DCollection
+                                               {
+                                                   new Point3D(-GraphOffset,0, 0),
+                                                   new Point3D(-GraphOffset,1, 0),
+                                                   new Point3D(-GraphOffset,0, 1),
+                                                   new Point3D(-GraphOffset,1, 1)
+                                               },
+                Normals = new Vector3DCollection
+                                             {
+                                                 normal,
+                                                 normal,
+                                                 normal,
+                                                 normal
+                                             },
+                TriangleIndices = new Int32Collection
+                                                     {
+                                                         0,1,3,
+                                                         0,3,2
+                                                     },
+                TextureCoordinates = new PointCollection
+                                                        {
+                                                                 new Point(0,projectedCurveSize),
+                                                                 new Point(projectedCurveSize,projectedCurveSize),
+                                                                 new Point(0,0),
+                                                                 new Point(projectedCurveSize,0),
+                                                        }
+            };
+
+
+            return new GeometryModel3D(mesh, material) { BackMaterial = material };
+        }
+
+        private CurveControl _ySliceCurveControl;
+        private GeometryModel3D BuildYSliceGraphModel()
+        {
+            _ySliceCurveControl = new CurveControl { Width = projectedCurveSize, Height = projectedCurveSize, YMin = 0, YMax = ZRange, StrokeThickness = 5.0, ShowName = false};
+            var brush = new VisualBrush(_ySliceCurveControl);
+            
+            
+            var material = new DiffuseMaterial(brush);
+
+            var normal = new Vector3D(0, -1, 0);
+
+
+            var mesh = new MeshGeometry3D
+                           {
+                               Positions = new Point3DCollection
+                                               {
+                                                   new Point3D(0, -GraphOffset, 0),
+                                                   new Point3D(1, -GraphOffset, 0),
+                                                   new Point3D(0, -GraphOffset, 1),
+                                                   new Point3D(1, -GraphOffset, 1)
+                                               },
+                               Normals = new Vector3DCollection
+                                             {
+                                                 normal,
+                                                 normal,
+                                                 normal,
+                                                 normal
+                                             },
+                               TriangleIndices = new Int32Collection
+                                                     {
+                                                         0,1,3,
+                                                         0,3,2
+                                                     },
+                                TextureCoordinates = new PointCollection
+                                                        {
+                                                                 new Point(0,projectedCurveSize),
+                                                                 new Point(projectedCurveSize,projectedCurveSize),
+                                                                 new Point(0,0),
+                                                                 new Point(projectedCurveSize,0),
+                                                        }
+                           };
+
+
+            return new GeometryModel3D(mesh, material) { BackMaterial = material };
+        }
+
+       
 
         private static GeometryModel3D BuildBaseModel()
         {
@@ -180,8 +292,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private GeometryModel3D BuildSurfaceModel()
         {
-            const double zRange = 100.0;
-            const double zScale = 1.0 / zRange;
+            
+            const double zScale = 1.0 / ZRange;
 
             var mesh = new MeshGeometry3D();
 
@@ -302,7 +414,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
 
             //Texture co-ordinates
-            const double colorScale = 1 / zRange;
+            const double colorScale = 1 / ZRange;
             for (int yi = 0; yi < yKeys.Count; yi++)
             {
                 for (int xi = 0; xi < xKeys.Count; xi++)
@@ -354,6 +466,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void mainViewport_MouseMove(object sender, MouseEventArgs e)
         {
+            _timer.IsEnabled = false;
             Point position = e.GetPosition(mainViewport);
             UpdateToolTip(position);
         }
@@ -383,10 +496,17 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
                 var point = result.PointHit;
 
-                var floor = (int) Math.Round(point.X/xScale);
-                var x = xs[floor];
-                floor = (int) Math.Round(point.Y / yScale);
-                var y = ys[floor];
+                var yFloor = (int)Math.Round(point.Y / yScale);
+                var xFloor = (int)Math.Round(point.X / xScale);
+
+                if (xFloor < 0 || yFloor < 0)
+                {//The graph slices
+                    toolTip.IsOpen = false;
+                    return;
+                }
+
+                var x = xs[xFloor];
+                var y = ys[yFloor];
 
                 UpdateToolTip(x, y);
                 UpdateCellSelection(x, y);
@@ -422,12 +542,16 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void SetYSliceGraph(Tenor y)
         {
-            rightCurveControl.DataContext = Surface.GetYSlice(y);
+            var slice = Surface.GetYSlice(y);
+            _ySliceCurveControl.DataContext = slice;
+            leftCurveControl.DataContext = slice;
         }
 
         private void SetXSliceGraph(Tenor x)
         {
-            leftCurveControl.DataContext = Surface.GetXSlice(x);
+            var slice = Surface.GetXSlice(x);
+            _xSliceCurveControl.DataContext = slice;
+            rightCurveControl.DataContext = slice;
         }
 
 

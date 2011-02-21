@@ -16,6 +16,19 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
             InitializeComponent();
         }
 
+        public double? YMax { get; set; }
+        public double? YMin { get; set; }
+        public double StrokeThickness
+        {
+            get { return myLine.StrokeThickness; } set { myLine.StrokeThickness = value; }
+        }
+
+        public bool ShowName
+        {
+            get { return nameGroup.Height == 0.0; }
+            set { nameGroup.Height = value ? double.NaN: 0.0; }
+        }
+
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateGraph();
@@ -42,8 +55,8 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
                 var doubleMaxX = Curve.XData.Max();
                 double xScale = canvas.ActualWidth / (doubleMaxX - doubleMinX);
 
-                var doubleMinY = Math.Min(Curve.YData.Min(), 0);
-                var doubleMaxY = Curve.YData.Max();
+                var doubleMinY = YMin.GetValueOrDefault(Math.Min(Curve.YData.Min(), 0));
+                var doubleMaxY = YMax.GetValueOrDefault(Curve.YData.Max());
                 double yScale = canvas.ActualHeight / (doubleMaxY - doubleMinY);
 
                 myLine.Points.Clear();

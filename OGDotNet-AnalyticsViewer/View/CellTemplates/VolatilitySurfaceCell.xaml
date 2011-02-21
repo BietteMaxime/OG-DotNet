@@ -3,13 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Charts="clr-namespace:OGDotNet.AnalyticsViewer.View.Charts" mc:Ignorable="d" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" DataContextChanged="UserControl_DataContextChanged">
-    <Grid Name="mainGrid">
+    <Grid Name="mainGrid" IsHitTestVisible="True" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
        
-        <Viewport3D Grid.Column="0" Name="mainViewport" ClipToBounds="True" Width="300" Height="300" MouseMove="mainViewport_MouseMove">
+        <Viewport3D Grid.Column="0" Name="mainViewport" ClipToBounds="True" Width="600" Height="400" MouseMove="mainViewport_MouseMove">
             <Viewport3D.Camera>
                 <PerspectiveCamera 	  x:Name="camera" FarPlaneDistance="100"	  LookDirection="-11,-10,-9"	  UpDirection="0,0,1"	  NearPlaneDistance="1" 	  Position="11,10,9" 	  FieldOfView="40" />
             </Viewport3D.Camera>
@@ -17,7 +17,7 @@
 
         <ToggleButton Content="\/" Height="23" Name="detailsButton" Width="23" HorizontalAlignment="Right" VerticalAlignment="Bottom" Checked="detailsButton_Checked" Unchecked="detailsButton_Unchecked" />
         
-        <Popup Name="toolTip" IsOpen="False" Placement="Mouse">
+        <Popup Name="toolTip" IsOpen="False" Placement="Mouse" IsHitTestVisible="False">
             <TextBlock Name="toolTipBox" Background="LightYellow" Foreground="Black"/>
         </Popup >
 
