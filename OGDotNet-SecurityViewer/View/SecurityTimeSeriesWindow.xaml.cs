@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Model.Context;
@@ -82,56 +83,103 @@ namespace OGDotNet.SecurityViewer.View
         #region zooming
 
 
-        private Point startZoomPosition;
+        private Point _startDragPosition;
 
         private void chart_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            startZoomPosition = e.GetPosition(canvas);
-            zoomRectangle.Visibility=Visibility.Visible;
+            _startDragPosition = e.GetPosition(canvas);
+
+            bool moving = (Keyboard.Modifiers & ModifierKeys.Control) == 0;
+
+            if (moving)
+            {
+                Cursor = Cursors.Hand;
+            }
+            else
+            {
+                zoomRectangle.Visibility = Visibility.Visible;
+            }
 
             chart_MouseMove(sender,e);
         }
 
         private void chart_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (e.LeftButton!=MouseButtonState.Pressed)
-                zoomRectangle.Visibility = Visibility.Hidden;
-            if (e.RightButton==MouseButtonState.Pressed)
-                zoomRectangle.Visibility = Visibility.Hidden;
-
-            if (zoomRectangle.Visibility != Visibility.Visible)
+            if (e.LeftButton != MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)
+            {
+                ResetDrag();
                 return;
+            }
 
-            var endZoomPosition = e.GetPosition(canvas);
+            var endDragPosition = e.GetPosition(canvas);
 
-            Canvas.SetLeft(zoomRectangle, Math.Min(endZoomPosition.X,startZoomPosition.X));
-            Canvas.SetTop(zoomRectangle, Math.Min(endZoomPosition.Y, startZoomPosition.Y));
-            zoomRectangle.Width = Math.Abs(endZoomPosition.X - startZoomPosition.X);
-            zoomRectangle.Height= Math.Abs(endZoomPosition.Y - startZoomPosition.Y);
+
+            bool moving = (Keyboard.Modifiers & ModifierKeys.Control) == 0;
+            if (moving)
+            {
+                if (Cursor != Cursors.Hand)
+                    return;
+
+                var delta = (_startDragPosition) - (endDragPosition);
+                chart.RenderTransform = new TranslateTransform(-delta.X, -delta.Y);
+            }
+            else
+            {
+                if (zoomRectangle.Visibility != Visibility.Visible)
+                    return;
+
+
+                Canvas.SetLeft(zoomRectangle, Math.Min(endDragPosition.X, _startDragPosition.X));
+                Canvas.SetTop(zoomRectangle, Math.Min(endDragPosition.Y, _startDragPosition.Y));
+                zoomRectangle.Width = Math.Abs(endDragPosition.X - _startDragPosition.X);
+                zoomRectangle.Height = Math.Abs(endDragPosition.Y - _startDragPosition.Y);    
+            }
         }
 
         private void chart_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (zoomRectangle.Visibility != Visibility.Visible)
-                return;
+            chart.RenderTransform = null;
 
-            var endZoomPosition = e.GetPosition(canvas);
-            
-            SetXRange(startZoomPosition, endZoomPosition);
-            SetYRange(startZoomPosition, endZoomPosition);
-           
+            var endDragPosition = e.GetPosition(canvas);
 
-            zoomRectangle.Visibility = Visibility.Hidden;
+            bool moving = (Keyboard.Modifiers & ModifierKeys.Control) == 0;
+
+            if (moving)
+            {
+                if (Cursor != Cursors.Hand)
+                    return;
+                var dx = GetChartPosition(_startDragPosition).Item1 - GetChartPosition(endDragPosition).Item1;
+                var dy = GetChartPosition(_startDragPosition).Item2 - GetChartPosition(endDragPosition).Item2;
+                Cursor = null;
+                XAxis.Maximum = XAxis.ActualMaximum.Value + dx;
+                XAxis.Minimum = XAxis.ActualMinimum.Value + dx;
+
+                YAxis.Maximum = YAxis.ActualMaximum.Value + dy;
+                YAxis.Minimum = YAxis.ActualMinimum.Value + dy;
+            }
+            else
+            {
+                if (zoomRectangle.Visibility != Visibility.Visible)
+                    return;
+
+                
+                SetXRange(_startDragPosition, endDragPosition);
+                SetYRange(_startDragPosition, endDragPosition);
+
+
+                zoomRectangle.Visibility = Visibility.Hidden;
+            }
         }
 
         private void chart_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            zoomRectangle.Visibility = Visibility.Hidden;
+            ResetDrag();
         }
+
 
         private void chart_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            zoomRectangle.Visibility = Visibility.Hidden;
+            ResetDrag();
 
             YAxis.Minimum = null;
             YAxis.Maximum = null;
@@ -140,7 +188,14 @@ namespace OGDotNet.SecurityViewer.View
             XAxis.Maximum = null;
         }
 
-        
+        private void ResetDrag()
+        {
+            zoomRectangle.Visibility = Visibility.Hidden;
+            Cursor = null;
+            chart.RenderTransform = null;
+        }
+
+
 
         private void chart_MouseWheel(object sender, MouseWheelEventArgs e)
         {
