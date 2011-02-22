@@ -75,6 +75,8 @@
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LocalDateLabelledMatrix1D.cs" />
+    <Compile Include="Builders\CurrencyMatrixBuilder.cs" />
+    <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixValue.cs" />
     <Compile Include="Mappedtypes\math\curve\Curve.cs" />
     <Compile Include="Mappedtypes\math\curve\FunctionalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\financial\model\interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />
@@ -85,6 +87,8 @@
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\InterpolatedYieldCurveSpecification.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ILocalDateDoubleTimeSeries.cs" />
+    <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
+    <Compile Include="Model\Resources\RemoteCurrencyMatrixSource.cs" />
     <Compile Include="Model\Resources\RemoteHistoricalDataSource.cs" />
     <Compile Include="Model\Resources\RemoteInterpolatedYieldCurveSpecificationBuilder.cs" />
     <Compile Include="Model\MQTemplate.cs" />

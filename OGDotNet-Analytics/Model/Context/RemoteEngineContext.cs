@@ -67,6 +67,13 @@ namespace OGDotNet.Model.Context
                 return new RemoteHistoricalDataSource(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["historicalData"]));
             }
         }
-       
+
+        public RemoteCurrencyMatrixSource CurrencyMatrixSource
+        {
+            get
+            {
+                return new RemoteCurrencyMatrixSource(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["currencyMatrixSource"]));
+            }
+        }
     }
 }
