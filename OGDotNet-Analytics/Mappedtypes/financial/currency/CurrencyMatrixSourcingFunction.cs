@@ -41,6 +41,10 @@ namespace OGDotNet.Mappedtypes.financial.currency
                 }
                 return rate;
             }
+            else if (currencyMatrixValue == null)
+            {
+                throw new ArgumentException();
+            }
             else
             {
                 throw new NotImplementedException();
