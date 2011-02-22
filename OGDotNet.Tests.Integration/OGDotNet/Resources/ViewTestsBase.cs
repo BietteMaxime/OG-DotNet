@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
@@ -35,7 +37,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             get
             {
                 var remoteEngineContext = GetContext();
-                return remoteEngineContext.ViewProcessor.ViewNames.Where(n => !BannedViews.Contains(n));
+                return remoteEngineContext.ViewProcessor.ViewNames.Where(IsNotBanned);
             }
         }
 
@@ -44,8 +46,20 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             get
             {
                 var remoteEngineContext = GetContext();
-                return ViewNames.Where(n => !BannedViews.Contains(n)).Select(n => remoteEngineContext.ViewProcessor.GetView(n));
+                return ViewNames.Where(IsNotBanned).Select(n => remoteEngineContext.ViewProcessor.GetView(n));
             }
+        }
+
+        private static bool IsNotBanned(string n)
+        {
+            return !BannedViews.Contains(n) && ! ContainsGuid(n);
+        }
+
+        private static readonly Regex GuidRegex = new Regex(@"\w{8}\-\w{4}\-\w{4}\-\w{4}\-\w{12}", RegexOptions.Compiled);
+        private static bool ContainsGuid(string s)
+        {
+            var containsGuid = GuidRegex.IsMatch(s);
+            return containsGuid;
         }
 
         public static IEnumerable<RemoteView> FastTickingViews
