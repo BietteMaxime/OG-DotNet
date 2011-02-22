@@ -11,31 +11,37 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
+using OGDotNet.WPFUtils.Windsor;
 
 namespace OGDotNet.SecurityViewer.View
 {
     /// <summary>
     /// Interaction logic for SecurityTimeSeriesWindow.xaml
     /// </summary>
-    public partial class SecurityTimeSeriesWindow : Window
+    public partial class SecurityTimeSeriesWindow : OGDotNetWindow
     {
-        private RemoteHistoricalDataSource _dataSource;
-        
+        public static void ShowDialog(IEnumerable<Security> securities, Window owner)
+        {
+            var securityTimeSeriesWindow = new SecurityTimeSeriesWindow
+            {
+                DataContext = securities,
+                Owner = owner,
+            };
+            securityTimeSeriesWindow.ShowDialog();
+        }
+
         public SecurityTimeSeriesWindow()
         {
             InitializeComponent();
         }
 
-        public RemoteEngineContext Context
+        private RemoteHistoricalDataSource DataSource
         {
-            set
-            {
-                if (_dataSource != null)
-                    throw new NotImplementedException("Can't handle context changing yet");
-                _dataSource = value.HistoricalDataSource;
-            }
+            get { return OGContext.HistoricalDataSource; }
         }
 
         private IEnumerable<Security> Securities
@@ -79,7 +85,10 @@ namespace OGDotNet.SecurityViewer.View
                 var security = tuple.Item1;
                 var style = tuple.Item2;
                 
-                var historicalData = _dataSource.GetHistoricalData(security.Identifiers);
+                var historicalData = DataSource.GetHistoricalData(security.Identifiers);
+                if (historicalData.Item1 == null && historicalData.Item2 ==null)
+                    continue;
+                
                 var timeSeries = historicalData.Item2;
                 //NOTE: the chart understands DateTime, but not DateTime Offset
                 var tuples = timeSeries.Values.Select(t => Tuple.Create(t.Item1.LocalDateTime, t.Item2)).ToList();
@@ -108,7 +117,10 @@ namespace OGDotNet.SecurityViewer.View
                 chart.Series.Add(lineSeries);
 
             }
-           
+           if (chart.Series.Count ==0)
+           {
+               chart.Title = "No time series found";
+           }
         }
 
 

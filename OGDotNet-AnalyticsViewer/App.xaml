@@ -1,7 +1,4 @@
-﻿<Application x:Class="OGDotNet.AnalyticsViewer.App"
+﻿<Windsor:OGDotNetApp x:Class="OGDotNet.AnalyticsViewer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
-</Application>
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windsor="clr-namespace:OGDotNet.WPFUtils.Windsor;assembly=OGDotNet.WPFUtils" StartupUri="View\MainWindow.xaml">
+</Windsor:OGDotNetApp>

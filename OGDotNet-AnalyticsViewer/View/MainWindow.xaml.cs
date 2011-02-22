@@ -8,13 +8,14 @@ using OGDotNet.Model.Context;
 using OGDotNet.WPFUtils;
 using OGDotNet.Model.Resources;
 using OGDotNet.AnalyticsViewer.ViewModel;
+using OGDotNet.WPFUtils.Windsor;
 
 namespace OGDotNet.AnalyticsViewer.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : OGDotNetWindow
     {
         private static readonly Properties.Settings Settings = Properties.Settings.Default;
         private ISecuritySource _remoteSecuritySource;
@@ -27,38 +28,29 @@ namespace OGDotNet.AnalyticsViewer.View
             InitializeComponent();
         }
 
-        private RemoteEngineContext _context;
-        public RemoteEngineContext Context
+        private void Window_Loaded(object sender, RoutedEventArgs args)
         {
-            set
+            try
             {
-                if (_context!= null)
-                    throw new NotImplementedException("Can't handle context changing yet");
-                _context = value;
-
-                try
-                {
-                    Title = string.Format("OGDotNet ({0})", _context.RootUri);
+                Title = string.Format("OGDotNet ({0})", OGContext.RootUri);
 
 
-                    _remoteViewProcessor = _context.ViewProcessor;
-                    var viewNames = _remoteViewProcessor.ViewNames;
-                    _remoteSecuritySource = _context.SecuritySource;
-                    viewSelector.DataContext = viewNames;
+                _remoteViewProcessor = OGContext.ViewProcessor;
+                var viewNames = _remoteViewProcessor.ViewNames;
+                _remoteSecuritySource = OGContext.SecuritySource;
+                viewSelector.DataContext = viewNames;
 
-                    WindowLocationPersister.InitAndPersistPosition(this, Settings);
+                WindowLocationPersister.InitAndPersistPosition(this, Settings);
 
-                    var viewToSelect = viewNames.Where(v => Settings.PreviousViewName == v).FirstOrDefault();
-                    viewSelector.SelectedItem = viewToSelect;
-                }
-                catch (WebException e)
-                {
-                    MessageBox.Show(e.ToString(), "Failed to connect to server");
-                    Close();
-                }
+                var viewToSelect = viewNames.Where(v => Settings.PreviousViewName == v).FirstOrDefault();
+                viewSelector.SelectedItem = viewToSelect;
+            }
+            catch (WebException e)
+            {
+                MessageBox.Show(e.ToString(), "Failed to connect to server");
+                Close();
             }
         }
-
 
 
         private void viewSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -154,6 +146,8 @@ namespace OGDotNet.AnalyticsViewer.View
             Settings.Save();
             viewSelector.SelectedItem = null;
         }
+
+
     }
 }
 

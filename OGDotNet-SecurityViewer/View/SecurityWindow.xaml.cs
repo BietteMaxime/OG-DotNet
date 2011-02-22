@@ -1,27 +1,21 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Util.Db;
-using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
+using OGDotNet.WPFUtils.Windsor;
 
 namespace OGDotNet.SecurityViewer.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class SecurityWindow : Window
+    public partial class SecurityWindow : OGDotNetWindow
     {
         long _cancellationToken = long.MinValue;
-
-        private RemoteEngineContext _context;
-        RemoteSecurityMaster _securityMaster;
-        
 
 
         public SecurityWindow()
@@ -30,17 +24,11 @@ namespace OGDotNet.SecurityViewer.View
             itemGrid.Items.Clear();
         }
 
-        public RemoteEngineContext Context
+
+        private RemoteSecurityMaster SecurityMaster
         {
-            set
-            {
-                if (_securityMaster != null)
-                    throw new NotImplementedException("Can't handle context changing yet");
-                _context = value;
-                _securityMaster = _context.SecurityMaster;
-            }
+            get { return OGContext.SecurityMaster; }
         }
-        
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Update();
@@ -68,7 +56,7 @@ namespace OGDotNet.SecurityViewer.View
                                                  try
                                                  {
                                                      CancelIfCancelled(token);
-                                                     var results = _securityMaster.Search(name, type, new PagingRequest(currentPage, 20));
+                                                     var results = SecurityMaster.Search(name, type, new PagingRequest(currentPage, 20));
                                                      CancelIfCancelled(token);
                                                      Dispatcher.Invoke((Action) (() =>
                                                                                           {
@@ -160,16 +148,11 @@ namespace OGDotNet.SecurityViewer.View
 
         private void ShowSecurities(IEnumerable<Security> securities)
         {
-            var securityTimeSeriesWindow = new SecurityTimeSeriesWindow
-                                               {
-                                                   DataContext = securities,
-                                                   Context = _context,
-                                                   Owner = this,
-                                               };
-            securityTimeSeriesWindow.ShowDialog();
+            SecurityTimeSeriesWindow.ShowDialog(securities, this);
         }
 
-        
+
+
 
         private void grid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {

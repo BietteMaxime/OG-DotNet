@@ -13,9 +13,6 @@ namespace OGDotNet
         {
             container.Register(Component.For<RemoteEngineContext>().UsingFactory((RemoteEngineContextFactory fac) => fac.CreateRemoteEngineContext()));
 
-            container.Register(Component.For<RemoteSecurityMaster>().UsingFactory((RemoteEngineContext context) => context.SecurityMaster));
-
-
             container.Register(new ComponentRegistration<OpenGammaFudgeContext>());
         }
     }
