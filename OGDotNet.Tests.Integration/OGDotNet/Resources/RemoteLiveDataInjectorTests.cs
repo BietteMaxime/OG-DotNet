@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Fudge.Types;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Model.Resources;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
@@ -14,7 +17,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CanInjectValue()
         {
-            var remoteView = Context.ViewProcessor.GetView("Swap Test View");
+            RemoteView remoteView = GetView();
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
             liveDataOverrideInjector.AddValue(GetRequirement(), 100.0);
         }
@@ -22,20 +25,24 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CanDeleteValue()
         {
-            var remoteView = Context.ViewProcessor.GetView("Swap Test View");
+            RemoteView remoteView = GetView();
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
             liveDataOverrideInjector.RemoveValue(GetRequirement());
         }
 
 
+
+
         [Fact]
         public void ValueChangesResults()
         {
+            RemoteView remoteView = GetView();
+
+
             var valueRequirement = GetRequirement();
 
-             var remoteView = Context.ViewProcessor.GetView("Swap Test View");
-             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
-             liveDataOverrideInjector.RemoveValue(valueRequirement);
+            var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
+            liveDataOverrideInjector.RemoveValue(valueRequirement);
 
             using (var cancellationTokenSource = new CancellationTokenSource())
             {
@@ -46,18 +53,25 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     using (var enumerator = viewComputationResultModels.GetEnumerator())
                     {
 
-                        WaitFor(enumerator, valueRequirement, o => 100.0 != (double) o );
+                        WaitFor(enumerator, valueRequirement, o => 100.0 != (double)o);
 
                         liveDataOverrideInjector.AddValue(valueRequirement, 100.0);
-                        WaitFor(enumerator, valueRequirement, o => 100.0 == (double)o);
-                        WaitFor(enumerator, valueRequirement, o => 100.0 == (double)o);
+                        WaitFor(enumerator, valueRequirement, o => 100.0 == (double) o);
 
                         liveDataOverrideInjector.RemoveValue(valueRequirement);
-                        WaitFor(enumerator, valueRequirement, o => 100.0 != (double)o);
-                        WaitFor(enumerator, valueRequirement, o => 100.0 != (double)o);
+                        WaitFor(enumerator, valueRequirement, o => 100.0 != (double) o);
                     }
                 }
             }
+        }
+
+        private RemoteView GetView()
+        {
+            return Context.ViewProcessor.GetView("Primitives Only");
+        }
+        private static ValueRequirement GetRequirement()
+        {
+            return new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::AAPL US Equity")));
         }
 
         private static void  WaitFor(IEnumerator<ViewComputationResultModel> enumerator, ValueRequirement valueRequirement, Predicate<object> match)
@@ -67,18 +81,23 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 Assert.True(enumerator.MoveNext());
 
-                object result;
-                if (enumerator.Current.TryGetValue("Default", valueRequirement, out result) && match(result))
-                {
+                var viewComputationResultModel = enumerator.Current;
+
+                if (GetContains(viewComputationResultModel, valueRequirement, match))
                     return;
-                }
                 Assert.InRange(i,0,100);
             }
         }
 
-        private static ValueRequirement GetRequirement()
+        private static bool GetContains(ViewComputationResultModel viewComputationResultModel, ValueRequirement valueRequirement, Predicate<object> match)
         {
-            return new ValueRequirement("Market_Value",new ComputationTargetSpecification(ComputationTargetType.Primitive,UniqueIdentifier.Parse("BLOOMBERG_TICKER::USBG5 Curncy")));
+            bool contains = false;
+            object result;
+            if (viewComputationResultModel.TryGetValue("Default", valueRequirement, out result) && match(result))
+            {
+                contains = true;
+            }
+            return contains;
         }
     }
 }
