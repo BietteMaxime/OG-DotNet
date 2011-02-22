@@ -79,7 +79,6 @@ namespace OGDotNet.SecurityViewer.View
                 var security = tuple.Item1;
                 var style = tuple.Item2;
                 
-                //,DateTimeOffset.Now-TimeSpan.FromDays(365),true,DateTimeOffset.Now,false)
                 var historicalData = _dataSource.GetHistoricalData(security.Identifiers);
                 var timeSeries = historicalData.Item2;
                 //NOTE: the chart understands DateTime, but not DateTime Offset
