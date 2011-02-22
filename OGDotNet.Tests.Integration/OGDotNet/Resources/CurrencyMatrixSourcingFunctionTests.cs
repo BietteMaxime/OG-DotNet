@@ -28,8 +28,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanGetNonIdentity()
         {
             CurrencyMatrixSourcingFunction currencyMatrixSourcingFunction = GetFunction();
-            var conversionRate = currencyMatrixSourcingFunction.GetConversionRate(GetValue, Currency.Create("GBP"), Currency.Create("USD"));
+            var source = Currency.Create("USD");
+            var target = Currency.Create("GBP");
+
+            var conversionRate = currencyMatrixSourcingFunction.GetConversionRate(GetValue, source, target);
             Assert.NotEqual(1.0, conversionRate);
+            var reciprocal = currencyMatrixSourcingFunction.GetConversionRate(GetValue, target, source);
+            Assert.NotEqual(1.0, reciprocal);
+
+            Assert.InRange(conversionRate, 0.99 / reciprocal, 1.01 / reciprocal );
         }
 
         private CurrencyMatrixSourcingFunction GetFunction()
@@ -42,7 +49,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             if (req.TargetSpecification.Type != ComputationTargetType.Primitive)
                 throw new NotImplementedException();
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            var cancellationTokenSource = new CancellationTokenSource();
 
             using (var remoteClient = Context.CreateUserClient())
             {
