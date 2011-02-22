@@ -139,6 +139,8 @@ namespace OGDotNet.Model
         {
             FudgeSerializer fudgeSerializer = _fudgeContext.GetSerializer();
             FudgeMsg retMsg = GetFudge();
+            if (retMsg== null)
+                return default(TRet);
             var subMessage = retMsg.GetMessage(subMessageField);
             if (subMessage == null)
                 return default(TRet);
