@@ -61,7 +61,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 
             var curveDate = ffc.GetValue<DateTimeOffset>("curveDate");
             String name = ffc.GetString("name");
-            var currency = Currency.GetInstance(ffc.GetString("currency"));
+            var currency = Currency.Create(ffc.GetString("currency"));
             var region = Identifier.Parse(ffc.GetString("region"));
             var resolvedStripFields = ffc.GetAllByName("resolvedStrips");
 

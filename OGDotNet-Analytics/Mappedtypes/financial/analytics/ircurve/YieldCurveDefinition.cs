@@ -68,7 +68,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
                 switch (fudgeField.Name)
                 {
                     case "currency":
-                        currency = Currency.GetInstance((string) fudgeField.Value);
+                        currency = Currency.Create((string) fudgeField.Value);
                         break;
                     case "name":
                         name = (string) fudgeField.Value;

@@ -93,7 +93,7 @@ namespace OGDotNet.Mappedtypes.engine.View
             var portfolioIdentifier =ffc.GetAllByName("identifier").Any()  ? UniqueIdentifier.Parse(ffc.GetValue<String>("identifier")) : null;
             var user = deserializer.FromField<UserPrincipal>(ffc.GetByName("user"));
 
-            var currency = Core.Common.Currency.GetInstance(ffc.GetValue<string>("currency"));
+            var currency = Core.Common.Currency.Create(ffc.GetValue<string>("currency"));
 
             var minDeltaCalcPeriod = ffc.GetValue<long>("minDeltaCalcPeriod");
             var maxDeltaCalcPeriod = ffc.GetValue<long>("maxDeltaCalcPeriod");

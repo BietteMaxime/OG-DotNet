@@ -84,7 +84,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
         public static VolatilitySurfaceData FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             string currencyName = ffc.GetValue<string>("currency");
-            Currency currency = Currency.GetInstance(currencyName);
+            Currency currency = Currency.Create(currencyName);
             string definitionName = ffc.GetValue<String>("definitionName");
             string specificationName = ffc.GetValue<String>("specificationName");
             string interpolatorName = ffc.GetValue<String>("interpolatorName");

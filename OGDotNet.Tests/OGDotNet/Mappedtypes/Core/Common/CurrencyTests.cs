@@ -9,20 +9,20 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
         [Fact]
         public void CanCreateCurrency()
         {
-            Currency.GetInstance("USD");
+            Currency.Create("USD");
         }
 
         [Fact]
         public void CantGetBadCurrenct()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => Currency.GetInstance("CurrencyISO::USD"));
+            Assert.Throws<ArgumentOutOfRangeException>(() => Currency.Create("CurrencyISO::USD"));
         }
 
         [Fact]
         public void CurrenciesAreEqual()
         {
-            var a = Currency.GetInstance("USD");
-            var b = Currency.GetInstance("USD");
+            var a = Currency.Create("USD");
+            var b = Currency.Create("USD");
             Assert.True(a.Equals(b));
             Assert.True(((object) a).Equals(b));
             Assert.Equal(a.GetHashCode(), b.GetHashCode());
@@ -31,8 +31,8 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
         [Fact]
         public void CurrenciesAreNotEqual()
         {
-            var a = Currency.GetInstance("GBO");
-            var b = Currency.GetInstance("USD");
+            var a = Currency.Create("GBO");
+            var b = Currency.Create("USD");
             Assert.False(a.Equals(b));
             Assert.False(((object)a).Equals(b));
             Assert.NotEqual(a.GetHashCode(), b.GetHashCode());//This is obviously over strict
@@ -41,8 +41,8 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
         [Fact]
         public void CurrenciesAreSingleton()
         {
-            var a = Currency.GetInstance("USD");
-            var b = Currency.GetInstance("USD");
+            var a = Currency.Create("USD");
+            var b = Currency.Create("USD");
             Assert.True(ReferenceEquals(a, b));
         }
     }

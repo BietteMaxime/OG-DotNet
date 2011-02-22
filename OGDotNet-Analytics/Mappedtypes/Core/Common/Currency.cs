@@ -21,7 +21,7 @@ namespace OGDotNet.Mappedtypes.Core.Common
             return new Currency(isoCode.ToUpper(CultureInfo.CreateSpecificCulture("en")));
         }
 
-        public static Currency GetInstance(string isoCode)
+        public static Currency Create(string isoCode)
         {
             return InstanceMap.Get(isoCode);
         }
@@ -61,6 +61,11 @@ namespace OGDotNet.Mappedtypes.Core.Common
         public override int GetHashCode()
         {
             return _identifier.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[Currency: {0}]", _identifier.Value);
         }
     }
 }
