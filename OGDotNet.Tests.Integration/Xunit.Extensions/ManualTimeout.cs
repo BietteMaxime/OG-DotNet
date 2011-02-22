@@ -8,9 +8,9 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {
     internal static class ManualTimeout
     {
-        private static int DefaultTimeout
+        private static int  DefaultTimeout
         {
-            get { return Debugger.IsAttached ?  int.MaxValue : (int) TimeSpan.FromMinutes(5).TotalMilliseconds; }
+            get { return (int) TimeSpan.FromMinutes(5).TotalMilliseconds; }
         }
 
         internal static T ExecuteWithTimeout<T>(Func<T> work)
@@ -43,6 +43,8 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                                 }));
             thread.IsBackground = true;
             thread.Start();
+            if (Debugger.IsAttached)
+                thread.Join();
             if (thread.Join(DefaultTimeout))
             {
                 if (innerEx != null)
