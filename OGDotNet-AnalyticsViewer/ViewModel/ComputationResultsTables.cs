@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
+using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
@@ -172,10 +173,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private IEnumerable<TreeNode> GetPortfolioNodesInner(PortfolioNode node)
         {
-            yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name, ComputationTargetType.PortfolioNode);
+            yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name, ComputationTargetType.PortfolioNode, null);
             foreach (var position in node.Positions)
             {
-                yield return new TreeNode(position.Identifier, String.Format("{0} ({1})", GetSecurityName(position), position.Quantity), ComputationTargetType.Position);
+                var security = _remoteSecuritySource.GetSecurity(position.SecurityKey);
+                yield return new TreeNode(position.Identifier, String.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security);
             }
 
             foreach (var portfolioNode in node.SubNodes)
@@ -188,27 +190,29 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         }
 
 
-        private string GetSecurityName(Position position)
-        {
-            return _remoteSecuritySource.GetSecurity(position.SecurityKey).Name;
-        }
-
         private class TreeNode
         {
             private readonly UniqueIdentifier _identifier;
             private readonly string _name;
             private readonly ComputationTargetType _targetType;
+            private readonly Security _security;
 
-            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType)
+            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType, Security security)
             {
                 _identifier = identifier;
                 _name = name;
                 _targetType = targetType;
+                _security = security;
             }
 
             public string Name
             {
                 get { return _name; }
+            }
+
+            public Security Security
+            {
+                get { return _security; }
             }
 
             public ComputationTargetSpecification ComputationTargetSpecification
@@ -247,7 +251,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 }
 
 
-                yield return new PortfolioRow(position.Name, values);
+                yield return new PortfolioRow(position.Name, values, position.Security);
             }
         }
     }

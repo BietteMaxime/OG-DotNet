@@ -13,7 +13,7 @@
     <Grid>
         <TabControl Height="Auto" Width="Auto">
             <TabItem Header="Portfolio" Name="portfolioTabItem" IsEnabled="{Binding Path=HavePortfolioRows}">
-                <ListView Name="portfolioTable"  ItemsSource="{Binding Path=PortfolioRows}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+                <ListView Name="portfolioTable"  ItemsSource="{Binding Path=PortfolioRows}" Height="Auto" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" MouseDoubleClick="portfolioTable_MouseDoubleClick">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Width="140" Header="Position" DisplayMemberBinding="{Binding Path=PositionName}"/>

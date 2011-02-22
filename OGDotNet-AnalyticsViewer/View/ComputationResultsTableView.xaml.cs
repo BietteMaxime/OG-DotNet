@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using OGDotNet.SecurityViewer.View;
 using OGDotNet.WPFUtils;
 using OGDotNet.AnalyticsViewer.View.CellTemplates;
 using OGDotNet.AnalyticsViewer.ViewModel;
@@ -12,7 +13,7 @@ namespace OGDotNet.AnalyticsViewer.View
     /// <summary>
     /// Interaction logic for ComputationResultsTableview.xaml
     /// </summary>
-    public partial class ComputationResultsTableView : UserControl
+    public partial class ComputationResultsTableView
     {
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
@@ -62,5 +63,25 @@ namespace OGDotNet.AnalyticsViewer.View
                 gridViewColumnCollection.RemoveAt(length);
             }
         }
+
+        private void portfolioTable_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var selectedItem = (PortfolioRow) portfolioTable.SelectedItem;
+            if (selectedItem!= null && selectedItem.Security != null)
+            {
+                SecurityTimeSeriesWindow.ShowDialog(new[] { selectedItem.Security }, GetWindow());
+            }
+        }
+        private Window GetWindow()
+        {
+            DependencyObject obj =this;
+            do
+                 {
+                    obj = LogicalTreeHelper.GetParent(obj);
+               } while (! typeof(Window).IsAssignableFrom(obj.GetType()));
+
+            return (Window) obj;
+        }
+        
     }
 }
