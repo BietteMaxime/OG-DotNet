@@ -36,7 +36,7 @@ namespace OGDotNet.Model.Resources
             {//NOTE: by starting the delta stream first I believe I am ok to use this latest result
 
                 if (token.IsCancellationRequested) yield break;
-                ViewComputationResultModel results = LatestResult;
+                ViewComputationResultModel results = GetLatestResult();
                 
                 while (!token.IsCancellationRequested)
                 {
@@ -92,7 +92,7 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("endJmsDeltaStream").Post();
         }
 
-        private bool ResultAvailable
+        public bool ResultAvailable
         {
             get {
 
@@ -100,12 +100,10 @@ namespace OGDotNet.Model.Resources
                 return 1 == (sbyte) (reponse.GetByName("value").Value);
             }
         }
-        private ViewComputationResultModel LatestResult
+
+        public ViewComputationResultModel GetLatestResult()
         {
-            get
-            {
-                return _rest.Resolve("latestResult").Get<ViewComputationResultModel>("latestResult");
-            }
+            return _rest.Resolve("latestResult").Get<ViewComputationResultModel>("latestResult");
         }
 
         protected override void Dispose(bool disposing)
