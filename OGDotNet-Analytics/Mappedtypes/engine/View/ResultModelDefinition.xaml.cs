@@ -1,6 +1,7 @@
 ﻿using System;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph;
 
 namespace OGDotNet.Mappedtypes.engine.View
@@ -20,6 +21,14 @@ namespace OGDotNet.Mappedtypes.engine.View
             _tradeOutputMode = tradeOutputMode;
             _securityOutputMode = securityOutputMode;
             _primitiveOutputMode = primitiveOutputMode;
+        }
+
+        public ResultModelDefinition() : this(ResultOutputMode.TerminalOutputs)
+        {
+        }
+
+        public ResultModelDefinition(ResultOutputMode defaultMode) : this(defaultMode, defaultMode, defaultMode, defaultMode, defaultMode)
+        {
         }
 
         public ResultOutputMode AggregatePositionOutputMode
@@ -50,17 +59,21 @@ namespace OGDotNet.Mappedtypes.engine.View
         public static ResultModelDefinition FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new ResultModelDefinition(
-                ResultOutputModeMethods.Parse(ffc.GetValue<string>("aggregatePositionOutputMode")),
-                ResultOutputModeMethods.Parse(ffc.GetValue<string>("positionOutputMode")),
-                ResultOutputModeMethods.Parse(ffc.GetValue<string>("tradeOutputMode")),
-                ResultOutputModeMethods.Parse(ffc.GetValue<string>("securityOutputMode")),
-                ResultOutputModeMethods.Parse(ffc.GetValue<string>("primitiveOutputMode"))
+                EnumBuilder<ResultOutputMode>.Parse(ffc.GetValue<string>("aggregatePositionOutputMode")),
+                EnumBuilder<ResultOutputMode>.Parse(ffc.GetValue<string>("positionOutputMode")),
+                EnumBuilder<ResultOutputMode>.Parse(ffc.GetValue<string>("tradeOutputMode")),
+                EnumBuilder<ResultOutputMode>.Parse(ffc.GetValue<string>("securityOutputMode")),
+                EnumBuilder<ResultOutputMode>.Parse(ffc.GetValue<string>("primitiveOutputMode"))
                 );
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            throw new NotImplementedException();
+            a.Add("aggregatePositionOutputMode",EnumBuilder<ResultOutputMode>.GetJavaName(AggregatePositionOutputMode));
+            a.Add("positionOutputMode", EnumBuilder<ResultOutputMode>.GetJavaName(PositionOutputMode));
+            a.Add("tradeOutputMode", EnumBuilder<ResultOutputMode>.GetJavaName(TradeOutputMode));
+            a.Add("securityOutputMode", EnumBuilder<ResultOutputMode>.GetJavaName(SecurityOutputMode));
+            a.Add("primitiveOutputMode", EnumBuilder<ResultOutputMode>.GetJavaName(PrimitiveOutputMode));
         }
     }
 }

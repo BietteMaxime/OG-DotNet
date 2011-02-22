@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.engine.value;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
@@ -13,7 +14,7 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly Dictionary<string, ValueProperties> _portfolioRequirementsBySecurityType;
 
 
-        private ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, ValueProperties> portfolioRequirementsBySecurityType)
+        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, ValueProperties> portfolioRequirementsBySecurityType)
         {
             _name = name;
             _specificRequirements = specificRequirements;

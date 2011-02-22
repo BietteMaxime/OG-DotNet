@@ -83,5 +83,12 @@ namespace OGDotNet.Mappedtypes.engine.View
         {
             return new ValueProperties(_properties.Where(predicate).ToDictionary(k => k.Key, v => v.Value));
         }
+
+        public bool IsSatisfiedBy(ValueProperties properties)
+        {
+            if (this.Properties.Count == 0)
+                return true;
+            throw new NotImplementedException();
+        }
     }
 }

@@ -2,7 +2,7 @@
 using System.Threading;
 using Apache.NMS;
 using OGDotNet.Mappedtypes.Core.Position;
-using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.LiveData;
 
 namespace OGDotNet.Model.Resources

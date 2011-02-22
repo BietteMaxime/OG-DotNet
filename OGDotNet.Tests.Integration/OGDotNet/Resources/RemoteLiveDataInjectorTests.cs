@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Fudge.Types;
 using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;

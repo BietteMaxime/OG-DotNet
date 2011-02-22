@@ -36,7 +36,6 @@ namespace OGDotNet.Model
                             throw new ArgumentException("Too many exception messages");
                         
                         string message = messages[0];
-
                         throw BuildException(type, message);
                     }
                 }

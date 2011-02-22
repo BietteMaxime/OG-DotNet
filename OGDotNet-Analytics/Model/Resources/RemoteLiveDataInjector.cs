@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using Fudge;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Utils;
 
@@ -37,7 +39,7 @@ namespace OGDotNet.Model.Resources
 
         private static string GetValueRequirementSubPath(ValueRequirement valueRequirement)
         {
-            return Path.Combine(valueRequirement.ValueName, ComputationTargetTypeBuilder.GetJavaName(valueRequirement.TargetSpecification.Type), valueRequirement.TargetSpecification.Uid.ToString());
+            return Path.Combine(valueRequirement.ValueName, EnumBuilder<ComputationTargetType>.GetJavaName(valueRequirement.TargetSpecification.Type), valueRequirement.TargetSpecification.Uid.ToString());
         }
 
         private class PutDouble

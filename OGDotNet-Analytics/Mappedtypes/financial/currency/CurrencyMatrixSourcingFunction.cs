@@ -1,4 +1,5 @@
 ﻿using System;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.View;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 

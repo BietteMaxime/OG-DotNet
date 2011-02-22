@@ -2,6 +2,7 @@
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Common;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.View;
 
 namespace OGDotNet.Mappedtypes.financial.currency

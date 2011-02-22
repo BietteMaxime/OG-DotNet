@@ -57,7 +57,7 @@
   <ItemGroup>
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
-    <Compile Include="Builders\ComputationTargetTypeBuilder.cs" />
+    <Compile Include="Builders\EnumBuilder.cs" />
     <Compile Include="Builders\IdentifierBuilder.cs" />
     <Compile Include="Mappedtypes\Core\Common\Currency.cs" />
     <Compile Include="Mappedtypes\Core\Security\Security.cs" />
@@ -66,7 +66,7 @@
     <Compile Include="Mappedtypes\engine\depGraph\DependencyGraph\ResultOutputMode.cs" />
     <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
     <Compile Include="Mappedtypes\engine\View\ValueProperties.cs" />
-    <Compile Include="Mappedtypes\engine\View\ValueRequirement.cs" />
+    <Compile Include="Mappedtypes\engine\Value\ValueRequirement.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewCalculationConfiguration.cs" />
     <Compile Include="Builders\LabelledMatrix1DBuilder.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStrip.cs" />
@@ -88,12 +88,14 @@
     <Compile Include="Mappedtypes\financial\analytics\ircurve\InterpolatedYieldCurveSpecification.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ILocalDateDoubleTimeSeries.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
+    <Compile Include="Mappedtypes\financial\view\AddViewDefinitionRequest.cs" />
     <Compile Include="Model\Resources\RemoteCurrencyMatrixSource.cs" />
     <Compile Include="Model\Resources\RemoteHistoricalDataSource.cs" />
     <Compile Include="Model\Resources\RemoteInterpolatedYieldCurveSpecificationBuilder.cs" />
     <Compile Include="Model\MQTemplate.cs" />
     <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMaster.cs" />
     <Compile Include="Model\Resources\RemoteLiveDataInjector.cs" />
+    <Compile Include="Model\Resources\RemoteManagableViewDefinitionRepository.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinitionDocument.cs" />
     <Compile Include="Model\Resources\UriEncoding.cs" />

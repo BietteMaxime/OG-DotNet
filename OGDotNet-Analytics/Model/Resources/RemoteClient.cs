@@ -68,6 +68,14 @@ namespace OGDotNet.Model.Resources
             }
         }
 
+        public RemoteManagableViewDefinitionRepository ViewDefinitionRepository
+        {
+            get
+            {
+                return new RemoteManagableViewDefinitionRepository(_rest);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             _cts.Cancel();
