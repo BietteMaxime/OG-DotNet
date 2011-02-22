@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization.Charting;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Model.Context;
@@ -35,14 +38,14 @@ namespace OGDotNet.SecurityViewer.View
             }
         }
 
-        private Security Security
+        private IEnumerable<Security> Securities
         {
-            get { return (Security) DataContext; }
+            get { return (IEnumerable<Security>) DataContext; }
         }
         
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Title = Security.Name;
+            Title = string.Join(",",Securities.Select(s=>s.Name));
             chart.Title = Title;
             UpdateDetailsBlock();
             BeginInvokeOnIdle(delegate
@@ -55,25 +58,61 @@ namespace OGDotNet.SecurityViewer.View
         private void UpdateDetailsBlock()
         {
             var sb = new StringBuilder();
-            foreach (var propertyInfo in Security.GetType().GetProperties())
+            foreach (var security in Securities)
             {
-                sb.AppendFormat(string.Format("{0}: {1}", propertyInfo.Name, propertyInfo.GetGetMethod().Invoke(Security, null)));
-                sb.Append(Environment.NewLine);
+                sb.AppendLine(security.Name);
+                foreach (var propertyInfo in security.GetType().GetProperties())
+                {
+                    sb.AppendFormat(string.Format("{0}: {1}", propertyInfo.Name, propertyInfo.GetGetMethod().Invoke(security, null)));
+                    sb.Append(Environment.NewLine);
+                }
+                sb.AppendLine(new string('-', 12));
             }
+            
             detailsBlock.Text = sb.ToString();
         }
 
         private void UpdateChart()
         {
-            var historicalData = _dataSource.GetHistoricalData(Security.Identifiers);
-            var timeSeries = historicalData.Item2;
+            foreach (var tuple in Securities.Zip(chart.StylePalette, Tuple.Create))
+            {
+                var security = tuple.Item1;
+                var style = tuple.Item2;
+                
+                //,DateTimeOffset.Now-TimeSpan.FromDays(365),true,DateTimeOffset.Now,false)
+                var historicalData = _dataSource.GetHistoricalData(security.Identifiers);
+                var timeSeries = historicalData.Item2;
+                //NOTE: the chart understands DateTime, but not DateTime Offset
+                var tuples = timeSeries.Values.Select(t => Tuple.Create(t.Item1.LocalDateTime, t.Item2)).ToList();
 
-            //NOTE: the chart understands DateTime, but not DateTime Offset
-            var tuples = timeSeries.Values.Select(t => Tuple.Create(t.Item1.LocalDateTime, t.Item2)).ToList();
+                if (tuples.Count == 0)
+                    continue;
 
-            lineSeries.ItemsSource = tuples;
-            lineSeries.Title = historicalData.Item1.ToString();
+                var lineSeries = new LineSeries
+                                     {
+                                         IndependentValueBinding = new Binding("Item1"),
+                                         DependentValueBinding = new Binding("Item2"),
+                                         ItemsSource = tuples,
+                                         Title = security.Name,
+                                         DataPointStyle = new Style(),
+
+                                         PolylineStyle = new Style(),
+                                         LegendItemStyle = new Style()
+                                     };
+                //Data points make us even slower, and there's too many of them to be useful
+                lineSeries.DataPointStyle.Setters.Add(new Setter(VisibilityProperty, Visibility.Hidden));
+
+                //The background is set from the style palette, which sets the line color?! http://wpf.codeplex.com/discussions/207938?ProjectName=wpf
+                var backgroundSetter = style.Setters.Where(s => s is Setter).Cast<Setter>().Where(s => s.Property == BackgroundProperty).First();
+                lineSeries.DataPointStyle.Setters.Add(backgroundSetter);
+
+                chart.Series.Add(lineSeries);
+
+            }
+           
         }
+
+
 
 
         private void BeginInvokeOnIdle(Action act)
@@ -291,12 +330,12 @@ namespace OGDotNet.SecurityViewer.View
 
         private DateTimeAxis XAxis
         {
-            get { return (DateTimeAxis)lineSeries.ActualIndependentAxis; }
+            get { return (DateTimeAxis)((LineSeries) chart.Series[0]).ActualIndependentAxis; }
         }
 
         private NumericAxis YAxis
         {
-            get { return (NumericAxis)lineSeries.ActualDependentRangeAxis; }
+            get { return (NumericAxis)((LineSeries)chart.Series[0]).ActualDependentRangeAxis; }
         }
 
         private static TimeSpan Mult(TimeSpan timeSpan, double factor)

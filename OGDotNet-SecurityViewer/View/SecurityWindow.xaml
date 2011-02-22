@@ -43,7 +43,8 @@
                 <Label VerticalAlignment="Center" Name="pageCountLabel" Content="{Binding Path=Pages}" Width="40" />
                 <Button VerticalAlignment="Center" Content=">" Name="nextPage" Click="nextPage_Click" />
                 <Button VerticalAlignment="Center" Content=">>" Name="lastPage" Click="lastPage_Click" />
-            </StackPanel>
+                <Button VerticalAlignment="Center" Content="Show all" Name="showAll" Click="showAll_Click"  Margin="10,0,0,0" HorizontalAlignment="Right"/>
+        </StackPanel>
         <Separator Grid.Row="3" Height="5" Name="separator1" Width="Auto" />
         <Grid Grid.Row="4" Height="Auto" x:Name="detailsGrid" Width="Auto" >
                 <Grid.RowDefinitions>

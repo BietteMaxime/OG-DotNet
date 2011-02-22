@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -145,16 +147,29 @@ namespace OGDotNet.SecurityViewer.View
             {
                 Security security = (Security) itemGrid.SelectedItem;
 
-                var securityTimeSeriesWindow = new SecurityTimeSeriesWindow
-                                                   {
-                                                       DataContext = security,
-                                                       Context = _context,
-                                                       Owner = this,
-                                                   };
-                securityTimeSeriesWindow.ShowDialog();
+                Security[] securities = new Security[] {security};
 
+                ShowSecurities(securities);
             }
         }
+
+        private void showAll_Click(object sender, RoutedEventArgs e)
+        {
+            ShowSecurities(itemGrid.Items.Cast<Security>());
+        }
+
+        private void ShowSecurities(IEnumerable<Security> securities)
+        {
+            var securityTimeSeriesWindow = new SecurityTimeSeriesWindow
+                                               {
+                                                   DataContext = securities,
+                                                   Context = _context,
+                                                   Owner = this,
+                                               };
+            securityTimeSeriesWindow.ShowDialog();
+        }
+
+        
 
         private void grid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
