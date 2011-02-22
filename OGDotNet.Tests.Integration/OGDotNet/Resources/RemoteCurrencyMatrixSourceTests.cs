@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OGDotNet.Mappedtypes.financial.currency;
 using Xunit;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
@@ -37,13 +38,25 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var matchedTargets = new HashSet<Currency>();
             foreach (var sourceCurrency in currencyMatrix.SourceCurrencies)
             {
-                var foundTargets = currencyMatrix.TargetCurrencies.Where(targetCurrency => currencyMatrix.GetConversion(sourceCurrency, targetCurrency) != null);
+                var foundTargets = currencyMatrix.TargetCurrencies.Where(targetCurrency => currencyMatrix.GetConversion(sourceCurrency, targetCurrency) != null).ToList();
                 Assert.NotEmpty(foundTargets);
                 foreach (var foundTarget in foundTargets)
                 {
                     matchedTargets.Add(foundTarget);
-                    valueTypes.Add(currencyMatrix.GetConversion(sourceCurrency, foundTarget).GetType());
+
+                    var fwd = currencyMatrix.GetConversion(sourceCurrency,foundTarget);
+                    var bwd = currencyMatrix.GetConversion(foundTarget, sourceCurrency);
+
+                    Assert.Equal(bwd, fwd.GetReciprocal());
+                    Assert.Equal(fwd, bwd.GetReciprocal());
+                    valueTypes.Add(fwd.GetType());
                 }
+
+                Assert.Contains(Currency.Create("USD"), foundTargets);
+                Assert.Contains(sourceCurrency, foundTargets);
+                var identityConversion = currencyMatrix.GetConversion(sourceCurrency, sourceCurrency);
+                Assert.True(identityConversion is CurrencyMatrixValue.CurrencyMatrixFixed);
+                Assert.Equal(1.0,((CurrencyMatrixValue.CurrencyMatrixFixed)identityConversion).FixedValue);
             }
 
             foreach (var targetCurrency in currencyMatrix.TargetCurrencies)

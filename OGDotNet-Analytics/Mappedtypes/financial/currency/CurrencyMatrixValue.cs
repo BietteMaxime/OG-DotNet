@@ -6,7 +6,7 @@ using OGDotNet.Mappedtypes.engine.View;
 
 namespace OGDotNet.Mappedtypes.financial.currency
 {
-    public abstract class CurrencyMatrixValue
+    public abstract class CurrencyMatrixValue : IEquatable<CurrencyMatrixValue>
     {
         public abstract CurrencyMatrixValue GetReciprocal();
 
@@ -39,6 +39,11 @@ namespace OGDotNet.Mappedtypes.financial.currency
             {
                 return new CurrencyMatrixFixed(1 / _fixedValue);
             }
+
+            protected override bool EqualsInner(CurrencyMatrixValue other)
+            {
+                return ((CurrencyMatrixFixed) other)._fixedValue == _fixedValue;//TODO : this is mental
+            }
         }
 
         public class CurrencyMatrixCross : CurrencyMatrixValue
@@ -59,6 +64,10 @@ namespace OGDotNet.Mappedtypes.financial.currency
             public override CurrencyMatrixValue GetReciprocal()
             {
                 return this;
+            }
+            protected override bool EqualsInner(CurrencyMatrixValue other)
+            {
+                return ((CurrencyMatrixCross)other)._crossCurrency == _crossCurrency;
             }
         }
 
@@ -99,6 +108,22 @@ namespace OGDotNet.Mappedtypes.financial.currency
                 throw new NotImplementedException();
             }
 
+            protected override bool EqualsInner(CurrencyMatrixValue other)
+            {
+                var otherReq = (CurrencyMatrixValueRequirement)other;
+                return otherReq._valueRequirement == this.ValueRequirement && otherReq._reciprocal == this._reciprocal;
+            }
         }
+
+        public bool Equals(CurrencyMatrixValue other)
+        {
+            if (other == null)
+                return false;
+            if (other.GetType() != this.GetType())
+                return false;
+            return EqualsInner(other);
+        }
+
+        protected  abstract bool EqualsInner(CurrencyMatrixValue other);
     }
 }
