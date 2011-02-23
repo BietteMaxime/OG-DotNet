@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using OGDotNet.Model.Resources;
@@ -14,11 +13,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                                                                       //Broken
                                                                       "TestDefinition",
-                                                                      "jonathan/b1232530-38ed-11e0-8000-541213631ee5/Test Bond View (0)",
-                                                                      "Bond Future Test View",
-                                                                      "Cash Equity Detailed Test View",
-                                                                      "Cash Equity Test View",
                                                                       "Swap Test View",
+                                                                      "Primitives Only"
                                                                   };
 
         private static bool IsSlowTickingView(RemoteView view)
@@ -66,8 +62,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             get
             {
-                var remoteEngineContext = GetContext();
-                return ViewNames.Where(n => !BannedViews.Contains(n)).Select(n => remoteEngineContext.ViewProcessor.GetView(n)).Where(n => ! IsSlowTickingView(n));
+                return Views.Where(n => ! IsSlowTickingView(n));
             }
         }
     }
