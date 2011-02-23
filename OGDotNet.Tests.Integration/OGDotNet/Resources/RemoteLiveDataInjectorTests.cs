@@ -17,7 +17,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
     public class RemoteLiveDataInjectorTests : TestWithContextBase
     {
         [Fact]
-        public void CanInjectValue()
+        public void CanAddValue()
         {
             RemoteView remoteView = GetView();
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
@@ -25,7 +25,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Fact]
-        public void CanDeleteValue()
+        public void CanRemoveValue()
         {
             RemoteView remoteView = GetView();
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
@@ -55,6 +55,32 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var viewComputationResultModel = remoteViewClient.GetLatestResult();
                     var result=viewComputationResultModel.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
                     Assert.Equal(newValue, (double) result.ComputedValue.Value);
+                }
+            }
+        }
+
+        [Fact]
+        public void RemoveChangesResults()
+        {
+            RemoteView remoteView = GetView();
+            var valueRequirement = GetRequirement();
+
+            var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
+            const double newValue = 1234.5678;
+            
+            using (var cancellationTokenSource = new CancellationTokenSource())
+            {
+                liveDataOverrideInjector.AddValue(valueRequirement, newValue);
+                liveDataOverrideInjector.RemoveValue(valueRequirement);
+                remoteView.Init(cancellationTokenSource.Token);
+
+                using (var remoteViewClient = remoteView.CreateClient())
+                {
+                    remoteViewClient.Start();
+                    while (!remoteViewClient.ResultAvailable) { }
+                    var viewComputationResultModel = remoteViewClient.GetLatestResult();
+                    var result = viewComputationResultModel.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
+                    Assert.NotEqual(newValue, (double)result.ComputedValue.Value);
                 }
             }
         }
