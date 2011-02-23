@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using Fudge.Types;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.View;
@@ -35,11 +33,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
 
         [Fact]
-        public void ValueChangesResults()
+        public void ValueChangesResultsOnSwapTestView()
         {
             RemoteView remoteView = GetView();
-
-
             var valueRequirement = GetRequirement();
 
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
@@ -66,13 +62,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+
         private RemoteView GetView()
         {
-            return Context.ViewProcessor.GetView("Primitives Only");
+            return Context.ViewProcessor.GetView("Swap Test View");
         }
         private static ValueRequirement GetRequirement()
         {
-            return new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::AAPL US Equity")));
+            return new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy")));
         }
 
         private static void  WaitFor(IEnumerator<ViewComputationResultModel> enumerator, ValueRequirement valueRequirement, Predicate<object> match)
