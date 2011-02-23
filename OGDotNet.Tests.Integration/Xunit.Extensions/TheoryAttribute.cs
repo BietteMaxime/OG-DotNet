@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Xunit.Sdk;
@@ -19,7 +18,15 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                 return ParameterGenerationTimedOutCommand.GetSingleCommand(method, timedOutTrace);
             }
 
-            return testCommands.Select(cmd => new CustomizingCommand(cmd));
+            IEnumerable<CustomizingCommand> serialCommands = testCommands.Select(cmd => new CustomizingCommand(cmd));
+            return Parallel ? ParallelCommandGroup.WrapGroup(serialCommands) : serialCommands;
+        }
+
+        private bool _parallel=true;
+        public bool Parallel
+        {
+            get { return _parallel; }
+            set { _parallel = value; }
         }
 
         private class ParameterGenerationTimedOutCommand : TestCommand
@@ -33,7 +40,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
 
             public override MethodResult Execute(object testClass)
             {
-                TimeoutException inner = new TimeoutException("Parameter generation timed out");
+                var inner = new TimeoutException("Parameter generation timed out");
                 throw ExceptionUtility.GetExceptionWithStackTrace(inner, _timedOutTrace);                
             }
 

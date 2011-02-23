@@ -83,6 +83,7 @@
     <Compile Include="Xunit.Extensions\ExceptionUtility.cs" />
     <Compile Include="Xunit.Extensions\FactAttribute.cs" />
     <Compile Include="Xunit.Extensions\ManualTimeout.cs" />
+    <Compile Include="Xunit.Extensions\ParallelCommandGroup.cs" />
     <Compile Include="Xunit.Extensions\TheoryAttribute.cs" />
     <Compile Include="OGDotNet\Resources\ViewTestsBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
