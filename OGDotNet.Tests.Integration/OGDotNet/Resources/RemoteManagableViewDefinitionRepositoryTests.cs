@@ -8,6 +8,7 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
+using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
@@ -125,7 +126,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static ViewDefinition GetViewDefinition(ValueRequirement req)
         {
-            var viewDefinition = new ViewDefinition( Guid.NewGuid().ToString());
+            var viewDefinition = new ViewDefinition(TestUtils.GetUniqueName());
 
             var viewCalculationConfiguration = new ViewCalculationConfiguration("Default", new List<ValueRequirement> { req }, new Dictionary<string, ValueProperties>());
             viewDefinition.CalculationConfigurationsByName.Add("Default", viewCalculationConfiguration);

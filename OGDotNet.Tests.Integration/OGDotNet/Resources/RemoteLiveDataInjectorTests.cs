@@ -9,6 +9,7 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
+using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
@@ -88,7 +89,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private RemoteView GetView()
         {
-            var viewDefinition = new ViewDefinition(string.Format("{0}-{1}", typeof(RemoteLiveDataInjectorTests).FullName, Guid.NewGuid().ToString()));
+            var viewDefinition = new ViewDefinition(TestUtils.GetUniqueName());
             viewDefinition.CalculationConfigurationsByName.Add("Default", new ViewCalculationConfiguration("Default", new List<ValueRequirement>(){GetRequirement()},new Dictionary<string, ValueProperties>() ));
             using (var remoteClient = Context.CreateUserClient())
             {

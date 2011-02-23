@@ -4,6 +4,7 @@ using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Model.Resources;
+using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
@@ -181,7 +182,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         public static YieldCurveDefinitionDocument GenerateDocument()
         {
-            string curveName = "My very special curve" + Guid.NewGuid();
+            string curveName = TestUtils.GetUniqueName();
 
             var yieldCurveDefinition = new YieldCurveDefinition(Currency.Create("USD"), curveName, "Linear"){Region = new Identifier("SOMEWHERE","Europe")};
             yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.CASH });

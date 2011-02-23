@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.financial.currency;
+using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -19,7 +21,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanGetNonExistantMatrix()
         {
             var source = Context.CurrencyMatrixSource;
-            Assert.Null(source.GetCurrencyMatrix("NonExistant"+Guid.NewGuid()));
+            Assert.Null(source.GetCurrencyMatrix(TestUtils.GetUniqueName()));
         }
 
         [Fact]

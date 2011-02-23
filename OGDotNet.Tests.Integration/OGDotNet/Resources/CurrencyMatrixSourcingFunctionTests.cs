@@ -9,7 +9,9 @@ using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.currency;
 using OGDotNet.Mappedtypes.financial.view;
+using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
+using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -53,23 +55,30 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var remoteClient = Context.CreateUserClient())
             {
-                var viewDefinition = new ViewDefinition(Guid.NewGuid().ToString());
+                var viewDefinition = new ViewDefinition(TestUtils.GetUniqueName());
 
                 var viewCalculationConfiguration = new ViewCalculationConfiguration("Default", new List<ValueRequirement> { req }, new Dictionary<string, ValueProperties>());
                 viewDefinition.CalculationConfigurationsByName.Add("Default", viewCalculationConfiguration);
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
 
-                var remoteView = Context.ViewProcessor.GetView(viewDefinition.Name);
-                remoteView.Init();
-                var remoteViewClient = remoteView.CreateClient();
-                foreach (var viewComputationResultModel in remoteViewClient.GetResults(cancellationTokenSource.Token))
+                try
                 {
-                    foreach (var val in viewComputationResultModel.AllResults)
+                    var remoteView = Context.ViewProcessor.GetView(viewDefinition.Name);
+                    remoteView.Init();
+                    var remoteViewClient = remoteView.CreateClient();
+                    foreach (var viewComputationResultModel in remoteViewClient.GetResults(cancellationTokenSource.Token))
                     {
-                        Debug.Assert(val.CalculationConfiguration == "Default");
-                        Debug.Assert(req.IsSatisfiedBy(val.ComputedValue.Specification));
-                        return val.ComputedValue.Value;
+                        foreach (var val in viewComputationResultModel.AllResults)
+                        {
+                            Debug.Assert(val.CalculationConfiguration == "Default");
+                            Debug.Assert(req.IsSatisfiedBy(val.ComputedValue.Specification));
+                            return val.ComputedValue.Value;
+                        }
                     }
+                }
+                finally
+                {
+                    remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewDefinition.Name);
                 }
             }
             throw new NotImplementedException();
