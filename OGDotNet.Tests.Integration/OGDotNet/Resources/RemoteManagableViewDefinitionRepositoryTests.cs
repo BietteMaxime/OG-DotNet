@@ -25,24 +25,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
-        public void CanAddPrimitiveView()
-        {
-            ValueRequirement req = GetRequirement();
-
-            using (var remoteClient = Context.CreateUserClient())
-            {
-                ViewDefinition vd = GetViewDefinition(req);
-                
-                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
-
-                var roundTripped = Context.ViewProcessor.GetView(vd.Name);
-                Assert.NotNull(roundTripped);
-
-                AssertEquivalent(vd, roundTripped.Definition);
-            }
-        }
-
-        [Xunit.Extensions.Fact]
         public void CanAddAndRemovePrimitiveView()
         {
             ValueRequirement req = GetRequirement();
@@ -52,6 +34,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 ViewDefinition vd = GetViewDefinition(req);
 
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
+
+                var roundTripped = Context.ViewProcessor.GetView(vd.Name);
+                Assert.NotNull(roundTripped);
+
+                AssertEquivalent(vd, roundTripped.Definition);
+
                 remoteClient.ViewDefinitionRepository.RemoveViewDefinition(vd.Name);
 
                 Assert.DoesNotContain(vd.Name, Context.ViewProcessor.ViewNames);
