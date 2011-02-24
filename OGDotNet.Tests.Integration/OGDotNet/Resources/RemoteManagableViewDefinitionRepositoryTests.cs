@@ -10,6 +10,7 @@ using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
+using Xunit.Extensions;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -24,14 +25,22 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Xunit.Extensions.Fact]
-        public void CanAddAndRemovePrimitiveView()
+        [Xunit.Extensions.Theory]
+        [InlineData("Simples")]
+        [InlineData("Spaces Spaces")]
+        [InlineData("Dots.Dots")]
+        [InlineData("ForwardSlash/")]
+        [InlineData("BackwardSlash\\")]
+        //PLAT-1108 [InlineData("Colons:")]
+        //PLAT-1108 [InlineData("Equals=")]
+        //PLAT-1108 [InlineData("Evil\\/.?#^5%")]
+        public void CanAddAndRemovePrimitiveView(string hardUriPart)
         {
             ValueRequirement req = GetRequirement();
 
             using (var remoteClient = Context.CreateUserClient())
             {
-                ViewDefinition vd = GetViewDefinition(req);
+                ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName()+hardUriPart);
 
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
 
@@ -112,9 +121,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(a.TradeOutputMode, b.TradeOutputMode);
         }
 
-        private static ViewDefinition GetViewDefinition(ValueRequirement req)
+        private static ViewDefinition GetViewDefinition(ValueRequirement req, string name)
         {
-            var viewDefinition = new ViewDefinition(TestUtils.GetUniqueName());
+            var viewDefinition = new ViewDefinition(name);
 
             var viewCalculationConfiguration = new ViewCalculationConfiguration("Default", new List<ValueRequirement> { req }, new Dictionary<string, ValueProperties>());
             viewDefinition.CalculationConfigurationsByName.Add("Default", viewCalculationConfiguration);
