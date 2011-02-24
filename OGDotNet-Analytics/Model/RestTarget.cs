@@ -18,7 +18,6 @@ namespace OGDotNet.Model
 
         public RestTarget(OpenGammaFudgeContext fudgeContext, string serviceUri) :this(fudgeContext, new Uri(serviceUri))
         {
-            
         }
         public RestTarget(OpenGammaFudgeContext fudgeContext, Uri serviceUri)
         {
@@ -26,6 +25,12 @@ namespace OGDotNet.Model
             _serviceUri = serviceUri;
         }
 
+        public RestTarget Resolve(params string[] segments)
+        {
+            if (!segments.Any())
+                return this;
+            return Resolve(segments.First()).Resolve(segments.Skip(1).ToArray());
+        }
         public RestTarget Resolve(string method, params Tuple<string,string>[] queryParams)
         {
             var safeMethod = Uri.EscapeDataString(method);
