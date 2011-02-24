@@ -35,11 +35,13 @@ namespace OGDotNet.Model
             queryParams.Select(p => string.Format("{0}={1}", Uri.EscapeDataString(p.Item1), Uri.EscapeDataString(p.Item2))));
             var serviceUri = uriBuilder.Uri;
 
+            UriHacks.LeaveDotsAndSlashesEscaped(serviceUri);
             Debug.Assert(_serviceUri.IsBaseOf(serviceUri));
-            Debug.Assert(serviceUri.Segments.Last() == method);
+            Debug.Assert(serviceUri.Segments.Last() == safeMethod);
             
             return new RestTarget(_fudgeContext, serviceUri);
         }
+
 
         public RestTarget Create(object reqObj)
         {

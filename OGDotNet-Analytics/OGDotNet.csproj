@@ -100,6 +100,7 @@
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinitionDocument.cs" />
     <Compile Include="Model\Resources\UriEncoding.cs" />
     <Compile Include="Model\RestExceptionMapping.cs" />
+    <Compile Include="Model\UriHacks.cs" />
     <Compile Include="OGDotNetModule.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixSourcingFunction.cs" />
