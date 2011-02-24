@@ -93,7 +93,6 @@ namespace OGDotNet.Model.Context
                 foreach (var uri in potentialServiceId.Value)
                 {
                     var webRequest = (HttpWebRequest)WebRequest.Create(uri);
-                    webRequest.Timeout = 5000;
 
                     var result = webRequest.BeginGetResponse(null, serviceId);
                     asyncRequests.Add(new Tuple<string, HttpWebRequest, IAsyncResult>(serviceId, webRequest, result));
@@ -105,7 +104,17 @@ namespace OGDotNet.Model.Context
             {
 
                 var waitHandles = asyncRequests.Select(kvp => kvp.Item3.AsyncWaitHandle).ToArray();
-                var index = WaitHandle.WaitAny(waitHandles);
+
+                var index = WaitHandle.WaitAny(waitHandles, 5000); //Have to timeout by hand, see http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx
+                if (index == WaitHandle.WaitTimeout)
+                {
+                    foreach (var req in asyncRequests)
+                    {
+                        req.Item2.Abort();
+                    }
+                    continue;
+                }
+
                 var completedRequest = asyncRequests[index];
                 asyncRequests.RemoveAt(index);
 
