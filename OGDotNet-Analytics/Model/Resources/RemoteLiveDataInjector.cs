@@ -34,21 +34,10 @@ namespace OGDotNet.Model.Resources
 
         private RestTarget GetValueReqTarget(ValueRequirement valueRequirement)
         {
-            return _rest.Resolve(GetValueRequirementSubPath(valueRequirement));
-        }
-
-        private static string GetValueRequirementSubPath(ValueRequirement valueRequirement)
-        {
-            return Path.Combine(valueRequirement.ValueName, EnumBuilder<ComputationTargetType>.GetJavaName(valueRequirement.TargetSpecification.Type), valueRequirement.TargetSpecification.Uid.ToString());
-        }
-
-        private class PutDouble
-        {
-            public double Value
-            {
-                get;
-                set;
-            }
+            return _rest.Resolve(
+                valueRequirement.ValueName,
+                EnumBuilder<ComputationTargetType>.GetJavaName(valueRequirement.TargetSpecification.Type),
+                valueRequirement.TargetSpecification.Uid.ToString());
         }
     }
 }
