@@ -32,7 +32,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             get
             {
-                var remoteEngineContext = GetContext();
+                var remoteEngineContext = Context;
                 return remoteEngineContext.ViewProcessor.ViewNames.Where(IsNotBanned);
             }
         }
@@ -41,7 +41,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             get
             {
-                var remoteEngineContext = GetContext();
+                var remoteEngineContext = Context;
                 return ViewNames.Where(IsNotBanned).Select(n => remoteEngineContext.ViewProcessor.GetView(n));
             }
         }
