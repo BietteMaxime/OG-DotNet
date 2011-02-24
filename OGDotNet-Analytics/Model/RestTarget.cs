@@ -204,6 +204,7 @@ namespace OGDotNet.Model
             return RestExceptionMapping.GetWithExceptionMapping(delegate()
             {
                 HttpWebRequest request = GetBasicRequest();
+                request.Timeout = 200000;
                 request.Method = method;
 
                 if (reqMsg != null)
