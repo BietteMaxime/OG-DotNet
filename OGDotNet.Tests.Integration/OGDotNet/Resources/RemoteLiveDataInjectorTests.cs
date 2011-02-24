@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.view;
-using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
-using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
@@ -17,12 +11,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteLiveDataInjectorTests : TestWithContextBase
     {
+
         [Fact]
         public void CanAddValue()
         {
             RemoteView remoteView = GetView();
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
-            liveDataOverrideInjector.AddValue(GetRequirement(), 100.0);
+            liveDataOverrideInjector.AddValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy"))), 100.0);
         }
 
         [Fact]
@@ -30,7 +25,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             RemoteView remoteView = GetView();
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
-            liveDataOverrideInjector.RemoveValue(GetRequirement());
+            liveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy"))));
         }
 
 
@@ -40,7 +35,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void ValueChangesResults()
         {
             RemoteView remoteView = GetView();
-            var valueRequirement = GetRequirement();
+            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy")));
 
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
             const double newValue = 1234.5678;
@@ -64,7 +59,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void RemoveChangesResults()
         {
             RemoteView remoteView = GetView();
-            var valueRequirement = GetRequirement();
+            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy")));
 
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
             const double newValue = 1234.5678;
@@ -86,20 +81,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-
         private RemoteView GetView()
         {
-            var viewDefinition = new ViewDefinition(TestUtils.GetUniqueName());
-            viewDefinition.CalculationConfigurationsByName.Add("Default", new ViewCalculationConfiguration("Default", new List<ValueRequirement>(){GetRequirement()},new Dictionary<string, ValueProperties>() ));
-            using (var remoteClient = Context.CreateUserClient())
-            {
-                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
-            }
-            return Context.ViewProcessor.GetView(viewDefinition.Name);
-        }
-        private static ValueRequirement GetRequirement()
-        {
-            return new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy")));
+            return CreateView(new ValueRequirement(
+                "Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy")))
+                );
         }
     }
 }
