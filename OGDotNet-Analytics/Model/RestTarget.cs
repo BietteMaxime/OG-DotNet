@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -31,8 +32,13 @@ namespace OGDotNet.Model
             var uriBuilder = new UriBuilder(_serviceUri);
             uriBuilder.Path = Path.Combine(uriBuilder.Path, safeMethod);
             uriBuilder.Query = String.Join("&",
-                                           queryParams.Select(p => string.Format("{0}={1}", Uri.EscapeDataString(p.Item1), Uri.EscapeDataString(p.Item2))));
-            return new RestTarget(_fudgeContext, uriBuilder.Uri);
+            queryParams.Select(p => string.Format("{0}={1}", Uri.EscapeDataString(p.Item1), Uri.EscapeDataString(p.Item2))));
+            var serviceUri = uriBuilder.Uri;
+
+            Debug.Assert(_serviceUri.IsBaseOf(serviceUri));
+            Debug.Assert(serviceUri.Segments.Last() == method);
+            
+            return new RestTarget(_fudgeContext, serviceUri);
         }
 
         public RestTarget Create(object reqObj)
