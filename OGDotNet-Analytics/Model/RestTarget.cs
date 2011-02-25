@@ -99,6 +99,11 @@ namespace OGDotNet.Model
             {
                 return PostFudge(null);
             }
+            else if (_fudgeContext.TypeDictionary.GetByCSharpType(reqObj.GetType()) != null)
+            {
+                var reqMsg = _fudgeContext.NewMessage(new Field("value", reqObj));
+                return PostFudge(reqMsg);    
+            }
             else
             {
                 var reqMsg = _fudgeContext.GetSerializer().SerializeToMsg(reqObj);

@@ -26,14 +26,15 @@ namespace OGDotNet.Model.Resources
         public IEnumerable<ViewComputationResultModel> GetResults(CancellationToken token)
         {
             Start();
-            while (!ResultAvailable)
-            {
-                if (token.IsCancellationRequested) yield break;
-            }
 
             if (token.IsCancellationRequested) yield break;
             using (var deltaStream = StartDeltaStream())
             {//NOTE: by starting the delta stream first I believe I am ok to use this latest result
+
+                while (!ResultAvailable)
+                {
+                    if (token.IsCancellationRequested) yield break;
+                }
 
                 if (token.IsCancellationRequested) yield break;
                 ViewComputationResultModel results = GetLatestResult();
@@ -99,6 +100,12 @@ namespace OGDotNet.Model.Resources
                 var reponse = _rest.Resolve("resultAvailable").GetFudge();
                 return 1 == (sbyte) (reponse.GetByName("value").Value);
             }
+        }
+
+
+        public ViewComputationResultModel RunOneCycle(long valuationTime)
+        {
+            return _rest.Resolve("runOneCycle").Post<ViewComputationResultModel>(valuationTime, "runOneCycle");
         }
 
         public ViewComputationResultModel GetLatestResult()

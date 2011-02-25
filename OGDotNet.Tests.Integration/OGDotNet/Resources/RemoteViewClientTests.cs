@@ -32,6 +32,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Theory]
+        [TypedPropertyData("Views")]
+        public void CanRunOneCycle(RemoteView view)
+        {
+            using (var remoteViewClient = view.CreateClient())
+            {
+                var viewComputationResultModel = remoteViewClient.RunOneCycle(1000L);
+                Assert.NotNull(viewComputationResultModel);
+            }
+        }
+
+        [Theory]
         [TypedPropertyData("FastTickingViews")]
         public void CanGetManyResults(RemoteView view)
         {
