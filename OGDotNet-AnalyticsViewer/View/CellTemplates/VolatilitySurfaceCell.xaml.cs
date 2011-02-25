@@ -147,7 +147,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         }
 
-        const double GraphOffset=0.8;
+
+        const double GraphOffset = 0.4;
+        const int ProjectedCurveSize = 400;
+
+        /// <summary>
+        /// NOTE: these graphs are not on the same axis as the surface, since they are to scale
+        /// </summary>
         private Model3DGroup BuildGraphModel()
         {
             return new Model3DGroup
@@ -159,8 +165,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                         }
                        };
         }
-
-        const int ProjectedCurveSize = 400;
+        
         private CurveControl _xSliceCurveControl;
         private GeometryModel3D BuildXSliceGraphModel()
         {
