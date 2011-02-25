@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
@@ -29,7 +28,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurity(new IdentifierBundle()));
         }
 
-        [Fact(Skip = "Known fault - [TODO add JIRA ID]")]
+        [Fact]
         public void CanDoMissingUidQuery()
         {
             var remoteSecuritySource = Context.SecuritySource;
