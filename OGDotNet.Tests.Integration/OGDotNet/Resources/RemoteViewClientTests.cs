@@ -6,6 +6,7 @@ using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
+using OGDotNet.Utils;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
@@ -27,18 +28,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("Views")]
         public void CanStartAndGetAResult(RemoteView view)
         {
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
-            {
-                var cts = new CancellationTokenSource();
-                var resultsEnum = remoteViewClient.GetResults(cts.Token);
-
-                foreach (var viewComputationResultModel in resultsEnum)
-                {
-                    Assert.NotNull(viewComputationResultModel);
-                    break;
-                }
-            }
+            Assert.NotNull(GetOneResultCache.Get(view.Name));
         }
 
         [Theory]
@@ -177,63 +167,58 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
 
+        readonly static Memoizer<string, ViewComputationResultModel> GetOneResultCache = new Memoizer<string, ViewComputationResultModel>(GetOneResult);
+        private static ViewComputationResultModel GetOneResult(string viewName)
+        {
+            var view = Context.ViewProcessor.GetView(viewName);
+
+            view.Init();
+            using (var remoteViewClient = view.CreateClient())
+            {
+                var cts = new CancellationTokenSource();
+                var resultsEnum = remoteViewClient.GetResults(cts.Token);
+
+                foreach (var viewComputationResultModel in resultsEnum)
+                {
+                    return viewComputationResultModel;
+                }
+            }
+            throw new Exception();
+        }
+
         [Theory]
         [TypedPropertyData("FastTickingViews")]
         public void ViewResultsMatchDefinition(RemoteView view)
         {
             var countMaxExpectedValues = CountMaxExpectedValues(view);
 
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
+            var viewComputationResultModel = GetOneResultCache.Get(view.Name);
+
+            foreach (var viewResultEntry in viewComputationResultModel.AllResults)
             {
-                var cts = new CancellationTokenSource();
-                var resultsEnum = remoteViewClient.GetResults(cts.Token);
-
-                int cycles = 1;
-
-                foreach (var viewComputationResultModel in resultsEnum)
-                {
-                    foreach (var viewResultEntry in viewComputationResultModel.AllResults)
-                    {
-                        Assert.NotNull(viewResultEntry.ComputedValue.Value);
-                        AssertDefinitionContains(view, viewResultEntry);
-                    }
-
-                    
-                    var countActualValues = viewComputationResultModel.AllResults.Count();
-                        
-                    Console.Out.WriteLine("{0} {1} {2}",view.Name, countActualValues, countMaxExpectedValues);
-                    Assert.InRange(countActualValues, 1, countMaxExpectedValues);
-
-                    if (--cycles <=0) 
-                        return;
-                }
-
+                Assert.NotNull(viewResultEntry.ComputedValue.Value);
+                AssertDefinitionContains(view, viewResultEntry);
             }
+
+
+            var countActualValues = viewComputationResultModel.AllResults.Count();
+
+            Console.Out.WriteLine("{0} {1} {2}", view.Name, countActualValues, countMaxExpectedValues);
+            Assert.InRange(countActualValues, 1, countMaxExpectedValues);
         }
 
         [Theory]
         [TypedPropertyData("Views")]
         public void ViewResultsHaveSaneValues(RemoteView view)
         {
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
+            var viewComputationResultModel = GetOneResultCache.Get(view.Name);
+            
+            foreach (var viewResultEntry in viewComputationResultModel.AllResults)
             {
-                var cts = new CancellationTokenSource();
-                var resultsEnum = remoteViewClient.GetResults(cts.Token);
-
-                foreach (var viewComputationResultModel in resultsEnum)
-                {
-                    foreach (var viewResultEntry in viewComputationResultModel.AllResults)
-                    {
-                        ValueAssertions.AssertSensibleValue(viewResultEntry.ComputedValue.Value);
-                    }
-                    break;
-                }
-
+                ValueAssertions.AssertSensibleValue(viewResultEntry.ComputedValue.Value);
             }
         }
-        
+
         private static void AssertDefinitionContains(RemoteView view, ViewResultEntry viewResultEntry)
         {
             var configuration = view.Definition.CalculationConfigurationsByName[viewResultEntry.CalculationConfiguration];
