@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 
@@ -43,42 +44,49 @@ namespace OGDotNet.Model
             }
         }
 
-        private static Exception BuildException(string javaType)
+        private static readonly IDictionary<string, Type> DotNetTypesByJavaTypeName = new Dictionary<string, Type>
+                                                {
+                    {"java.lang.IllegalArgumentException", typeof(ArgumentException)},
+                    {"java.lang.NullPointerException", typeof(NullReferenceException)},
+                    {"java.lang.IllegalStateException", typeof(InvalidOperationException)},
+                    //TODO "com.opengamma.OpenGammaRuntimeException":
+                    //TODO "org.fudgemsg.FudgeRuntimeException":
+                                                };
+
+        private static Exception BuildException(string javaType, string message = null)
         {
-            Type exceptionType = GetExceptionType(javaType);
-
-            ConstructorInfo constructorInfo = exceptionType.GetConstructor(new Type[] {});
-            if (constructorInfo == null)
-                throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
-            return (Exception)constructorInfo.Invoke(new object[] {});
-        }
-
-        private static Exception BuildException(string javaType, string message)
-        {
-            Type exceptionType = GetExceptionType(javaType);
-
-            ConstructorInfo constructorInfo = exceptionType.GetConstructor(new[] {typeof(string)});
-            if (constructorInfo == null)
-                throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}",javaType,exceptionType),"javaType");
-            if (constructorInfo.GetParameters()[0].Name != "message")
-                throw new ArgumentException(String.Format("Exception type {0}->{1} expectes {2} not message" , javaType, exceptionType, message), "javaType");
-            return (Exception) constructorInfo.Invoke(new object[] {message});
-        }
-
-        private static Type GetExceptionType(string javaType)
-        {
-            switch (javaType)
+            Type exceptionType;
+            if (DotNetTypesByJavaTypeName.TryGetValue(javaType, out exceptionType))
             {
-                case "java.lang.IllegalArgumentException":
-                    return typeof (ArgumentException);
-                case "java.lang.NullPointerException":
-                    return typeof (NullReferenceException);
-                //TODO case "com.opengamma.OpenGammaRuntimeException":
-                //TODO case "org.fudgemsg.FudgeRuntimeException":
-                //TODO case "java.lang.IllegalStateException":
-                default:
-                    return typeof(Exception);
+                if (message == null)
+                {
+                    ConstructorInfo constructorInfo = exceptionType.GetConstructor(new Type[] {});
+                    if (constructorInfo == null)
+                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType),"javaType");
+
+                    return (Exception) constructorInfo.Invoke(new object[] {});
+                }
+                else
+                {
+                    ConstructorInfo constructorInfo = exceptionType.GetConstructor(new[] {typeof (string)});
+
+                    if (constructorInfo == null)
+                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType),"javaType");
+                    if (constructorInfo.GetParameters()[0].Name != "message")
+                        throw new ArgumentException(String.Format("Exception type {0}->{1} expectes {2} not message", javaType, exceptionType, message), "javaType");
+                    return (Exception) constructorInfo.Invoke(new object[] {message});
+                }
             }
+            else
+            {
+                return BuildGenericException(javaType, message);
+            }
+        }
+
+
+        private static Exception BuildGenericException(string javaType, string message = null)
+        {
+            return new Exception(string.Format("{0}: {1} - {2}", javaType, message, "Unmappable java exception ocurred"));
         }
     }
 }
