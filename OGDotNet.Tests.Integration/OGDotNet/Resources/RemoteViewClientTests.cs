@@ -67,6 +67,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("Views")]
         public void CanRunOneCycle(RemoteView view)
         {
+            view.Init();
             using (var remoteViewClient = view.CreateClient())
             {
                 var viewComputationResultModel = remoteViewClient.RunOneCycle(1000L);
@@ -78,6 +79,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("Views")]
         public void CanRunOneCycleByDate(RemoteView view)
         {
+            view.Init();
             using (var remoteViewClient = view.CreateClient())
             {
                 var valuationTime = DateTimeOffset.Now;
@@ -96,6 +98,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("Views")]
         public void CanRunOneCycleByFutureDate(RemoteView view)
         {
+            view.Init();
             using (var remoteViewClient = view.CreateClient())
             {
                 var valuationTime = DateTimeOffset.Now + TimeSpan.FromDays(2);
