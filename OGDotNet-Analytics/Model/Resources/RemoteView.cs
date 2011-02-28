@@ -96,6 +96,11 @@ namespace OGDotNet.Model.Resources
             return new RemoteViewClient(_fudgeContext, clientUri, _mqTemplate);
         }
 
+        public void AssertAccessToLiveDataRequirements(UserPrincipal user)
+        {
+            _rest.Resolve("hasAccessToLiveData", Tuple.Create("userIp", user.IpAddress), Tuple.Create("userName", user.UserName)).Post();
+        }
+
         public override string ToString()
         {
             return string.Format("[View {0}]", _name);

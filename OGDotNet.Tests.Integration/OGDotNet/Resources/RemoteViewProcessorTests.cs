@@ -1,4 +1,7 @@
-﻿using OGDotNet.Model.Resources;
+﻿using System;
+using OGDotNet.Mappedtypes.engine.View.permission;
+using OGDotNet.Mappedtypes.LiveData;
+using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
@@ -31,6 +34,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var remoteViewResource = Context.ViewProcessor.GetView(viewName);
             Assert.NotNull(remoteViewResource);
             Assert.Equal(viewName, remoteViewResource.Name);
+
+            
         }
 
         [Theory]
@@ -56,6 +61,25 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 Assert.Null(portfolio);
             }
+        }
+        [Theory]
+        [TypedPropertyData("Views")]
+        public void CanAssertAccessAfterInit(RemoteView remoteView)
+        {
+            remoteView.Init();
+
+            remoteView.AssertAccessToLiveDataRequirements(new UserPrincipal("bbgintegrationtestuser", "127.0.0.1"));
+        }
+
+        [Theory]
+        [TypedPropertyData("Views")]
+        public void CanAssertFailedAccessAfterInit(RemoteView remoteView)
+        {
+            remoteView.Init();
+
+            var userPrincipal = new UserPrincipal("someOtherUser"+Guid.NewGuid(), "127.0.0.1");
+            var viewPermissionException = Assert.Throws<ViewPermissionException>(() => remoteView.AssertAccessToLiveDataRequirements(userPrincipal));
+            Assert.Contains(userPrincipal.UserName, viewPermissionException.Message);
         }
     }
 }
