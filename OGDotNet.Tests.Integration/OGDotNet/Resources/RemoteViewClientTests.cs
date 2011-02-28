@@ -26,6 +26,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         [Theory]
         [TypedPropertyData("Views")]
+        public void CanGetUid(RemoteView view)
+        {
+            view.Init();
+            using (var remoteViewClient = view.CreateClient())
+            {
+                Assert.NotNull(remoteViewClient.GetUniqueId());
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("Views")]
         public void CanStartAndGetAResult(RemoteView view)
         {
             Assert.NotNull(GetOneResultCache.Get(view.Name));

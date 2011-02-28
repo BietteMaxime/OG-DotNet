@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -111,6 +112,12 @@ namespace OGDotNet.Model.Resources
         public ViewComputationResultModel GetLatestResult()
         {
             return _rest.Resolve("latestResult").Get<ViewComputationResultModel>("latestResult");
+        }
+
+        public UniqueIdentifier GetUniqueId()
+        {
+            var restTarget = _rest.Resolve("uniqueIdentifier");
+            return restTarget.Get<UniqueIdentifier>();
         }
 
         protected override void Dispose(bool disposing)

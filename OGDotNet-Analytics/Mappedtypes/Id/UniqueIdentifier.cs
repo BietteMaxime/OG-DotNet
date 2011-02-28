@@ -183,6 +183,10 @@ namespace OGDotNet.Mappedtypes.Id
                     case VersionFudgeFieldName:
                         version = (string)field.Value;
                         break;
+                    case null:
+                        if (field.Ordinal != 0)
+                            throw new ArgumentException();
+                        break;
                     default:
                         throw new ArgumentException();
                 }
