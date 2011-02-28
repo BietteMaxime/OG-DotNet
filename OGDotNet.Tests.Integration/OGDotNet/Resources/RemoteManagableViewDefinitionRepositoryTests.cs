@@ -55,6 +55,32 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        [Xunit.Extensions.Fact]
+        public void ViewHasRightValue()
+        {
+            ValueRequirement req = GetRequirement();
+
+            using (var remoteClient = Context.CreateUserClient())
+            {
+                ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName());
+
+                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
+
+                var roundTripped = Context.ViewProcessor.GetView(vd.Name);
+                roundTripped.Init();
+                using (var remoteViewClient = roundTripped.CreateClient())
+                {
+                    var viewComputationResultModel = remoteViewClient.RunOneCycle(DateTimeOffset.Now);
+                    Assert.NotNull(viewComputationResultModel);
+                    var count = viewComputationResultModel.AllResults.Where(spec => req.IsSatisfiedBy(spec.ComputedValue.Specification)).Count();
+                    Assert.Equal(1,count);
+                }
+
+
+                remoteClient.ViewDefinitionRepository.RemoveViewDefinition(vd.Name);
+            }
+        }
+
         
 
         private static void AssertEquivalent(ViewDefinition a, ViewDefinition b)

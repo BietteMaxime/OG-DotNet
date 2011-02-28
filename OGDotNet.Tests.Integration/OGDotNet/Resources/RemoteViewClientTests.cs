@@ -75,6 +75,35 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Theory]
+        [TypedPropertyData("Views")]
+        public void CanRunOneCycleByDate(RemoteView view)
+        {
+            using (var remoteViewClient = view.CreateClient())
+            {
+                var valuationTime = DateTimeOffset.Now;
+                var viewComputationResultModel = remoteViewClient.RunOneCycle(valuationTime);
+                Assert.NotNull(viewComputationResultModel);
+
+                //Now has a higher resolution
+                Assert.InRange(valuationTime - viewComputationResultModel.ValuationTime.ToDateTimeOffset(),
+                    TimeSpan.Zero,
+                    TimeSpan.FromMilliseconds(1)
+                    );
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("Views")]
+        public void CantRunOneCycleByFutureDate(RemoteView view)
+        {
+            using (var remoteViewClient = view.CreateClient())
+            {
+                var viewComputationResultModel = remoteViewClient.RunOneCycle(DateTimeOffset.Now + TimeSpan.FromDays(2));
+                Assert.NotNull(viewComputationResultModel);
+            }
+        }
+
+        [Theory]
         [TypedPropertyData("FastTickingViews")]
         public void CanGetManyResults(RemoteView view)
         {

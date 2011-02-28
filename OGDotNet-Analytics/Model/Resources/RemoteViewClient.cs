@@ -6,6 +6,7 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.util.PublicAPI;
+using OGDotNet.Mappedtypes.util.timeseries.fast;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -106,6 +107,10 @@ namespace OGDotNet.Model.Resources
         }
 
 
+        public ViewComputationResultModel RunOneCycle(DateTimeOffset valuationTime)
+        {
+            return RunOneCycle((long) (valuationTime - DateTimeNumericEncoding.Epoch).TotalMilliseconds);
+        }
         public ViewComputationResultModel RunOneCycle(long valuationTime)
         {
             return _rest.Resolve("runOneCycle").Post<ViewComputationResultModel>(valuationTime, "runOneCycle");
