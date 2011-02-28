@@ -73,5 +73,22 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.NotEmpty(secTypes);
             ValueAssertions.AssertSensibleValue(secTypes);
         }
+
+        [Theory]
+        [TypedPropertyData("Views")]
+        public void CanGetIsLiveComputationRunning(RemoteView remoteView)
+        {
+            var isLiveComputationRunning = remoteView.IsLiveComputationRunning();
+            Assert.False(isLiveComputationRunning);
+            remoteView.Init();
+            isLiveComputationRunning = remoteView.IsLiveComputationRunning();
+            Assert.False(isLiveComputationRunning);
+            using (var client = remoteView.CreateClient())
+            {
+                client.Start();
+                isLiveComputationRunning = remoteView.IsLiveComputationRunning();
+                Assert.True(isLiveComputationRunning);
+            }
+        }
     }
 }

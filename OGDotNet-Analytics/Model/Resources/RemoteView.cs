@@ -116,6 +116,12 @@ namespace OGDotNet.Model.Resources
             return new HashSet<String>(target.Get<String[]>());
         }
 
+        public bool IsLiveComputationRunning()
+        {
+            var target = _rest.Resolve("liveComputationRunning");
+            var reponse = target.GetFudge();
+            return 1 == (sbyte)(reponse.GetByName("value").Value);
+        }
 
 
         public override string ToString()
