@@ -43,7 +43,7 @@ namespace OGDotNet.Model.Resources
                             //This post responds via JMS
                             //See the java comments for explanation
                             _rest.Resolve("init").Post(temporaryTopic.TopicName);
-                            IMessage message= null;
+                            IMessage message = null;
                             while (message == null)//TODO make this cancellable in a more sane way
                             {
                                 message = consumer.Receive(TimeSpan.FromMilliseconds(1000));
@@ -51,7 +51,7 @@ namespace OGDotNet.Model.Resources
                             }
 
 
-                            bool value = (bool) message.Properties["init"];
+                            bool value = (bool)message.Properties["init"];
 
                             if (!value)
                             {
@@ -79,11 +79,12 @@ namespace OGDotNet.Model.Resources
         {
             get
             {
-                return _rest.Resolve("definition").Get <ViewDefinition>();
+                return _rest.Resolve("definition").Get<ViewDefinition>();
             }
         }
 
-        public RemoteLiveDataInjector LiveDataOverrideInjector {
+        public RemoteLiveDataInjector LiveDataOverrideInjector
+        {
             get
             {
                 return new RemoteLiveDataInjector(_rest.Resolve("liveDataOverrideInjector"));
@@ -92,7 +93,7 @@ namespace OGDotNet.Model.Resources
 
         public RemoteViewClient CreateClient()
         {
-            
+
             var clientUri = _rest.Resolve("clients").Create(UserPrincipal.DefaultUser);
 
             return new RemoteViewClient(_fudgeContext, clientUri, _mqTemplate);
@@ -124,9 +125,12 @@ namespace OGDotNet.Model.Resources
         }
 
 
+
         public override string ToString()
         {
             return string.Format("[View {0}]", _name);
         }
     }
+
+
 }
