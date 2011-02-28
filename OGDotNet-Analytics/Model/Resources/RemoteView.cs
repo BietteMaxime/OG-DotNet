@@ -104,15 +104,18 @@ namespace OGDotNet.Model.Resources
         }
 
 
-      public IEnumerable<ValueRequirement> GetRequiredLiveData() {
-          var target = _rest.Resolve("requiredLiveData");
-          return new List<ValueRequirement>(target.Get<ValueRequirement[]>());
-      }
+        public IEnumerable<ValueRequirement> GetRequiredLiveData()
+        {
+            var target = _rest.Resolve("requiredLiveData");
+            return new List<ValueRequirement>(target.Get<ValueRequirement[]>());
+        }
 
-      public HashSet<String> GetAllSecurityTypes() {
-          var target = _rest.Resolve("allSecurityTypes");
-          return new HashSet<String>(target.Get<String[]>());
-      }
+        public HashSet<String> GetAllSecurityTypes()
+        {
+            var target = _rest.Resolve("allSecurityTypes");
+            return new HashSet<String>(target.Get<String[]>());
+        }
+
 
 
         public override string ToString()
