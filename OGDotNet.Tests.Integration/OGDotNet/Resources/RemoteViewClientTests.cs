@@ -98,8 +98,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             using (var remoteViewClient = view.CreateClient())
             {
-                var viewComputationResultModel = remoteViewClient.RunOneCycle(DateTimeOffset.Now + TimeSpan.FromDays(2));
+                var valuationTime = DateTimeOffset.Now + TimeSpan.FromDays(2);
+                var viewComputationResultModel = remoteViewClient.RunOneCycle(valuationTime);
                 Assert.NotNull(viewComputationResultModel);
+
+                //Now has a higher resolution
+                Assert.InRange(valuationTime - viewComputationResultModel.ValuationTime.ToDateTimeOffset(),
+                    TimeSpan.Zero,
+                    TimeSpan.FromMilliseconds(1)
+                    );
             }
         }
 
