@@ -19,7 +19,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             }
 
             IEnumerable<CustomizingCommand> serialCommands = testCommands.Select(cmd => new CustomizingCommand(cmd));
-            return Parallel ? ParallelCommandGroup.WrapGroup(serialCommands) : serialCommands;
+            return (!Debugger.IsAttached && Parallel) ? ParallelCommandGroup.WrapGroup(serialCommands) : serialCommands;
         }
 
         private bool _parallel=true;
