@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Utils;
@@ -32,6 +33,26 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = view.CreateClient())
             {
                 Assert.NotNull(remoteViewClient.GetUniqueId());
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("Views")]
+        public void CanGetState(RemoteView view)
+        {
+            view.Init();
+            using (var remoteViewClient = view.CreateClient())
+            {
+                var viewClientState = remoteViewClient.GetState();
+                Assert.Equal(ViewClientState.Stopped, viewClientState);
+
+                remoteViewClient.Start();
+                viewClientState = remoteViewClient.GetState();
+                Assert.Equal(ViewClientState.Started, viewClientState);
+
+                remoteViewClient.Pause();
+                viewClientState = remoteViewClient.GetState();
+                Assert.Equal(ViewClientState.Paused, viewClientState);
             }
         }
 

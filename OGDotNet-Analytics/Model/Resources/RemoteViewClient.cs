@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -119,10 +121,19 @@ namespace OGDotNet.Model.Resources
             var restTarget = _rest.Resolve("uniqueIdentifier");
             return restTarget.Get<UniqueIdentifier>();
         }
+        public ViewClientState GetState()
+        {
+            var target = _rest.Resolve("state");
+            var msg = target.GetFudge();
+
+            return EnumBuilder<ViewClientState>.Parse((string) msg.GetByOrdinal(1).Value);
+        }
 
         protected override void Dispose(bool disposing)
         {
             Stop();
         }
     }
+
+
 }
