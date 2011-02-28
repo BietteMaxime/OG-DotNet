@@ -78,6 +78,7 @@
     <Compile Include="OGDotNet\Resources\RemoteSecuritySourceTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewClientTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewProcessorTests.cs" />
+    <Compile Include="OGDotNet\Resources\RemoteViewTests.cs" />
     <Compile Include="OGDotNet\Resources\TestViewFactory.cs" />
     <Compile Include="OGDotNet\Resources\TestWithContextBase.cs" />
     <Compile Include="Xunit.Extensions\CustomizingCommand.cs" />
