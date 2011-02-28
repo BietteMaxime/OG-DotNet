@@ -109,6 +109,11 @@ namespace OGDotNet.Model.Resources
           return new List<ValueRequirement>(target.Get<ValueRequirement[]>());
       }
 
+      public HashSet<String> GetAllSecurityTypes() {
+          var target = _rest.Resolve("allSecurityTypes");
+          return new HashSet<String>(target.Get<String[]>());
+      }
+
 
         public override string ToString()
         {

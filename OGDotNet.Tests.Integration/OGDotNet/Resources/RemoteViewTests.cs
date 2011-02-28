@@ -54,14 +54,24 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Contains(userPrincipal.UserName, viewPermissionException.Message);
         }
 
-        [Theory(Parallel =  false)]
+        [Theory]
         [TypedPropertyData("Views")]
-        public void GetGetRequiredLiveData(RemoteView remoteView)
+        public void CanGetRequiredLiveData(RemoteView remoteView)
         {
             remoteView.Init();
             var requiredLiveData = remoteView.GetRequiredLiveData();
             Assert.NotEmpty(requiredLiveData);
             ValueAssertions.AssertSensibleValue(requiredLiveData);
+        }
+
+        [Theory]
+        [TypedPropertyData("Views")]
+        public void CanGetSecurityTypes(RemoteView remoteView)
+        {
+            remoteView.Init();
+            var secTypes = remoteView.GetAllSecurityTypes();
+            Assert.NotEmpty(secTypes);
+            ValueAssertions.AssertSensibleValue(secTypes);
         }
     }
 }
