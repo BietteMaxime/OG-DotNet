@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.engine.View.permission;
 
 namespace OGDotNet.Model
@@ -51,7 +52,7 @@ namespace OGDotNet.Model
                     {"java.lang.NullPointerException", typeof(NullReferenceException)},
                     {"java.lang.IllegalStateException", typeof(InvalidOperationException)},
                     {"com.opengamma.engine.view.permission.ViewPermissionException", typeof(ViewPermissionException)},
-                    //TODO "com.opengamma.OpenGammaRuntimeException":
+                    {"com.opengamma.OpenGammaRuntimeException", typeof(OpenGammaException)},
                     //TODO "org.fudgemsg.FudgeRuntimeException":
                                                 };
 

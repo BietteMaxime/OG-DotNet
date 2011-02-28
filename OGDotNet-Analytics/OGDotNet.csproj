@@ -81,6 +81,7 @@
     <Compile Include="Mappedtypes\math\curve\Curve.cs" />
     <Compile Include="Mappedtypes\math\curve\FunctionalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\financial\model\interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />
+    <Compile Include="Mappedtypes\OpenGammaException.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ArrayLocalDateDoubleTimeSeries.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\DateTimeNumericEncoding.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\FastArrayIntDoubleTimeSeries.cs" />
