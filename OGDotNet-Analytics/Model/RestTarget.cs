@@ -87,7 +87,7 @@ namespace OGDotNet.Model
         public TRet Post<TRet>(object reqObj, string subMessageField)
         {
             FudgeMsg retMsg = Post(reqObj);
-            return Deserialize<TRet>((FudgeMsg)retMsg.GetMessage(subMessageField));
+            return ProjectSubMessage<TRet>(retMsg, subMessageField);
         }
 
         public FudgeMsg Post(object reqObj = null)
@@ -155,14 +155,8 @@ namespace OGDotNet.Model
 
         public TRet Get<TRet>(string subMessageField)
         {
-            FudgeSerializer fudgeSerializer = _fudgeContext.GetSerializer();
             FudgeMsg retMsg = GetFudge();
-            if (retMsg== null)
-                return default(TRet);
-            var subMessage = retMsg.GetMessage(subMessageField);
-            if (subMessage == null)
-                return default(TRet);
-            return fudgeSerializer.Deserialize<TRet>((FudgeMsg)subMessage);
+            return ProjectSubMessage<TRet>(retMsg, subMessageField);
         }
 
         private FudgeMsg FudgeRequestImpl(string method = "GET", FudgeMsg reqMsg = null)
@@ -234,6 +228,16 @@ namespace OGDotNet.Model
             return request;
         }
 
+        private TRet ProjectSubMessage<TRet>(FudgeMsg retMsg, string subMessageField)
+        {
+            if (retMsg == null)
+                return default(TRet);
+            FudgeSerializer fudgeSerializer = _fudgeContext.GetSerializer();
+            var subMessage = retMsg.GetMessage(subMessageField);
+            if (subMessage == null)
+                return default(TRet);
+            return fudgeSerializer.Deserialize<TRet>((FudgeMsg)subMessage);
+        }
         private TRet Deserialize<TRet>(FudgeMsg retMsg)
         {
             return _fudgeContext.GetSerializer().Deserialize<TRet>(retMsg);
