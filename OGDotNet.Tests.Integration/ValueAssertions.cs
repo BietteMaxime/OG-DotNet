@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
@@ -101,6 +102,14 @@ namespace OGDotNet.Tests.Integration
                 Assert.Equal(value.XData.Count, value.YData.Count);
                 Assert.Equal(value.XData.Count, value.GetData().Count());
             }
+        }
+
+        public static void AssertSensibleValue(Security security)
+        {
+            Assert.NotEmpty(security.Name);
+            Assert.NotEmpty(security.Identifiers.Identifiers);
+            Assert.NotEmpty(security.SecurityType);
+            Assert.NotNull(security.UniqueId);
         }
 
         public static void AssertSensibleValue(VolatilitySurfaceData value)

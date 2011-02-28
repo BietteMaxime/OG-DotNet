@@ -37,7 +37,7 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        public ISecuritySource SecuritySource
+        public IFinancialSecuritySource SecuritySource
         {
             get {
                 return new RemoteSecuritySource(_fudgeContext, new RestTarget(_fudgeContext,  _serviceUris["securitySource"]));

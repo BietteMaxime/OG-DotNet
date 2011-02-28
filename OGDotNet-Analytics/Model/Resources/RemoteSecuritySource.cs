@@ -8,7 +8,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {
-    internal class RemoteSecuritySource : ISecuritySource
+    internal class RemoteSecuritySource : IFinancialSecuritySource
     {
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly RestTarget _restTarget;
@@ -31,6 +31,15 @@ namespace OGDotNet.Model.Resources
 
             Tuple<string, string>[] parameters = UriEncoding.GetParameters(bundle);
             return _restTarget.Resolve("securities").Resolve("security", parameters).Get<Security>("security");
+        }
+
+        public IEnumerable<Security> GetBondsWithIssuerName(string issuerName)
+        {
+            ArgumentChecker.NotNull(issuerName, "issuerName");
+            var target = _restTarget.Resolve("bonds", Tuple.Create("issuerName", issuerName));
+            var msg = target.GetFudge();
+            var fudgeSerializer = _fudgeContext.GetSerializer();
+            return msg.GetAllByName("security").Select(field => fudgeSerializer.Deserialize<Security>((FudgeMsg) field.Value)).ToList();
         }
 
         public ICollection<Security> GetSecurities(IdentifierBundle bundle)

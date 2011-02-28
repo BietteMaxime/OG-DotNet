@@ -44,6 +44,28 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Empty(collection);
         }
 
+        [Fact]
+        public void CanGetBondsByIssuerName()
+        {
+            var remoteSecuritySource = Context.SecuritySource;
+            var collection = remoteSecuritySource.GetBondsWithIssuerName("US TREASURY N/B");
+            Assert.NotEmpty(collection);
+            foreach (var security in collection)
+            {
+                ValueAssertions.AssertSensibleValue(security);
+                Assert.Equal("BOND", security.SecurityType);
+            }
+        }
+
+        [Fact]
+        public void CanGetNoBondsByIssuerName()
+        {
+            var remoteSecuritySource = Context.SecuritySource;
+            var collection = remoteSecuritySource.GetBondsWithIssuerName(Guid.NewGuid().ToString());
+            Assert.Empty(collection);
+        }
+
+
         private static UniqueIdentifier StupidUid
         {
             get { return UniqueIdentifier.Of("xxx", "xxx"); }
