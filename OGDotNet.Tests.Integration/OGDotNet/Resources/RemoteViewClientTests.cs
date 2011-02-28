@@ -94,7 +94,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         [Theory]
         [TypedPropertyData("Views")]
-        public void CantRunOneCycleByFutureDate(RemoteView view)
+        public void CanRunOneCycleByFutureDate(RemoteView view)
         {
             using (var remoteViewClient = view.CreateClient())
             {
