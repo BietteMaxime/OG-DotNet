@@ -166,23 +166,23 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         private IEnumerable<TreeNode> GetPortfolioNodes()
         {
             //We cache these in order to cache security names
-            _portfolioNodes = _portfolioNodes ?? GetPortfolioNodesInner(_portfolio.Root).ToList();
+            _portfolioNodes = _portfolioNodes ?? GetPortfolioNodesInner(_portfolio.Root, 0).ToList();
             return _portfolioNodes;
         }
 
 
-        private IEnumerable<TreeNode> GetPortfolioNodesInner(PortfolioNode node)
+        private IEnumerable<TreeNode> GetPortfolioNodesInner(PortfolioNode node, int depth)
         {
-            yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name, ComputationTargetType.PortfolioNode, null);
+            yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name, ComputationTargetType.PortfolioNode, null, depth);
             foreach (var position in node.Positions)
             {
                 var security = _remoteSecuritySource.GetSecurity(position.SecurityKey);
-                yield return new TreeNode(position.Identifier, String.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security);
+                yield return new TreeNode(position.Identifier, String.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security, depth+1);
             }
 
             foreach (var portfolioNode in node.SubNodes)
             {
-                foreach (var treeNode in GetPortfolioNodesInner(portfolioNode))
+                foreach (var treeNode in GetPortfolioNodesInner(portfolioNode, depth+1))
                 {
                     yield return treeNode;
                 }
@@ -196,13 +196,15 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             private readonly string _name;
             private readonly ComputationTargetType _targetType;
             private readonly Security _security;
+            private readonly int _depth;
 
-            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType, Security security)
+            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType, Security security, int depth)
             {
                 _identifier = identifier;
                 _name = name;
                 _targetType = targetType;
                 _security = security;
+                _depth = depth;
             }
 
             public string Name
@@ -218,6 +220,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             public ComputationTargetSpecification ComputationTargetSpecification
             {
                 get { return new ComputationTargetSpecification(_targetType, _identifier); }
+            }
+
+            public int Depth
+            {
+                get { return _depth; }
             }
         }
 
@@ -251,7 +258,8 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 }
 
 
-                yield return new PortfolioRow(position.Name, values, position.Security);
+                var treeName = string.Format("{0} {1}",new string('-',position.Depth), position.Name);
+                yield return new PortfolioRow(treeName, values, position.Security);
             }
         }
     }
