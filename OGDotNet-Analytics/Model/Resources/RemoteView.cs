@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Apache.NMS;
 using OGDotNet.Mappedtypes.Core.Position;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.LiveData;
 
@@ -100,6 +102,13 @@ namespace OGDotNet.Model.Resources
         {
             _rest.Resolve("hasAccessToLiveData", Tuple.Create("userIp", user.IpAddress), Tuple.Create("userName", user.UserName)).Post();
         }
+
+
+      public IEnumerable<ValueRequirement> GetRequiredLiveData() {
+          var target = _rest.Resolve("requiredLiveData");
+          return new List<ValueRequirement>(target.Get<ValueRequirement[]>());
+      }
+
 
         public override string ToString()
         {

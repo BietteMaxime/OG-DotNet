@@ -53,5 +53,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var viewPermissionException = Assert.Throws<ViewPermissionException>(() => remoteView.AssertAccessToLiveDataRequirements(userPrincipal));
             Assert.Contains(userPrincipal.UserName, viewPermissionException.Message);
         }
+
+        [Theory(Parallel =  false)]
+        [TypedPropertyData("Views")]
+        public void GetGetRequiredLiveData(RemoteView remoteView)
+        {
+            remoteView.Init();
+            var requiredLiveData = remoteView.GetRequiredLiveData();
+            Assert.NotEmpty(requiredLiveData);
+            ValueAssertions.AssertSensibleValue(requiredLiveData);
+        }
     }
 }

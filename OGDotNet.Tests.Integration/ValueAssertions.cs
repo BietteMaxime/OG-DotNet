@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
@@ -136,6 +137,12 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(value);
             Assert.InRange(value.TimeSpan, TimeSpan.Zero, TimeSpan.MaxValue);
+        }
+
+        public static void AssertSensibleValue(ValueRequirement value)
+        {
+            Assert.NotNull(value);
+            Assert.NotEmpty(value.ValueName);
         }
     }
 }
