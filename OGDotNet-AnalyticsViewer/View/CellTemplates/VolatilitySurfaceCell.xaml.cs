@@ -132,12 +132,14 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void BuildModel()
         {
+            var surfaceModel = BuildSurfaceModel();
+
             var models = new Model3DCollection
                             {
                                 new DirectionalLight(Colors.White, new Vector3D(-1, -1, -1)),
-                                BuildBaseModel(),
+                                BuildBaseModel(surfaceModel),
                                 BuildGraphModel(),
-                                BuildSurfaceModel(),
+                                surfaceModel,
                             };
 
             var groupModel = new ModelVisual3D { Content = new Model3DGroup { Children = models } };
@@ -260,39 +262,15 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
        
 
-        private static GeometryModel3D BuildBaseModel()
+        private GeometryModel3D BuildBaseModel(GeometryModel3D buildSurfaceModel)
         {
-            var brush = new SolidColorBrush(Colors.WhiteSmoke);
-            var material = new DiffuseMaterial(brush);
-
-            var normal = new Vector3D(0, 0, 1);
-
-
-            var mesh = new MeshGeometry3D
-                           {
-                               Positions = new Point3DCollection
-                                               {
-                                                   new Point3D(0, 0, 0),
-                                                   new Point3D(1, 0, 0),
-                                                   new Point3D(0, 1, 0),
-                                                   new Point3D(1, 1, 0)
-                                               },
-                               Normals = new Vector3DCollection
-                                             {
-                                                 normal,
-                                                 normal,
-                                                 normal,
-                                                 normal
-                                             },
-                               TriangleIndices = new Int32Collection
-                                                     {
-                                                         0,1,3,
-                                                         0,3,2
-                                                     }
-                           };
-
-
-            return new GeometryModel3D(mesh, material) { BackMaterial = material };
+            var geometryModel3D = new GeometryModel3D(buildSurfaceModel.Geometry, buildSurfaceModel.Material) { BackMaterial = buildSurfaceModel.BackMaterial};
+            geometryModel3D.Transform = new MatrixTransform3D(new Matrix3D(
+                                                                  1, 0, 0, 0
+                                                                  , 0, 1, 0, 0,
+                                                                  0, 0, 0, 0,
+                                                                  0, 0, 0, 1));
+            return geometryModel3D;
         }
 
         private GeometryModel3D BuildSurfaceModel()
@@ -478,7 +456,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UpdateToolTip(Point position)
         {
-            if (ToScale)
+            if (Surface == null ||ToScale)
             {
                 //TODO this isn't right if we're 'ToScale'ing
                 toolTip.IsOpen = false;
