@@ -15,12 +15,16 @@ namespace OGDotNet.Mappedtypes.engine.view
         private readonly string _name;
         private readonly UniqueIdentifier _portfolioIdentifier;
         private readonly UserPrincipal _user;
+
         private readonly ResultModelDefinition _resultModelDefinition;
-        private readonly Currency _defaultCurrency;
+
         private readonly long? _minDeltaCalcPeriod;
         private readonly long? _maxDeltaCalcPeriod;
+
         private readonly long? _minFullCalcPeriod;
         private readonly long? _maxFullCalcPeriod;
+        private readonly Currency _defaultCurrency;
+
         private readonly Dictionary<string, ViewCalculationConfiguration> _calculationConfigurationsByName;
 
 
