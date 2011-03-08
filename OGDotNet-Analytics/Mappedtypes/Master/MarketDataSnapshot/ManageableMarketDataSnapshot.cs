@@ -14,7 +14,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 
         private String _name;
 
-        private Dictionary<Identifier, ValueSnapshot> _values;
+        private Dictionary<UniqueIdentifier, ValueSnapshot> _values;
 
         //TODO private Dictionary<Pair<String, CurrencyUnit>, YieldCurveSnapshot> _yieldCurves;
 
@@ -32,7 +32,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
             set { _name = value; }
         }
 
-        public Dictionary<Identifier, ValueSnapshot> Values
+        public Dictionary<UniqueIdentifier, ValueSnapshot> Values
         {
             get { return _values; }
             set { _values = value; }
@@ -50,20 +50,20 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
                        };
         }
 
-        private static Dictionary<Identifier, ValueSnapshot> GetValues(IFudgeFieldContainer msg)
+        private static Dictionary<UniqueIdentifier, ValueSnapshot> GetValues(IFudgeFieldContainer msg)
         {
             var ffc = msg.GetMessage("values");
 
-            var ret = new Dictionary<Identifier, ValueSnapshot>();
+            var ret = new Dictionary<UniqueIdentifier, ValueSnapshot>();
 
-            Identifier key = null;
+            UniqueIdentifier key = null;
 
             foreach (var fudgeField in ffc)
             {
                 switch (fudgeField.Ordinal)
                 {
                     case 1:
-                        key = Identifier.Parse((string)fudgeField.Value);
+                        key = UniqueIdentifier.Parse((string)fudgeField.Value);
                         break;
                     case 2:
                         if (key == null)
@@ -73,7 +73,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
                                {
                                    MarketValue = (double)valueMessage.GetDouble("marketValue"),
                                    OverrideValue = valueMessage.GetDouble("overrideValue"),
-                                   Security = Identifier.Of(valueMessage.GetString("Scheme"), valueMessage.GetString("Value"))
+                                   Security = UniqueIdentifier.Of(valueMessage.GetString("Scheme"), valueMessage.GetString("Value"))
                                };
 
                         ret.Add(key, value);
@@ -97,7 +97,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
             WriteValues(a, Values);
         }
 
-        private static void WriteValues(IAppendingFudgeFieldContainer a, Dictionary<Identifier, ValueSnapshot> values)
+        private static void WriteValues(IAppendingFudgeFieldContainer a, Dictionary<UniqueIdentifier, ValueSnapshot> values)
         {
             var msg = new FudgeMsg();
             foreach (var valueSnapshot in values)

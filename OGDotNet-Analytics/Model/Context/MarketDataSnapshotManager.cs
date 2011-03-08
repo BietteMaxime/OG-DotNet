@@ -53,8 +53,7 @@ namespace OGDotNet.Model.Context
             var tempResults = remoteViewClient.RunOneCycle(valuationTime);
 
 
-            //TODO Identifier -> UID
-            return new ManageableMarketDataSnapshot { Values = requiredLiveData.ToDictionary(r => Identifier.Parse(r.TargetSpecification.Uid.ToString()), r => new ValueSnapshot { Security = Identifier.Parse(r.TargetSpecification.Uid.ToString()), MarketValue = GetValue(tempResults, r) }) };
+            return new ManageableMarketDataSnapshot { Values = requiredLiveData.ToDictionary(r => r.TargetSpecification.Uid, r => new ValueSnapshot { Security = r.TargetSpecification.Uid, MarketValue = GetValue(tempResults, r) }) };
         }
 
         private static double GetValue(ViewComputationResultModel tempResults, ValueRequirement valueRequirement)
