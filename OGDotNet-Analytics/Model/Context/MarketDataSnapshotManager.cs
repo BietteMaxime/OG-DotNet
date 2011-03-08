@@ -7,7 +7,6 @@ using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.view;
-using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Resources;
 
@@ -42,18 +41,27 @@ namespace OGDotNet.Model.Context
             view.Init();
             var requiredLiveData = view.GetRequiredLiveData();
 
-            var remoteClient = _remoteEngineContext.CreateUserClient();
+            using (var remoteClient = _remoteEngineContext.CreateUserClient())
+            {
+                var tempViewName = typeof(MarketDataSnapshotManager).FullName + Guid.NewGuid();
 
-            var tempViewName= Guid.NewGuid().ToString();
-            remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(GetView(tempViewName, requiredLiveData)));
+                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(GetView(tempViewName, requiredLiveData)));
 
-            var tempView = _remoteEngineContext.ViewProcessor.GetView(tempViewName);
-            tempView.Init();
-            var remoteViewClient = tempView.CreateClient();
-            var tempResults = remoteViewClient.RunOneCycle(valuationTime);
-
-
-            return new ManageableMarketDataSnapshot { Values = requiredLiveData.ToDictionary(r => r.TargetSpecification.Uid, r => new ValueSnapshot { Security = r.TargetSpecification.Uid, MarketValue = GetValue(tempResults, r) }) };
+                var tempView = _remoteEngineContext.ViewProcessor.GetView(tempViewName);
+                try
+                {
+                    tempView.Init();
+                    using (var remoteViewClient = tempView.CreateClient())
+                    {
+                        var tempResults = remoteViewClient.RunOneCycle(valuationTime);
+                        return new ManageableMarketDataSnapshot { Values = requiredLiveData.ToDictionary(r => r.TargetSpecification.Uid, r => new ValueSnapshot { Security = r.TargetSpecification.Uid, MarketValue = GetValue(tempResults, r) }) };
+                    }
+                }
+                finally
+                {
+                    remoteClient.ViewDefinitionRepository.RemoveViewDefinition(tempViewName);                
+                }
+            }
         }
 
         private static double GetValue(ViewComputationResultModel tempResults, ValueRequirement valueRequirement)
@@ -72,6 +80,14 @@ namespace OGDotNet.Model.Context
                                                                                                                                                                    {
                                                                                                                                                                        {"Default", new ViewCalculationConfiguration("Default", requiredLiveData.ToList(), new Dictionary<string, ValueProperties>())}
                                                                                                                                                                    });
+        }
+
+        public ManageableMarketDataSnapshot UpdateFromView(ManageableMarketDataSnapshot basis, string viewName)
+        {
+            //TODO handle portfolio/view changing
+            var newSnapshot = CreateFromView(viewName);
+
+            return new ManageableMarketDataSnapshot { Values = newSnapshot.Values.ToDictionary(v=>v.Key, v=> new ValueSnapshot{Security = v.Key, MarketValue = v.Value.MarketValue, OverrideValue = basis.Values[v.Key].OverrideValue}) };
         }
     }
 }
