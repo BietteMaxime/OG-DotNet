@@ -69,6 +69,7 @@ namespace OGDotNet.Model
 
                     return (Exception) constructorInfo.Invoke(new object[] {});
                 }
+
                 else
                 {
                     ConstructorInfo constructorInfo = exceptionType.GetConstructor(new[] {typeof (string)});

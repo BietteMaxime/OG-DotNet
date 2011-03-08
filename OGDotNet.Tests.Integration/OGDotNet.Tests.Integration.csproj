@@ -75,6 +75,7 @@
     <Compile Include="OGDotNet\Resources\RemoteHistoricalDataSourceTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteLiveDataInjectorTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteManagableViewDefinitionRepositoryTests.cs" />
+    <Compile Include="OGDotNet\Resources\RemoteMarketDataSnapshotMasterTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteSecuritySourceTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewClientTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewProcessorTests.cs" />

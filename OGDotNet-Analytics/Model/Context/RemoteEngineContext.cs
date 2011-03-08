@@ -52,6 +52,14 @@ namespace OGDotNet.Model.Context
             }
         }
 
+        public RemoteMarketDataSnapshotMaster MarketDataSnapshotMaster
+        {//TODO this is a hack, should I even be exposing this?
+            get
+            {
+                return new RemoteMarketDataSnapshotMaster(new RestTarget(_fudgeContext, _serviceUris["securitySource"].ToString().Replace("securitySource", "marketDataSnapshotMaster")));
+            }
+        }
+
         public RemoteInterpolatedYieldCurveSpecificationBuilder InterpolatedYieldCurveSpecificationBuilder
         {
             get

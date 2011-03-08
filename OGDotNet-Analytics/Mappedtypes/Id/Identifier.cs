@@ -25,6 +25,11 @@ namespace OGDotNet.Mappedtypes.Id
             _value = value;
         }
 
+        public static Identifier Of(string scheme, string value)
+        {
+            return new Identifier(scheme,value);
+        }
+
         public static Identifier Parse(string s)
         {
             string[] strings = s.Split(new[]{"::"},StringSplitOptions.None);

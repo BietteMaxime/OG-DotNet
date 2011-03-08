@@ -60,6 +60,7 @@
     <Compile Include="Builders\EnumBuilder.cs" />
     <Compile Include="Builders\IdentifierBuilder.cs" />
     <Compile Include="Mappedtypes\Core\Common\Currency.cs" />
+    <Compile Include="Mappedtypes\Core\marketdatasnapshot\ValueSnapshot.cs" />
     <Compile Include="Mappedtypes\Core\Security\Security.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
@@ -78,6 +79,9 @@
     <Compile Include="Mappedtypes\financial\analytics\LocalDateLabelledMatrix1D.cs" />
     <Compile Include="Builders\CurrencyMatrixBuilder.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixValue.cs" />
+    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableMarketDataSnapshot.cs" />
+    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotDocument.cs" />
+    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotSearchRequest.cs" />
     <Compile Include="Mappedtypes\math\curve\Curve.cs" />
     <Compile Include="Mappedtypes\math\curve\FunctionalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\financial\model\interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />
@@ -99,6 +103,7 @@
     <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMaster.cs" />
     <Compile Include="Model\Resources\RemoteLiveDataInjector.cs" />
     <Compile Include="Model\Resources\RemoteManagableViewDefinitionRepository.cs" />
+    <Compile Include="Model\Resources\RemoteMarketDataSnapshotMaster.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinitionDocument.cs" />
     <Compile Include="Model\Resources\UriEncoding.cs" />
