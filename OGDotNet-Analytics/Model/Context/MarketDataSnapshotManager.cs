@@ -13,6 +13,11 @@ using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context
 {
+    /// <summary>
+    /// This class handles creating and mutating snapshots based on Views and live data
+    /// 
+    /// TODO: this implementation probably shouldn't be client side
+    /// </summary>
     public class MarketDataSnapshotManager
     {
         private readonly RemoteEngineContext _remoteEngineContext;
@@ -48,7 +53,8 @@ namespace OGDotNet.Model.Context
             var tempResults = remoteViewClient.RunOneCycle(valuationTime);
 
 
-            return new ManageableMarketDataSnapshot { Values = requiredLiveData.ToDictionary(r => Identifier.Parse(r.TargetSpecification.Uid.ToString()), r => new ValueSnapshot() { Security = Identifier.Parse(r.TargetSpecification.Uid.ToString()), MarketValue = GetValue(tempResults, r) }) };
+            //TODO Identifier -> UID
+            return new ManageableMarketDataSnapshot { Values = requiredLiveData.ToDictionary(r => Identifier.Parse(r.TargetSpecification.Uid.ToString()), r => new ValueSnapshot { Security = Identifier.Parse(r.TargetSpecification.Uid.ToString()), MarketValue = GetValue(tempResults, r) }) };
         }
 
         private static double GetValue(ViewComputationResultModel tempResults, ValueRequirement valueRequirement)
