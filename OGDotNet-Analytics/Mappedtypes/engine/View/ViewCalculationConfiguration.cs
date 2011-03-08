@@ -12,13 +12,18 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly string _name;
         private readonly List<ValueRequirement> _specificRequirements;
         private readonly Dictionary<string, ValueProperties> _portfolioRequirementsBySecurityType;
+        private readonly ValueProperties _defaultProperties;
 
-
-        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, ValueProperties> portfolioRequirementsBySecurityType)
+        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, ValueProperties> portfolioRequirementsBySecurityType) : this(name,specificRequirements, portfolioRequirementsBySecurityType, new ValueProperties())
+        {
+            
+        }
+        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, ValueProperties> portfolioRequirementsBySecurityType, ValueProperties defaultProperties)
         {
             _name = name;
             _specificRequirements = specificRequirements;
             _portfolioRequirementsBySecurityType = portfolioRequirementsBySecurityType;
+            _defaultProperties = defaultProperties;
         }
 
         public string Name
@@ -34,6 +39,11 @@ namespace OGDotNet.Mappedtypes.engine.View
         public Dictionary<string, ValueProperties> PortfolioRequirementsBySecurityType
         {
             get { return _portfolioRequirementsBySecurityType; }
+        }
+
+        public ValueProperties DefaultProperties
+        {
+            get { return _defaultProperties; }
         }
 
         public static ViewCalculationConfiguration FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -53,8 +63,9 @@ namespace OGDotNet.Mappedtypes.engine.View
                 portfolioRequirementsBySecurityType.Add(securityType, valueProperties.Filter(p => p.Key != securitytypeKey));
             }
 
-            
-            return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType);
+            var defaultProperties = deserializer.FromField<ValueProperties>(ffc.GetByName("defaultProperties"));
+
+            return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType, defaultProperties);
         }
 
         private static List<T> GetList<T>(IFudgeFieldContainer ffc, string fieldName, IFudgeDeserializer deserializer) where T : class

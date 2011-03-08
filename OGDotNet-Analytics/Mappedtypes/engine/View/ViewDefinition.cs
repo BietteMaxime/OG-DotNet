@@ -12,7 +12,7 @@ namespace OGDotNet.Mappedtypes.engine.view
 {
     public class ViewDefinition
     {
-        private readonly string _name;
+        private string _name;
         private readonly UniqueIdentifier _portfolioIdentifier;
         private readonly UserPrincipal _user;
 
@@ -45,6 +45,7 @@ namespace OGDotNet.Mappedtypes.engine.view
         public string Name
         {
             get { return _name; }
+            set { _name = value; }
         }
 
         public UniqueIdentifier PortfolioIdentifier
@@ -163,7 +164,11 @@ namespace OGDotNet.Mappedtypes.engine.view
                     securityTypeRequirementsMsg.Add("securityType", securityTypeRequirements.Key);
                     foreach (var requirement in securityTypeRequirements.Value.Properties)
                     {
-                        securityTypeRequirementsMsg.Add("portfolioRequirement", requirement.Key);
+                        foreach (var var in requirement.Value)
+                        {
+                            securityTypeRequirementsMsg.Add("portfolioRequirement", var);    
+                        }
+                        
                         // TODO put the value constraints into the message if they're specified
                     }
 
@@ -176,8 +181,11 @@ namespace OGDotNet.Mappedtypes.engine.view
                     
                 }
 
-                //TODO delta defn, default properties
+                s.WriteInline(calcConfigMsg, "defaultProperties", calcConfig.DefaultProperties);
+                
+                //TODO delta defn
                 calcConfigMsg.Add("deltaDefinition", new FudgeMsg());
+                
                 message.Add("calculationConfiguration",calcConfigMsg);
             }
             

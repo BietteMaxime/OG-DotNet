@@ -58,6 +58,17 @@ namespace OGDotNet.Mappedtypes.engine.View
             return new ValueProperties(properties);
         }
 
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            foreach (var property in Properties)
+            {
+                foreach (var val in property.Value)
+                {
+                    a.Add(property.Key, val);    
+                }
+            }
+        }
+
         private static bool IsIndicatorType(object value)
         {
             if (value is IndicatorType)
@@ -74,10 +85,7 @@ namespace OGDotNet.Mappedtypes.engine.View
             return fudgeField.Value is IndicatorType;
         }
 
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            throw new NotImplementedException();
-        }
+
 
         internal ValueProperties Filter(Func<KeyValuePair<string,HashSet<string>>, bool> predicate)
         {
