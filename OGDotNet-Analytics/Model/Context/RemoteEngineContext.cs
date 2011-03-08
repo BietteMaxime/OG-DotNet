@@ -52,6 +52,13 @@ namespace OGDotNet.Model.Context
             }
         }
 
+        public MarketDataSnapshotManager MarketDataSnapshotManager
+        {
+            get
+            {
+                return new MarketDataSnapshotManager(this);
+            }
+        }
         public RemoteMarketDataSnapshotMaster MarketDataSnapshotMaster
         {//TODO this is a hack, should I even be exposing this?
             get
