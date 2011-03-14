@@ -9,6 +9,7 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Resources;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context
 {
@@ -17,7 +18,7 @@ namespace OGDotNet.Model.Context
     /// 
     /// TODO: this implementation probably shouldn't be client side
     /// </summary>
-    public class MarketDataSnapshotManager
+    public class MarketDataSnapshotManager : DisposableBase
     {
         private readonly RemoteEngineContext _remoteEngineContext;
 
@@ -88,6 +89,11 @@ namespace OGDotNet.Model.Context
             var newSnapshot = CreateFromView(viewName);
 
             return new ManageableMarketDataSnapshot { Values = newSnapshot.Values.ToDictionary(v=>v.Key, v=> new ValueSnapshot{Security = v.Key, MarketValue = v.Value.MarketValue, OverrideValue = basis.Values[v.Key].OverrideValue}) };
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+        	//TODO
         }
     }
 }
