@@ -25,9 +25,9 @@ namespace OGDotNet.Model.Context
     /// </summary>
     public class MarketDataSnapshotManager : DisposableBase
     {
-        const string YieldCurveValueReqName = "YieldCurve";
-        const string YieldCurveSpecValueReqName = "YieldCurveSpec";
-        const string MarketValueReqName = "Market_Value";
+        internal const string YieldCurveValueReqName = "YieldCurve";
+        internal const string YieldCurveSpecValueReqName = "YieldCurveSpec";
+        internal const string MarketValueReqName = "Market_Value";
 
         private static readonly string MarketValuesConfigName = "MarketValues"+Guid.NewGuid();
 
@@ -38,6 +38,11 @@ namespace OGDotNet.Model.Context
             _remoteEngineContext = remoteEngineContext;
         }
 
+
+        public MarketDataSnapshotProcessor GetProcessor(string viewName)
+        {
+            return new MarketDataSnapshotProcessor(_remoteEngineContext, viewName);    
+        }
         public ManageableMarketDataSnapshot CreateFromView(string viewName)
         {
             return CreateFromView(viewName, DateTimeOffset.Now);

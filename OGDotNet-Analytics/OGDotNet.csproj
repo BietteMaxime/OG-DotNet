@@ -92,6 +92,7 @@
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\FastArrayIntDoubleTimeSeries.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\LocalDateEpochDaysConverter.cs" />
     <Compile Include="Model\Context\MarketDataSnapshotManager.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshotProcessor.cs" />
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\InterpolatedYieldCurveSpecification.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ILocalDateDoubleTimeSeries.cs" />

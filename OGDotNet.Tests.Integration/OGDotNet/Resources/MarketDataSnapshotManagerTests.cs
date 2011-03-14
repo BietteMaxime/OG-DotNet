@@ -8,7 +8,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class MarketDataSnapshotManagerTests : TestWithContextBase
     {
-        private const string ViewName = "Equity Option Test View 1";
+        protected const string ViewName = "Equity Option Test View 1";
 
         [Xunit.Extensions.Fact]
         public void CanCreateFromView()
