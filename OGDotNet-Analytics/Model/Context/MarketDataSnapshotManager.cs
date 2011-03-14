@@ -57,7 +57,37 @@ namespace OGDotNet.Model.Context
             //TODO update yield curves
             var newSnapshot = CreateFromView(viewName);
 
-            return new ManageableMarketDataSnapshot { Values = newSnapshot.Values.ToDictionary(v => v.Key, v => new ValueSnapshot { Security = v.Key, MarketValue = v.Value.MarketValue, OverrideValue = basis.Values[v.Key].OverrideValue }) };
+            return new ManageableMarketDataSnapshot
+                       {
+                           Values = UpdateValues(basis, newSnapshot),
+                           YieldCurves = UpdateCurves(basis,newSnapshot)
+                       };
+        }
+
+        private static Dictionary<Pair<string, Currency>, YieldCurveSnapshot> UpdateCurves(ManageableMarketDataSnapshot basis, ManageableMarketDataSnapshot newSnapshot)
+        {
+            return newSnapshot.YieldCurves.ToDictionary(
+                kvp => kvp.Key, kvp => ApplyOverrides(basis, kvp.Value)
+                );
+        }
+
+        private static YieldCurveSnapshot ApplyOverrides(ManageableMarketDataSnapshot basis, YieldCurveSnapshot newSnapshot)
+        {
+            return new YieldCurveSnapshot(
+                MergeValues(newSnapshot.Values, basis.Values), newSnapshot.ValuationTime
+                );
+        }
+
+        private static Dictionary<Identifier, ValueSnapshot> UpdateValues(ManageableMarketDataSnapshot basis, ManageableMarketDataSnapshot newSnapshot)
+        {
+            var newValues = newSnapshot.Values;
+            var basisValues = basis.Values;
+            return MergeValues(newValues, basisValues);
+        }
+
+        private static Dictionary<Identifier, ValueSnapshot> MergeValues(Dictionary<Identifier, ValueSnapshot> newValues, Dictionary<Identifier, ValueSnapshot> basisValues)
+        {
+            return newValues.ToDictionary(v => v.Key, v => new ValueSnapshot { Security = v.Key, MarketValue = v.Value.MarketValue, OverrideValue = basisValues[v.Key].OverrideValue });
         }
 
 
@@ -120,7 +150,7 @@ namespace OGDotNet.Model.Context
             
         }
 
-        private static Tuple<double, UniqueIdentifier> GetValue(ViewComputationResultModel tempResults, FixedIncomeStripWithIdentifier strip)
+        private static Tuple<double, Identifier> GetValue(ViewComputationResultModel tempResults, FixedIncomeStripWithIdentifier strip)
         {
             var uid = UniqueIdentifier.Parse(strip.Security.ToString());
             object ret;
@@ -128,12 +158,12 @@ namespace OGDotNet.Model.Context
             {
                 throw new ArgumentException();
             }
-            return Tuple.Create( (double) ret, uid);
+            return Tuple.Create( (double) ret, strip.Security);
         }
 
-        private static Dictionary<UniqueIdentifier, ValueSnapshot> GetSnapshotValues(IEnumerable<ValueRequirement> requiredLiveData, ViewComputationResultModel tempResults)
+        private static Dictionary<Identifier, ValueSnapshot> GetSnapshotValues(IEnumerable<ValueRequirement> requiredLiveData, ViewComputationResultModel tempResults)
         {
-            return requiredLiveData.ToDictionary(r => r.TargetSpecification.Uid, r => new ValueSnapshot { Security = r.TargetSpecification.Uid, MarketValue = GetValue(tempResults, r) });
+            return requiredLiveData.ToDictionary(r => IdentifierOf(r.TargetSpecification.Uid), r => new ValueSnapshot { Security = IdentifierOf(r.TargetSpecification.Uid), MarketValue = GetValue(tempResults, r) });
         }
 
         private static IEnumerable<ValueRequirement> GetTempView(RemoteView view, out ViewDefinition tempViewDefn)
@@ -190,6 +220,10 @@ namespace OGDotNet.Model.Context
                 .ToList(), new Dictionary<string, ValueProperties>());
         }
 
+        private static Identifier IdentifierOf(UniqueIdentifier uid)
+        {
+            return Identifier.Parse(uid.ToString());
+        }
 
         protected override void Dispose(bool disposing)
         {

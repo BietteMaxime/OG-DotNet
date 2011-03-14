@@ -94,10 +94,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static MarketDataSnapshotDocument GetDocument(string name)
         {
-            return new MarketDataSnapshotDocument(null, new ManageableMarketDataSnapshot { Name = name, Values = new Dictionary<UniqueIdentifier, ValueSnapshot>
+            return new MarketDataSnapshotDocument(null, new ManageableMarketDataSnapshot { Name = name, Values = new Dictionary<Identifier, ValueSnapshot>
                                                                                                                      {
-                                                                                                                         {UniqueIdentifier.Parse("AA::11"), new ValueSnapshot {MarketValue = 12.0, Security = UniqueIdentifier.Parse("AA::22"), OverrideValue = null}},
-                                                                                                                        {UniqueIdentifier.Parse("BB::22"), new ValueSnapshot {MarketValue = 12.0, Security = UniqueIdentifier.Parse("BB::33"), OverrideValue = 11.0}},
+                                                                                                                         {Identifier.Parse("AA::11"), new ValueSnapshot {MarketValue = 12.0, Security = Identifier.Parse("AA::22"), OverrideValue = null}},
+                                                                                                                        {Identifier.Parse("BB::22"), new ValueSnapshot {MarketValue = 12.0, Security = Identifier.Parse("BB::33"), OverrideValue = 11.0}},
                                                                                                                      } });
         }
 

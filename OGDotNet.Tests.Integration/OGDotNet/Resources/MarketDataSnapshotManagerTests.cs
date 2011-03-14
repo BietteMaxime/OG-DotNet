@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Castle.Core;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
@@ -78,7 +77,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.InRange(yieldCurveSnapshot.Values.Count, 2,200);
             foreach (var valueSnapshot in yieldCurveSnapshot.Values)
             {
-                ValueAssertions.AssertSensibleValue(valueSnapshot.Key);
+                Assert.NotNull(valueSnapshot.Key);
                 ValueAssertions.AssertSensibleValue(valueSnapshot.Value.MarketValue);
                 Assert.Null(valueSnapshot.Value.OverrideValue);
             }
