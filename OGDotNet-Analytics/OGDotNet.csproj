@@ -82,6 +82,7 @@
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableMarketDataSnapshot.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotDocument.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotSearchRequest.cs" />
+    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\YieldCurveSnapshot.cs" />
     <Compile Include="Mappedtypes\math\curve\Curve.cs" />
     <Compile Include="Mappedtypes\math\curve\FunctionalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\financial\model\interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />

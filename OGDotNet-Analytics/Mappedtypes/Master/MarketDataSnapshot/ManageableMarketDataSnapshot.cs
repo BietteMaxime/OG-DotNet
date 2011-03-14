@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Castle.Core;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Id;
+using Currency=OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
@@ -16,7 +18,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 
         private Dictionary<UniqueIdentifier, ValueSnapshot> _values;
 
-        //TODO private Dictionary<Pair<String, CurrencyUnit>, YieldCurveSnapshot> _yieldCurves;
+        private Dictionary<Pair<String, Currency>, YieldCurveSnapshot> _yieldCurves;//TODO serialize this
 
         //TODO private Map<Triple<String, CurrencyUnit, CurrencyUnit>, FXVolatilitySurfaceSnapshot> _fxVolatilitySurfaces;
 
@@ -36,6 +38,12 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         {
             get { return _values; }
             set { _values = value; }
+        }
+
+        public Dictionary<Pair<string, Currency>, YieldCurveSnapshot> YieldCurves
+        {
+            get { return _yieldCurves; }
+            set { _yieldCurves = value; }
         }
 
         public static ManageableMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
