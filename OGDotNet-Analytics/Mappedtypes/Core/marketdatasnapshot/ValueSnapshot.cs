@@ -4,7 +4,7 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
     public class ValueSnapshot
     {
-        public Identifier Security { get; set; }
+        public UniqueIdentifier Security { get; set; }
 
         public double MarketValue { get; set; }
 
