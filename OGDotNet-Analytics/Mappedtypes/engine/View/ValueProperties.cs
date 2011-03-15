@@ -48,6 +48,10 @@ namespace OGDotNet.Mappedtypes.engine.View
                 {
                     properties.Add(name, new HashSet<string>());
                 }
+                else if (field.Value is IFudgeFieldContainer)
+                {
+                    properties.Add(name, new HashSet<string>(((IFudgeFieldContainer) field.Value).Select(f =>f.Value).Cast<string>()));
+                }
                 else
                 {
                     throw new ArgumentException(string.Format("Unexpected value {0}",field.Value));

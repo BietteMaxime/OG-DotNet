@@ -73,9 +73,41 @@ namespace OGDotNet.Mappedtypes.engine.View
             return ffc.GetAllByName(fieldName).Select(deserializer.FromField<T>).ToList();
         }
 
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer calcConfigMsg, IFudgeSerializer s)
         {
-            throw new NotImplementedException();
+
+            calcConfigMsg.Add("name", Name);
+            foreach (var securityTypeRequirements in PortfolioRequirementsBySecurityType)
+            {
+                FudgeMsg securityTypeRequirementsMsg = new FudgeMsg(s.Context);
+                securityTypeRequirementsMsg.Add("securityType", securityTypeRequirements.Key);
+                foreach (var requirement in securityTypeRequirements.Value.Properties)
+                {
+                    foreach (var var in requirement.Value)
+                    {
+                        securityTypeRequirementsMsg.Add("portfolioRequirement", var);
+                    }
+
+                    // TODO put the value constraints into the message if they're specified
+                }
+
+                calcConfigMsg.Add("portfolioRequirementsBySecurityType", securityTypeRequirementsMsg);
+            }
+
+            var fudgeSerializer = new FudgeSerializer(s.Context);
+
+            foreach (var specificRequirement in SpecificRequirements)
+            {
+                var sReqMsg = fudgeSerializer.SerializeToMsg(specificRequirement);
+                calcConfigMsg.Add("specificRequirement", sReqMsg);
+
+            }
+
+            var defaultPropsMessage = fudgeSerializer.SerializeToMsg(DefaultProperties);
+            calcConfigMsg.Add("defaultProperties", defaultPropsMessage);
+
+            //TODO delta defn
+            calcConfigMsg.Add("deltaDefinition", new FudgeMsg());
         }
     }
 }

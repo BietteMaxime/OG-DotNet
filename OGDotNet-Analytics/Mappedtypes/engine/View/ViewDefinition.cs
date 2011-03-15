@@ -157,38 +157,9 @@ namespace OGDotNet.Mappedtypes.engine.view
             foreach (var calcConfig in CalculationConfigurationsByName.Values)
             {
                 FudgeMsg calcConfigMsg = s.Context.NewMessage();
-                calcConfigMsg.Add("name", calcConfig.Name);
-                foreach (var securityTypeRequirements in calcConfig.PortfolioRequirementsBySecurityType)
-                {
-                    FudgeMsg securityTypeRequirementsMsg = new FudgeMsg(s.Context);
-                    securityTypeRequirementsMsg.Add("securityType", securityTypeRequirements.Key);
-                    foreach (var requirement in securityTypeRequirements.Value.Properties)
-                    {
-                        foreach (var var in requirement.Value)
-                        {
-                            securityTypeRequirementsMsg.Add("portfolioRequirement", var);    
-                        }
-                        
-                        // TODO put the value constraints into the message if they're specified
-                    }
 
-                    calcConfigMsg.Add("portfolioRequirementsBySecurityType", securityTypeRequirementsMsg);
-                }
+                calcConfig.ToFudgeMsg(calcConfigMsg, s);
 
-                var fudgeSerializer = new FudgeSerializer(s.Context);
-
-                foreach (var specificRequirement in calcConfig.SpecificRequirements)
-                {
-                    var sReqMsg = fudgeSerializer.SerializeToMsg(specificRequirement);
-                    calcConfigMsg.Add("specificRequirement", sReqMsg);
-                    
-                }
-
-                s.WriteInline(calcConfigMsg, "defaultProperties", calcConfig.DefaultProperties);
-                
-                //TODO delta defn
-                calcConfigMsg.Add("deltaDefinition", new FudgeMsg());
-                
                 message.Add("calculationConfiguration",calcConfigMsg);
             }
             
