@@ -1,12 +1,20 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
     public class ValueSnapshot : INotifyPropertyChanged
     {
-        public Identifier Security { get; set; }
+        private Identifier _security;
+        public Identifier Security
+        {
+            get { return _security; }
+            set
+            {
+                InvokePropertyChanged("Security");
+                _security = value;
+            }
+        }
 
         private double _marketValue;
         public double MarketValue
