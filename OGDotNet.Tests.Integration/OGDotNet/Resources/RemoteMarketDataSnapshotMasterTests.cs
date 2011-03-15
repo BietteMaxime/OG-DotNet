@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Castle.Core;
+using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
@@ -94,11 +97,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static MarketDataSnapshotDocument GetDocument(string name)
         {
-            return new MarketDataSnapshotDocument(null, new ManageableMarketDataSnapshot { Name = name, Values = new Dictionary<Identifier, ValueSnapshot>
+            return new MarketDataSnapshotDocument(null, new ManageableMarketDataSnapshot(new Dictionary<Identifier, ValueSnapshot>
                                                                                                                      {
                                                                                                                          {Identifier.Parse("AA::11"), new ValueSnapshot {MarketValue = 12.0, Security = Identifier.Parse("AA::22"), OverrideValue = null}},
                                                                                                                         {Identifier.Parse("BB::22"), new ValueSnapshot {MarketValue = 12.0, Security = Identifier.Parse("BB::33"), OverrideValue = 11.0}},
-                                                                                                                     } });
+                                                                                                                     }, new Dictionary<Pair<string, Currency>, YieldCurveSnapshot>()) { Name = name });
         }
 
 

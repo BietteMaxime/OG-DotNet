@@ -42,19 +42,19 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var snapshotManager = Context.MarketDataSnapshotManager)
             {
 
-                var original = snapshotManager.CreateFromView(ViewName);
+                var updated = snapshotManager.CreateFromView(ViewName);
 
-                var valueChanged = original.Values.Keys.First();
-                original.Values[valueChanged].OverrideValue = 12;
+                var valueChanged = updated.Values.Keys.First();
+                updated.Values[valueChanged].OverrideValue = 12;
 
 
-                var manageableMarketDataSnapshot = snapshotManager.UpdateFromView(original, ViewName);
+                snapshotManager.UpdateFromView(updated, ViewName);
 
-                Assert.Null(manageableMarketDataSnapshot.Name);
-                Assert.Null(manageableMarketDataSnapshot.UniqueId);
+				Assert.Null(updated.Name);
+                Assert.Null(updated.UniqueId);
 
-                Assert.NotEmpty(manageableMarketDataSnapshot.Values);
-                foreach (var valueSnapshot in manageableMarketDataSnapshot.Values)
+                Assert.NotEmpty(updated.Values);
+                foreach (var valueSnapshot in updated.Values)
                 {
                     Assert.Equal(valueSnapshot.Key, valueSnapshot.Value.Security);
                     ValueAssertions.AssertSensibleValue(valueSnapshot.Value.MarketValue);

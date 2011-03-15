@@ -1,29 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
-    public class YieldCurveSnapshot
+    public class YieldCurveSnapshot : MarketDataSnapshotScope, INotifyPropertyChanged
     {
-        private readonly Dictionary<Identifier, ValueSnapshot> _values;
-        private readonly DateTimeOffset _valuationTime;
-
-        public YieldCurveSnapshot(Dictionary<Identifier, ValueSnapshot> values, DateTimeOffset valuationTime)
+        private DateTimeOffset _valuationTime;
+         
+        public YieldCurveSnapshot(Dictionary<Identifier, ValueSnapshot> values, DateTimeOffset valuationTime) : base(values)
         {
-            _values = values;
             _valuationTime = valuationTime;
         }
 
-        public Dictionary<Identifier, ValueSnapshot> Values
-        {
-            get { return _values; }
-        }
 
         public DateTimeOffset ValuationTime
         {
             get { return _valuationTime; }
+        }
+
+
+        public void UpdateFrom(YieldCurveSnapshot yieldCurve)
+        {
+            base.UpdateFrom(yieldCurve);
+            
+            _valuationTime = yieldCurve.ValuationTime;
+            InvokePropertyChanged(new PropertyChangedEventArgs("ValuationTime"));
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void InvokePropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, e);
         }
     }
 }

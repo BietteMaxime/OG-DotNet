@@ -80,6 +80,7 @@
     <Compile Include="Builders\CurrencyMatrixBuilder.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixValue.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableMarketDataSnapshot.cs" />
+    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotScope.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotDocument.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotSearchRequest.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\YieldCurveSnapshot.cs" />

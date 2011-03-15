@@ -56,43 +56,12 @@ namespace OGDotNet.Model.Context
         /// <summary>
         /// TODO Filtering
         /// </summary>
-        public ManageableMarketDataSnapshot UpdateFromView(ManageableMarketDataSnapshot basis, string viewName)
+        public void UpdateFromView(ManageableMarketDataSnapshot basis, string viewName)
         {
-            //TODO handle portfolio/view changing
-            //TODO update yield curves
+            
             var newSnapshot = CreateFromView(viewName);
 
-            return new ManageableMarketDataSnapshot
-                       {
-                           Values = UpdateValues(basis, newSnapshot),
-                           YieldCurves = UpdateCurves(basis,newSnapshot)
-                       };
-        }
-
-        private static Dictionary<Pair<string, Currency>, YieldCurveSnapshot> UpdateCurves(ManageableMarketDataSnapshot basis, ManageableMarketDataSnapshot newSnapshot)
-        {
-            return newSnapshot.YieldCurves.ToDictionary(
-                kvp => kvp.Key, kvp => ApplyOverrides(basis, kvp.Value)
-                );
-        }
-
-        private static YieldCurveSnapshot ApplyOverrides(ManageableMarketDataSnapshot basis, YieldCurveSnapshot newSnapshot)
-        {
-            return new YieldCurveSnapshot(
-                MergeValues(newSnapshot.Values, basis.Values), newSnapshot.ValuationTime
-                );
-        }
-
-        private static Dictionary<Identifier, ValueSnapshot> UpdateValues(ManageableMarketDataSnapshot basis, ManageableMarketDataSnapshot newSnapshot)
-        {
-            var newValues = newSnapshot.Values;
-            var basisValues = basis.Values;
-            return MergeValues(newValues, basisValues);
-        }
-
-        private static Dictionary<Identifier, ValueSnapshot> MergeValues(Dictionary<Identifier, ValueSnapshot> newValues, Dictionary<Identifier, ValueSnapshot> basisValues)
-        {
-            return newValues.ToDictionary(v => v.Key, v => new ValueSnapshot { Security = v.Key, MarketValue = v.Value.MarketValue, OverrideValue = basisValues[v.Key].OverrideValue });
+            basis.UpdateFrom(newSnapshot);
         }
 
 
@@ -114,11 +83,7 @@ namespace OGDotNet.Model.Context
                     using (var remoteViewClient = tempView.CreateClient())
                     {
                         var tempResults = remoteViewClient.RunOneCycle(valuationTime);
-                        return new ManageableMarketDataSnapshot
-                                   {
-                                       Values = GetSnapshotValues(requiredLiveData, tempResults),
-                                       YieldCurves = GetYieldCurves(tempResults)
-                                   };
+                        return new ManageableMarketDataSnapshot(GetSnapshotValues(requiredLiveData, tempResults), GetYieldCurves(tempResults));
                     }
                 }
                 finally
