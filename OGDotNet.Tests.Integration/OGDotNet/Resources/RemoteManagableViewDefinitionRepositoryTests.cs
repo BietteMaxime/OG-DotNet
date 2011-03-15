@@ -81,6 +81,28 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        [Xunit.Extensions.Fact]
+        public void DefaultPropertiesSurvive()
+        {
+            ValueRequirement req = GetRequirement();
+
+            using (var remoteClient = Context.CreateUserClient())
+            {
+                ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName());
+                vd.CalculationConfigurationsByName.Values.First().DefaultProperties.Properties.Add("XX", new HashSet<string>(){"YY", "ZZ"});
+                vd.CalculationConfigurationsByName.Values.First().DefaultProperties.Properties.Add("11", new HashSet<string>() { "22" });
+                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
+
+                var roundTripped = Context.ViewProcessor.GetView(vd.Name);
+                Assert.NotNull(roundTripped);
+
+                AssertEquivalent(vd, roundTripped.Definition);
+
+                remoteClient.ViewDefinitionRepository.RemoveViewDefinition(vd.Name);
+
+                Assert.DoesNotContain(vd.Name, Context.ViewProcessor.ViewNames);
+            }
+        }
         
 
         private static void AssertEquivalent(ViewDefinition a, ViewDefinition b)
@@ -125,6 +147,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
 
             //TODO stricter asserts
+
+            var misMatchedProperties = aVal.DefaultProperties.Properties.Zip(bVal.DefaultProperties.Properties, Tuple.Create).Where(t => t.Item1.Key != t.Item2.Key || !t.Item1.Value.OrderBy(s=>s).SequenceEqual(t.Item2.Value.OrderBy(s=>s))).ToList();
+            Assert.Empty(misMatchedProperties);
 
             Assert.Equal(aVal.PortfolioRequirementsBySecurityType.ToList().Count, bVal.PortfolioRequirementsBySecurityType.ToList().Count);
 
