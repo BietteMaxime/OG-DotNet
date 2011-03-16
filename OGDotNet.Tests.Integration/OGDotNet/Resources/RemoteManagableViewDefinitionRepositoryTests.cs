@@ -8,6 +8,7 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
+using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
@@ -103,7 +104,31 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.DoesNotContain(vd.Name, Context.ViewProcessor.ViewNames);
             }
         }
-        
+
+        public class RemoteManagableViewDefinitionRepositoryRoundTripTests : ViewTestsBase
+        {
+            [Xunit.Extensions.Theory]
+            [TypedPropertyData("FastTickingViews")]
+            public void RoundTrippedViewsInit(RemoteView view)
+            {
+                view.Init();
+                using (var remoteClient = Context.CreateUserClient())
+                {
+                    ViewDefinition vd = view.Definition;
+                    vd.Name = vd.Name + "RoundTripped";
+
+                    remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
+
+                    var roundTripped = Context.ViewProcessor.GetView(vd.Name);
+                    Assert.NotNull(roundTripped);
+
+                    AssertEquivalent(vd, roundTripped.Definition);
+
+                    roundTripped.Init();
+                }
+            }
+        }
+
 
         private static void AssertEquivalent(ViewDefinition a, ViewDefinition b)
         {
@@ -176,7 +201,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var viewDefinition = new ViewDefinition(name);
 
-            var viewCalculationConfiguration = new ViewCalculationConfiguration("Default", new List<ValueRequirement> { req }, new Dictionary<string, ValueProperties>());
+            var viewCalculationConfiguration = new ViewCalculationConfiguration("Default", new List<ValueRequirement> { req }, new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>());
             viewDefinition.CalculationConfigurationsByName.Add("Default", viewCalculationConfiguration);
 
             return viewDefinition;

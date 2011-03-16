@@ -57,7 +57,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 var viewDefinition = new ViewDefinition(TestUtils.GetUniqueName());
 
-                var viewCalculationConfiguration = new ViewCalculationConfiguration("Default", new List<ValueRequirement> { req }, new Dictionary<string, ValueProperties>());
+                var viewCalculationConfiguration = new ViewCalculationConfiguration("Default", new List<ValueRequirement> { req }, new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>());
                 viewDefinition.CalculationConfigurationsByName.Add("Default", viewCalculationConfiguration);
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
 

@@ -322,8 +322,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var reqsByType= configuration.PortfolioRequirementsBySecurityType;
             foreach (var valuePropertiese in reqsByType)
             {
-                var hashSet = valuePropertiese.Value.Properties["portfolioRequirement"];
-                if (!hashSet.Contains(valueSpecification.ValueName))
+                var hashSet = valuePropertiese.Value;
+                if (!hashSet.Any(t => t.Item1 == valueSpecification.ValueName))
                 {
                     Assert.True(false, string.Format("Unmatched requirement {0},{1},{2} on {3}", valueSpecification.ValueName,
                                                      valueSpecification.TargetSpecification.Type,
@@ -336,7 +336,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var specifics = view.Definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.SpecificRequirements.Count());
             int rows = CountRows(view.Portfolio);
-            var values = rows * view.Definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.PortfolioRequirementsBySecurityType.Values.Sum(kvp2 => kvp2.Properties["portfolioRequirement"].Count));
+            var values = rows * view.Definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.PortfolioRequirementsBySecurityType.Single().Value.Count);
             return specifics
                 + values
                 ;

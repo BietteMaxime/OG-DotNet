@@ -144,14 +144,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
-                foreach (var valuePropertiese in configuration.Value.PortfolioRequirementsBySecurityType)
+                foreach (var secType in configuration.Value.PortfolioRequirementsBySecurityType)
                 {
-                    foreach (var property in valuePropertiese.Value.Properties)
+                    foreach (var req in secType.Value)
                     {
-                        foreach (var p in property.Value)
-                        {
-                            yield return GetColumnHeading(configuration.Key, p);
-                        }
+                        yield return GetColumnHeading(configuration.Key, req.Item1);
                     }
                 }
             }
@@ -240,12 +237,12 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 {
                     foreach (var req in configuration.Value.PortfolioRequirementsBySecurityType)
                     {
-                        foreach (var portfolioReq in req.Value.Properties["portfolioRequirement"])
+                        foreach (var tuple in req.Value)
                         {
-                            string header = String.Format("{0}/{1}", configuration.Key, portfolioReq);
-                            
+                            string header = String.Format("{0}/{1}", configuration.Key, tuple.Item1);
+
                             object result;
-                            if (results.TryGetValue(configuration.Key, new ValueRequirement(portfolioReq, position.ComputationTargetSpecification), out result))
+                            if (results.TryGetValue(configuration.Key, new ValueRequirement(tuple.Item1, position.ComputationTargetSpecification), out result))
                             {
                                 values.Add(header, result);
                             }

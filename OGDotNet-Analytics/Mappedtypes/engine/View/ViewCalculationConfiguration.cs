@@ -11,14 +11,15 @@ namespace OGDotNet.Mappedtypes.engine.View
     {
         private readonly string _name;
         private readonly List<ValueRequirement> _specificRequirements;
-        private readonly Dictionary<string, ValueProperties> _portfolioRequirementsBySecurityType;
+        private readonly Dictionary<string, HashSet<Tuple<String, ValueProperties>>> _portfolioRequirementsBySecurityType;
         private readonly ValueProperties _defaultProperties;
 
-        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, ValueProperties> portfolioRequirementsBySecurityType) : this(name,specificRequirements, portfolioRequirementsBySecurityType, new ValueProperties())
+        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<String, ValueProperties>>> portfolioRequirementsBySecurityType)
+            : this(name, specificRequirements, portfolioRequirementsBySecurityType, new ValueProperties())
         {
             
         }
-        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, ValueProperties> portfolioRequirementsBySecurityType, ValueProperties defaultProperties)
+        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<String, ValueProperties>>> portfolioRequirementsBySecurityType, ValueProperties defaultProperties)
         {
             _name = name;
             _specificRequirements = specificRequirements;
@@ -36,7 +37,7 @@ namespace OGDotNet.Mappedtypes.engine.View
             get { return _specificRequirements; }
         }
 
-        public Dictionary<string, ValueProperties> PortfolioRequirementsBySecurityType
+        public Dictionary<string, HashSet<Tuple<String, ValueProperties>>> PortfolioRequirementsBySecurityType
         {
             get { return _portfolioRequirementsBySecurityType; }
         }
@@ -53,19 +54,29 @@ namespace OGDotNet.Mappedtypes.engine.View
             List<ValueRequirement> specificRequirements = GetList<ValueRequirement>(ffc, "specificRequirement", deserializer);
 
             //TODO MAP deserializer by magic
-            var portfolioRequirementsBySecurityType = new Dictionary<string, ValueProperties>();
+            var portfolioRequirementsBySecurityType = new Dictionary<string, HashSet<Tuple<String, ValueProperties>>>();
             foreach (var portfolioReqField in ffc.GetAllByName("portfolioRequirementsBySecurityType"))
             {
                 const string securitytypeKey = "securityType";
+                var securityType = ((IFudgeFieldContainer)portfolioReqField.Value).GetValue<String>(securitytypeKey);
 
-                var securityType = ((IFudgeFieldContainer) portfolioReqField.Value).GetValue<String>(securitytypeKey);
-                var valueProperties = deserializer.FromField<ValueProperties>(portfolioReqField);
-                portfolioRequirementsBySecurityType.Add(securityType, valueProperties.Filter(p => p.Key != securitytypeKey));
+                var enumerable = ((IFudgeFieldContainer) portfolioReqField.Value).GetAllByName("portfolioRequirement").Select(f => GetReqPair(f,deserializer));
+
+                portfolioRequirementsBySecurityType.Add(securityType, new HashSet<Tuple<string, ValueProperties>>(enumerable) );    
             }
 
             var defaultProperties = deserializer.FromField<ValueProperties>(ffc.GetByName("defaultProperties"));
 
             return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType, defaultProperties);
+        }
+
+        private static Tuple<string, ValueProperties> GetReqPair(IFudgeField field, IFudgeDeserializer deserializer)
+        {
+            var ffc = (IFudgeFieldContainer) field.Value;
+            string requiredOutput = ffc.GetString("requiredOutput");
+            var constraints = deserializer.FromField <ValueProperties>(ffc.GetByName("constraints"));
+
+            return Tuple.Create(requiredOutput, constraints);
         }
 
         private static List<T> GetList<T>(IFudgeFieldContainer ffc, string fieldName, IFudgeDeserializer deserializer) where T : class
@@ -75,26 +86,26 @@ namespace OGDotNet.Mappedtypes.engine.View
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer calcConfigMsg, IFudgeSerializer s)
         {
+            var fudgeSerializer = new FudgeSerializer(s.Context);
+
 
             calcConfigMsg.Add("name", Name);
             foreach (var securityTypeRequirements in PortfolioRequirementsBySecurityType)
             {
                 FudgeMsg securityTypeRequirementsMsg = new FudgeMsg(s.Context);
                 securityTypeRequirementsMsg.Add("securityType", securityTypeRequirements.Key);
-                foreach (var requirement in securityTypeRequirements.Value.Properties)
+                foreach (var requirement in securityTypeRequirements.Value)
                 {
-                    foreach (var var in requirement.Value)
-                    {
-                        securityTypeRequirementsMsg.Add("portfolioRequirement", var);
-                    }
+                    var newMessage = s.Context.NewMessage();
+                    newMessage.Add("requiredOutput", requirement.Item1);
+                    newMessage.Add("constraints", fudgeSerializer.SerializeToMsg(requirement.Item2));
 
-                    // TODO put the value constraints into the message if they're specified
+                    securityTypeRequirementsMsg.Add("portfolioRequirement", newMessage);
                 }
 
                 calcConfigMsg.Add("portfolioRequirementsBySecurityType", securityTypeRequirementsMsg);
             }
 
-            var fudgeSerializer = new FudgeSerializer(s.Context);
 
             foreach (var specificRequirement in SpecificRequirements)
             {

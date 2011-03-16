@@ -169,7 +169,7 @@ namespace OGDotNet.Model.Context
                                                  cc.SpecificRequirements.Where(r => r.ValueName.Equals(YieldCurveValueReqName))
                                                  .Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Constraints)).ToList() 
 
-                                                 , cc.PortfolioRequirementsBySecurityType.ToDictionary(kvp=> kvp.Key, kvp=>kvp.Value), //TODO why do I have to add these in order to get the yield curve out
+                                                 , cc.PortfolioRequirementsBySecurityType,
                                                  cc.DefaultProperties)
                 );
         }
@@ -187,7 +187,7 @@ namespace OGDotNet.Model.Context
         private static ViewCalculationConfiguration GetMarketValuesCalculationConfiguration(IEnumerable<ValueRequirement> requiredLiveData)
         {
             return new ViewCalculationConfiguration(MarketValuesConfigName, requiredLiveData
-                .ToList(), new Dictionary<string, ValueProperties>());
+                .ToList(), new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>());
         }
 
         private static Identifier IdentifierOf(UniqueIdentifier uid)

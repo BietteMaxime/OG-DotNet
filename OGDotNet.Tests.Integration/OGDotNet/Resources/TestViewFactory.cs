@@ -18,7 +18,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public RemoteView CreateView(RemoteEngineContext context, ValueRequirement valueRequirement)
         {
             var viewDefinition = new ViewDefinition(TestUtils.GetUniqueName());
-            viewDefinition.CalculationConfigurationsByName.Add("Default", new ViewCalculationConfiguration("Default", new List<ValueRequirement> { valueRequirement }, new Dictionary<string, ValueProperties>()));
+            viewDefinition.CalculationConfigurationsByName.Add("Default", new ViewCalculationConfiguration("Default", new List<ValueRequirement> { valueRequirement }, new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>()));
             using (var remoteClient = context.CreateUserClient())
             {
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
