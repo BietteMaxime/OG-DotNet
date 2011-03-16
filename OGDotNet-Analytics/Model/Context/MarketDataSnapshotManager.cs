@@ -138,7 +138,7 @@ namespace OGDotNet.Model.Context
 
         private static IEnumerable<ValueRequirement> GetTempView(RemoteView view, out ViewDefinition tempViewDefn)
         {
-            var requiredLiveData = view.GetRequiredLiveData();
+            var requiredLiveData = view.GetRequiredLiveData().Where(r => r.ValueName == MarketValueReqName);//TODO this where clause is a lie
 
             var tempViewName = typeof(MarketDataSnapshotManager).FullName + Guid.NewGuid();
 
