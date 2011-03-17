@@ -15,7 +15,7 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly ValueProperties _defaultProperties;
 
         public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<String, ValueProperties>>> portfolioRequirementsBySecurityType)
-            : this(name, specificRequirements, portfolioRequirementsBySecurityType, new ValueProperties())
+            : this(name, specificRequirements, portfolioRequirementsBySecurityType, ValueProperties.Create())
         {
             
         }

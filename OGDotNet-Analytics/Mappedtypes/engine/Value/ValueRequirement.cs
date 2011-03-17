@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using Fudge;
+﻿using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.Value;
-using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine.value
@@ -22,7 +20,7 @@ namespace OGDotNet.Mappedtypes.engine.value
         public ComputationTargetSpecification TargetSpecification{get { return _targetSpecification; }}
 
 
-        public ValueRequirement(string valueName, ComputationTargetSpecification targetSpecification) : this(valueName, targetSpecification, new ValueProperties())
+        public ValueRequirement(string valueName, ComputationTargetSpecification targetSpecification) : this(valueName, targetSpecification, ValueProperties.Create())
         {
         }
 
@@ -51,7 +49,7 @@ namespace OGDotNet.Mappedtypes.engine.value
 
         public static ValueRequirement FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            ValueProperties constraints = deserializer.FromField<ValueProperties>(ffc.GetByName("constraints")) ?? new ValueProperties();
+            ValueProperties constraints = deserializer.FromField<ValueProperties>(ffc.GetByName("constraints")) ?? ValueProperties.Create();
 
             var computationTargetType = ffc.GetValue<string>("computationTargetType");
             var computationTargetIdentifier = ffc.GetValue<string>("computationTargetIdentifier");
@@ -65,10 +63,7 @@ namespace OGDotNet.Mappedtypes.engine.value
         {
             msg.Add("valueName", ValueName);
             ComputationTargetSpecificationBuilder.AddMessageFields(s, msg, TargetSpecification);
-            if (Constraints.Properties.Any())
-            {
-                s.WriteInline(msg, "constraints", Constraints);
-            }
+            s.WriteInline(msg, "constraints", Constraints);
         }
     }
 }
