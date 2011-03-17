@@ -12,9 +12,7 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.financial.view;
-using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
-using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context
@@ -69,9 +67,12 @@ namespace OGDotNet.Model.Context
                 remoteView.Init();
                 using (var remoteViewClient = remoteView.CreateClient())
                 {
-                    foreach (var valueSnapshot in yieldCurveSnapshot.Value.Values)
+                    foreach (var target in yieldCurveSnapshot.Value.Values)
                     {
-                        remoteView.LiveDataOverrideInjector.AddValue(GetOverrideReq(valueSnapshot), valueSnapshot.Value.OverrideValue ?? valueSnapshot.Value.MarketValue  );
+                        foreach (var valueSnapshot in target.Value)
+                        {
+                            remoteView.LiveDataOverrideInjector.AddValue(GetOverrideReq(target.Key, valueSnapshot), valueSnapshot.Value.OverrideValue ?? valueSnapshot.Value.MarketValue);    
+                        }
                         
                     }
 
@@ -94,9 +95,9 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        private static ValueRequirement GetOverrideReq(KeyValuePair<Identifier, ValueSnapshot> valueSnapshot)
+        private static ValueRequirement GetOverrideReq(ComputationTargetSpecification target, KeyValuePair<string, ValueSnapshot> snap)
         {
-            return new ValueRequirement(MarketDataSnapshotManager.MarketValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse(valueSnapshot.Value.Security.ToString())));
+            return new ValueRequirement(snap.Key, target);
         }
 
         private ViewCalculationConfiguration GetCalcConfig(ManageableMarketDataSnapshot snapshot, KeyValuePair<Pair<string,Currency>,YieldCurveSnapshot> yieldCurveSnapshot, ViewDefinition viewDefinition)

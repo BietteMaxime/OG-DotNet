@@ -30,6 +30,10 @@ namespace OGDotNet.Mappedtypes.engine.View
             }
         }
 
+        public bool TryGetValues(ComputationTargetSpecification target, out IDictionary<string, ComputedValue> values)
+        {
+            return _map.TryGetValue(target, out values);
+        }
         public bool TryGetValue(ComputationTargetSpecification target, string valueName, out ComputedValue value)
         {
             IDictionary<string, ComputedValue> valueDict;

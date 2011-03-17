@@ -23,9 +23,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotEmpty(manageableMarketDataSnapshot.Values);
                 foreach (var valueSnapshot in manageableMarketDataSnapshot.Values)
                 {
-                    Assert.Equal(valueSnapshot.Key, valueSnapshot.Value.Security);
-                    ValueAssertions.AssertSensibleValue(valueSnapshot.Value.MarketValue);
-                    Assert.Null(valueSnapshot.Value.OverrideValue);
+                    foreach (var snapshot in valueSnapshot.Value)
+                    {
+                        Assert.Equal(valueSnapshot.Key, snapshot.Value.ComputationTarget);
+                        ValueAssertions.AssertSensibleValue(snapshot.Value.MarketValue);
+                        Assert.Null(snapshot.Value.OverrideValue);    
+                    }
+                    
                 }
                 
                 Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
@@ -34,7 +38,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        
 
         [Xunit.Extensions.Fact]
         public void CanUpdateFromView()
@@ -44,8 +47,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var updated = snapshotManager.CreateFromView(ViewName);
 
-                var valueChanged = updated.Values.Keys.First();
-                updated.Values[valueChanged].OverrideValue = 12;
+                var targetChanged = updated.Values.Keys.First();
+                var valueChanged = updated.Values[targetChanged].Keys.First();
+
+                updated.Values[targetChanged][valueChanged].OverrideValue = 12;
 
 
                 snapshotManager.UpdateFromView(updated, ViewName);
@@ -54,19 +59,25 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Null(updated.UniqueId);
 
                 Assert.NotEmpty(updated.Values);
+
                 foreach (var valueSnapshot in updated.Values)
                 {
-                    Assert.Equal(valueSnapshot.Key, valueSnapshot.Value.Security);
-                    ValueAssertions.AssertSensibleValue(valueSnapshot.Value.MarketValue);
-                    if (valueSnapshot.Key.Equals(valueChanged))
+                    foreach (var snapshot in valueSnapshot.Value)
                     {
-                        Assert.Equal(12, valueSnapshot.Value.OverrideValue);
+                        Assert.Equal(valueSnapshot.Key, snapshot.Value.ComputationTarget);
+                        ValueAssertions.AssertSensibleValue(snapshot.Value.MarketValue);
+                        if (targetChanged == valueSnapshot.Key && valueChanged == snapshot.Key)
+                        {
+                            Assert.Equal(12, snapshot.Value.OverrideValue);
+                        }
+                        else
+                        {
+                            Assert.Null(snapshot.Value.OverrideValue);                            
+                        }
                     }
-                    else
-                    {
-                        Assert.Null(valueSnapshot.Value.OverrideValue);
-                    }
+
                 }
+                
 
             }
         }
@@ -75,11 +86,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             Assert.NotNull(yieldCurveSnapshot);
             Assert.InRange(yieldCurveSnapshot.Values.Count, 2,200);
+
             foreach (var valueSnapshot in yieldCurveSnapshot.Values)
             {
-                Assert.NotNull(valueSnapshot.Key);
-                ValueAssertions.AssertSensibleValue(valueSnapshot.Value.MarketValue);
-                Assert.Null(valueSnapshot.Value.OverrideValue);
+                foreach (var snapshot in valueSnapshot.Value)
+                {
+                    Assert.Equal(valueSnapshot.Key, snapshot.Value.ComputationTarget);
+                    ValueAssertions.AssertSensibleValue(snapshot.Value.MarketValue);
+                    Assert.Null(snapshot.Value.OverrideValue);
+                }
+
             }
         }
 

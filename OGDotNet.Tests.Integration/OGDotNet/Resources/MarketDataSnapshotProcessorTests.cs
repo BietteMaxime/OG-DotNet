@@ -26,12 +26,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
                 foreach (var valueSnapshot in ycSnapshot.Values)
                 {
-                    valueSnapshot.Value.OverrideValue = 23;
+                    foreach (var snapshot in valueSnapshot.Value)
+                    {
+                        snapshot.Value.OverrideValue = 23;
+                    }
                 }
 
                 var marketDataSnapshotProcessor = snapshotManager.GetProcessor(ViewName);
                 var interpolatedDoublesCurves = marketDataSnapshotProcessor.GetYieldCurves(manageableMarketDataSnapshot);
                 Assert.NotEmpty(interpolatedDoublesCurves);
+                //TODO check that the curve changes
             }
         }
     }

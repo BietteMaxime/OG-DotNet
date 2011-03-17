@@ -5,6 +5,7 @@ using Castle.Core;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.Id;
 using Currency=OGDotNet.Mappedtypes.Core.Common.Currency;
 
@@ -18,7 +19,8 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         //TODO private Map<Triple<String, CurrencyUnit, CurrencyUnit>, FXVolatilitySurfaceSnapshot> _fxVolatilitySurfaces;
 
 
-        public ManageableMarketDataSnapshot(Dictionary<Identifier, ValueSnapshot> valueSnapshots, Dictionary<Pair<String, Currency>, YieldCurveSnapshot> yieldCurves, UniqueIdentifier uniqueId = null) : base(valueSnapshots)
+        public ManageableMarketDataSnapshot(IDictionary<ComputationTargetSpecification, IDictionary<string, ValueSnapshot>> valueSnapshots, Dictionary<Pair<String, Currency>, YieldCurveSnapshot> yieldCurves, UniqueIdentifier uniqueId = null)
+            : base(valueSnapshots)
         {
             _yieldCurves = yieldCurves;
             _uniqueId = uniqueId;
@@ -71,86 +73,13 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 
         public static ManageableMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
-
-            return new ManageableMarketDataSnapshot(GetValues(ffc), null /* TODO */, uid) { Name = ffc.GetString("name") };
+            throw new NotImplementedException("Leaving this till I've worked out the structure");
         }
 
-        private static Dictionary<Identifier, ValueSnapshot> GetValues(IFudgeFieldContainer msg)
-        {
-            var ffc = msg.GetMessage("values");
-
-            var ret = new Dictionary<Identifier, ValueSnapshot>();
-
-            Identifier key = null;
-
-            foreach (var fudgeField in ffc)
-            {
-                switch (fudgeField.Ordinal)
-                {
-                    case 1:
-                        key = Identifier.Parse((string)fudgeField.Value);
-                        break;
-                    case 2:
-                        if (key == null)
-                            throw new ArgumentException();
-                        var valueMessage = (IFudgeFieldContainer)fudgeField.Value;
-                        var value = new ValueSnapshot
-                               {
-                                   MarketValue = (double)valueMessage.GetDouble("marketValue"),
-                                   OverrideValue = valueMessage.GetDouble("overrideValue"),
-                                   Security = Identifier.Of(valueMessage.GetString("Scheme"), valueMessage.GetString("Value"))
-                               };
-
-                        ret.Add(key, value);
-                        key = null;
-                        break;
-                    default:
-                        throw new ArgumentException();
-                }
-            }
-
-
-            return ret;
-        }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add("name", Name);
-
-            s.WriteInline(a, "uniqueId", UniqueId);
-
-            WriteValues(a, Values);
-        }
-
-        private static void WriteValues(IAppendingFudgeFieldContainer a, Dictionary<Identifier, ValueSnapshot> values)
-        {
-            var msg = new FudgeMsg();
-            foreach (var valueSnapshot in values)
-            {
-
-                msg.Add(1, valueSnapshot.Key.ToString());
-
-                var valueMsg = new FudgeMsg();
-
-
-                valueMsg.Add("marketValue", 2, valueSnapshot.Value.MarketValue);
-                if (valueSnapshot.Value.OverrideValue != null)
-                {
-                    valueMsg.Add("overrideValue", 2, valueSnapshot.Value.OverrideValue);
-                }
-                valueMsg.Add("Scheme", 2, valueSnapshot.Value.Security.Scheme);
-                valueMsg.Add("Value", 2, valueSnapshot.Value.Security.Value);
-
-
-
-                msg.Add(2, valueMsg);
-
-
-            }
-
-            a.Add("values", msg);
-
+            throw new NotImplementedException("Leaving this till I've worked out the structure");
         }
     }
 }

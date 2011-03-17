@@ -1,22 +1,32 @@
 ﻿using System.ComponentModel;
-using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.engine;
 
 namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
     public class ValueSnapshot : INotifyPropertyChanged
     {
-        private Identifier _security;
-        public Identifier Security
+        private readonly ComputationTargetSpecification _computationTarget;
+        private readonly string _valueName;
+        private double _marketValue;
+        private double? _overrideValue;
+
+        public ValueSnapshot(ComputationTargetSpecification computationTarget, string valueName, double marketValue)
         {
-            get { return _security; }
-            set
-            {
-                InvokePropertyChanged("Security");
-                _security = value;
-            }
+            _computationTarget = computationTarget;
+            _valueName = valueName;
+            _marketValue = marketValue;
         }
 
-        private double _marketValue;
+        public ComputationTargetSpecification ComputationTarget
+        {
+            get { return _computationTarget; }
+        }
+
+        public string ValueName
+        {
+            get { return _valueName; }
+        }
+
         public double MarketValue
         {
             get { return _marketValue; }
@@ -27,7 +37,6 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
             }
         }
 
-        private double? _overrideValue;
         public double? OverrideValue
         {
             get { return _overrideValue; }

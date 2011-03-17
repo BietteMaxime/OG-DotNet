@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.engine;
 
 namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
     public class YieldCurveSnapshot : MarketDataSnapshotScope, INotifyPropertyChanged
     {
         private DateTimeOffset _valuationTime;
-         
-        public YieldCurveSnapshot(Dictionary<Identifier, ValueSnapshot> values, DateTimeOffset valuationTime) : base(values)
+
+        public YieldCurveSnapshot(IDictionary<ComputationTargetSpecification, IDictionary<string, ValueSnapshot>> values, DateTimeOffset valuationTime)
+            : base(values)
         {
             _valuationTime = valuationTime;
         }

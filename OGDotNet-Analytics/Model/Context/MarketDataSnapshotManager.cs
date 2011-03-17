@@ -71,6 +71,8 @@ namespace OGDotNet.Model.Context
 
             ViewDefinition tempViewDefn;
             IEnumerable<ValueRequirement> requiredLiveData = GetTempView(view, out tempViewDefn);
+            var requiredDataSet = new HashSet<Tuple<ComputationTargetSpecification,string>>(requiredLiveData.Select(vr => Tuple.Create(vr.TargetSpecification, vr.ValueName)));
+            Func<ComputationTargetSpecification, string, bool> isRequiredData = (cts, name) => requiredDataSet.Contains(Tuple.Create(cts,name));
 
             using (var remoteClient = _remoteEngineContext.CreateUserClient())
             {
@@ -83,7 +85,7 @@ namespace OGDotNet.Model.Context
                     using (var remoteViewClient = tempView.CreateClient())
                     {
                         var tempResults = remoteViewClient.RunOneCycle(valuationTime);
-                        return new ManageableMarketDataSnapshot(GetSnapshotValues(requiredLiveData, tempResults), GetYieldCurves(tempResults));
+                        return new ManageableMarketDataSnapshot(GetSnapshotValues(tempResults, isRequiredData), GetYieldCurves(tempResults));
                     }
                 }
                 finally
@@ -113,32 +115,31 @@ namespace OGDotNet.Model.Context
 
         private static YieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecification yieldCurveSpec, ViewComputationResultModel tempResults)
         {
-            var values = yieldCurveSpec.ResolvedStrips.ToDictionary(s => s.Security, s => GetValue(tempResults, s));
+            //TODO do yield curves only take market values?
+            Func<ComputationTargetSpecification, string, bool> predicate =(cts,name)=>name == MarketValueReqName && yieldCurveSpec.ResolvedStrips.Any(s=>UniqueIdentifier.Of(s.Security) ==cts.Uid);
 
-            var valueSnapshots = values.ToDictionary(lu=>lu.Key,lu=> new ValueSnapshot {MarketValue = lu.Value.Item1, Security = lu.Value.Item2});
-            return new YieldCurveSnapshot(valueSnapshots, tempResults.ValuationTime.ToDateTimeOffset());
+            var snapshotValues = GetSnapshotValues(tempResults, predicate);
+            return new YieldCurveSnapshot(snapshotValues, tempResults.ValuationTime.ToDateTimeOffset());
             
         }
 
-        private static Tuple<double, Identifier> GetValue(ViewComputationResultModel tempResults, FixedIncomeStripWithIdentifier strip)
-        {
-            var uid = UniqueIdentifier.Parse(strip.Security.ToString());
-            object ret;
-            if (! tempResults.TryGetValue(MarketValuesConfigName,new ValueRequirement(MarketValueReqName,new ComputationTargetSpecification(ComputationTargetType.Primitive, uid)), out ret))
-            {
-                throw new ArgumentException();
-            }
-            return Tuple.Create( (double) ret, strip.Security);
-        }
 
-        private static Dictionary<Identifier, ValueSnapshot> GetSnapshotValues(IEnumerable<ValueRequirement> requiredLiveData, ViewComputationResultModel tempResults)
+        private static IDictionary<ComputationTargetSpecification, IDictionary<string, ValueSnapshot>> GetSnapshotValues(ViewComputationResultModel tempResults, Func<ComputationTargetSpecification, string, bool> predicate)
         {
-            return requiredLiveData.ToDictionary(r => IdentifierOf(r.TargetSpecification.Uid), r => new ValueSnapshot { Security = IdentifierOf(r.TargetSpecification.Uid), MarketValue = GetValue(tempResults, r) });
+            var dictionary = tempResults.AllResults.ToLookup(r => r.ComputedValue.Specification.TargetSpecification)
+                .ToDictionary(l => l.Key, l => (IDictionary<string, ValueSnapshot>)l.Where(ll => predicate(l.Key, ll.ComputedValue.Specification.ValueName)).ToDictionary(r => r.ComputedValue.Specification.ValueName, GetValueSnapshot))
+                .Where(kvp=>kvp.Value.Any()).ToDictionary(kvp=>kvp.Key,kvp=>kvp.Value);
+
+            return dictionary;
+        }
+        private static ValueSnapshot GetValueSnapshot(ViewResultEntry entry)
+        {
+            return new ValueSnapshot(entry.ComputedValue.Specification.TargetSpecification, entry.ComputedValue.Specification.ValueName, (double) entry.ComputedValue.Value);
         }
 
         private static IEnumerable<ValueRequirement> GetTempView(RemoteView view, out ViewDefinition tempViewDefn)
         {
-            var requiredLiveData = view.GetRequiredLiveData().Where(r => r.ValueName == MarketValueReqName);//TODO this where clause is a lie
+            var requiredLiveData = view.GetRequiredLiveData();
 
             var tempViewName = typeof(MarketDataSnapshotManager).FullName + Guid.NewGuid();
 
@@ -174,7 +175,7 @@ namespace OGDotNet.Model.Context
                 );
         }
 
-        private static double GetValue(ViewComputationResultModel tempResults, ValueRequirement valueRequirement)
+        private static double GetValues(ViewComputationResultModel tempResults, ValueRequirement valueRequirement)
         {
             object ret;
             if (!tempResults.TryGetValue(MarketValuesConfigName, valueRequirement, out ret))

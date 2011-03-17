@@ -54,6 +54,10 @@ namespace OGDotNet.Mappedtypes.engine.View
             get { return _configurationMap.SelectMany(config => config.Value.AllResults.Select(cv => new ViewResultEntry(config.Key, cv))); }
         }
 
+        public IDictionary<string, ViewCalculationResultModel> CalculationResultsByConfiguration
+        {
+            get { return _configurationMap; }
+        }
 
         public ViewComputationResultModel ApplyDelta(ViewComputationResultModel delta)
         {
