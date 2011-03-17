@@ -14,10 +14,9 @@ namespace OGDotNet.Mappedtypes.engine.value
         public abstract bool IsEmpty { get; }
 
 
-        //TODO builder etc.
         public static ValueProperties Create()
         {
-            return new FiniteValueProperties();
+            return EmptyValueProperties.Instance;
         }
 
         public static ValueProperties Create(Dictionary<string, HashSet<string>> propertyValues)
@@ -26,14 +25,31 @@ namespace OGDotNet.Mappedtypes.engine.value
         }
 
 
+        private class EmptyValueProperties : ValueProperties
+        {
+            public static readonly EmptyValueProperties Instance = new EmptyValueProperties();
+
+            private EmptyValueProperties() { }
+
+            public override ISet<string> Properties
+            {
+                get { return new HashSet<string>(); }
+            }
+
+            public override bool IsEmpty
+            {
+                get { return true; }
+            }
+
+            public new static EmptyValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+            {
+                throw new ArgumentException("This is just here to keep the surrogate selector happy");
+            }
+        }
+
         private class FiniteValueProperties : ValueProperties
         {
             internal readonly Dictionary<string, HashSet<string>> PropertyValues;
-
-            internal FiniteValueProperties() : this(new Dictionary<string, HashSet<string>>())//TODO this should be the empty instance
-            {
-            
-            }
 
             internal FiniteValueProperties(Dictionary<string, HashSet<string>> propertyValues)
             {
@@ -120,7 +136,7 @@ namespace OGDotNet.Mappedtypes.engine.value
 
             if (withMessage == null)
             {
-                return new FiniteValueProperties();
+                return EmptyValueProperties.Instance;
             }
 
             foreach (var field in withMessage)
@@ -157,6 +173,10 @@ namespace OGDotNet.Mappedtypes.engine.value
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
+            if (this is EmptyValueProperties)
+            {
+                return;
+            }
             if (this is FiniteValueProperties)
             {
                 var withMessage = new FudgeMsg();
