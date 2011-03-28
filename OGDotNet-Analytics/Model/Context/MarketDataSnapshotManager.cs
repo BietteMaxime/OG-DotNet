@@ -59,10 +59,10 @@ namespace OGDotNet.Model.Context
         /// <summary>
         /// TODO Filtering
         /// </summary>
-        public void UpdateFromView(ManageableMarketDataSnapshot basis, string viewName)
+        public void UpdateFromView(ManageableMarketDataSnapshot basis)
         {
             
-            var newSnapshot = CreateFromView(viewName);
+            var newSnapshot = CreateFromView(basis.BasisViewName);
 
             basis.UpdateFrom(newSnapshot);
         }
