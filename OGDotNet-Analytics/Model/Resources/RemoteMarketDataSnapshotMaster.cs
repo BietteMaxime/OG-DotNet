@@ -22,18 +22,40 @@ namespace OGDotNet.Model.Resources
             return _restTarget.Resolve("search").Post<SearchResult<MarketDataSnapshotDocument>>(request);
         }
 
+        public MarketDataSnapshotDocument AddOrUpdate(MarketDataSnapshotDocument document)
+        {
+            return document.UniqueId == null ? Add(document) : Update(document);
+        }
         public MarketDataSnapshotDocument Add(MarketDataSnapshotDocument document)
         {
             return PostDefinition(document, "add");
         }
 
+        public MarketDataSnapshotDocument Update(MarketDataSnapshotDocument document)
+        {
+            if (document.UniqueId == null)
+            {
+                throw new ArgumentException();
+            }
+            return PutDefinition(document, "snapshots", document.UniqueId.ToString());
+        }
 
+        private MarketDataSnapshotDocument PutDefinition(MarketDataSnapshotDocument document, params string[] pathParts)
+        {
+            var target = pathParts.Aggregate(_restTarget, (r, p) => r.Resolve(p));
+            var respMsg = target.Put<UniqueIdentifier>(document, "uniqueId");
+            var uid = respMsg.UniqueId;
+            if (uid == null)
+            {
+                throw new ArgumentException("No UID returned");
+            }
+
+            document.UniqueId = uid;
+
+            return document;
+        }
         private MarketDataSnapshotDocument PostDefinition(MarketDataSnapshotDocument document, params string[] pathParts)
         {
-            if (document.UniqueId != null)
-            {
-                document.UniqueId = document.UniqueId.ToLatest();
-            }
             var target =  pathParts.Aggregate(_restTarget, (r, p) => r.Resolve(p));
             var respMsg = target.Post<UniqueIdentifier>(document, "uniqueId");
             var uid = respMsg.UniqueId;
@@ -61,7 +83,8 @@ namespace OGDotNet.Model.Resources
         {
             _restTarget.Resolve("snapshots").Resolve(uniqueId.ToString()).Delete();
         }
-        //TODO Update, correct
+        //TODO correct
 
+        
     }
 }

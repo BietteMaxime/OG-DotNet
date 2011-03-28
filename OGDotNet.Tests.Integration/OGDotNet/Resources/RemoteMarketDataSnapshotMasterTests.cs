@@ -91,18 +91,71 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             snapshotMaster.Remove(marketDataSnapshotDocument.UniqueId);
         }
 
+        [Xunit.Extensions.Fact]
+        public void CanAddAndUpdate()
+        {
+            var snapshotMaster = Context.MarketDataSnapshotMaster;
+
+            var name = TestUtils.GetUniqueName();
+
+            var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));
+            
+            UniqueIdentifier id1 = marketDataSnapshotDocument.UniqueId;
+
+            marketDataSnapshotDocument.Snapshot.GlobalValues.Values.First().Value.First().Value.OverrideValue = 23;
+            
+            var ret = snapshotMaster.Update(marketDataSnapshotDocument);
+            UniqueIdentifier id2 = ret.UniqueId;
+
+            Assert.Equal(id1.ToLatest(), id2.ToLatest());
+            Assert.Equal(int.Parse(id1.Version)+1, int.Parse(id2.Version));
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanAddOrUpdateTwice()
+        {
+            var snapshotMaster = Context.MarketDataSnapshotMaster;
+
+            var name = TestUtils.GetUniqueName();
+
+            var marketDataSnapshotDocument = snapshotMaster.AddOrUpdate(GetDocument(name));
+
+            UniqueIdentifier id1 = marketDataSnapshotDocument.UniqueId;
+            Assert.Equal("0", id1.Version);
+            marketDataSnapshotDocument.Snapshot.GlobalValues.Values.First().Value.First().Value.OverrideValue = 23;
+
+            var ret = snapshotMaster.AddOrUpdate(marketDataSnapshotDocument);
+            UniqueIdentifier id2 = ret.UniqueId;
+
+            Assert.Equal(id1.ToLatest(), id2.ToLatest());
+            Assert.Equal(int.Parse(id1.Version) + 1, int.Parse(id2.Version));
+        }
+
+        [Xunit.Extensions.Fact(Skip = "This isn't a test, but it's quite useful")]
+        public void CanRemoveAllMine()
+        {
+            string searchString = string.Format("*{0}*", GetType().Name);
+
+            RemoveAll(searchString);
+        }
 
         [Xunit.Extensions.Fact(Skip = "This isn't a test, but it's quite useful")]
         public void CanRemoveAll()
         {
+            string searchString = string.Format("*", GetType().Name);
+
+            RemoveAll(searchString);
+        }
+
+        private static void RemoveAll(string searchString)
+        {
             var snapshotMaster = Context.MarketDataSnapshotMaster;
 
-            var searchResult = snapshotMaster.Search(string.Format("*{0}*", GetType().Name), PagingRequest.All);
+            var searchResult = snapshotMaster.Search(searchString, PagingRequest.All);
             foreach (var dataSnapshotDocument in searchResult.Documents)
             {
                 snapshotMaster.Remove(dataSnapshotDocument.UniqueId);    
             }
-            
         }
 
         private static MarketDataSnapshotDocument GetDocument(string name)

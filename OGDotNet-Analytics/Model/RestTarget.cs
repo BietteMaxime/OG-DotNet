@@ -148,6 +148,13 @@ namespace OGDotNet.Model
             RequestImpl("DELETE").Close();
         }
 
+        public TRet Put<TRet>(object reqObj, string subMessageField)
+        {
+            var reqMsg = _fudgeContext.GetSerializer().SerializeToMsg(reqObj);
+            FudgeMsg retMsg  = FudgeRequestImpl("PUT", reqMsg);
+            return ProjectSubMessage<TRet>(retMsg, subMessageField);
+        }
+
         public void Put(FudgeMsg reqMsg = null)
         {
             RequestImpl("PUT", reqMsg).Close();
