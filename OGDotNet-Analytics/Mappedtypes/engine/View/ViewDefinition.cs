@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
@@ -10,6 +11,7 @@ using OGDotNet.Mappedtypes.LiveData;
 
 namespace OGDotNet.Mappedtypes.engine.view
 {
+    [DebuggerDisplay("ViewDefinition {_name}")]
     public class ViewDefinition
     {
         private string _name;

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using OGDotNet.Properties;
 
 namespace OGDotNet.Mappedtypes.LiveData
 {
+    [DebuggerDisplay("UserPrincipal {_userName}/{_ipAddress}")]
     public class UserPrincipal
     {
         private readonly string _userName;
