@@ -66,34 +66,42 @@ namespace OGDotNet.Model.Context
             {
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefn));
 
-                var remoteView = _remoteEngineContext.ViewProcessor.GetView(viewDefn.Name);
-                remoteView.Init();
-                using (var remoteViewClient = remoteView.CreateClient())
+                try
                 {
-                    foreach (var target in yieldCurveSnapshot.Value.Values.Values)
+
+                    var remoteView = _remoteEngineContext.ViewProcessor.GetView(viewDefn.Name);
+                    remoteView.Init();
+                    using (var remoteViewClient = remoteView.CreateClient())
                     {
-                        foreach (var valueSnapshot in target.Value)
+                        foreach (var target in yieldCurveSnapshot.Value.Values.Values)
                         {
-                            remoteView.LiveDataOverrideInjector.AddValue(GetOverrideReq(target.Key, valueSnapshot), valueSnapshot.Value.OverrideValue ?? valueSnapshot.Value.MarketValue);    
+                            foreach (var valueSnapshot in target.Value)
+                            {
+                                remoteView.LiveDataOverrideInjector.AddValue(GetOverrideReq(target.Key, valueSnapshot), valueSnapshot.Value.OverrideValue ?? valueSnapshot.Value.MarketValue);
+                            }
+
                         }
-                        
-                    }
 
-                    var viewComputationResultModel = remoteViewClient.RunOneCycle(yieldCurveSnapshot.Value.ValuationTime);
-                    
+                        var viewComputationResultModel = remoteViewClient.RunOneCycle(yieldCurveSnapshot.Value.ValuationTime);
 
-                    object curve;
-                    if (!viewComputationResultModel.TryGetValue("Default", GetYieldCurveReq(yieldCurveSnapshot), out curve))
-                    {
-                        throw new ArgumentException();
-                    }
-                    object spec;
-                    if (!viewComputationResultModel.TryGetValue("Default", GetYieldCurveSpecReq(yieldCurveSnapshot), out spec))
-                    {
-                        throw new ArgumentException();
-                    }
 
-                    return Tuple.Create((YieldCurve)curve, (InterpolatedYieldCurveSpecification) spec);
+                        object curve;
+                        if (!viewComputationResultModel.TryGetValue("Default", GetYieldCurveReq(yieldCurveSnapshot), out curve))
+                        {
+                            throw new ArgumentException();
+                        }
+                        object spec;
+                        if (!viewComputationResultModel.TryGetValue("Default", GetYieldCurveSpecReq(yieldCurveSnapshot), out spec))
+                        {
+                            throw new ArgumentException();
+                        }
+
+                        return Tuple.Create((YieldCurve)curve, (InterpolatedYieldCurveSpecification)spec);
+                    }
+                }
+                finally
+                {
+                    remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewDefn.Name);
                 }
             }
         }
