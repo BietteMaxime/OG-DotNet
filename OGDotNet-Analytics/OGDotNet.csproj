@@ -83,6 +83,7 @@
     <Compile Include="Mappedtypes\financial\analytics\LocalDateLabelledMatrix1D.cs" />
     <Compile Include="Builders\CurrencyMatrixBuilder.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixValue.cs" />
+    <Compile Include="Mappedtypes\Master\AbstractDocument.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableMarketDataSnapshot.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableUnstructuredMarketDataSnapshot.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotDocument.cs" />

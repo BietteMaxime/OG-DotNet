@@ -62,6 +62,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(1, searchResult.Documents.Count);
             var retDoc = searchResult.Documents[0];
 
+            Assert.NotNull(retDoc.VersionFromInstant);
+            Assert.NotNull(retDoc.CorrectionFromInstant);
+            Assert.Equal(DateTimeOffset.MinValue, retDoc.VersionToInstant);
+            Assert.Equal(DateTimeOffset.MinValue, retDoc.CorrectionToInstant);
+
             AssertEqual(retDoc, marketDataSnapshotDocument);
 
             snapshotMaster.Remove(marketDataSnapshotDocument.UniqueId);
@@ -78,9 +83,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var retDoc = snapshotMaster.Get(marketDataSnapshotDocument.UniqueId);
             Assert.NotNull(retDoc);
-            
-            AssertEqual(retDoc, marketDataSnapshotDocument);
+            Assert.Equal(DateTimeOffset.MinValue, retDoc.VersionFromInstant);
+            Assert.Equal(DateTimeOffset.MinValue, retDoc.CorrectionFromInstant);
 
+            AssertEqual(retDoc, marketDataSnapshotDocument);
+            
             snapshotMaster.Remove(marketDataSnapshotDocument.UniqueId);
         }
 
@@ -90,7 +97,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var snapshotMaster = Context.MarketDataSnapshotMaster;
 
-            var searchResult = snapshotMaster.Search(string.Format("*{0}*", GetType().Name), new PagingRequest(1, int.MaxValue));
+            var searchResult = snapshotMaster.Search(string.Format("*{0}*", GetType().Name), PagingRequest.All);
             foreach (var dataSnapshotDocument in searchResult.Documents)
             {
                 snapshotMaster.Remove(dataSnapshotDocument.UniqueId);    

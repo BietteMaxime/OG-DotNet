@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Fudge;
 using Fudge.Serialization;
+using Fudge.Types;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 
 namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
-    public class MarketDataSnapshotDocument
+    public class MarketDataSnapshotDocument : AbstractDocument
     {
         private UniqueIdentifier _uniqueId;
         private ManageableMarketDataSnapshot _snapshot;
@@ -26,8 +24,10 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
             set { _snapshot = value; }
         }
 
-        public MarketDataSnapshotDocument()
+        private MarketDataSnapshotDocument(UniqueIdentifier uniqueId, ManageableMarketDataSnapshot snapshot, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant) : base(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant)
         {
+            _uniqueId = uniqueId;
+            _snapshot = snapshot;
         }
 
         public MarketDataSnapshotDocument(UniqueIdentifier uniqueId, ManageableMarketDataSnapshot snapshot)
@@ -39,13 +39,42 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         public static MarketDataSnapshotDocument FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
-            return new MarketDataSnapshotDocument(uid, deserializer.FromField<ManageableMarketDataSnapshot>(ffc.GetByName("snapshot")));
+
+            var versionFromInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("versionFromInstant"));
+            var correctionFromInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("correctionFromInstant"));
+
+            var vToInst = ffc.GetValue<FudgeDateTime>("versionToInstant");
+            var versionToInstant = ToDateTimeOffsetWithDefault(vToInst);
+
+            var cToInst = ffc.GetValue<FudgeDateTime>("correctionToInstant");
+            var correctionToInstant = ToDateTimeOffsetWithDefault(cToInst);
+
+            return new MarketDataSnapshotDocument(uid, deserializer.FromField<ManageableMarketDataSnapshot>(ffc.GetByName("snapshot")), versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant);
+        }
+
+        private static DateTimeOffset ToDateTimeOffsetWithDefault(FudgeDateTime dt)
+        {
+            return (dt == null ) ? default(DateTimeOffset)  : dt.ToDateTimeOffset();
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             if (_uniqueId != null) a.Add("uniqueId", _uniqueId.ToString());
             a.Add("snapshot", _snapshot);
+
+            AddField(a, VersionFromInstant, "versionFromInstant");
+            AddField(a, CorrectionFromInstant, "correctionFromInstant");
+            AddField(a, VersionToInstant, "versionToInstant");
+            AddField(a, CorrectionToInstant, "correctionToInstant");
+        }
+
+        private static void AddField(IAppendingFudgeFieldContainer a, DateTimeOffset value, string fieldName)
+        {
+            if (value != default(DateTimeOffset))
+            {
+                
+                a.Add(fieldName, new FudgeDateTime(value));
+            }
         }
 
         public override string ToString()
