@@ -106,9 +106,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotNull(viewComputationResultModel);
 
                 //Now has a higher resolution
+                TimeSpan precision = TimeSpan.FromMilliseconds(1);
                 Assert.InRange(valuationTime - viewComputationResultModel.ValuationTime.ToDateTimeOffset(),
-                    TimeSpan.Zero,
-                    TimeSpan.FromMilliseconds(1)
+                    TimeSpan.Zero-precision,
+                    precision
                     );
             }
         }
