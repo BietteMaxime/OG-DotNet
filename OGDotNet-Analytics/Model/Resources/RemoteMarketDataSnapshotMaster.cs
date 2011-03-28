@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
@@ -26,15 +27,15 @@ namespace OGDotNet.Model.Resources
             return PostDefinition(document, "add");
         }
 
-        public MarketDataSnapshotDocument AddOrUpdate(MarketDataSnapshotDocument document)
-        {
-            return PostDefinition(document, "addOrUpdate");
-        }
 
-
-        private MarketDataSnapshotDocument PostDefinition(MarketDataSnapshotDocument document, string path)
+        private MarketDataSnapshotDocument PostDefinition(MarketDataSnapshotDocument document, params string[] pathParts)
         {
-            var respMsg = _restTarget.Resolve(path).Post<UniqueIdentifier>(document, "uniqueId");
+            if (document.UniqueId != null)
+            {
+                document.UniqueId = document.UniqueId.ToLatest();
+            }
+            var target =  pathParts.Aggregate(_restTarget, (r, p) => r.Resolve(p));
+            var respMsg = target.Post<UniqueIdentifier>(document, "uniqueId");
             var uid = respMsg.UniqueId;
             if (uid == null)
             {
