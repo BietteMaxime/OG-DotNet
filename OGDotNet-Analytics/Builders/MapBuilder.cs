@@ -18,6 +18,10 @@ namespace OGDotNet.Builders
 
         public static Dictionary<TKey, TValue> FromFudgeMsg<TKey, TValue>(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer,  Func<IFudgeField, TKey> keyFactory = null, Func<IFudgeField, TValue> valueFactory = null) where TKey : class where TValue : class
         {
+            if (ffc == null)
+            {
+                return new Dictionary<TKey, TValue>();
+            }
             keyFactory = keyFactory ?? deserializer.FromField<TKey>;
             valueFactory = valueFactory ?? deserializer.FromField<TValue>;
 
