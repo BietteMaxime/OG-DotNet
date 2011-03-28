@@ -5,6 +5,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 {
@@ -58,7 +59,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         private static void UpdateDictionaryFrom<TKey, TValueA, TValueB>(IDictionary<TKey, TValueA> dictA, IDictionary<TKey, TValueB> dictB, Action<TValueA, TValueB> updater)
         {
-            CheckNoChanges(dictA, dictB);
+            CheckUnchangedKeys(dictB, dictA);
 
             var enumerable = dictA.Join(dictB, a => a.Key, b => b.Key, (a, b) => Tuple.Create(a.Value, b.Value));
             foreach (var tuple in enumerable)
@@ -67,12 +68,11 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             }
         }
 
-        private static void CheckNoChanges<TKey, TValueA, TValueB>(IDictionary<TKey, TValueA> current, IDictionary<TKey, TValueB> newValues)
+        private static void CheckUnchangedKeys<TKey, TValueB, TValueA>(IDictionary<TKey, TValueB> dictB, IDictionary<TKey, TValueA> dictA)
         {
-            var toAdd = newValues.Keys.Except(current.Keys).ToList();
-            var toRemove = current.Keys.Except(newValues.Keys).ToList();
-
-            if (toAdd.Any() || toRemove.Any())
+            if (dictB.Count != dictA.Count
+                   ||
+                   !dictA.Keys.All(dictB.ContainsKey))
             {//TODO handle dictionary changing
                 throw new NotImplementedException();
             }
