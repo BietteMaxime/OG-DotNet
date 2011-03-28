@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Globalization;
+using Fudge;
+using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 
@@ -40,6 +42,17 @@ namespace OGDotNet.Mappedtypes.Core.Common
         public string ISOCode
         {
             get { return _identifier.Value; }
+        }
+
+
+        public static Currency FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            return Create(ffc.GetString("code"));
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            a.Add("code", _identifier.Value);
         }
 
         public bool Equals(Currency other)

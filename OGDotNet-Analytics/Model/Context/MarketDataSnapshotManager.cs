@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
@@ -12,6 +13,8 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
@@ -71,6 +74,7 @@ namespace OGDotNet.Model.Context
 
             ViewDefinition tempViewDefn;
             IEnumerable<ValueRequirement> requiredLiveData = GetTempView(view, out tempViewDefn);
+
             var requiredDataSet = new HashSet<Tuple<ComputationTargetSpecification,string>>(requiredLiveData.Select(vr => Tuple.Create(vr.TargetSpecification, vr.ValueName)));
             Func<ComputationTargetSpecification, string, bool> isRequiredData = (cts, name) => requiredDataSet.Contains(Tuple.Create(cts,name));
 
@@ -85,7 +89,7 @@ namespace OGDotNet.Model.Context
                     using (var remoteViewClient = tempView.CreateClient())
                     {
                         var tempResults = remoteViewClient.RunOneCycle(valuationTime);
-                        return new ManageableMarketDataSnapshot(GetSnapshotValues(tempResults, isRequiredData), GetYieldCurves(tempResults));
+                        return new ManageableMarketDataSnapshot(view.Name, GetUnstructuredSnapshot(tempResults, isRequiredData), GetYieldCurves(tempResults));
                     }
                 }
                 finally
@@ -95,7 +99,7 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        private static Dictionary<Pair<string, Currency>, YieldCurveSnapshot> GetYieldCurves(ViewComputationResultModel tempResults)
+        private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(ViewComputationResultModel tempResults)
         {
             //TODO less insanity
             var specEntries = tempResults.AllResults.Where(r =>r.ComputedValue.Specification.ValueName==YieldCurveSpecValueReqName);
@@ -110,31 +114,46 @@ namespace OGDotNet.Model.Context
                 .ToList();
 
 
-            return curves.ToDictionary(t => new Pair<string, Currency>(t.Item1, Currency.Create(t.Item2.Value)), t => GetYieldCurveSnapshot(t.Item3, tempResults));
+            return curves.ToDictionary(t => new YieldCurveKey(Currency.Create(t.Item2.Value), t.Item1), t => GetYieldCurveSnapshot(t.Item3, tempResults));
         }
 
-        private static YieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecification yieldCurveSpec, ViewComputationResultModel tempResults)
+        private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecification yieldCurveSpec, ViewComputationResultModel tempResults)
         {
             //TODO do yield curves only take market values?
             Func<ComputationTargetSpecification, string, bool> predicate =(cts,name)=>name == MarketValueReqName && yieldCurveSpec.ResolvedStrips.Any(s=>UniqueIdentifier.Of(s.Security) ==cts.Uid);
 
-            var snapshotValues = GetSnapshotValues(tempResults, predicate);
-            return new YieldCurveSnapshot(snapshotValues, tempResults.ValuationTime.ToDateTimeOffset());
+            var snapshotValues = GetUnstructuredSnapshot(tempResults, predicate);
+            return new ManageableYieldCurveSnapshot(snapshotValues, tempResults.ValuationTime.ToDateTimeOffset());
             
         }
 
 
-        private static IDictionary<ComputationTargetSpecification, IDictionary<string, ValueSnapshot>> GetSnapshotValues(ViewComputationResultModel tempResults, Func<ComputationTargetSpecification, string, bool> predicate)
+        private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredSnapshot(ViewComputationResultModel tempResults, Func<ComputationTargetSpecification, string, bool> predicate)
         {
-            var dictionary = tempResults.AllResults.ToLookup(r => r.ComputedValue.Specification.TargetSpecification)
-                .ToDictionary(l => l.Key, l => (IDictionary<string, ValueSnapshot>)l.Where(ll => predicate(l.Key, ll.ComputedValue.Specification.ValueName)).ToDictionary(r => r.ComputedValue.Specification.ValueName, GetValueSnapshot))
+            var dictionary = tempResults.AllResults
+                .Where(vre => predicate(vre.ComputedValue.Specification.TargetSpecification, vre.ComputedValue.Specification.ValueName))
+                .ToLookup(r => r.ComputedValue.Specification.TargetSpecification)
+                .ToDictionary(l => GetMarketValueSpecification(l.Key), l => (IDictionary<string, ValueSnapshot>)l.Where(ll => predicate(l.Key, ll.ComputedValue.Specification.ValueName)).ToDictionary(r => r.ComputedValue.Specification.ValueName, GetValueSnapshot))
                 .Where(kvp=>kvp.Value.Any()).ToDictionary(kvp=>kvp.Key,kvp=>kvp.Value);
 
-            return dictionary;
+            return new ManageableUnstructuredMarketDataSnapshot(dictionary);
         }
+
+       
+
+        private static MarketDataValueSpecification GetMarketValueSpecification(ComputationTargetSpecification key)
+        {
+            return new MarketDataValueSpecification(GetMarketType(key.Type), key.Uid);
+        }
+
+        private static MarketDataValueType GetMarketType(ComputationTargetType type)
+        {
+            return type.ConvertTo<MarketDataValueType>();
+        }
+
         private static ValueSnapshot GetValueSnapshot(ViewResultEntry entry)
         {
-            return new ValueSnapshot(entry.ComputedValue.Specification.TargetSpecification, entry.ComputedValue.Specification.ValueName, (double) entry.ComputedValue.Value);
+            return new ValueSnapshot((double) entry.ComputedValue.Value);
         }
 
         private static IEnumerable<ValueRequirement> GetTempView(RemoteView view, out ViewDefinition tempViewDefn)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
+using Fudge;
 using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.engine.View.permission;
 
@@ -53,7 +54,7 @@ namespace OGDotNet.Model
                     {"java.lang.IllegalStateException", typeof(InvalidOperationException)},
                     {"com.opengamma.engine.view.permission.ViewPermissionException", typeof(ViewPermissionException)},
                     {"com.opengamma.OpenGammaRuntimeException", typeof(OpenGammaException)},
-                    //TODO "org.fudgemsg.FudgeRuntimeException":
+                    {"org.fudgemsg.FudgeRuntimeException", typeof(FudgeRuntimeException)}
                                                 };
 
         private static Exception BuildException(string javaType, string message = null)

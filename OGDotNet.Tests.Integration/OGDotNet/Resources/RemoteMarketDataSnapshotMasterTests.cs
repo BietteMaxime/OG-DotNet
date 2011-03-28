@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Castle.Core;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.Db;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -10,8 +14,7 @@ using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
-    //TODO this: when it's fixed
-    internal class RemoteMarketDataSnapshotMasterTests : TestWithContextBase
+    public class RemoteMarketDataSnapshotMasterTests : TestWithContextBase
     {
         [Xunit.Extensions.Fact]
         public void CanSearch()
@@ -97,7 +100,33 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static MarketDataSnapshotDocument GetDocument(string name)
         {
-            return new MarketDataSnapshotDocument(null, new ManageableMarketDataSnapshot(new Dictionary<ComputationTargetSpecification, IDictionary<string, ValueSnapshot>>(), new Dictionary<Pair<string, Currency>, YieldCurveSnapshot>()) { Name = name });
+            var manageableUnstructuredMarketDataSnapshot = new ManageableUnstructuredMarketDataSnapshot(
+                new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>()
+                    {
+                        {
+                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Parse("AA::XX")),
+                            new Dictionary<string,ValueSnapshot>()
+                                {
+                                    {"SomeValue", new ValueSnapshot(12)}
+                                }
+                            },
+                        {
+                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Parse("AA::YY")),
+                            new Dictionary<string,ValueSnapshot>()
+                                {
+                                    {"SomeOtherValue", new ValueSnapshot(12){OverrideValue = 13}}
+                                }
+                            }
+                    }
+                );
+            return new MarketDataSnapshotDocument(null,
+                new ManageableMarketDataSnapshot("SomeView", 
+                    manageableUnstructuredMarketDataSnapshot, 
+                    new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>()
+                        {
+                            {new YieldCurveKey(Currency.Create("USD"), "Default"), new ManageableYieldCurveSnapshot(manageableUnstructuredMarketDataSnapshot, DateTimeOffset.Now)}
+                        }
+                    ) { Name = name });
         }
 
 
@@ -115,7 +144,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(mSnapshot.Name, retSnapshot.Name);
             Assert.NotNull(retSnapshot.Values);
 
-            Assert.Equal(mSnapshot.Values.Keys, retSnapshot.Values.Keys);
+            Assert.Equal(mSnapshot.Values.Keys.OrderBy(x => x.GetHashCode()), retSnapshot.Values.Keys.OrderBy(x => x.GetHashCode()));
 
             //TODO
         }

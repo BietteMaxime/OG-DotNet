@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
@@ -12,6 +13,8 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.financial.view;
+using OGDotNet.Mappedtypes.master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Resources;
 
@@ -42,13 +45,13 @@ namespace OGDotNet.Model.Context
         }
 
 
-        public Dictionary<Pair<string, Currency>, Tuple<YieldCurve, InterpolatedYieldCurveSpecification>> GetYieldCurves(ManageableMarketDataSnapshot snapshot)
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecification>> GetYieldCurves(ManageableMarketDataSnapshot snapshot)
         {
 
             return snapshot.YieldCurves.ToDictionary(kvp => kvp.Key, kvp => GetYieldCurve(snapshot, kvp));
         }
 
-        private Tuple<YieldCurve, InterpolatedYieldCurveSpecification> GetYieldCurve(ManageableMarketDataSnapshot snapshot, KeyValuePair<Pair<string, Currency>, YieldCurveSnapshot> yieldCurveSnapshot)
+        private Tuple<YieldCurve, InterpolatedYieldCurveSpecification> GetYieldCurve(ManageableMarketDataSnapshot snapshot, KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot)
         {
             var viewDefinition = ViewDefinition;
 
@@ -67,7 +70,7 @@ namespace OGDotNet.Model.Context
                 remoteView.Init();
                 using (var remoteViewClient = remoteView.CreateClient())
                 {
-                    foreach (var target in yieldCurveSnapshot.Value.Values)
+                    foreach (var target in yieldCurveSnapshot.Value.Values.Values)
                     {
                         foreach (var valueSnapshot in target.Value)
                         {
@@ -95,12 +98,17 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        private static ValueRequirement GetOverrideReq(ComputationTargetSpecification target, KeyValuePair<string, ValueSnapshot> snap)
+        private static ValueRequirement GetOverrideReq(MarketDataValueSpecification target, KeyValuePair<string, ValueSnapshot> snap)
         {
-            return new ValueRequirement(snap.Key, target);
+            return new ValueRequirement(snap.Key, new ComputationTargetSpecification(ConvertToComputationTargetType(target), target.UniqueId));
         }
 
-        private ViewCalculationConfiguration GetCalcConfig(ManageableMarketDataSnapshot snapshot, KeyValuePair<Pair<string,Currency>,YieldCurveSnapshot> yieldCurveSnapshot, ViewDefinition viewDefinition)
+        private static ComputationTargetType ConvertToComputationTargetType(MarketDataValueSpecification target)
+        {
+            return target.Type.ConvertTo<ComputationTargetType>();
+        }
+
+        private ViewCalculationConfiguration GetCalcConfig(ManageableMarketDataSnapshot snapshot, KeyValuePair<YieldCurveKey,ManageableYieldCurveSnapshot> yieldCurveSnapshot, ViewDefinition viewDefinition)
         {
             return new ViewCalculationConfiguration("Default", 
                 new List<ValueRequirement> {GetYieldCurveReq(yieldCurveSnapshot), GetYieldCurveSpecReq(yieldCurveSnapshot)},
@@ -108,13 +116,13 @@ namespace OGDotNet.Model.Context
                 );
         }
 
-        private static ValueRequirement GetYieldCurveReq(KeyValuePair<Pair<string, Currency>, YieldCurveSnapshot> yieldCurveSnapshot)
+        private static ValueRequirement GetYieldCurveReq(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot)
         {
-            return new ValueRequirement(MarketDataSnapshotManager.YieldCurveValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, yieldCurveSnapshot.Key.Second.Identifier));
+            return new ValueRequirement(MarketDataSnapshotManager.YieldCurveValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, yieldCurveSnapshot.Key.Currency.Identifier));
         }
-        private static ValueRequirement GetYieldCurveSpecReq(KeyValuePair<Pair<string, Currency>, YieldCurveSnapshot> yieldCurveSnapshot)
+        private static ValueRequirement GetYieldCurveSpecReq(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot)
         {
-            return new ValueRequirement(MarketDataSnapshotManager.YieldCurveSpecValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, yieldCurveSnapshot.Key.Second.Identifier));
+            return new ValueRequirement(MarketDataSnapshotManager.YieldCurveSpecValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, yieldCurveSnapshot.Key.Currency.Identifier));
         }
 
         private static string GetViewDefnName()

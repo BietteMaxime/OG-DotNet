@@ -1,0 +1,67 @@
+﻿using System;
+using Fudge;
+using Fudge.Serialization;
+using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.Id;
+
+namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
+{
+    public class MarketDataValueSpecification : IEquatable<MarketDataValueSpecification>
+    {
+        private readonly MarketDataValueType _type;
+        private readonly UniqueIdentifier _uniqueId;
+
+        public MarketDataValueSpecification(MarketDataValueType type, UniqueIdentifier uniqueId)
+        {
+            _type = type;
+            _uniqueId = uniqueId;
+        }
+
+        public MarketDataValueType Type
+        {
+            get { return _type; }
+        }
+
+        public UniqueIdentifier UniqueId
+        {
+            get { return _uniqueId; }
+        }
+
+        public bool Equals(MarketDataValueSpecification other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other._type, _type) && Equals(other._uniqueId, _uniqueId);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof (MarketDataValueSpecification)) return false;
+            return Equals((MarketDataValueSpecification) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (_type.GetHashCode()*397) ^ (_uniqueId != null ? _uniqueId.GetHashCode() : 0);
+            }
+        }
+
+        public static MarketDataValueSpecification FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            return new MarketDataValueSpecification(
+                EnumBuilder<MarketDataValueType>.Parse(ffc.GetMessage("type").GetString(1)),
+                deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"))
+                );
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            a.Add("type", EnumBuilder<MarketDataValueType>.GetJavaName(_type));
+            a.Add("uniqueId", _uniqueId.ToString());
+        }
+    }
+}

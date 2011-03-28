@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using Castle.Core;
 using OGDotNet.Mappedtypes.Core.Common;
+using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using Xunit;
 
@@ -9,6 +11,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
     public class MarketDataSnapshotManagerTests : TestWithContextBase
     {
         protected const string ViewName = "Equity Option Test View 1";
+        //protected const string ViewName = "Swap Test View";
 
         [Xunit.Extensions.Fact]
         public void CanCreateFromView()
@@ -25,7 +28,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     foreach (var snapshot in valueSnapshot.Value)
                     {
-                        Assert.Equal(valueSnapshot.Key, snapshot.Value.ComputationTarget);
                         ValueAssertions.AssertSensibleValue(snapshot.Value.MarketValue);
                         Assert.Null(snapshot.Value.OverrideValue);    
                     }
@@ -33,7 +35,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 }
                 
                 Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
-                var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves[new Pair<string, Currency>("Default", Currency.Create("USD"))];
+                var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "Default")];
                 AssertSaneValue(yieldCurveSnapshot);
             }
         }
@@ -64,7 +66,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     foreach (var snapshot in valueSnapshot.Value)
                     {
-                        Assert.Equal(valueSnapshot.Key, snapshot.Value.ComputationTarget);
                         ValueAssertions.AssertSensibleValue(snapshot.Value.MarketValue);
                         if (targetChanged == valueSnapshot.Key && valueChanged == snapshot.Key)
                         {
@@ -82,16 +83,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private static void AssertSaneValue(YieldCurveSnapshot yieldCurveSnapshot)
+        private static void AssertSaneValue(ManageableYieldCurveSnapshot yieldCurveSnapshot)
         {
             Assert.NotNull(yieldCurveSnapshot);
-            Assert.InRange(yieldCurveSnapshot.Values.Count, 2,200);
+            Assert.InRange(yieldCurveSnapshot.Values.Values.Count(), 2,200);
 
             foreach (var valueSnapshot in yieldCurveSnapshot.Values)
             {
                 foreach (var snapshot in valueSnapshot.Value)
                 {
-                    Assert.Equal(valueSnapshot.Key, snapshot.Value.ComputationTarget);
                     ValueAssertions.AssertSensibleValue(snapshot.Value.MarketValue);
                     Assert.Null(snapshot.Value.OverrideValue);
                 }
