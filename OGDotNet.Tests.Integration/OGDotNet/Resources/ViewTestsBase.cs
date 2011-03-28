@@ -14,7 +14,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       //Broken
                                                                       "TestDefinition",
                                                                       "Swap Test View",
-                                                                      "Primitives Only"
+                                                                      "Primitives Only",
+                                                                      "OvernightBatchTestView"
                                                                   };
 
         private static bool IsSlowTickingView(RemoteView view)
