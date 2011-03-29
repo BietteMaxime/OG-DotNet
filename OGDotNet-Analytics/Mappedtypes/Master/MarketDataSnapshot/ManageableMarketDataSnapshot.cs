@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using Castle.Core;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
-using Currency=OGDotNet.Mappedtypes.Core.Common.Currency;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 {
-    public class ManageableMarketDataSnapshot
+    public class ManageableMarketDataSnapshot : INotifyPropertyChanged
     {
         private readonly UniqueIdentifier _uniqueId;
 
@@ -21,7 +21,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
         private readonly ManageableUnstructuredMarketDataSnapshot _globalValues;
 
 
-        private readonly Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> _yieldCurves; //TODO serialize this
+        private readonly Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> _yieldCurves;
 
         //TODO private Map<Triple<String, CurrencyUnit, CurrencyUnit>, FXVolatilitySurfaceSnapshot> _fxVolatilitySurfaces;
 
@@ -83,15 +83,13 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
         {
             _globalValues.UpdateFrom(newSnapshot._globalValues);
 
-            if (! _yieldCurves.Keys.SequenceEqual(newSnapshot._yieldCurves.Keys))
-            {
-                //TODO handle portfolio/view changing
-                throw new NotImplementedException();
-            }
 
-            foreach (var yieldCurveSnapshot in _yieldCurves.Keys)
+            bool dirty = _yieldCurves.UpdateDictionaryFrom(newSnapshot._yieldCurves, (o, n) => o.UpdateFrom(n));
+
+
+            if (dirty)
             {
-                _yieldCurves[yieldCurveSnapshot].UpdateFrom(newSnapshot._yieldCurves[yieldCurveSnapshot]);
+                InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
             }
         }
 
@@ -128,6 +126,15 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             }
             
             a.Add("yieldCurves", MapBuilder.ToFudgeMsg(s, _yieldCurves));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+
+        public void InvokePropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, e);
         }
     }
 }

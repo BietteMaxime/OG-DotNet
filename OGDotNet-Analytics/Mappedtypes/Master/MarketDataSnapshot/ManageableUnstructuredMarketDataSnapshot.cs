@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
@@ -9,7 +10,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 {
-    public class ManageableUnstructuredMarketDataSnapshot
+    public class ManageableUnstructuredMarketDataSnapshot : INotifyPropertyChanged
     {
         private readonly IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> _values;
 
@@ -41,42 +42,25 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             var newValues = newSnapshot.Values;
             var current = Values;
 
-            UpdateDictionaryFrom(current, newValues);
-        }
-
-
-        private static void UpdateDictionaryFrom(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> current, IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> newValues)
-        {
-            UpdateDictionaryFrom(current, newValues, UpdateDictionaryFrom);
-        }
-
-
-        private static void UpdateDictionaryFrom(IDictionary<string, ValueSnapshot> current, IDictionary<string, ValueSnapshot> newValues)
-        {
-            UpdateDictionaryFrom(current, newValues, (c, n) => c.MarketValue = n.MarketValue);
-        }
-
-
-        private static void UpdateDictionaryFrom<TKey, TValueA, TValueB>(IDictionary<TKey, TValueA> dictA, IDictionary<TKey, TValueB> dictB, Action<TValueA, TValueB> updater)
-        {
-            CheckUnchangedKeys(dictB, dictA);
-
-            var enumerable = dictA.Join(dictB, a => a.Key, b => b.Key, (a, b) => Tuple.Create(a.Value, b.Value));
-            foreach (var tuple in enumerable)
+            bool dirty= UpdateDictionaryFrom(current, newValues);
+            if (dirty)
             {
-                updater(tuple.Item1, tuple.Item2);
+                InvokePropertyChanged("Values");
             }
         }
 
-        private static void CheckUnchangedKeys<TKey, TValueB, TValueA>(IDictionary<TKey, TValueB> dictB, IDictionary<TKey, TValueA> dictA)
+
+        private static bool UpdateDictionaryFrom(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> current, IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> newValues)
         {
-            if (dictB.Count != dictA.Count
-                   ||
-                   !dictA.Keys.All(dictB.ContainsKey))
-            {//TODO handle dictionary changing
-                throw new NotImplementedException();
-            }
+            return current.UpdateDictionaryFrom(newValues, (Func<IDictionary<string, ValueSnapshot>, IDictionary<string, ValueSnapshot>, bool>)UpdateDictionaryFrom);
         }
+
+
+        private static bool UpdateDictionaryFrom(IDictionary<string, ValueSnapshot> current, IDictionary<string, ValueSnapshot> newValues)
+        {
+            return current.UpdateDictionaryFrom(newValues, (c, n) => c.MarketValue = n.MarketValue);
+        }
+
 
         public IEnumerator<KeyValuePair<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>> GetEnumerator()
         {
@@ -90,7 +74,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             return new ManageableUnstructuredMarketDataSnapshot(
                 MapBuilder.FromFudgeMsg<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(ffc, deserializer, "values",
                 deserializer.FromField<MarketDataValueSpecification>,
-                vm => MapBuilder.FromFudgeMsg<string, ValueSnapshot>((IFudgeFieldContainer)vm.Value, deserializer, km=>(string) km.Value, deserializer.FromField<ValueSnapshot>)
+                vm => MapBuilder.FromFudgeMsg((IFudgeFieldContainer)vm.Value, deserializer, km=>(string) km.Value, deserializer.FromField<ValueSnapshot>)
                 )
                 );
         }
@@ -101,6 +85,18 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             s.WriteTypeHeader(a, type);
             FudgeMsg valuesMessage = MapBuilder.ToFudgeMsg(s, Values);
             a.Add("values", valuesMessage);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void InvokePropertyChanged(string propertyName)
+        {
+            InvokePropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+        private void InvokePropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, e);
         }
     }
 }
