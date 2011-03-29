@@ -55,7 +55,7 @@ namespace OGDotNet.Model.Context
             var viewDefn = new ViewDefinition(GetViewDefnName(), new ResultModelDefinition(ResultOutputMode.TerminalOutputs),
                                    viewDefinition.PortfolioIdentifier, viewDefinition.User,
                                    viewDefinition.DefaultCurrency, null, null, null, null,
-                                   new Dictionary<string, ViewCalculationConfiguration>()
+                                   new Dictionary<string, ViewCalculationConfiguration>
                                        {
                                            {"Default", GetCalcConfig(snapshot, yieldCurveSnapshot, viewDefinition)}
                                        });
