@@ -16,6 +16,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var viewDefinition = remoteView.Definition;
             Assert.NotNull(viewDefinition);
+            Assert.NotNull(viewDefinition.UniqueID);
         }
 
         [Theory]

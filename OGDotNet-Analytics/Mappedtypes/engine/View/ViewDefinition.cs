@@ -17,6 +17,7 @@ namespace OGDotNet.Mappedtypes.engine.view
         private string _name;
         private readonly UniqueIdentifier _portfolioIdentifier;
         private readonly UserPrincipal _user;
+        private readonly UniqueIdentifier _uniqueID;
 
         private readonly ResultModelDefinition _resultModelDefinition;
 
@@ -28,11 +29,12 @@ namespace OGDotNet.Mappedtypes.engine.view
         private readonly Currency _defaultCurrency;
 
         private readonly Dictionary<string, ViewCalculationConfiguration> _calculationConfigurationsByName;
+        
 
-
-        public ViewDefinition(string name, ResultModelDefinition resultModelDefinition = null, UniqueIdentifier portfolioIdentifier = null, UserPrincipal user = null, Currency defaultCurrency = null, long? minDeltaCalcPeriod = null, long? maxDeltaCalcPeriod = null, long? minFullCalcPeriod = null, long? maxFullCalcPeriod = null, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName = null)
+        public ViewDefinition(string name, ResultModelDefinition resultModelDefinition = null, UniqueIdentifier portfolioIdentifier = null, UserPrincipal user = null, Currency defaultCurrency = null, long? minDeltaCalcPeriod = null, long? maxDeltaCalcPeriod = null, long? minFullCalcPeriod = null, long? maxFullCalcPeriod = null, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName = null, UniqueIdentifier uniqueID = null)
         {
             _name = name;
+            _uniqueID = uniqueID;
             _portfolioIdentifier = portfolioIdentifier;
             _user = user ?? UserPrincipal.DefaultUser;
             _resultModelDefinition = resultModelDefinition ?? new ResultModelDefinition();
@@ -95,9 +97,17 @@ namespace OGDotNet.Mappedtypes.engine.view
             get { return _calculationConfigurationsByName; }
         }
 
+        public UniqueIdentifier UniqueID
+        {
+            get { return _uniqueID; }
+        }
+
         public static ViewDefinition FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var name = ffc.GetValue<string>("name");
+            var uniqueIdString = ffc.GetString("uniqueId");
+            var uniqueId = uniqueIdString == null ? null : UniqueIdentifier.Parse(uniqueIdString);
+
             var resultModelDefinition = deserializer.FromField<ResultModelDefinition>(ffc.GetByName("resultModelDefinition"));
             var portfolioIdentifier =ffc.GetAllByName("identifier").Any()  ? UniqueIdentifier.Parse(ffc.GetValue<String>("identifier")) : null;
             var user = deserializer.FromField<UserPrincipal>(ffc.GetByName("user"));
@@ -117,7 +127,7 @@ namespace OGDotNet.Mappedtypes.engine.view
                                                     .Select(deserializer.FromField<ViewCalculationConfiguration>)
                                                     .ToDictionary(vcc => vcc.Name);
 
-            return new ViewDefinition(name, resultModelDefinition, portfolioIdentifier, user, currency, minDeltaCalcPeriod, maxDeltaCalcPeriod, minFullCalcPeriod, maxFullCalcPeriod, calculationConfigurationsByName);
+            return new ViewDefinition(name, resultModelDefinition, portfolioIdentifier, user, currency, minDeltaCalcPeriod, maxDeltaCalcPeriod, minFullCalcPeriod, maxFullCalcPeriod, calculationConfigurationsByName, uniqueId);
         }
 
         /// <summary>
@@ -141,6 +151,7 @@ namespace OGDotNet.Mappedtypes.engine.view
         public void ToFudgeMsg(IAppendingFudgeFieldContainer message, IFudgeSerializer s)
         {
             message.Add("name",Name);
+            message.Add("uniqueId", _uniqueID.ToString());
             s.WriteInline(message,"identifier", PortfolioIdentifier);
             s.WriteInline(message, "user", User);
             s.WriteInline(message, "resultModelDefinition", ResultModelDefinition);
