@@ -6,7 +6,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Id
 {
-    public class UniqueIdentifier : IComparable<UniqueIdentifier>, IEquatable<UniqueIdentifier>
+    public class UniqueIdentifier : IComparable<UniqueIdentifier>, IEquatable<UniqueIdentifier>, IComparable
     {
         private const string Separator = "::";
 
@@ -108,6 +108,20 @@ namespace OGDotNet.Mappedtypes.Id
         public UniqueIdentifier UniqueId
         {
             get { return this; }
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null)
+            {
+                throw new ArgumentNullException("obj");
+            }
+            if (!(obj is UniqueIdentifier))
+            {
+                throw new ArgumentException(string.Format("Unexpected type {0}", obj.GetType()), "obj");
+            }
+
+            return CompareTo((UniqueIdentifier) obj);
         }
 
         #region auto generated equality
