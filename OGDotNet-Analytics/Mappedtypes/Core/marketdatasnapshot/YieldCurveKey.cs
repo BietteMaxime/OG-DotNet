@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using Fudge;
 using Fudge.Serialization;
 using Currency=OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
+    [DebuggerDisplay("YieldCurveKey {_currency}/{_name}")]
     public class YieldCurveKey : IComparable<YieldCurveKey>
     {
         private readonly Currency _currency;
