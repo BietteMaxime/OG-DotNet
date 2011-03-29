@@ -29,7 +29,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.NotNull(interpolatedYieldCurveSpecification);
 
             Assert.Equal(reqDef.Currency, interpolatedYieldCurveSpecification.Currency);
-            Assert.Equal(reqDate, interpolatedYieldCurveSpecification.CurveDate);
+            Assert.Equal(reqDate.Date, interpolatedYieldCurveSpecification.CurveDate.Date);
             Assert.Equal(reqDef.Name, interpolatedYieldCurveSpecification.Name);
             Assert.Equal(reqDef.Region, interpolatedYieldCurveSpecification.Region);
 
