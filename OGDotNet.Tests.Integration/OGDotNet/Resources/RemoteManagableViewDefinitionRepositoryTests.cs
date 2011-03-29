@@ -43,6 +43,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName()+hardUriPart);
 
+                Assert.Null(vd.UniqueID);
+
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
 
                 var roundTripped = Context.ViewProcessor.GetView(vd.Name);
