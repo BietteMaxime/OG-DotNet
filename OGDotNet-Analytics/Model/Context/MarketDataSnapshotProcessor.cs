@@ -42,13 +42,13 @@ namespace OGDotNet.Model.Context
         }
 
 
-        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecification>> GetYieldCurves(ManageableMarketDataSnapshot snapshot)
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(ManageableMarketDataSnapshot snapshot)
         {
 
             return snapshot.YieldCurves.ToDictionary(kvp => kvp.Key, kvp => GetYieldCurve(snapshot, kvp));
         }
 
-        private Tuple<YieldCurve, InterpolatedYieldCurveSpecification> GetYieldCurve(ManageableMarketDataSnapshot snapshot, KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot)
+        private Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(ManageableMarketDataSnapshot snapshot, KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot)
         {
             var viewDefinition = ViewDefinition;
 
@@ -93,7 +93,7 @@ namespace OGDotNet.Model.Context
                             throw new ArgumentException();
                         }
 
-                        return Tuple.Create((YieldCurve)curve, (InterpolatedYieldCurveSpecification)spec);
+                        return Tuple.Create((YieldCurve)curve, (InterpolatedYieldCurveSpecificationWithSecurities)spec);
                     }
                 }
                 finally

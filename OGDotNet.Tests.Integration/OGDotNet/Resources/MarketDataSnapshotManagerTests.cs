@@ -32,7 +32,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 }
                 
                 Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
-                var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "Default")];
+                var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "SWAP_ONLY")];
                 AssertSaneValue(yieldCurveSnapshot);
             }
         }

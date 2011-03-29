@@ -77,6 +77,8 @@
     <Compile Include="Builders\LabelledMatrix1DBuilder.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStrip.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStripWithIdentifier.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStripWithSecurity.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\ircurve\InterpolatedYieldCurveSpecificationWithSecurities.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\StripInstrumentType.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrix1D.cs" />

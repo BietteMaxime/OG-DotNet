@@ -110,17 +110,17 @@ namespace OGDotNet.Model.Context
                                                                                                              gg.ComputedValue.
                                                                                                                  Specification.
                                                                                                                  TargetSpecification.Uid));
-            var curves = dictionary.SelectMany(kvp => kvp.Value.SelectMany(g => g.Select(gg=> Tuple.Create(kvp.Key, g.Key, (InterpolatedYieldCurveSpecification) gg.ComputedValue.Value))))
+            var curves = dictionary.SelectMany(kvp => kvp.Value.SelectMany(g => g.Select(gg=> Tuple.Create(kvp.Key, g.Key, (InterpolatedYieldCurveSpecificationWithSecurities) gg.ComputedValue.Value))))
                 .ToList();
 
 
-            return curves.ToDictionary(t => new YieldCurveKey(Currency.Create(t.Item2.Value), t.Item1), t => GetYieldCurveSnapshot(t.Item3, tempResults));
+            return curves.ToDictionary(t => new YieldCurveKey(Currency.Create(t.Item2.Value), t.Item3.Name), t => GetYieldCurveSnapshot(t.Item3, tempResults));
         }
 
-        private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecification yieldCurveSpec, ViewComputationResultModel tempResults)
+        private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecificationWithSecurities yieldCurveSpec, ViewComputationResultModel tempResults)
         {
             //TODO do yield curves only take market values?
-            Func<ComputationTargetSpecification, string, bool> predicate =(cts,name)=>name == MarketValueReqName && yieldCurveSpec.ResolvedStrips.Any(s=>UniqueIdentifier.Of(s.Security) ==cts.Uid);
+            Func<ComputationTargetSpecification, string, bool> predicate =(cts,name)=>name == MarketValueReqName && yieldCurveSpec.Strips.Any(s=>UniqueIdentifier.Of(s.SecurityIdentifier) ==cts.Uid);
 
             var snapshotValues = GetUnstructuredSnapshot(tempResults, predicate);
             return new ManageableYieldCurveSnapshot(snapshotValues, tempResults.ValuationTime.ToDateTimeOffset());
