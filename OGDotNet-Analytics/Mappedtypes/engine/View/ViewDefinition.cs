@@ -151,7 +151,10 @@ namespace OGDotNet.Mappedtypes.engine.view
         public void ToFudgeMsg(IAppendingFudgeFieldContainer message, IFudgeSerializer s)
         {
             message.Add("name",Name);
-            message.Add("uniqueId", _uniqueID.ToString());
+            if (_uniqueID != null)
+            {
+                message.Add("uniqueId", _uniqueID.ToString());
+            }
             s.WriteInline(message,"identifier", PortfolioIdentifier);
             s.WriteInline(message, "user", User);
             s.WriteInline(message, "resultModelDefinition", ResultModelDefinition);
