@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
+using OGDotNet.Model.Context.MarketDataSnapshot;
+using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
@@ -79,18 +83,43 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             }
         }
 
-        public void UpdateFrom(ManageableMarketDataSnapshot newSnapshot)
+        public UpdateAction PrepareUpdateFrom(ManageableMarketDataSnapshot newSnapshot)
         {
-            _globalValues.UpdateFrom(newSnapshot._globalValues);
 
+            UpdateAction globalUpdate = _globalValues.PrepareUpdateFrom(newSnapshot._globalValues);
 
-            bool dirty = _yieldCurves.UpdateDictionaryFrom(newSnapshot._yieldCurves, (o, n) => o.UpdateFrom(n));
+            var ycActions = _yieldCurves.ProjectStructure(newSnapshot._yieldCurves,
+                (k, va, vb) => va.PrepareUpdateFrom(vb),
+                PrepareRemoveAction,
+                PrepareAddAction
+                );
 
+            return globalUpdate.Concat(UpdateAction.Of(ycActions));
 
-            if (dirty)
-            {
-                InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
-            }
+        }
+
+        private UpdateAction PrepareRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
+        {
+            return new UpdateAction(
+                delegate
+                    {
+                        _yieldCurves.Remove(key);
+                        InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
+                    },
+                    OverriddenYieldCurveDisappearingWarning.Of(key, value)
+                );
+
+        }
+
+        private UpdateAction PrepareAddAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
+        {
+            return new UpdateAction(
+               delegate
+               {
+                   _yieldCurves.Add(key,value);
+                   InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
+               }
+               );
         }
 
 

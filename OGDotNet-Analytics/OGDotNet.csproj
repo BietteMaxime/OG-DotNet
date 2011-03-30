@@ -108,6 +108,8 @@
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ILocalDateDoubleTimeSeries.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
     <Compile Include="Mappedtypes\financial\view\AddViewDefinitionRequest.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\UpdateAction.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\Warnings\Warning.cs" />
     <Compile Include="Model\Resources\IFinancialSecuritySource.cs" />
     <Compile Include="Model\Resources\RemoteCurrencyMatrixSource.cs" />
     <Compile Include="Model\Resources\RemoteHistoricalDataSource.cs" />

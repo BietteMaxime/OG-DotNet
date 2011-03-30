@@ -6,6 +6,8 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Model.Context.MarketDataSnapshot;
+using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
@@ -37,30 +39,59 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             }
         }
 
-        public void UpdateFrom(ManageableUnstructuredMarketDataSnapshot newSnapshot)
+        public UpdateAction PrepareUpdateFrom(ManageableUnstructuredMarketDataSnapshot newSnapshot)
         {
-            var newValues = newSnapshot.Values;
-            var current = Values;
-
-            bool dirty= UpdateDictionaryFrom(current, newValues);
-            if (dirty)
-            {
-                InvokePropertyChanged("Values");
-            }
+            return Values.ProjectStructure(newSnapshot.Values,
+                                     PrepareUpdateFrom,
+                                     PrepareRemoveAction,
+                                     PrepareAddAction
+                ).Aggregate((a,b)=>a.Concat(b));
         }
 
-
-        private static bool UpdateDictionaryFrom(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> current, IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> newValues)
+        private UpdateAction PrepareAddAction(MarketDataValueSpecification marketDataValueSpecification,  IDictionary<string, ValueSnapshot> valueSnapshots)
         {
-            return current.UpdateDictionaryFrom(newValues, (Func<IDictionary<string, ValueSnapshot>, IDictionary<string, ValueSnapshot>, bool>)UpdateDictionaryFrom);
+            return new UpdateAction(
+                delegate
+                    {
+                        Values.Add(marketDataValueSpecification, valueSnapshots);
+                        InvokePropertyChanged("Values");
+                    }
+                );
         }
 
-
-        private static bool UpdateDictionaryFrom(IDictionary<string, ValueSnapshot> current, IDictionary<string, ValueSnapshot> newValues)
+        private UpdateAction PrepareRemoveAction(MarketDataValueSpecification marketDataValueSpecification, IDictionary<string, ValueSnapshot> valueSnapshots)
         {
-            return current.UpdateDictionaryFrom(newValues, (c, n) => c.MarketValue = n.MarketValue);
+            
+            return new UpdateAction(
+                delegate
+                {
+                    Values.Remove(marketDataValueSpecification);
+                    InvokePropertyChanged("Values");
+                },
+                OverriddenSecurityDisappearingWarning.Of(marketDataValueSpecification, valueSnapshots)
+                );
         }
 
+        private UpdateAction PrepareUpdateFrom(MarketDataValueSpecification spec, IDictionary<string, ValueSnapshot> cv, IDictionary<string, ValueSnapshot> nv)
+        {
+            
+            var actions = cv.ProjectStructure(nv,
+                                                (k, a, b) => new UpdateAction(delegate { a.MarketValue = b.MarketValue; }),
+                                                (k, v) => PrepareRemoveAction(spec, cv, k, v),
+                                                (k, v) => new UpdateAction(delegate { cv.Add(k, v); InvokePropertyChanged("Values"); })
+                );
+            return UpdateAction.Of(actions);
+        }
+
+        private UpdateAction PrepareRemoveAction(MarketDataValueSpecification spec, IDictionary<string, ValueSnapshot> cv, string k, ValueSnapshot v)
+        {
+            Action updateAction = delegate
+                                      {
+                                          cv.Remove(k);
+                                          InvokePropertyChanged("Values");
+                                      };
+            return new UpdateAction(updateAction, OverriddenValueDisappearingWarning.Of(spec, k, v));
+        }
 
         public IEnumerator<KeyValuePair<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>> GetEnumerator()
         {

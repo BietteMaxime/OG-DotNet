@@ -63,5 +63,10 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
             a.Add("type", EnumBuilder<MarketDataValueType>.GetJavaName(_type));
             a.Add("uniqueId", _uniqueId.ToString());
         }
+
+        public override string ToString()
+        {
+            return string.Format("[{0} {1}]", _type, _uniqueId);
+        }
     }
 }

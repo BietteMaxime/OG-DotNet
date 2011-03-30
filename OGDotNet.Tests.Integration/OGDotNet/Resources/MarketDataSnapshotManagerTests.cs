@@ -51,8 +51,20 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 updated.Values[targetChanged][valueChanged].OverrideValue = 12;
 
+                bool seenUpdate = false;
+                foreach (var value in updated.GlobalValues.Values.SelectMany(v=>v.Value.Values))
+                {
+                    value.PropertyChanged += delegate
+                                                 {
+                                                     seenUpdate = true;
+                                                 };
+                }
 
-                snapshotManager.UpdateFromView(updated);
+                var action = snapshotManager.PrepareUpdateFrom(updated);
+                Assert.Empty(action.Warnings);
+                Assert.False(seenUpdate);
+                action.Execute();
+                Assert.True(seenUpdate);
 
 				Assert.Null(updated.Name);
                 Assert.Null(updated.UniqueId);

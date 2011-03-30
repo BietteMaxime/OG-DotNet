@@ -34,51 +34,24 @@ namespace OGDotNet.Utils
             return ret;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="dictA"></param>
-        /// <param name="dictB"></param>
-        /// <param name="updater"></param>
-        /// <returns>true iff there is a structural change</returns>
-        public static bool UpdateDictionaryFrom<TKey, TValue>(this IDictionary<TKey, TValue> dictA, IDictionary<TKey, TValue> dictB, Action<TValue, TValue> updater)
+        public static IEnumerable<TRet> ProjectStructure<TKey, TValue, TRet>(this IDictionary<TKey, TValue> dictA, IDictionary<TKey, TValue> dictB,
+            Func<TKey, TValue, TValue, TRet> matchingProjecter,
+            Func<TKey, TValue, TRet> aOnlyProjecter,
+            Func<TKey, TValue, TRet> bOnlyProjecter
+            )
         {
-            return UpdateDictionaryFrom(dictA, dictB, (a, b) => { updater(a, b); return false; });
-        }
+            return
+                dictA.Join(dictB, a => a.Key, b => b.Key, (a, b) => matchingProjecter(a.Key, a.Value, b.Value))
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="dictA"></param>
-        /// <param name="dictB"></param>
-        /// <param name="updater"></param>
-        /// <returns>true iff the updater ever returns true or there is a structural change</returns>
-        public static bool UpdateDictionaryFrom<TKey, TValue>(this IDictionary<TKey, TValue> dictA, IDictionary<TKey, TValue> dictB, Func<TValue, TValue,bool> updater)
-        {
-            bool dirty = false;
-            var enumerable = Enumerable.Join(dictA, dictB, a => a.Key, b => b.Key, (a, b) => Tuple.Create(a.Value, b.Value));
-            foreach (var tuple in enumerable)
-            {
-                bool itemDirty = updater(tuple.Item1, tuple.Item2);
-                dirty |= itemDirty;
-            }
+                .Concat(
+                    dictB.Where(k => !dictA.ContainsKey(k.Key)).Select(k=>bOnlyProjecter(k.Key,k.Value))
+                )
+                .Concat(
+                    dictA.Where(k => !dictB.ContainsKey(k.Key)).Select(k => aOnlyProjecter(k.Key, k.Value))
+                )
+                ;
 
-            foreach (var keyToRemove in Enumerable.Where(dictA.Keys, k => !dictB.ContainsKey(k)).ToList())
-            {
-                dirty = true;
-                dictA.Remove(keyToRemove);
-            }
-            foreach (var kvpToAdd in Enumerable.Where(dictB, kvp => !dictA.ContainsKey(kvp.Key)).ToList())
-            {
-                dirty = true;
-                dictA.Add(kvpToAdd.Key,kvpToAdd.Value);
-            }
-
-            return dirty;
+            
         }
     }
 }

@@ -14,6 +14,7 @@ using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
 
@@ -57,12 +58,12 @@ namespace OGDotNet.Model.Context
         /// <summary>
         /// TODO Filtering
         /// </summary>
-        public void UpdateFromView(ManageableMarketDataSnapshot basis)
+        public UpdateAction PrepareUpdateFrom(ManageableMarketDataSnapshot basis)
         {
             
             var newSnapshot = CreateFromView(basis.BasisViewName);
 
-            basis.UpdateFrom(newSnapshot);
+            return basis.PrepareUpdateFrom(newSnapshot);
         }
 
 
