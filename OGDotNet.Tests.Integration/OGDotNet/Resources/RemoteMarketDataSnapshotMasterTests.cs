@@ -92,44 +92,30 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
-        public void CanAddAndUpdate()
+        public void CanUpdate()
         {
             var snapshotMaster = Context.MarketDataSnapshotMaster;
 
             var name = TestUtils.GetUniqueName();
 
             var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));
-            
-            UniqueIdentifier id1 = marketDataSnapshotDocument.UniqueId;
+            UniqueIdentifier init = marketDataSnapshotDocument.UniqueId;
+            Assert.True(init.IsVersioned);
+            Assert.Equal("0", init.Version);
+            Assert.Equal(marketDataSnapshotDocument.UniqueId, marketDataSnapshotDocument.Snapshot.UniqueId);
 
-            marketDataSnapshotDocument.Snapshot.GlobalValues.Values.First().Value.First().Value.OverrideValue = 23;
+            snapshotMaster.Update(marketDataSnapshotDocument);
             
-            var ret = snapshotMaster.Update(marketDataSnapshotDocument);
-            UniqueIdentifier id2 = ret.UniqueId;
+            UniqueIdentifier afterUpdate = marketDataSnapshotDocument.UniqueId;
+            Assert.True(afterUpdate.IsVersioned);
+            Assert.Equal("1", afterUpdate.Version);
+            Assert.Equal(marketDataSnapshotDocument.UniqueId, marketDataSnapshotDocument.Snapshot.UniqueId);
 
-            Assert.Equal(id1.ToLatest(), id2.ToLatest());
-            Assert.Equal(int.Parse(id1.Version)+1, int.Parse(id2.Version));
+            snapshotMaster.Remove(afterUpdate);
         }
 
-        [Xunit.Extensions.Fact]
-        public void CanAddOrUpdateTwice()
-        {
-            var snapshotMaster = Context.MarketDataSnapshotMaster;
-
-            var name = TestUtils.GetUniqueName();
-
-            var marketDataSnapshotDocument = snapshotMaster.AddOrUpdate(GetDocument(name));
-
-            UniqueIdentifier id1 = marketDataSnapshotDocument.UniqueId;
-            Assert.Equal("0", id1.Version);
-            marketDataSnapshotDocument.Snapshot.GlobalValues.Values.First().Value.First().Value.OverrideValue = 23;
-
-            var ret = snapshotMaster.AddOrUpdate(marketDataSnapshotDocument);
-            UniqueIdentifier id2 = ret.UniqueId;
-
-            Assert.Equal(id1.ToLatest(), id2.ToLatest());
-            Assert.Equal(int.Parse(id1.Version) + 1, int.Parse(id2.Version));
-        }
+       
+       
 
         [Xunit.Extensions.Fact(Skip = "This isn't a test, but it's quite useful")]
         public void CanRemoveAllMine()

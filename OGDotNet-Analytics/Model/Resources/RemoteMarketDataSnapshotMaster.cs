@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Fudge;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
@@ -22,10 +23,6 @@ namespace OGDotNet.Model.Resources
             return _restTarget.Resolve("search").Post<SearchResult<MarketDataSnapshotDocument>>(request);
         }
 
-        public MarketDataSnapshotDocument AddOrUpdate(MarketDataSnapshotDocument document)
-        {
-            return document.UniqueId == null ? Add(document) : Update(document);
-        }
         public MarketDataSnapshotDocument Add(MarketDataSnapshotDocument document)
         {
             return PostDefinition(document, "add");
@@ -42,29 +39,24 @@ namespace OGDotNet.Model.Resources
 
         private MarketDataSnapshotDocument PutDefinition(MarketDataSnapshotDocument document, params string[] pathParts)
         {
-            var target = pathParts.Aggregate(_restTarget, (r, p) => r.Resolve(p));
-            var respMsg = target.Put<UniqueIdentifier>(document, "uniqueId");
-            var uid = respMsg.UniqueId;
-            if (uid == null)
-            {
-                throw new ArgumentException("No UID returned");
-            }
-
-            document.UniqueId = uid;
-
-            return document;
+            return ReqDefinition((t, d, f) => t.Put<UniqueIdentifier>(d, f), document, pathParts);
         }
         private MarketDataSnapshotDocument PostDefinition(MarketDataSnapshotDocument document, params string[] pathParts)
         {
-            var target =  pathParts.Aggregate(_restTarget, (r, p) => r.Resolve(p));
-            var respMsg = target.Post<UniqueIdentifier>(document, "uniqueId");
-            var uid = respMsg.UniqueId;
+            return ReqDefinition((t, d, f) => t.Post<UniqueIdentifier>(d, f), document, pathParts);
+        }
+
+        private MarketDataSnapshotDocument ReqDefinition(Func<RestTarget, MarketDataSnapshotDocument, string, UniqueIdentifier> reqFunc, MarketDataSnapshotDocument document, params string[] pathParts)
+        {
+            var target = pathParts.Aggregate(_restTarget, (r, p) => r.Resolve(p));
+            var uid = reqFunc(target, document, "uniqueId");
             if (uid == null)
             {
                 throw new ArgumentException("No UID returned");
             }
 
             document.UniqueId = uid;
+            document.Snapshot.UniqueId = uid;
 
             return document;
         }

@@ -18,7 +18,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 {
     public class ManageableMarketDataSnapshot : INotifyPropertyChanged
     {
-        private readonly UniqueIdentifier _uniqueId;
+        private UniqueIdentifier _uniqueId;
 
         private readonly string _basisViewName;
 
@@ -44,6 +44,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
         public UniqueIdentifier UniqueId
         {
             get { return _uniqueId; }
+            set { _uniqueId = value; }
         }
 
         public string Name { get; set; }
