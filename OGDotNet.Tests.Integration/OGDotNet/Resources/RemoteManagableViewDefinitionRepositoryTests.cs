@@ -96,14 +96,21 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     ViewDefinition vd = view.Definition;
                     vd.Name = vd.Name + "RoundTripped";
 
-                    remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
+                    try
+                    {
+                        remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
 
-                    var roundTripped = Context.ViewProcessor.GetView(vd.Name);
-                    Assert.NotNull(roundTripped);
+                        var roundTripped = Context.ViewProcessor.GetView(vd.Name);
+                        Assert.NotNull(roundTripped);
 
-                    AssertEquivalent(vd, roundTripped.Definition);
+                        AssertEquivalent(vd, roundTripped.Definition);
 
-                    roundTripped.Init();
+                        roundTripped.Init();
+                    }
+                    finally
+                    {
+                        remoteClient.ViewDefinitionRepository.RemoveViewDefinition(vd.Name);
+                    }
                 }
             }
         }
