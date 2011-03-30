@@ -41,11 +41,44 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         public UpdateAction PrepareUpdateFrom(ManageableUnstructuredMarketDataSnapshot newSnapshot)
         {
-            return Values.ProjectStructure(newSnapshot.Values,
+            var currValues = GetUpdateDictionary(Values);
+            var newValues = GetUpdateDictionary(newSnapshot.Values);
+
+            return currValues.ProjectStructure(newValues,
                                      PrepareUpdateFrom,
                                      PrepareRemoveAction,
                                      PrepareAddAction
                 ).Aggregate((a,b)=>a.Concat(b));
+        }
+
+        private static Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> GetUpdateDictionary(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> values)
+        {
+            return new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(
+                values,
+                IgnoreVersionComparer.Instance
+                );
+        }
+        private class IgnoreVersionComparer :IEqualityComparer<MarketDataValueSpecification>
+        {
+            public static readonly IEqualityComparer<MarketDataValueSpecification> Instance = new IgnoreVersionComparer();
+
+            private IgnoreVersionComparer()
+            {
+            }
+
+            public bool Equals(MarketDataValueSpecification x, MarketDataValueSpecification y)
+            {
+                return x.Type.Equals(y.Type)
+                       &&
+                       x.UniqueId.ToLatest().Equals(y.UniqueId.ToLatest()); //Ignore the version info
+            }
+
+            public int GetHashCode(MarketDataValueSpecification obj)
+            {
+                int result = obj.Type.GetHashCode();
+                result = (result * 397) ^ obj.UniqueId.ToLatest().GetHashCode(); //Ignore the version info
+                return result;
+            }
         }
 
         private UpdateAction PrepareAddAction(MarketDataValueSpecification marketDataValueSpecification,  IDictionary<string, ValueSnapshot> valueSnapshots)
@@ -72,15 +105,32 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                 );
         }
 
-        private UpdateAction PrepareUpdateFrom(MarketDataValueSpecification spec, IDictionary<string, ValueSnapshot> cv, IDictionary<string, ValueSnapshot> nv)
+        private UpdateAction PrepareUpdateFrom(MarketDataValueSpecification currSpec, IDictionary<string, ValueSnapshot> currValues, MarketDataValueSpecification newSpec, IDictionary<string, ValueSnapshot> newValues)
         {
-            
-            var actions = cv.ProjectStructure(nv,
+
+            var actions = currValues.ProjectStructure(newValues,
                                                 (k, a, b) => new UpdateAction(delegate { a.MarketValue = b.MarketValue; }),
-                                                (k, v) => PrepareRemoveAction(spec, cv, k, v),
-                                                (k, v) => new UpdateAction(delegate { cv.Add(k, v); InvokePropertyChanged("Values"); })
+                                                (k, v) => PrepareRemoveAction(currSpec, currValues, k, v),
+                                                (k, v) => new UpdateAction(delegate { currValues.Add(k, v); InvokePropertyChanged("Values"); })
                 );
-            return UpdateAction.Of(actions);
+           
+            UpdateAction ret = UpdateAction.Of(actions);
+
+            if (!currSpec.Equals(newSpec))
+            {//we need to update the key, since we used a non standard comparer
+                ret = ret.Concat(
+                    new UpdateAction(delegate
+                    {
+                        if (!ReferenceEquals(Values[currSpec], currValues))
+                            throw new ArgumentException();
+                        Values.Remove(currSpec);
+                        Values.Add(newSpec, currValues);
+                        InvokePropertyChanged("Values");
+                    })
+                    );
+            }
+
+            return ret;
         }
 
         private UpdateAction PrepareRemoveAction(MarketDataValueSpecification spec, IDictionary<string, ValueSnapshot> cv, string k, ValueSnapshot v)

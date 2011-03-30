@@ -34,24 +34,33 @@ namespace OGDotNet.Utils
             return ret;
         }
 
+        public static IEnumerable<TRet> ProjectStructure<TKey, TValue, TRet>(this Dictionary<TKey, TValue> dictA, Dictionary<TKey, TValue> dictB,
+            Func<TKey, TValue, TKey, TValue, TRet> matchingProjecter,
+            Func<TKey, TValue, TRet> aOnlyProjecter,
+            Func<TKey, TValue, TRet> bOnlyProjecter
+            )
+        {
+            if (dictA.Comparer != dictB.Comparer)
+                throw new ArgumentException();
+            return
+               dictA.Join(dictB, a => a.Key, b => b.Key, (a, b) => matchingProjecter(a.Key, a.Value, b.Key, b.Value), dictA.Comparer)
+
+               .Concat(
+                   dictB.Where(k => !dictA.ContainsKey(k.Key)).Select(k => bOnlyProjecter(k.Key, k.Value))
+               )
+               .Concat(
+                   dictA.Where(k => !dictB.ContainsKey(k.Key)).Select(k => aOnlyProjecter(k.Key, k.Value))
+               )
+               ;
+        }
+
         public static IEnumerable<TRet> ProjectStructure<TKey, TValue, TRet>(this IDictionary<TKey, TValue> dictA, IDictionary<TKey, TValue> dictB,
             Func<TKey, TValue, TValue, TRet> matchingProjecter,
             Func<TKey, TValue, TRet> aOnlyProjecter,
             Func<TKey, TValue, TRet> bOnlyProjecter
             )
         {
-            return
-                dictA.Join(dictB, a => a.Key, b => b.Key, (a, b) => matchingProjecter(a.Key, a.Value, b.Value))
-
-                .Concat(
-                    dictB.Where(k => !dictA.ContainsKey(k.Key)).Select(k=>bOnlyProjecter(k.Key,k.Value))
-                )
-                .Concat(
-                    dictA.Where(k => !dictB.ContainsKey(k.Key)).Select(k => aOnlyProjecter(k.Key, k.Value))
-                )
-                ;
-
-            
+            return ProjectStructure((Dictionary<TKey, TValue>) dictA, (Dictionary<TKey, TValue>) dictB, (ka, va, kb, vb) => matchingProjecter(ka, va, vb), aOnlyProjecter, bOnlyProjecter);
         }
     }
 }
