@@ -12,7 +12,7 @@ namespace OGDotNet.Mappedtypes.engine.value
         //TODO the rest of this interface
         public abstract ISet<string> Properties { get; }
         public abstract bool IsEmpty { get; }
-
+        public abstract IEnumerable<string> this[string curve] { get; }
 
         public static ValueProperties Create()
         {
@@ -41,6 +41,11 @@ namespace OGDotNet.Mappedtypes.engine.value
                 get { return true; }
             }
 
+            public override IEnumerable<string> this[string curve]
+            {
+                get { return Enumerable.Empty<string>(); }
+            }
+
             public new static EmptyValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
@@ -66,6 +71,15 @@ namespace OGDotNet.Mappedtypes.engine.value
                 get { return ! PropertyValues.Any(); }
             }
 
+            public override IEnumerable<string> this[string curve]
+            {
+                get {
+                    HashSet<string> ret;
+                    PropertyValues.TryGetValue(curve, out ret);
+                    return ret;
+                }
+            }
+
             public new static FiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
@@ -86,6 +100,11 @@ namespace OGDotNet.Mappedtypes.engine.value
             public override bool IsEmpty
             {
                 get { return false; }
+            }
+
+            public override IEnumerable<string> this[string curve]
+            {
+                get { return Enumerable.Empty<string>(); }
             }
 
             public new static InfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -111,6 +130,11 @@ namespace OGDotNet.Mappedtypes.engine.value
             public override bool IsEmpty
             {
                 get { return false; }
+            }
+
+            public override IEnumerable<string> this[string curve]
+            {
+                get { return Without.Contains(curve) ? null : Enumerable.Empty<string>(); }
             }
 
             public new static NearlyInfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -234,5 +258,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                 return true;
             throw new NotImplementedException();
         }
+
+        
     }
 }
