@@ -50,14 +50,7 @@ namespace OGDotNet.Builders
             var t = o.Type.CSharpType;
             if (o.Type == FudgeMsgFieldType.Instance || o.Type == IndicatorFieldType.Instance)
             {
-                try
-                {
-                    innerValue = deserializer.FromField(o, t);
-                }
-                catch (ArgumentNullException)
-                {//TODO: didn't know how to deserialize
-                    innerValue = new UnhandledObject(o.Value);
-                }
+                innerValue = deserializer.FromField(o, t);
             }
             else
             {
@@ -65,22 +58,6 @@ namespace OGDotNet.Builders
             }
             
             return innerValue;
-        }
-
-        private class UnhandledObject
-        {
-            //Useful for debugging
-            private readonly object _value;
-
-            public UnhandledObject(object value)
-            {
-                _value = value;
-            }
-
-            public override string ToString()
-            {
-                return "An Object I didn't know how to deserialize";
-            }
         }
     }
 }
