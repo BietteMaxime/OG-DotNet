@@ -23,6 +23,22 @@ namespace OGDotNet.Mappedtypes.Core.Common
             return new Currency(isoCode.ToUpper(CultureInfo.CreateSpecificCulture("en")));
         }
 
+
+        public static Currency Create(UniqueIdentifier isoCode)
+        {
+            if (isoCode.Scheme !=IdentificationDomain)
+                throw new ArgumentException("Unexpected Scheme","isoCode");
+            if (isoCode.IsVersioned)
+                throw new ArgumentException("Unexpected Versioned UID", "isoCode");
+            
+            Currency ret = Create(isoCode.Value);
+            
+            if (! ret.Identifier.Equals(isoCode))
+                throw new ArgumentException("Unexpected UID", "isoCode");
+
+            return ret;
+        }
+
         public static Currency Create(string isoCode)
         {
             return InstanceMap.Get(isoCode);
