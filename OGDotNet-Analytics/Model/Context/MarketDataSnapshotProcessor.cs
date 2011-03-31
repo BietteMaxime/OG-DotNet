@@ -31,7 +31,7 @@ namespace OGDotNet.Model.Context
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, RemoteView view, DateTimeOffset valuationTime)
         {
             var rawMarketDataSnapper = new RawMarketDataSnapper(context, view);
-            var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(view, valuationTime);
+            var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(valuationTime);
             return new MarketDataSnapshotProcessor(snapshot,rawMarketDataSnapper);
         }
 
@@ -62,7 +62,7 @@ namespace OGDotNet.Model.Context
         /// </summary>
         public UpdateAction PrepareUpdate()
         {
-            var newSnapshot = _rawMarketDataSnapper.CreateSnapshotFromView(View,DateTimeOffset.Now);
+            var newSnapshot = _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now);
             return Snapshot.PrepareUpdateFrom(newSnapshot);
         }
 
@@ -88,7 +88,7 @@ namespace OGDotNet.Model.Context
                     SelectMany(kvp =>kvp.Value.Select(v=>GetOverrideTuple(kvp,v))
                 ).ToDictionary(t=>t.Item1,t=>t.Item2);
 
-            var results = _rawMarketDataSnapper.GetAllResults(View, valuationTime,overrides);
+            var results = _rawMarketDataSnapper.GetAllResults(valuationTime,overrides);
 
             var curveResults =
                 results.AllResults

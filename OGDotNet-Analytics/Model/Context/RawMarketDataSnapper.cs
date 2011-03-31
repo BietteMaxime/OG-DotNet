@@ -48,14 +48,14 @@ namespace OGDotNet.Model.Context
         }
 
         #region create snapshot
-        public ManageableMarketDataSnapshot CreateSnapshotFromView(RemoteView view, DateTimeOffset valuationTime)
+        public ManageableMarketDataSnapshot CreateSnapshotFromView(DateTimeOffset valuationTime)
         {
-            view.Init();
-            ViewComputationResultModel allResults = GetAllResults(view, valuationTime);
+            _view.Init();
+            ViewComputationResultModel allResults = GetAllResults(valuationTime);
 
-            var requiredLiveData = view.GetRequiredLiveData();
+            var requiredLiveData = _view.GetRequiredLiveData();
 
-            return new ManageableMarketDataSnapshot(view.Name, GetUnstructuredData(allResults, requiredLiveData), GetYieldCurves(allResults));
+            return new ManageableMarketDataSnapshot(_view.Name, GetUnstructuredData(allResults, requiredLiveData), GetYieldCurves(allResults));
         }
 
         private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(ViewComputationResultModel tempResults)
@@ -128,17 +128,17 @@ namespace OGDotNet.Model.Context
         #endregion
 
         #region view defn building
-        public ViewComputationResultModel GetAllResults(RemoteView view, DateTimeOffset valuationTime, Dictionary<ValueRequirement, double > overrides)
+        public ViewComputationResultModel GetAllResults(DateTimeOffset valuationTime, Dictionary<ValueRequirement, double > overrides)
         {
-            var yieldCurveSpecReqs = GetYieldCurveSpecReqs(view, valuationTime);
+            var yieldCurveSpecReqs = GetYieldCurveSpecReqs(_view, valuationTime);
 
-            var allDataViewDefn = GetTempViewDefinition(view, yieldCurveSpecReqs);
+            var allDataViewDefn = GetTempViewDefinition(_view, yieldCurveSpecReqs);
             return RunOneCycle(allDataViewDefn, valuationTime, overrides);
         }
 
-        private ViewComputationResultModel GetAllResults(RemoteView view, DateTimeOffset valuationTime)
+        private ViewComputationResultModel GetAllResults(DateTimeOffset valuationTime)
         {
-            return GetAllResults(view, valuationTime, new Dictionary<ValueRequirement, double>());
+            return GetAllResults(valuationTime, new Dictionary<ValueRequirement, double>());
         }
 
 
