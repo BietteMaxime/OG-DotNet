@@ -5,13 +5,10 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
-using OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
-using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
-using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
@@ -29,17 +26,15 @@ namespace OGDotNet.Model.Context
     /// </summary>
     public class MarketDataSnapshotManager : DisposableBase
     {
-        internal const string YieldCurveValueReqName = "YieldCurve";
-        internal const string YieldCurveSpecValueReqName = "YieldCurveSpec";
-        private const string MarketValueReqName = "Market_Value";
 
-        private static readonly string MarketValuesConfigName = "MarketValues"+Guid.NewGuid();
 
         private readonly RemoteEngineContext _remoteEngineContext;
+        private readonly MarketDataSnapshotHelper _helper;
 
         public MarketDataSnapshotManager(RemoteEngineContext remoteEngineContext)
         {
             _remoteEngineContext = remoteEngineContext;
+            _helper = new MarketDataSnapshotHelper(remoteEngineContext);
         }
 
 
@@ -78,42 +73,20 @@ namespace OGDotNet.Model.Context
         public ManageableMarketDataSnapshot CreateFromView(RemoteView view, DateTimeOffset valuationTime)
         {
             view.Init();
+            ViewComputationResultModel allResults = _helper.GetAllResults(view, valuationTime);
 
-            ViewDefinition tempViewDefn;
-            IEnumerable<ValueRequirement> requiredLiveData = GetTempView(view, out tempViewDefn);
+            var requiredLiveData = view.GetRequiredLiveData();
 
-            using (var remoteClient = _remoteEngineContext.CreateUserClient())
-            {
-                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(tempViewDefn));
-                try
-                {
-                    var tempView = _remoteEngineContext.ViewProcessor.GetView(tempViewDefn.Name);
-
-                    tempView.Init();
-                    using (var remoteViewClient = tempView.CreateClient())
-                    {
-                        var tempResults = remoteViewClient.RunOneCycle(valuationTime);
-                        return new ManageableMarketDataSnapshot(view.Name, GetUnstructuredData(tempResults, requiredLiveData), GetYieldCurves(tempResults, view.Definition));
-                    }
-                }
-                finally
-                {
-                    remoteClient.ViewDefinitionRepository.RemoveViewDefinition(tempViewDefn.Name);                
-                }
-            }
+            return new ManageableMarketDataSnapshot(view.Name, GetUnstructuredData(allResults, requiredLiveData), GetYieldCurves(allResults));
         }
 
-
-
-        private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(ViewComputationResultModel tempResults, ViewDefinition definition)
+        private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(ViewComputationResultModel tempResults)
         {
-            //TODO less insanity
-            var yCurveSpecs = definition.CalculationConfigurationsByName.SelectMany(
-                c =>c.Value.SpecificRequirements.Where(r => r.ValueName == YieldCurveValueReqName)
-                        .Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Constraints)).Select(r => tempResults[c.Key, r])).Select(r => (InterpolatedYieldCurveSpecificationWithSecurities)r.Value);
-
-            //TODO I shouldn't be fetching duplicate copies s/Lookup/Dictionary/
-            var resultsByKey = yCurveSpecs.ToLookup(GetYieldCurveKey, r => r);
+         
+            var resultsByKey = tempResults.AllResults.Where(r => r.ComputedValue.Specification.ValueName == MarketDataSnapshotHelper.YieldCurveSpecValueReqName)
+                .Select(r=>(InterpolatedYieldCurveSpecificationWithSecurities) r.ComputedValue.Value)
+                .ToLookup(GetYieldCurveKey,s=>s);
+            
             var resultByKey = resultsByKey.ToDictionary(g => g.Key, g => g.First());
             
             return resultByKey.ToDictionary(g => g.Key, g => GetYieldCurveSnapshot(g.Value, tempResults));
@@ -137,7 +110,7 @@ namespace OGDotNet.Model.Context
         private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredSnapshot(ViewComputationResultModel tempResults, InterpolatedYieldCurveSpecificationWithSecurities yieldCurveSpec)
         {
             //TODO do yield curves only take primitive market values?
-            IEnumerable<ValueRequirement> reqs = yieldCurveSpec.Strips.Select(s => new ValueRequirement(MarketValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Of(s.SecurityIdentifier))));
+            IEnumerable<ValueRequirement> reqs = yieldCurveSpec.Strips.Select(s => new ValueRequirement(MarketDataSnapshotHelper.MarketValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Of(s.SecurityIdentifier))));
             return GetUnstructuredData(tempResults, reqs);
         }
 
@@ -155,11 +128,17 @@ namespace OGDotNet.Model.Context
         {
             foreach (var valueRequirement in requiredDataSet)
             {
-                ComputedValue ret;
-                if( tempResults.TryGetComputedValue(MarketValuesConfigName, valueRequirement, out ret))
-                {//TODO what should I do if I can't get a value
-                    yield return ret;
+                foreach (var config in tempResults.CalculationResultsByConfiguration.Keys)
+                {
+                    
+                    ComputedValue ret;
+                    if (tempResults.TryGetComputedValue(config, valueRequirement, out ret))
+                    {//TODO what should I do if I can't get a value
+                        yield return ret;
+                        break;
+                    }
                 }
+                //TODO what should I do if I can't get a value
             }
         }
 
@@ -169,57 +148,13 @@ namespace OGDotNet.Model.Context
             return type.ConvertTo<MarketDataValueType>();
         }
 
-        private static IEnumerable<ValueRequirement> GetTempView(RemoteView view, out ViewDefinition tempViewDefn)
-        {
-            var requiredLiveData = view.GetRequiredLiveData();
-
-            var tempViewName = string.Format("{0}.{1}.{2}", typeof(MarketDataSnapshotManager).Name, view.Name, Guid.NewGuid());
-
-            var viewCalculationConfigurations = Enumerable.Repeat(GetMarketValuesCalculationConfiguration(requiredLiveData), 1)
-                .Concat(GetYieldCurveCalculationConfigurations(view))
-                ;
-            
-            tempViewDefn = new ViewDefinition(tempViewName, new ResultModelDefinition(ResultOutputMode.TerminalOutputs),
-                view.Definition.PortfolioIdentifier,
-                view.Definition.User,
-                view.Definition.DefaultCurrency,
-                view.Definition.MinDeltaCalcPeriod,
-                view.Definition.MaxDeltaCalcPeriod,
-                view.Definition.MinFullCalcPeriod,
-                view.Definition.MaxFullCalcPeriod,
-                viewCalculationConfigurations.ToDictionary(cc => cc.Name, cc => cc)
-
-                );
-            return requiredLiveData;
-        }
-
-        private static IEnumerable<ViewCalculationConfiguration> GetYieldCurveCalculationConfigurations(RemoteView view)
-        {
-            
-            return view.Definition.CalculationConfigurationsByName.Values.Select(
-                cc =>
-                new ViewCalculationConfiguration(cc.Name,
-                                                 cc.SpecificRequirements.Where(r => r.ValueName.Equals(YieldCurveValueReqName))
-                                                 .Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Constraints))
-
-                                                 .Concat(cc.SpecificRequirements.Where(r => r.ValueName != YieldCurveValueReqName))//TODO why do I have to fetch these as well for (e.g. Single Bind view Nelson-Siegel-Svennson Bond Curve)
-
-                                                 .ToList() 
-
-                                                 , cc.PortfolioRequirementsBySecurityType,
-                                                 cc.DefaultProperties)
-                );
-        }
-
-        private static ViewCalculationConfiguration GetMarketValuesCalculationConfiguration(IEnumerable<ValueRequirement> requiredLiveData)
-        {
-            return new ViewCalculationConfiguration(MarketValuesConfigName, requiredLiveData
-                .ToList(), new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>());
-        }
-
+        
         protected override void Dispose(bool disposing)
         {
-        	//TODO -I'm going to need thsi in order to be less slow
+        	if (disposing)
+        	{
+        	    _helper.Dispose();
+        	}
         }
     }
 }
