@@ -2,21 +2,23 @@
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
+using OGDotNet.Model.Resources;
+using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
-    public class MarketDataSnapshotManagerTests : TestWithContextBase
+    public class MarketDataSnapshotManagerTests : ViewTestsBase
     {
-        protected const string ViewName = "Equity Option Test View 1";
+        
 
-        [Xunit.Extensions.Fact]
-        public void CanCreateFromView()
+        [Theory]
+        [TypedPropertyData("FastTickingViews")]
+        public void CanCreateFromView(RemoteView view)
         {
-            
             using (var snapshotManager = Context.MarketDataSnapshotManager)
             {
-                var manageableMarketDataSnapshot = snapshotManager.CreateFromView(ViewName);
+                var manageableMarketDataSnapshot = snapshotManager.CreateFromView(view);
                 Assert.Null(manageableMarketDataSnapshot.Name);
                 Assert.Null(manageableMarketDataSnapshot.UniqueId);
 
@@ -30,21 +32,36 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     }
                     
                 }
-                
-                Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
-                var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "SWAP_ONLY")];
-                AssertSaneValue(yieldCurveSnapshot);
+
+                if (view.Name == "Equity Option Test View 1")
+                {
+                    //TODO hoist this when fixed
+                    Assert.Equal(ExpectedYieldCurves(view), manageableMarketDataSnapshot.YieldCurves.Count);
+                    var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "SINGLE")];
+                    Assert.NotNull(yieldCurveSnapshot);
+                }
+                foreach (var curve in manageableMarketDataSnapshot.YieldCurves.Values)
+                {
+                    AssertSaneValue(curve);
+                }
             }
         }
 
+        private static int ExpectedYieldCurves(RemoteView view)
+        {
+            return
+                view.Definition.CalculationConfigurationsByName.Select(
+                    c => c.Value.SpecificRequirements.Where(r => r.ValueName.Contains("YieldCurve")).Count()).Distinct().Single();
+        }
 
-        [Xunit.Extensions.Fact]
-        public void CanUpdateFromView()
+        [Theory]
+        [TypedPropertyData("FastTickingViews")]
+        public void CanUpdateFromView(RemoteView view)
         {
             using (var snapshotManager = Context.MarketDataSnapshotManager)
             {
 
-                var updated = snapshotManager.CreateFromView(ViewName);
+                var updated = snapshotManager.CreateFromView(view);
 
                 var targetChanged = updated.Values.Keys.First();
                 var valueChanged = updated.Values[targetChanged].Keys.First();

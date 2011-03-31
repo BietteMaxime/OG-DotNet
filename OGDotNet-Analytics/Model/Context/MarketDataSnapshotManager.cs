@@ -50,6 +50,12 @@ namespace OGDotNet.Model.Context
             return CreateFromView(viewName, DateTimeOffset.Now);
         }
 
+
+        public ManageableMarketDataSnapshot CreateFromView(RemoteView view)
+        {
+            return CreateFromView(view, DateTimeOffset.Now);
+        }
+
         private ManageableMarketDataSnapshot CreateFromView(string viewName, DateTimeOffset valuationTime)
         {
             return CreateFromView(_remoteEngineContext.ViewProcessor.GetView(viewName), valuationTime);
@@ -67,7 +73,7 @@ namespace OGDotNet.Model.Context
         }
 
 
-        private ManageableMarketDataSnapshot CreateFromView(RemoteView view, DateTimeOffset valuationTime)
+        public ManageableMarketDataSnapshot CreateFromView(RemoteView view, DateTimeOffset valuationTime)
         {
             view.Init();
 

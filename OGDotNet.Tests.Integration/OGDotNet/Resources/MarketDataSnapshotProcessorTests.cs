@@ -3,8 +3,9 @@ using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
-    public class MarketDataSnapshotProcessorTests : MarketDataSnapshotManagerTests
+    public class MarketDataSnapshotProcessorTests : TestWithContextBase
     {
+        private const string ViewName = "Equity Option Test View 1";
         [Xunit.Extensions.Fact]
         public void CanGetYieldCurveValues()
         {
