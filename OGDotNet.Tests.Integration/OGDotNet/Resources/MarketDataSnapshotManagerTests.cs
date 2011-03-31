@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
@@ -33,10 +34,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     
                 }
 
+                Assert.Equal(ExpectedYieldCurves(view), manageableMarketDataSnapshot.YieldCurves.Count);
                 if (view.Name == "Equity Option Test View 1")
                 {
-                    //TODO hoist this when fixed
-                    Assert.Equal(ExpectedYieldCurves(view), manageableMarketDataSnapshot.YieldCurves.Count);
                     var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "SINGLE")];
                     Assert.NotNull(yieldCurveSnapshot);
                 }

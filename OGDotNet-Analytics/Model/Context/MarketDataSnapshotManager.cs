@@ -7,6 +7,7 @@ using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph;
 using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
@@ -24,6 +25,7 @@ namespace OGDotNet.Model.Context
     /// This class handles creating and mutating snapshots based on Views and live data
     /// 
     /// TODO: this implementation probably shouldn't be client side
+    /// TODO: we fetch way more data then I think is neccesary
     /// </summary>
     public class MarketDataSnapshotManager : DisposableBase
     {
@@ -80,9 +82,6 @@ namespace OGDotNet.Model.Context
             ViewDefinition tempViewDefn;
             IEnumerable<ValueRequirement> requiredLiveData = GetTempView(view, out tempViewDefn);
 
-            var requiredDataSet = new HashSet<Tuple<ComputationTargetSpecification,string>>(requiredLiveData.Select(vr => Tuple.Create(vr.TargetSpecification, vr.ValueName)));
-            Func<ComputationTargetSpecification, string, bool> isRequiredData = (cts, name) => requiredDataSet.Contains(Tuple.Create(cts,name));
-
             using (var remoteClient = _remoteEngineContext.CreateUserClient())
             {
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(tempViewDefn));
@@ -94,7 +93,7 @@ namespace OGDotNet.Model.Context
                     using (var remoteViewClient = tempView.CreateClient())
                     {
                         var tempResults = remoteViewClient.RunOneCycle(valuationTime);
-                        return new ManageableMarketDataSnapshot(view.Name, GetFilteredUnstructuredSnapshot(tempResults, isRequiredData), GetYieldCurves(tempResults));
+                        return new ManageableMarketDataSnapshot(view.Name, GetUnstructuredData(tempResults, requiredLiveData), GetYieldCurves(tempResults, view.Definition));
                     }
                 }
                 finally
@@ -104,10 +103,14 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(ViewComputationResultModel tempResults)
+
+
+        private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(ViewComputationResultModel tempResults, ViewDefinition definition)
         {
             //TODO less insanity
-            var yCurveSpecs = tempResults.AllResults.Where(r =>r.ComputedValue.Specification.ValueName==YieldCurveSpecValueReqName).Select(r => (InterpolatedYieldCurveSpecificationWithSecurities)r.ComputedValue.Value);
+            var yCurveSpecs = definition.CalculationConfigurationsByName.SelectMany(
+                c =>c.Value.SpecificRequirements.Where(r => r.ValueName == YieldCurveValueReqName)
+                        .Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Constraints)).Select(r => tempResults[c.Key, r])).Select(r => (InterpolatedYieldCurveSpecificationWithSecurities)r.Value);
 
             //TODO I shouldn't be fetching duplicate copies s/Lookup/Dictionary/
             var resultsByKey = yCurveSpecs.ToLookup(GetYieldCurveKey, r => r);
@@ -133,44 +136,44 @@ namespace OGDotNet.Model.Context
 
         private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredSnapshot(ViewComputationResultModel tempResults, InterpolatedYieldCurveSpecificationWithSecurities yieldCurveSpec)
         {
-            //TODO do yield curves only take market values?
-            return GetFilteredUnstructuredSnapshot(tempResults, (cts,name)=> name == MarketValueReqName && yieldCurveSpec.Strips.Any(s=>UniqueIdentifier.Of(s.SecurityIdentifier) ==cts.Uid));
+            //TODO do yield curves only take primitive market values?
+            IEnumerable<ValueRequirement> reqs = yieldCurveSpec.Strips.Select(s => new ValueRequirement(MarketValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Of(s.SecurityIdentifier))));
+            return GetUnstructuredData(tempResults, reqs);
         }
 
 
-        private static ManageableUnstructuredMarketDataSnapshot GetFilteredUnstructuredSnapshot(ViewComputationResultModel tempResults, Func<ComputationTargetSpecification, string, bool> predicate)
+        private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredData(ViewComputationResultModel tempResults, IEnumerable<ValueRequirement> requiredDataSet)
         {
-            var dictionary = tempResults.AllResults
-                .Where(vre => predicate(vre.ComputedValue.Specification.TargetSpecification, vre.ComputedValue.Specification.ValueName))
-                .ToLookup(r => r.ComputedValue.Specification.TargetSpecification)
-                .ToDictionary(l => GetMarketValueSpecification(l.Key), l => (IDictionary<string, ValueSnapshot>)l.Where(ll => predicate(l.Key, ll.ComputedValue.Specification.ValueName)).ToDictionary(r => r.ComputedValue.Specification.ValueName, GetValueSnapshot))
-                .Where(kvp=>kvp.Value.Any()).ToDictionary(kvp=>kvp.Key,kvp=>kvp.Value);
+            var dict = GetMatchingData(requiredDataSet, tempResults)
+                .ToLookup(r=>new MarketDataValueSpecification(GetMarketType(r.Specification.TargetSpecification.Type), r.Specification.TargetSpecification.Uid))
+                .ToDictionary(r=>r.Key,r=>(IDictionary<string, ValueSnapshot>) r.ToDictionary(e=>e.Specification.ValueName, e=>new ValueSnapshot((double)e.Value)));
 
-            return new ManageableUnstructuredMarketDataSnapshot(dictionary);
+            return new ManageableUnstructuredMarketDataSnapshot(dict);
         }
 
-       
-
-        private static MarketDataValueSpecification GetMarketValueSpecification(ComputationTargetSpecification key)
+        private static IEnumerable<ComputedValue> GetMatchingData(IEnumerable<ValueRequirement> requiredDataSet, ViewComputationResultModel tempResults)
         {
-            return new MarketDataValueSpecification(GetMarketType(key.Type), key.Uid);
+            foreach (var valueRequirement in requiredDataSet)
+            {
+                ComputedValue ret;
+                if( tempResults.TryGetComputedValue(MarketValuesConfigName, valueRequirement, out ret))
+                {//TODO what should I do if I can't get a value
+                    yield return ret;
+                }
+            }
         }
+
 
         private static MarketDataValueType GetMarketType(ComputationTargetType type)
         {
             return type.ConvertTo<MarketDataValueType>();
         }
 
-        private static ValueSnapshot GetValueSnapshot(ViewResultEntry entry)
-        {
-            return new ValueSnapshot((double) entry.ComputedValue.Value);
-        }
-
         private static IEnumerable<ValueRequirement> GetTempView(RemoteView view, out ViewDefinition tempViewDefn)
         {
             var requiredLiveData = view.GetRequiredLiveData();
 
-            var tempViewName = typeof(MarketDataSnapshotManager).FullName + Guid.NewGuid();
+            var tempViewName = string.Format("{0}.{1}.{2}", typeof(MarketDataSnapshotManager).Name, view.Name, Guid.NewGuid());
 
             var viewCalculationConfigurations = Enumerable.Repeat(GetMarketValuesCalculationConfiguration(requiredLiveData), 1)
                 .Concat(GetYieldCurveCalculationConfigurations(view))
@@ -197,7 +200,11 @@ namespace OGDotNet.Model.Context
                 cc =>
                 new ViewCalculationConfiguration(cc.Name,
                                                  cc.SpecificRequirements.Where(r => r.ValueName.Equals(YieldCurveValueReqName))
-                                                 .Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Constraints)).ToList() 
+                                                 .Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Constraints))
+
+                                                 .Concat(cc.SpecificRequirements.Where(r => r.ValueName != YieldCurveValueReqName))//TODO why do I have to fetch these as well for (e.g. Single Bind view Nelson-Siegel-Svennson Bond Curve)
+
+                                                 .ToList() 
 
                                                  , cc.PortfolioRequirementsBySecurityType,
                                                  cc.DefaultProperties)
