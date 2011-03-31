@@ -74,12 +74,16 @@ namespace OGDotNet.Model.Context
             return GetYieldCurves(DateTimeOffset.Now);
         }
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(DateTimeOffset valuationTime)
-        {
+        {//TODO this is slooow and we only need to do this much work if there's awkward overrides 
             return _snapshot.YieldCurves.ToDictionary(kvp => kvp.Key, kvp => GetYieldCurve(kvp, valuationTime));
         }
 
-        private Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, DateTimeOffset valuationTime)
-        {//TODO this is slooow
+        public Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot)
+        {
+            return GetYieldCurve(yieldCurveSnapshot, DateTimeOffset.Now);
+        }
+        public Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, DateTimeOffset valuationTime)
+        {
             var overrides = yieldCurveSnapshot.Value.Values.Values.
                     SelectMany(kvp =>kvp.Value.Select(v=>GetOverrideTuple(kvp,v))
                 ).ToDictionary(t=>t.Item1,t=>t.Item2);
