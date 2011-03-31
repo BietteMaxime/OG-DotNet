@@ -9,10 +9,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
     {
         private readonly IEnumerable<Warning> _warnings;
         private readonly List<Action> _updateActions;
+        private static readonly UpdateAction Empty= new UpdateAction(Enumerable.Empty<Action>(), Enumerable.Empty<Warning>());
 
         internal static UpdateAction Of(IEnumerable<UpdateAction> actions)
         {
-            return actions.Aggregate((a, b) => a.Concat(b));
+            return actions.Aggregate(Empty, (a, b) => a.Concat(b));
         }
 
         internal UpdateAction(Action updateAction)
