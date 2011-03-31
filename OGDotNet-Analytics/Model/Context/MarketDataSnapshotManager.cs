@@ -38,9 +38,9 @@ namespace OGDotNet.Model.Context
         }
 
 
-        public MarketDataSnapshotProcessor GetProcessor(string viewName)
+        public MarketDataSnapshotProcessor GetProcessor(ManageableMarketDataSnapshot snapshot)
         {
-            return new MarketDataSnapshotProcessor(_remoteEngineContext, viewName);    
+            return new MarketDataSnapshotProcessor(_remoteEngineContext, snapshot);    
         }
         public ManageableMarketDataSnapshot CreateFromView(string viewName)
         {

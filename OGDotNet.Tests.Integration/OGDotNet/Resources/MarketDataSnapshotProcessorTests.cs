@@ -14,9 +14,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var snapshotManager = Context.MarketDataSnapshotManager)
             {
                 var manageableMarketDataSnapshot = snapshotManager.CreateFromView(view);
-                var marketDataSnapshotProcessor = snapshotManager.GetProcessor(view.Name);
-                var interpolatedDoublesCurves = marketDataSnapshotProcessor.GetYieldCurves(manageableMarketDataSnapshot);
-                Assert.Equal(interpolatedDoublesCurves.Count, manageableMarketDataSnapshot.YieldCurves.Count);
+                using (var marketDataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
+                {
+                    var interpolatedDoublesCurves = marketDataSnapshotProcessor.GetYieldCurves();
+                    Assert.Equal(interpolatedDoublesCurves.Count, manageableMarketDataSnapshot.YieldCurves.Count);
+                }
             }
         }
 
@@ -40,10 +42,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     }
                 }
 
-                var marketDataSnapshotProcessor = snapshotManager.GetProcessor(ViewName);
-                var interpolatedDoublesCurves = marketDataSnapshotProcessor.GetYieldCurves(manageableMarketDataSnapshot);
-                Assert.NotEmpty(interpolatedDoublesCurves);
-                //TODO check that the curve changes
+                using (var marketDataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
+                {
+                    var interpolatedDoublesCurves = marketDataSnapshotProcessor.GetYieldCurves();
+                    Assert.NotEmpty(interpolatedDoublesCurves);
+                    //TODO check that the curve changes
+                }
             }
         }
     }

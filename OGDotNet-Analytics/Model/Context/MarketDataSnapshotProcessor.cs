@@ -18,24 +18,22 @@ namespace OGDotNet.Model.Context
 {
     public class MarketDataSnapshotProcessor : DisposableBase
     {
-        
-
         private readonly RemoteEngineContext _remoteEngineContext;
-        private readonly string _viewName;
+        private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly MarketDataSnapshotHelper _helper;
 
 
-        public MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, string viewName)
+        public MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot)
         {
             _remoteEngineContext = remoteEngineContext;
-            _viewName = viewName;
+            _snapshot = snapshot;
             _helper = new MarketDataSnapshotHelper(_remoteEngineContext);
         }
 
 
         private RemoteView View
         {
-            get { return _remoteEngineContext.ViewProcessor.GetView(_viewName); }
+            get { return _remoteEngineContext.ViewProcessor.GetView(_snapshot.BasisViewName); }
         }
         private ViewDefinition ViewDefinition
         {
@@ -43,13 +41,13 @@ namespace OGDotNet.Model.Context
         }
 
 
-        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(ManageableMarketDataSnapshot snapshot)
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves()
         {
-            return GetYieldCurves(snapshot, DateTimeOffset.Now);
+            return GetYieldCurves(DateTimeOffset.Now);
         }
-        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(ManageableMarketDataSnapshot snapshot, DateTimeOffset valuationTime)
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(DateTimeOffset valuationTime)
         {
-            return snapshot.YieldCurves.ToDictionary(kvp => kvp.Key, kvp => GetYieldCurve(kvp, valuationTime));
+            return _snapshot.YieldCurves.ToDictionary(kvp => kvp.Key, kvp => GetYieldCurve(kvp, valuationTime));
         }
 
         private Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, DateTimeOffset valuationTime)
