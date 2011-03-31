@@ -36,7 +36,7 @@ namespace OGDotNet.Mappedtypes.math.curve
 
         protected static string GetName(IFudgeFieldContainer ffc)
         {
-            return ffc.GetValue<string>("curve name");
+            return ffc.GetString("name") ?? ffc.GetString("curve name");
         }
     }
 }
