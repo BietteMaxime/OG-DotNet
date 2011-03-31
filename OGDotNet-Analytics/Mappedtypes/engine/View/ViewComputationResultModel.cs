@@ -31,21 +31,45 @@ namespace OGDotNet.Mappedtypes.engine.View
         public FudgeDateTime ResultTimestamp { get { return _resultTimestamp; } }
         public String ViewName { get { return _viewName; } }
 
+        public ComputedValue this[string calculationConfiguration, ValueRequirement valueRequirement]
+        {
+            get
+            {
+                ComputedValue ret;
+                if (!TryGetComputedValue(calculationConfiguration, valueRequirement, out ret))
+                {
+                    throw new KeyNotFoundException();
+                }
+                return ret;
+            }
+        }
+
         public bool TryGetValue(string calculationConfiguration, ValueRequirement valueRequirement, out object result)
-        {            
+        {
+            ComputedValue compValue;
+            if (!TryGetComputedValue(calculationConfiguration, valueRequirement, out compValue))
+            {
+                result = null;
+                return false;
+            }
+            result = compValue.Value;
+            return true;
+        }
+
+        public bool TryGetComputedValue(string calculationConfiguration, ValueRequirement valueRequirement, out ComputedValue result)
+        {
             result = null;
-            
+
             ViewCalculationResultModel model;
             if (!_configurationMap.TryGetValue(calculationConfiguration, out model))
             {
                 return false;
             }
-            ComputedValue computedValue;
-            if (!model.TryGetValue(valueRequirement.TargetSpecification, valueRequirement.ValueName, out computedValue))
+
+            if (!model.TryGetValue(valueRequirement.TargetSpecification, valueRequirement.ValueName, out result))
             {
                 return false;
             }
-            result = computedValue.Value;
             return true;
         }
 
