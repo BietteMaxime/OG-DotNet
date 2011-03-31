@@ -29,7 +29,7 @@ namespace OGDotNet.Model.Context
     {
         internal const string YieldCurveValueReqName = "YieldCurve";
         internal const string YieldCurveSpecValueReqName = "YieldCurveSpec";
-        internal const string MarketValueReqName = "Market_Value";
+        private const string MarketValueReqName = "Market_Value";
 
         private static readonly string MarketValuesConfigName = "MarketValues"+Guid.NewGuid();
 
@@ -88,7 +88,7 @@ namespace OGDotNet.Model.Context
                     using (var remoteViewClient = tempView.CreateClient())
                     {
                         var tempResults = remoteViewClient.RunOneCycle(valuationTime);
-                        return new ManageableMarketDataSnapshot(view.Name, GetUnstructuredSnapshot(tempResults, isRequiredData), GetYieldCurves(tempResults));
+                        return new ManageableMarketDataSnapshot(view.Name, GetFilteredUnstructuredSnapshot(tempResults, isRequiredData), GetYieldCurves(tempResults));
                     }
                 }
                 finally
@@ -101,33 +101,38 @@ namespace OGDotNet.Model.Context
         private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(ViewComputationResultModel tempResults)
         {
             //TODO less insanity
-            var specEntries = tempResults.AllResults.Where(r =>r.ComputedValue.Specification.ValueName==YieldCurveSpecValueReqName);
-            var dictionary = specEntries.GroupBy(vre => vre.CalculationConfiguration).ToDictionary(g => g.Key,
-                                                                                                         g =>
-                                                                                                         g.GroupBy(
-                                                                                                             gg =>
-                                                                                                             gg.ComputedValue.
-                                                                                                                 Specification.
-                                                                                                                 TargetSpecification.Uid));
-            var curves = dictionary.SelectMany(kvp => kvp.Value.SelectMany(g => g.Select(gg=> Tuple.Create(kvp.Key, g.Key, (InterpolatedYieldCurveSpecificationWithSecurities) gg.ComputedValue.Value))))
-                .ToList();
+            var yCurveSpecs = tempResults.AllResults.Where(r =>r.ComputedValue.Specification.ValueName==YieldCurveSpecValueReqName).Select(r => (InterpolatedYieldCurveSpecificationWithSecurities)r.ComputedValue.Value);
 
-
-            return curves.ToDictionary(t => new YieldCurveKey(Currency.Create(t.Item2.Value), t.Item3.Name), t => GetYieldCurveSnapshot(t.Item3, tempResults));
+            //TODO I shouldn't be fetching duplicate copies s/Lookup/Dictionary/
+            var resultsByKey = yCurveSpecs.ToLookup(GetYieldCurveKey, r => r);
+            var resultByKey = resultsByKey.ToDictionary(g => g.Key, g => g.First());
+            
+            return resultByKey.ToDictionary(g => g.Key, g => GetYieldCurveSnapshot(g.Value, tempResults));
         }
 
-        private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecificationWithSecurities yieldCurveSpec, ViewComputationResultModel tempResults)
+
+        private static YieldCurveKey GetYieldCurveKey(InterpolatedYieldCurveSpecificationWithSecurities spec)
+        {
+            return new YieldCurveKey(Currency.Create(spec.Currency), spec.Name);
+        }
+
+
+
+        private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecificationWithSecurities spec, ViewComputationResultModel tempResults)
+        {
+            ManageableUnstructuredMarketDataSnapshot values = GetUnstructuredSnapshot(tempResults, spec);
+            
+            return new ManageableYieldCurveSnapshot(values,tempResults.ValuationTime.ToDateTimeOffset());
+        }
+
+        private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredSnapshot(ViewComputationResultModel tempResults, InterpolatedYieldCurveSpecificationWithSecurities yieldCurveSpec)
         {
             //TODO do yield curves only take market values?
-            Func<ComputationTargetSpecification, string, bool> predicate =(cts,name)=>name == MarketValueReqName && yieldCurveSpec.Strips.Any(s=>UniqueIdentifier.Of(s.SecurityIdentifier) ==cts.Uid);
-
-            var snapshotValues = GetUnstructuredSnapshot(tempResults, predicate);
-            return new ManageableYieldCurveSnapshot(snapshotValues, tempResults.ValuationTime.ToDateTimeOffset());
-            
+            return GetFilteredUnstructuredSnapshot(tempResults, (cts,name)=> name == MarketValueReqName && yieldCurveSpec.Strips.Any(s=>UniqueIdentifier.Of(s.SecurityIdentifier) ==cts.Uid));
         }
 
 
-        private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredSnapshot(ViewComputationResultModel tempResults, Func<ComputationTargetSpecification, string, bool> predicate)
+        private static ManageableUnstructuredMarketDataSnapshot GetFilteredUnstructuredSnapshot(ViewComputationResultModel tempResults, Func<ComputationTargetSpecification, string, bool> predicate)
         {
             var dictionary = tempResults.AllResults
                 .Where(vre => predicate(vre.ComputedValue.Specification.TargetSpecification, vre.ComputedValue.Specification.ValueName))
@@ -193,25 +198,10 @@ namespace OGDotNet.Model.Context
                 );
         }
 
-        private static double GetValues(ViewComputationResultModel tempResults, ValueRequirement valueRequirement)
-        {
-            object ret;
-            if (!tempResults.TryGetValue(MarketValuesConfigName, valueRequirement, out ret))
-            {
-                throw new ArgumentException();
-            }
-            return (double) ret;
-        }
-
         private static ViewCalculationConfiguration GetMarketValuesCalculationConfiguration(IEnumerable<ValueRequirement> requiredLiveData)
         {
             return new ViewCalculationConfiguration(MarketValuesConfigName, requiredLiveData
                 .ToList(), new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>());
-        }
-
-        private static Identifier IdentifierOf(UniqueIdentifier uid)
-        {
-            return Identifier.Parse(uid.ToString());
         }
 
         protected override void Dispose(bool disposing)
