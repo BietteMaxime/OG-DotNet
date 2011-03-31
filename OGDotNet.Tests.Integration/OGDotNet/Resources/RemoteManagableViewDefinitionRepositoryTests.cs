@@ -152,21 +152,28 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             Assert.Equal(aVal.Name,bVal.Name);
             Assert.Equal(aVal.SpecificRequirements.ToList().Count, bVal.SpecificRequirements.ToList().Count);
-            foreach (var tuple in aVal.SpecificRequirements.Zip(bVal.SpecificRequirements, Tuple.Create))
-            {
-                AssertEquivalent(tuple.Item1,tuple.Item2);
-            }
+
+            var matchedRequirements = aVal.SpecificRequirements.Join(bVal.SpecificRequirements, a => a, b => b, (a,b)=>a, new ValueReqEquivalentComparer() );
+            Assert.Equal(aVal.SpecificRequirements.Count(), matchedRequirements.Count());
 
             Assert.Equal(aVal.PortfolioRequirementsBySecurityType.ToList().Count, bVal.PortfolioRequirementsBySecurityType.ToList().Count);
 
         }
 
-        private static void AssertEquivalent(ValueRequirement a, ValueRequirement b)
+        private class ValueReqEquivalentComparer : IEqualityComparer<ValueRequirement>
         {
-            //TODO stricter asserts
-            Assert.Equal(a.Constraints.Properties.Count, b.Constraints.Properties.Count);
-            Assert.Equal(a.TargetSpecification, b.TargetSpecification);
-            Assert.Equal(a.ValueName, b.ValueName);
+                public bool Equals(ValueRequirement a, ValueRequirement b)
+                {
+                    return a.Constraints.Properties.Count == b.Constraints.Properties.Count &&
+                           a.TargetSpecification.Equals(b.TargetSpecification)
+                           &&
+                           a.ValueName.Equals(b.ValueName);
+                }
+
+                public int GetHashCode(ValueRequirement obj)
+                {
+                    return obj.TargetSpecification.GetHashCode();
+                }
         }
 
         private static void AssertEquivalent(ResultModelDefinition a, ResultModelDefinition b)
