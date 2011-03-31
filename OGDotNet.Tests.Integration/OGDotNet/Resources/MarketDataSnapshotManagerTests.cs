@@ -16,9 +16,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViews")]
         public void CanCreateFromView(RemoteView view)
         {
-            using (var snapshotManager = Context.MarketDataSnapshotManager)
+            var snapshotManager = Context.MarketDataSnapshotManager;
+            using (var proc = snapshotManager.CreateFromView(view))
             {
-                var manageableMarketDataSnapshot = snapshotManager.CreateFromView(view);
+                var manageableMarketDataSnapshot = proc.Snapshot;
                 Assert.Null(manageableMarketDataSnapshot.Name);
                 Assert.Null(manageableMarketDataSnapshot.UniqueId);
 
@@ -28,16 +29,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     foreach (var snapshot in valueSnapshot.Value)
                     {
                         ValueAssertions.AssertSensibleValue(snapshot.Value.MarketValue);
-                        Assert.Null(snapshot.Value.OverrideValue);    
+                        Assert.Null(snapshot.Value.OverrideValue);
                     }
-                    
                 }
 
-                Assert.InRange(manageableMarketDataSnapshot.YieldCurves.Count, ExpectedYieldCurves(view), int.MaxValue);
+                Assert.InRange(manageableMarketDataSnapshot.YieldCurves.Count, ExpectedYieldCurves(view),
+                               int.MaxValue);
                 if (view.Name == "Equity Option Test View 1")
                 {
                     Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
-                    var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "SINGLE")];
+                    var yieldCurveSnapshot =
+                        manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "SINGLE")
+                            ];
                     Assert.NotNull(yieldCurveSnapshot);
                 }
                 foreach (var curve in manageableMarketDataSnapshot.YieldCurves.Values)
@@ -58,10 +61,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViews")]
         public void CanUpdateFromView(RemoteView view)
         {
-            using (var snapshotManager = Context.MarketDataSnapshotManager)
+            var snapshotManager = Context.MarketDataSnapshotManager;
+            using (var proc = snapshotManager.CreateFromView(view))
             {
-
-                var updated = snapshotManager.CreateFromView(view);
+                var updated = proc.Snapshot;
 
                 var targetChanged = updated.Values.Keys.First();
                 var valueChanged = updated.Values[targetChanged].Keys.First();
@@ -69,21 +72,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 updated.Values[targetChanged][valueChanged].OverrideValue = 12;
 
                 bool seenUpdate = false;
-                foreach (var value in updated.GlobalValues.Values.SelectMany(v=>v.Value.Values))
+                foreach (var value in updated.GlobalValues.Values.SelectMany(v => v.Value.Values))
                 {
-                    value.PropertyChanged += delegate
-                                                 {
-                                                     seenUpdate = true;
-                                                 };
+                    value.PropertyChanged += delegate { seenUpdate = true; };
                 }
 
-                var action = snapshotManager.PrepareUpdateFrom(updated);
+                var action = proc.PrepareUpdate();
                 Assert.Empty(action.Warnings);
                 Assert.False(seenUpdate);
                 action.Execute();
                 Assert.True(seenUpdate);
 
-				Assert.Null(updated.Name);
+                Assert.Null(updated.Name);
                 Assert.Null(updated.UniqueId);
 
                 Assert.NotEmpty(updated.Values);
@@ -99,13 +99,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         }
                         else
                         {
-                            Assert.Null(snapshot.Value.OverrideValue);                            
+                            Assert.Null(snapshot.Value.OverrideValue);
                         }
                     }
-
                 }
-                
-
             }
         }
 

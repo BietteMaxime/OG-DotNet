@@ -11,9 +11,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViews")]
         public void CanGetYieldCurveValues(RemoteView view)
         {
-            using (var snapshotManager = Context.MarketDataSnapshotManager)
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromView(view))
             {
-                var manageableMarketDataSnapshot = snapshotManager.CreateFromView(view);
+                var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 using (var marketDataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
                 {
                     var interpolatedDoublesCurves = marketDataSnapshotProcessor.GetYieldCurves();
@@ -30,9 +32,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanOverrideYieldCurveValuesEqView()
         {
-            using (var snapshotManager = Context.MarketDataSnapshotManager)
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromView(ViewName))
             {
-                var manageableMarketDataSnapshot = snapshotManager.CreateFromView(ViewName);
+                var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
                 foreach (var valueSnapshot in ycSnapshot.Values)
                 {
@@ -42,12 +46,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     }
                 }
 
-                using (var marketDataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
-                {
-                    var interpolatedDoublesCurves = marketDataSnapshotProcessor.GetYieldCurves();
-                    Assert.NotEmpty(interpolatedDoublesCurves);
-                    //TODO check that the curve changes
-                }
+                var interpolatedDoublesCurves = dataSnapshotProcessor.GetYieldCurves();
+                Assert.NotEmpty(interpolatedDoublesCurves);
+                //TODO check that the curve changes
             }
         }
     }
