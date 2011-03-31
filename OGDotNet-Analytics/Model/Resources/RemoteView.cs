@@ -55,7 +55,7 @@ namespace OGDotNet.Model.Resources
 
                             if (!value)
                             {
-                                throw new ArgumentException("View failed to initialize");
+                                throw new ArgumentException(string.Format("View {0} failed to initialize", Name));
                             }
                         }
                     }
