@@ -73,7 +73,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
                     EnumBuilder<StripInstrumentType>.Parse((string) ffc.GetByName("type").Value),
                     new Tenor(ffc.GetString("tenor")),
                     new Tenor(ffc.GetString("resolvedTenor")),
-                    ffc.GetInt("nthFuture").GetValueOrDefault(-1),
+                    ffc.GetInt("numFutures").GetValueOrDefault(-1),
                     GetDateTime(ffc.GetByName("maturity")),
                     Identifier.Parse(ffc.GetString("identifier")),
                     deserializer.FromField<Core.Security.Security>(ffc.GetByName("security"))
