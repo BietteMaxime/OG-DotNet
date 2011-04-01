@@ -58,15 +58,49 @@ namespace OGDotNet.Model.Context
         }
 
 
-        /// <summary>
-        /// TODO Filtering
-        /// </summary>
         public UpdateAction PrepareUpdate(CancellationToken ct = default(CancellationToken))
         {
-            var newSnapshot = _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now,ct);
-            return Snapshot.PrepareUpdateFrom(newSnapshot);
+            return PrepareUpdate(s => s, ct);
+        }
+        
+        public UpdateAction PrepareGlobalValuesUpdate(CancellationToken ct = default(CancellationToken))
+        {
+            return PrepareUpdate(s => s.GlobalValues, ct);
         }
 
+        public UpdateAction PrepareYieldCurveUpdate(YieldCurveKey yieldCurveKey, CancellationToken ct = default(CancellationToken))
+        {
+            if (! _snapshot.YieldCurves.ContainsKey(yieldCurveKey))
+            {//TODO should I be able to add a yield curve like this?
+                throw new ArgumentException(string.Format("Nonexistant yield curve {0}",yieldCurveKey));
+            }
+
+            ManageableMarketDataSnapshot newSnapshot = GetNewSnapshotForUpdate(ct);
+            if (newSnapshot.YieldCurves.ContainsKey(yieldCurveKey))
+            {
+                return PrepareUpdate(s => s.YieldCurves[yieldCurveKey], newSnapshot);
+            }
+            else
+            {
+                return _snapshot.PrepareRemoveAction(yieldCurveKey, _snapshot.YieldCurves[yieldCurveKey]);
+            }
+        }
+
+        private UpdateAction PrepareUpdate<T>(Func<ManageableMarketDataSnapshot, T> scopeSelector, CancellationToken ct = default(CancellationToken)) where T: IUpdatableFrom<T>
+        {
+            ManageableMarketDataSnapshot newSnapshot = GetNewSnapshotForUpdate(ct);
+            return PrepareUpdate(scopeSelector, newSnapshot);
+        }
+
+        private UpdateAction PrepareUpdate<T>(Func<ManageableMarketDataSnapshot, T> scopeSelector, ManageableMarketDataSnapshot newSnapshot) where T : IUpdatableFrom<T>
+        {
+            return scopeSelector(Snapshot).PrepareUpdateFrom(scopeSelector(newSnapshot));
+        }
+
+        private ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct)
+        {
+            return _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now, ct);
+        }
 
         #region YieldCurveView
 

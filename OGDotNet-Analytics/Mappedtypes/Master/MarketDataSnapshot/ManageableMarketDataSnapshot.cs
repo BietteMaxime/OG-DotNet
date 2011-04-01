@@ -16,7 +16,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 {
-    public class ManageableMarketDataSnapshot : INotifyPropertyChanged
+    public class ManageableMarketDataSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableMarketDataSnapshot>
     {
         private UniqueIdentifier _uniqueId;
 
@@ -99,7 +99,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         }
 
-        private UpdateAction PrepareRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
+        internal UpdateAction PrepareRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
         {
             return new UpdateAction(
                 delegate

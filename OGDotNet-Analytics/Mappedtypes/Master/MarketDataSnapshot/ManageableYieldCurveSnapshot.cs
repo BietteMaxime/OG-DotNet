@@ -3,11 +3,12 @@ using System.ComponentModel;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
+using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 
 namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 {
-    public class ManageableYieldCurveSnapshot : INotifyPropertyChanged
+    public class ManageableYieldCurveSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableYieldCurveSnapshot>
     {
         private DateTimeOffset _valuationTime;
         private readonly ManageableUnstructuredMarketDataSnapshot _values;
