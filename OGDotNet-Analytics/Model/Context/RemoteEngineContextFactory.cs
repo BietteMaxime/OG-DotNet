@@ -129,6 +129,10 @@ namespace OGDotNet.Model.Context
                 }
             }
 
+            if (!validServiceUris.Any())
+            {
+                throw new WebException("Failed to get any service Uris");
+            }
             return validServiceUris;
         }
 
