@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
@@ -28,10 +29,10 @@ namespace OGDotNet.Model.Context
         private readonly RawMarketDataSnapper _rawMarketDataSnapper;
 
 
-        internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, RemoteView view, DateTimeOffset valuationTime)
+        internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, RemoteView view, DateTimeOffset valuationTime, CancellationToken ct)
         {
             var rawMarketDataSnapper = new RawMarketDataSnapper(context, view);
-            var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(valuationTime);
+            var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(valuationTime, ct);
             return new MarketDataSnapshotProcessor(snapshot,rawMarketDataSnapper);
         }
 
@@ -60,9 +61,9 @@ namespace OGDotNet.Model.Context
         /// <summary>
         /// TODO Filtering
         /// </summary>
-        public UpdateAction PrepareUpdate()
+        public UpdateAction PrepareUpdate(CancellationToken ct = default(CancellationToken))
         {
-            var newSnapshot = _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now);
+            var newSnapshot = _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now,ct);
             return Snapshot.PrepareUpdateFrom(newSnapshot);
         }
 

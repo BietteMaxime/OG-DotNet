@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
@@ -24,22 +25,24 @@ namespace OGDotNet.Model.Context
         }
 
 
-        public MarketDataSnapshotProcessor CreateFromView(string viewName)
+        public MarketDataSnapshotProcessor CreateFromView(string viewName, CancellationToken ct =default(CancellationToken))
         {
-            return CreateFromView(viewName,DateTimeOffset.Now);
+            return CreateFromView(viewName,DateTimeOffset.Now, ct);
         }
-        public MarketDataSnapshotProcessor CreateFromView(RemoteView view)
+        public MarketDataSnapshotProcessor CreateFromView(RemoteView view, CancellationToken ct = default(CancellationToken))
         {
-            return CreateFromView(view,DateTimeOffset.Now);
+            return CreateFromView(view,DateTimeOffset.Now,ct);
         }
 
-        public MarketDataSnapshotProcessor CreateFromView(string viewName, DateTimeOffset offset)
+        public MarketDataSnapshotProcessor CreateFromView(string viewName, DateTimeOffset offset, CancellationToken ct = default(CancellationToken))
         {
-            return CreateFromView(_remoteEngineContext.ViewProcessor.GetView(viewName), offset);
+            return CreateFromView(_remoteEngineContext.ViewProcessor.GetView(viewName), offset,ct);
         }
-        public MarketDataSnapshotProcessor CreateFromView(RemoteView view, DateTimeOffset offset)
+        public MarketDataSnapshotProcessor CreateFromView(RemoteView view, DateTimeOffset offset, CancellationToken ct = default(CancellationToken))
         {
-            return MarketDataSnapshotProcessor.Create(_remoteEngineContext, view, offset);
+            return MarketDataSnapshotProcessor.Create(_remoteEngineContext, view, offset, ct);
         }
+
+       
     }
 }

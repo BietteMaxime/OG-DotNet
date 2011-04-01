@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
@@ -48,13 +49,18 @@ namespace OGDotNet.Model.Context
         }
 
         #region create snapshot
-        public ManageableMarketDataSnapshot CreateSnapshotFromView(DateTimeOffset valuationTime)
+        public ManageableMarketDataSnapshot CreateSnapshotFromView(DateTimeOffset valuationTime, CancellationToken ct)
         {
+            ct.ThrowIfCancellationRequested();
             _view.Init();
-            ViewComputationResultModel allResults = GetAllResults(valuationTime);
 
+            ct.ThrowIfCancellationRequested();
+            ViewComputationResultModel allResults = GetAllResults(valuationTime, ct);
+            
+            ct.ThrowIfCancellationRequested();
             var requiredLiveData = _view.GetRequiredLiveData();
-
+            
+            ct.ThrowIfCancellationRequested();
             return new ManageableMarketDataSnapshot(_view.Name, GetUnstructuredData(allResults, requiredLiveData), GetYieldCurves(allResults));
         }
 
@@ -128,17 +134,24 @@ namespace OGDotNet.Model.Context
         #endregion
 
         #region view defn building
-        public ViewComputationResultModel GetAllResults(DateTimeOffset valuationTime, Dictionary<ValueRequirement, double > overrides)
+        public ViewComputationResultModel GetAllResults(DateTimeOffset valuationTime, Dictionary<ValueRequirement, double> overrides, CancellationToken ct=default(CancellationToken))
         {
+            ct.ThrowIfCancellationRequested();
             var yieldCurveSpecReqs = GetYieldCurveSpecReqs(_view, valuationTime);
-
+            
+            ct.ThrowIfCancellationRequested();
             var allDataViewDefn = GetTempViewDefinition(_view, yieldCurveSpecReqs);
-            return RunOneCycle(allDataViewDefn, valuationTime, overrides);
+            
+            ct.ThrowIfCancellationRequested();
+            var viewComputationResultModel = RunOneCycle(allDataViewDefn, valuationTime, overrides);
+            
+            
+            return viewComputationResultModel;
         }
 
-        private ViewComputationResultModel GetAllResults(DateTimeOffset valuationTime)
+        private ViewComputationResultModel GetAllResults(DateTimeOffset valuationTime, CancellationToken ct)
         {
-            return GetAllResults(valuationTime, new Dictionary<ValueRequirement, double>());
+            return GetAllResults(valuationTime, new Dictionary<ValueRequirement, double>(), ct);
         }
 
 
