@@ -66,7 +66,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             var resolvedStripFields = ffc.GetAllByName("resolvedStrips");
 
             var resolvedStrips = resolvedStripFields.Select(deserializer.FromField<FixedIncomeStripWithIdentifierFudge>)
-                .Select(s => new FixedIncomeStripWithIdentifier((StripInstrumentType) Enum.Parse(typeof(StripInstrumentType),s.Type), new Tenor(s.Maturity), Identifier.Parse(s.Security))).
+                .Select(s => new FixedIncomeStripWithIdentifier((StripInstrumentType)Enum.Parse(typeof(StripInstrumentType), s.Type), new Tenor(s.Tenor), Identifier.Parse(s.Identifier))).
                 ToList();
             return new InterpolatedYieldCurveSpecification(curveDate, name, currency, resolvedStrips, region);
         }
@@ -78,8 +78,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         private class FixedIncomeStripWithIdentifierFudge
         {
             public string Type { get; set; }
-            public string Maturity{ get; set; }
-            public string Security { get; set; }
+            public string Tenor { get; set; }
+            public string Identifier { get; set; }
         }
     }
 }
