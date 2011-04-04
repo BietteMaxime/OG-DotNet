@@ -104,26 +104,34 @@ namespace OGDotNet.Model.Context
 
         #region YieldCurveView
 
-        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves()
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
         {
-            return GetYieldCurves(DateTimeOffset.Now);
+            return GetYieldCurves(DateTimeOffset.Now, ct);
         }
-        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(DateTimeOffset valuationTime)
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(DateTimeOffset valuationTime, CancellationToken ct = default(CancellationToken))
         {//TODO this is slooow and we only need to do this much work if there's awkward overrides 
-            return _snapshot.YieldCurves.ToDictionary(kvp => kvp.Key, kvp => GetYieldCurve(kvp, valuationTime));
+            var ret = new Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>>();
+            foreach (var manageableYieldCurveSnapshot in _snapshot.YieldCurves)
+            {
+                ct.ThrowIfCancellationRequested();
+                ret.Add(manageableYieldCurveSnapshot.Key, GetYieldCurve(manageableYieldCurveSnapshot, valuationTime, ct));
+            }
+            return ret;
         }
 
-        public Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot)
+        public Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, CancellationToken ct = default(CancellationToken))
         {
-            return GetYieldCurve(yieldCurveSnapshot, DateTimeOffset.Now);
+            return GetYieldCurve(yieldCurveSnapshot, DateTimeOffset.Now, ct);
         }
-        public Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, DateTimeOffset valuationTime)
+        public Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, DateTimeOffset valuationTime, CancellationToken ct = default(CancellationToken))
         {
             var overrides = yieldCurveSnapshot.Value.Values.Values.
                     SelectMany(kvp =>kvp.Value.Select(v=>GetOverrideTuple(kvp,v))
                 ).ToDictionary(t=>t.Item1,t=>t.Item2);
 
-            var results = _rawMarketDataSnapper.GetAllResults(valuationTime,overrides);
+            var results = _rawMarketDataSnapper.GetAllResults(valuationTime,overrides, ct);
+
+            ct.ThrowIfCancellationRequested();
 
             var curveResults =
                 results.AllResults
