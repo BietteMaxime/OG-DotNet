@@ -258,7 +258,7 @@ namespace OGDotNet.Model.Context
 
         protected override void Dispose(bool disposing)
         {
-            //TODO -I'm going to need thsi in order to be less slow
+            //TODO -I'm going to need this in order to be less slow
         }
     }
 }
