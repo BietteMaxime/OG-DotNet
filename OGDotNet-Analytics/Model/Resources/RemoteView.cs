@@ -33,38 +33,53 @@ namespace OGDotNet.Model.Resources
 
         public void Init(CancellationToken cancellationToken = new CancellationToken())
         {
+            //This post responds via JMS
+            //See the java comments for explanation
+            IMessage message = CallResponse( cancellationToken, topicName => _rest.Resolve("init").Post(topicName));
+
+            var value = (bool)message.Properties["init"];
+            if (!value)
+            {
+                throw new ArgumentException(string.Format("View {0} failed to initialize", Name));
+            }
+        }
+
+        private IMessage CallResponse(CancellationToken token, Action<string> call)
+        {
+            IMessage ret = null;
             _mqTemplate.Do(delegate(ISession session)
+            {
+                var temporaryTopic = session.CreateTemporaryTopic();//TODO we shouldn't be creating temporary topics all over the place
+                try
                 {
-                    var temporaryTopic = session.CreateTemporaryTopic();
-                    try
+                    using (var consumer = session.CreateConsumer(temporaryTopic))
+                    using (var mre = new ManualResetEvent(false))
                     {
-                        using (var consumer = session.CreateConsumer(temporaryTopic))
+                        IMessage message = null;
+                        consumer.Listener += delegate(IMessage m)
+                                                 {
+                                                     message = m;
+                                                     mre.Set();
+                                                 };
+
+                        call(temporaryTopic.TopicName);
+
+
+                        var waitHandles = new[] { mre, token.WaitHandle };
+                        while (WaitHandle.WaitAny(waitHandles) != 0)
                         {
-                            //This post responds via JMS
-                            //See the java comments for explanation
-                            _rest.Resolve("init").Post(temporaryTopic.TopicName);
-                            IMessage message = null;
-                            while (message == null)//TODO make this cancellable in a more sane way
-                            {
-                                message = consumer.Receive(TimeSpan.FromMilliseconds(1000));
-                                cancellationToken.ThrowIfCancellationRequested();
-                            }
-
-
-                            bool value = (bool)message.Properties["init"];
-
-                            if (!value)
-                            {
-                                throw new ArgumentException(string.Format("View {0} failed to initialize", Name));
-                            }
+                            token.ThrowIfCancellationRequested();
                         }
-                    }
-                    finally
-                    {
-                        temporaryTopic.Delete();//Oh how I wish this was a dipose call
+                        ret = message;
                     }
                 }
-            );
+                finally
+                {
+                    temporaryTopic.Delete();
+                }
+            }
+           );
+            return ret;
         }
 
         public IPortfolio Portfolio
