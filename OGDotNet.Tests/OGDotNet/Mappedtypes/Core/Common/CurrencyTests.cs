@@ -13,7 +13,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
         }
 
         [Fact]
-        public void CantGetBadCurrenct()
+        public void CantGetBadCurrency()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => Currency.Create("CurrencyISO::USD"));
         }
@@ -31,7 +31,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
         [Fact]
         public void CurrenciesAreNotEqual()
         {
-            var a = Currency.Create("GBO");
+            var a = Currency.Create("GBP");
             var b = Currency.Create("USD");
             Assert.False(a.Equals(b));
             Assert.False(((object)a).Equals(b));
