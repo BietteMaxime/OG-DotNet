@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
@@ -41,17 +39,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.InRange(conversionRate, 0.99 / reciprocal, 1.01 / reciprocal );
         }
 
-        private CurrencyMatrixSourcingFunction GetFunction()
+        private static CurrencyMatrixSourcingFunction GetFunction()
         {
             var currencyMatrix = Context.CurrencyMatrixSource.GetCurrencyMatrix("BloombergLiveData");
             return new CurrencyMatrixSourcingFunction(currencyMatrix);
         }
 
-        private object GetValue(ValueRequirement req)
+        private static object GetValue(ValueRequirement req)
         {
             if (req.TargetSpecification.Type != ComputationTargetType.Primitive)
                 throw new NotImplementedException();
-            var cancellationTokenSource = new CancellationTokenSource();
 
             using (var remoteClient = Context.CreateUserClient())
             {
@@ -66,22 +63,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var remoteView = Context.ViewProcessor.GetView(viewDefinition.Name);
                     remoteView.Init();
                     var remoteViewClient = remoteView.CreateClient();
-                    foreach (var viewComputationResultModel in remoteViewClient.GetResults(cancellationTokenSource.Token))
-                    {
-                        foreach (var val in viewComputationResultModel.AllResults)
-                        {
-                            Debug.Assert(val.CalculationConfiguration == "Default");
-                            Debug.Assert(req.IsSatisfiedBy(val.ComputedValue.Specification));
-                            return val.ComputedValue.Value;
-                        }
-                    }
+                    var viewComputationResultModel = remoteViewClient.RunOneCycle(DateTimeOffset.Now);
+
+                    return viewComputationResultModel["Default", req].Value;
                 }
                 finally
                 {
                     remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewDefinition.Name);
                 }
             }
-            throw new NotImplementedException();
         }
     }
 }
