@@ -8,11 +8,11 @@ using OGDotNet.Mappedtypes.math.surface;
 
 namespace OGDotNet.Mappedtypes.financial.model.volatility.surface
 {
-    /// <summary>
-    /// TODO Not implemented
-    /// </summary>
     public class VolatilitySurface
     {
+        /// <summary>
+        /// TODO this could be any sort of surface
+        /// </summary>
         private readonly ConstantDoublesSurface _sigma;
 
         public VolatilitySurface(ConstantDoublesSurface sigma)
