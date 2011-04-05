@@ -115,11 +115,11 @@ namespace OGDotNet.Mappedtypes.engine.view
             var currency = ffc.GetByName("currency")==null ? null : Currency.Create(ffc.GetValue<string>("currency"));
 
             
-            var minDeltaCalcPeriod = GetNullableLongField(ffc, "minDeltaCalcPeriod");
-            var maxDeltaCalcPeriod = GetNullableLongField(ffc, "maxDeltaCalcPeriod");
+            var minDeltaCalcPeriod = ffc.GetLong("minDeltaCalcPeriod");
+            var maxDeltaCalcPeriod = ffc.GetLong("maxDeltaCalcPeriod");
 
-            var minFullCalcPeriod = GetNullableLongField(ffc, "fullDeltaCalcPeriod");
-            var maxFullCalcPeriod = GetNullableLongField(ffc, "maxFullCalcPeriod");
+            var minFullCalcPeriod = ffc.GetLong("fullDeltaCalcPeriod");
+            var maxFullCalcPeriod = ffc.GetLong("maxFullCalcPeriod");
 
 
 
@@ -130,18 +130,6 @@ namespace OGDotNet.Mappedtypes.engine.view
             return new ViewDefinition(name, resultModelDefinition, portfolioIdentifier, user, currency, minDeltaCalcPeriod, maxDeltaCalcPeriod, minFullCalcPeriod, maxFullCalcPeriod, calculationConfigurationsByName, uniqueId);
         }
 
-        /// <summary>
-        /// TODO a nice nullable deserializer
-        /// </summary>
-        private static long? GetNullableLongField(IFudgeFieldContainer ffc, string name)
-        {
-            var field = ffc.GetByName(name);
-            
-            if (field == null) return null;
-
-            long longValue = ffc.GetValue<long>(name);
-            return (long?) longValue;
-        }
         private static void WriteNullableLongField(IAppendingFudgeFieldContainer message, string name, long? value)
         {
             if (value.HasValue)
