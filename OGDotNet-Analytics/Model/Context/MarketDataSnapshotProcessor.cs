@@ -102,6 +102,89 @@ namespace OGDotNet.Model.Context
             return _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now, ct);
         }
 
+        #region BuildOverridenView
+        //TODO this shouldn't require so much hackery
+        
+        public enum ViewOptions
+        {
+            AllSnapshotValues,
+            OverridesAndLiveValues
+        }
+
+        private class ValueReqComparer  : IEqualityComparer<ValueRequirement>
+        {
+            public static readonly ValueReqComparer Instance = new ValueReqComparer();
+            public bool Equals(ValueRequirement x, ValueRequirement y)
+            {
+                return x.ValueName == y.ValueName && x.TargetSpecification.Equals(y.TargetSpecification);
+            }
+
+            public int GetHashCode(ValueRequirement obj)
+            {
+                return obj.TargetSpecification.GetHashCode();
+            }
+        }
+        public RemoteView GetViewOfSnapshot(ViewOptions options)
+        {
+            //TODO this is a hack since I can't do structured overrides in the engine yet
+            var values = 
+                (_snapshot.Values.Concat(_snapshot.YieldCurves.SelectMany(y=>y.Value.Values.Values)
+                ).SelectMany(kvp => kvp.Value.Select(v => Tuple.Create(GetOverrideReq(kvp.Key, v), v.Value)))
+                 )
+                .ToLookup(t => t.Item1, t => t.Item2, ValueReqComparer.Instance);
+
+            Dictionary<ValueRequirement, double> overrides = GetOverrides(options, values);
+            return _rawMarketDataSnapper.GetViewOfSnapshot(overrides);
+        }
+
+        private static Dictionary<ValueRequirement, double> GetOverrides(ViewOptions options, ILookup<ValueRequirement, ValueSnapshot> values)
+        {
+            switch (options)
+            {
+                case ViewOptions.AllSnapshotValues:
+                    return values.ToDictionary(g => g.Key, ChoseBestOverrideValue);
+                case ViewOptions.OverridesAndLiveValues:
+                    var dictionary = new Dictionary<ValueRequirement, double>();
+                    foreach (var group in values)
+                    {
+                        double value;
+                        if (TryGetOverrideValue(group, out value))
+                        {
+                            dictionary.Add(group.Key, value);
+                        }
+                    }
+                    return dictionary;
+                default:
+                    throw new ArgumentOutOfRangeException("options");
+            }
+        }
+
+        private static bool TryGetOverrideValue(IEnumerable<ValueSnapshot> snapshots, out double value)
+        {
+            //Lots of errors here possible if there are overrides  I can't express
+            if (snapshots.Any(v => v.OverrideValue.HasValue))
+            {
+                value = snapshots.Single(v => v.OverrideValue.HasValue).OverrideValue.Value;
+                return true;
+            }
+            value = double.NaN;
+            return false;
+        }
+        private static double ChoseBestOverrideValue(IEnumerable<ValueSnapshot> snapshots)
+        {
+            //Lots of errors here possible if there are overrides  I can't express
+            double value;
+            if (TryGetOverrideValue(snapshots, out value))
+            {
+                return value;
+            }
+            else
+            {
+                return snapshots.Select(s => s.MarketValue).Distinct().Single();
+            }
+        }
+
+        #endregion
         #region YieldCurveView
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))

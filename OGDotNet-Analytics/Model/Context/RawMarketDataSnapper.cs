@@ -43,6 +43,11 @@ namespace OGDotNet.Model.Context
             _view = view;
         }
 
+        public RemoteEngineContext RemoteEngineContext
+        {
+            get { return _remoteEngineContext; }
+        }
+
         public RemoteView View
         {
             get { return _view; }
@@ -140,7 +145,7 @@ namespace OGDotNet.Model.Context
             var yieldCurveSpecReqs = GetYieldCurveSpecReqs(_view, valuationTime);
             
             ct.ThrowIfCancellationRequested();
-            var allDataViewDefn = GetTempViewDefinition(_view, yieldCurveSpecReqs);
+            var allDataViewDefn = GetTempViewDefinition(_view, new ResultModelDefinition(ResultOutputMode.All), yieldCurveSpecReqs);
             
             ct.ThrowIfCancellationRequested();
             var viewComputationResultModel = RunOneCycle(allDataViewDefn, valuationTime, overrides);
@@ -157,10 +162,23 @@ namespace OGDotNet.Model.Context
 
         private IEnumerable<ValueRequirement> GetYieldCurveSpecReqs(RemoteView view, DateTimeOffset valuationTime)
         {//TODO this is sloooow
-            var tempViewDefinition = GetTempViewDefinition(view);
+            var tempViewDefinition = GetTempViewDefinition(view, new ResultModelDefinition(ResultOutputMode.All));
             var tempResults = RunOneCycle(tempViewDefinition, valuationTime, new Dictionary<ValueRequirement, double>());
 
             return GetYieldCurveSpecReqs(tempResults);
+        }
+
+        public RemoteView GetViewOfSnapshot(Dictionary<ValueRequirement, double> overrides)
+        {
+            var tempViewDefinition = GetTempViewDefinition(_view, _view.Definition.ResultModelDefinition);
+            using (var remoteClient = _remoteEngineContext.CreateUserClient())
+            {
+                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(tempViewDefinition));
+                var tempView = _remoteEngineContext.ViewProcessor.GetView(tempViewDefinition.Name);
+                tempView.Init();
+                ApplyOverrides(tempView, overrides);
+                return tempView;
+            }
         }
 
         private ViewComputationResultModel RunOneCycle(ViewDefinition tempViewDefinition, DateTimeOffset valuationTime, Dictionary<ValueRequirement, double> overrides)
@@ -175,10 +193,7 @@ namespace OGDotNet.Model.Context
                     tempView.Init();
                     using (var remoteViewClient = tempView.CreateClient())
                     {
-                        foreach (var @override in overrides)
-                        {
-                            tempView.LiveDataOverrideInjector.AddValue(@override.Key, @override.Value);
-                        }
+                        ApplyOverrides(tempView, overrides);
                         var tempResults = remoteViewClient.RunOneCycle(valuationTime);
 
                         return tempResults;
@@ -191,12 +206,20 @@ namespace OGDotNet.Model.Context
             }
         }
 
+        private static void ApplyOverrides(RemoteView tempView, Dictionary<ValueRequirement, double> overrides)
+        {
+            foreach (var @override in overrides)
+            {
+                tempView.LiveDataOverrideInjector.AddValue(@override.Key, @override.Value);
+            }
+        }
+
         private static IEnumerable<ValueRequirement> GetYieldCurveSpecReqs(ViewComputationResultModel tempResults)
         {
             return tempResults.AllResults.Where(r => r.ComputedValue.Specification.ValueName == YieldCurveValueReqName).Select(r => r.ComputedValue.Specification).Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Properties));
         }
 
-        private static ViewDefinition GetTempViewDefinition(RemoteView view, IEnumerable<ValueRequirement> extraReqs = null)
+        private static ViewDefinition GetTempViewDefinition(RemoteView view, ResultModelDefinition resultModelDefinition, IEnumerable<ValueRequirement> extraReqs = null)
         {
             extraReqs = extraReqs ?? Enumerable.Empty<ValueRequirement>();
 
@@ -204,7 +227,7 @@ namespace OGDotNet.Model.Context
             
             var viewDefinition = view.Definition;
 
-            return new ViewDefinition(tempViewName, new ResultModelDefinition(ResultOutputMode.All),
+            return new ViewDefinition(tempViewName, resultModelDefinition,
                                       viewDefinition.PortfolioIdentifier,
                                       viewDefinition.User,
                                       viewDefinition.DefaultCurrency,
