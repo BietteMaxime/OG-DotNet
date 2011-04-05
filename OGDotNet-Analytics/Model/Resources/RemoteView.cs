@@ -62,6 +62,7 @@ namespace OGDotNet.Model.Resources
                                                      mre.Set();
                                                  };
 
+                        token.ThrowIfCancellationRequested();
                         call(temporaryTopic.TopicName);
 
 
