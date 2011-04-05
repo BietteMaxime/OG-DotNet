@@ -45,7 +45,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             return new CurrencyMatrixSourcingFunction(currencyMatrix);
         }
 
-        private static object GetValue(ValueRequirement req)
+        private static double GetValue(ValueRequirement req)
         {
             if (req.TargetSpecification.Type != ComputationTargetType.Primitive)
                 throw new NotImplementedException();
@@ -65,7 +65,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var remoteViewClient = remoteView.CreateClient();
                     var viewComputationResultModel = remoteViewClient.RunOneCycle(DateTimeOffset.Now);
 
-                    return viewComputationResultModel["Default", req].Value;
+                    return (double) viewComputationResultModel["Default", req].Value;
                 }
                 finally
                 {

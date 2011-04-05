@@ -17,7 +17,7 @@ namespace OGDotNet.Mappedtypes.financial.currency
         /// <summary>
         /// TODO type up first input
         /// </summary>
-        public double GetConversionRate( Func<ValueRequirement,object> inputs, Currency source, Currency target)
+        public double GetConversionRate( Func<ValueRequirement,double> inputs, Currency source, Currency target)
         {
             var currencyMatrixValue = _matrix.GetConversion(source,target);
             if (currencyMatrixValue is CurrencyMatrixValue.CurrencyMatrixCross)
