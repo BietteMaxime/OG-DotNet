@@ -10,21 +10,21 @@ namespace OGDotNet.Builders
 
         static EnumUtils()
         {
-            LookupTable = Enum.GetValues(typeof (TA)).Cast<TA>().ToDictionary(a => a, ConvertToInner);
+            var values = Enum.GetValues(typeof (TA)).Cast<TA>();
+            LookupTable = new Dictionary<TA, TB>();
+            foreach (var a in values)
+            {
+                TB b;
+                if (Enum.TryParse(a.ToString(), out b))
+                {
+                    LookupTable.Add(a,b);
+                }
+            }
         }
+
         public static TB ConvertTo(TA a) 
         {
             return LookupTable[a];
-        }
-
-        private static TB ConvertToInner(TA a) 
-        {//TODO less slow
-            TB ret;
-            if (! Enum.TryParse(a.ToString(), out ret))
-            {
-                throw new ArgumentException();
-            }
-            return ret;
         }
     }
 }
