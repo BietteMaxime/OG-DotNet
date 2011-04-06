@@ -245,7 +245,7 @@ namespace OGDotNet.Model.Context
 
         private static ComputationTargetType ConvertToComputationTargetType(MarketDataValueSpecification target)
         {
-            return target.Type.ConvertTo<ComputationTargetType>();
+            return EnumUtils<MarketDataValueType, ComputationTargetType>.ConvertTo(target.Type);
         }
         #endregion
 

@@ -134,7 +134,7 @@ namespace OGDotNet.Model.Context
 
         private static MarketDataValueType GetMarketType(ComputationTargetType type)
         {
-            return type.ConvertTo<MarketDataValueType>();
+            return EnumUtils<ComputationTargetType, MarketDataValueType>.ConvertTo(type);
         }
         #endregion
 
