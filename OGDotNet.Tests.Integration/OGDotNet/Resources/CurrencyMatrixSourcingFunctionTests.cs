@@ -42,6 +42,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static CurrencyMatrixSourcingFunction GetFunction()
         {
             var currencyMatrix = Context.CurrencyMatrixSource.GetCurrencyMatrix("BloombergLiveData");
+            Assert.NotNull(currencyMatrix);
             return new CurrencyMatrixSourcingFunction(currencyMatrix);
         }
 
