@@ -134,6 +134,7 @@
     <Compile Include="OGDotNetModule.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixSourcingFunction.cs" />
+    <Compile Include="Utils\BlockingQueueWithCancellation.cs" />
     <Compile Include="Utils\DictionaryExtensionMethods.cs" />
     <Compile Include="Utils\DisposableBase.cs" />
     <Compile Include="Model\Resources\ClientResultStream.cs" />

@@ -2,9 +2,7 @@
 using System.IO;
 using System.Threading;
 using Apache.NMS;
-using Fudge;
 using Fudge.Encodings;
-using Fudge.Serialization;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -18,6 +16,9 @@ namespace OGDotNet.Model.Resources
         private readonly IMessageConsumer _consumer;
         private readonly MQTemplate _mqTemplate;
         private readonly OpenGammaFudgeContext _fudgeContext;
+
+
+        readonly BlockingQueueWithCancellation<IMessage> _messageQueue = new BlockingQueueWithCancellation<IMessage>();
 
         public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate, string topicName, Action stopAction)
         {
@@ -34,22 +35,23 @@ namespace OGDotNet.Model.Resources
             _destination = _session.GetDestination("topic://"+topicName);
 
             _consumer = _session.CreateConsumer(_destination);
-            
+
+            _consumer.Listener += msg => _messageQueue.Enqueue(msg);
+
             _connection.Start();
         }
 
         public T GetNext(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            IMessage message = null;
-            while (message== null)
-            {
-                message = _consumer.Receive(TimeSpan.FromSeconds(1));//TODO make this cancellable in a more sane manner
-                cancellationToken.ThrowIfCancellationRequested();
-            }
-            
 
-            cancellationToken.ThrowIfCancellationRequested();
+            IMessage message = _messageQueue.TryDequeue(cancellationToken);
+            
+            return Deserialize(message);
+        }
+
+        private T Deserialize(IMessage message)
+        {
             var bytesMessage = (IBytesMessage) message;
             using (var memoryStream = new MemoryStream(bytesMessage.Content))
             {
@@ -64,6 +66,7 @@ namespace OGDotNet.Model.Resources
             _session.Dispose();
             _connection.Dispose();
 
+            _messageQueue.Dispose();
 
             _stopAction();
         }
