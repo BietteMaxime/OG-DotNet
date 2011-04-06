@@ -1,6 +1,5 @@
 ﻿using System;
 using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.View;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Mappedtypes.financial.currency
@@ -14,9 +13,6 @@ namespace OGDotNet.Mappedtypes.financial.currency
             _matrix = matrix;
         }
 
-        /// <summary>
-        /// TODO type up first input
-        /// </summary>
         public double GetConversionRate( Func<ValueRequirement,double> inputs, Currency source, Currency target)
         {
             var currencyMatrixValue = _matrix.GetConversion(source,target);
@@ -34,7 +30,7 @@ namespace OGDotNet.Mappedtypes.financial.currency
             {
                 var valueRequirement = (CurrencyMatrixValue.CurrencyMatrixValueRequirement)currencyMatrixValue;
 
-                double rate = (double)inputs(valueRequirement.ValueRequirement);
+                double rate = inputs(valueRequirement.ValueRequirement);
                 if (valueRequirement.Reciprocal)
                 {
                     rate = 1.0 / rate;
