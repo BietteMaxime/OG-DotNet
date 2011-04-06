@@ -37,27 +37,23 @@ namespace OGDotNet.Builders
 
         private static object GetValue(IFudgeDeserializer deserializer, IFudgeFieldContainer subMsg, ValueSpecification valueSpecification)
         {
-            var o = subMsg.GetByName("value");
-            object innerValue;
+            var valueMsg = subMsg.GetByName("value");
 
             if (valueSpecification.ValueName == "YieldCurveJacobian")
             {
-                var fromField = deserializer.FromField<List<double[]>>(o);
+                var fromField = deserializer.FromField<List<double[]>>(valueMsg);
                 return fromField;//TODO I hope this gets a better type one day?
             }
 
-            
-            var t = o.Type.CSharpType;
-            if (o.Type == FudgeMsgFieldType.Instance || o.Type == IndicatorFieldType.Instance)
+            var t = valueMsg.Type.CSharpType;
+            if (valueMsg.Type == FudgeMsgFieldType.Instance || valueMsg.Type == IndicatorFieldType.Instance)
             {
-                innerValue = deserializer.FromField(o, t);
+                return deserializer.FromField(valueMsg, t);
             }
             else
             {
-                innerValue = subMsg.GetValue("value");
+                return valueMsg.Value;
             }
-            
-            return innerValue;
         }
     }
 }
