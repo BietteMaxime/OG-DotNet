@@ -39,21 +39,18 @@ namespace OGDotNet.Builders
         {
             var valueMsg = subMsg.GetByName("value");
 
-            if (valueSpecification.ValueName == "YieldCurveJacobian")
-            {
-                var fromField = deserializer.FromField<List<double[]>>(valueMsg);
-                return fromField;//TODO I hope this gets a better type one day?
-            }
-
-            var t = valueMsg.Type.CSharpType;
-            if (valueMsg.Type == FudgeMsgFieldType.Instance || valueMsg.Type == IndicatorFieldType.Instance)
-            {
-                return deserializer.FromField(valueMsg, t);
-            }
-            else
+            if (valueMsg.Type != FudgeMsgFieldType.Instance)
             {
                 return valueMsg.Value;
             }
+
+            if (valueSpecification.ValueName == "YieldCurveJacobian")
+            {
+                var fromField = deserializer.FromField<List<double[]>>(valueMsg);
+                return fromField; //TODO I hope this gets a better type one day?
+            }
+
+            return deserializer.FromField(valueMsg, null);
         }
     }
 }
