@@ -140,10 +140,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         var result = enumerator.Current.ResultTimestamp.ToDateTimeOffset();
                         var now = DateTimeOffset.Now;
 
-                        //TODO Make sure we're not being shown up too much by the server
-                        //var timeToReceive = now-requested;
-                        //var timeToCalculate = result-valuation;
-                        //Assert.InRange(timeToReceive, TimeSpan.Zero, TimeSpan.FromMilliseconds(timeToCalculate.TotalMilliseconds*2.0));
+                        //Make sure we're not being shown up too much by the server
+                        var timeToReceive = now - requested;
+                        var timeToCalculate = result - valuation;
+                        Assert.InRange(timeToReceive, TimeSpan.Zero, TimeSpan.FromMilliseconds(timeToCalculate.TotalMilliseconds * 3.0));
                     }
                 }
             }
@@ -313,8 +313,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 bool matches = (req.TargetSpecification.Uid ==
                                 valueSpecification.TargetSpecification.Uid
                                 && req.TargetSpecification.Type == valueSpecification.TargetSpecification.Type
-                                && req.ValueName == valueSpecification.ValueName);
-                //TODO constraints?
+                                && req.ValueName == valueSpecification.ValueName)
+                                && req.Constraints.IsSatisfiedBy(valueSpecification.Properties) ;
+
                 if (matches)
                     return;
 
