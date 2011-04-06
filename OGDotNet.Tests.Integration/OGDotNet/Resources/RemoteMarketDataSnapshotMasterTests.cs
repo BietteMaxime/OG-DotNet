@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.Core;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Id;
@@ -189,11 +188,48 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.NotNull(retSnapshot);
             Assert.Equal(mSnapshot.Name, retSnapshot.Name);
             Assert.NotNull(retSnapshot.Values);
+            Assert.Equal(mSnapshot.BasisViewName, retSnapshot.BasisViewName);
 
-            Assert.Equal(mSnapshot.Values.Keys.OrderBy(x => x.GetHashCode()), retSnapshot.Values.Keys.OrderBy(x => x.GetHashCode()));
+            AssertEqual(mSnapshot.GlobalValues, retSnapshot.GlobalValues);
+            
 
-            //TODO
+
+            AssertEqual(mSnapshot.YieldCurves, retSnapshot.YieldCurves, AssertEqual);
+
+            
+            //TODO volatility surfaces etc.
         }
 
+        private static void AssertEqual(ManageableYieldCurveSnapshot a, ManageableYieldCurveSnapshot b)
+        {
+            AssertEqual(a.Values, b.Values);
+            var timeSpan = a.ValuationTime.LocalDateTime- b.ValuationTime.LocalDateTime;
+            Assert.InRange(timeSpan.TotalMilliseconds,0, 1000);//Only second accuracy
+        }
+
+        private static void AssertEqual(ManageableUnstructuredMarketDataSnapshot a, ManageableUnstructuredMarketDataSnapshot b)
+        {
+            AssertEqual(a.Values, b.Values, AssertEqual);
+        }
+
+        private static void AssertEqual(IDictionary<string, ValueSnapshot> a, IDictionary<string,ValueSnapshot> b)
+        {
+            AssertEqual(a, b, AssertEqual);
+        }
+        private static void AssertEqual(ValueSnapshot a, ValueSnapshot b)
+        {
+            Assert.Equal(a.MarketValue,b.MarketValue);
+            Assert.Equal(a.OverrideValue, b.OverrideValue);
+        }
+
+        private static void AssertEqual<TKey,TValue>(IDictionary<TKey,TValue> a,IDictionary<TKey,TValue> b, Action<TValue,TValue> assert)
+        {
+            Assert.Equal(a.Keys.OrderBy(x => x.GetHashCode()), b.Keys.OrderBy(x => x.GetHashCode()));
+
+            foreach (var t in a.Join(b, aP => aP.Key, bP => bP.Key, Tuple.Create))
+            {
+                assert(t.Item1.Value, t.Item2.Value);
+            }
+        }
     }
 }
