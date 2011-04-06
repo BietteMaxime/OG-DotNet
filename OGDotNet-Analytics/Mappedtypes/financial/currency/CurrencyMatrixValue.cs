@@ -3,7 +3,6 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.View;
 
 namespace OGDotNet.Mappedtypes.financial.currency
 {
@@ -43,7 +42,7 @@ namespace OGDotNet.Mappedtypes.financial.currency
 
             protected override bool EqualsInner(CurrencyMatrixValue other)
             {
-                return ((CurrencyMatrixFixed) other)._fixedValue == _fixedValue;//TODO : this is mental
+                return ((CurrencyMatrixFixed) other)._fixedValue == _fixedValue;//TODO : this is an odd thing to do, since == on doubles rarely does what you want.  But it's what the Java side does
             }
         }
 
