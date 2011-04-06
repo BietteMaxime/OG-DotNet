@@ -7,6 +7,8 @@ namespace OGDotNet.Mappedtypes.Id
     [FudgeSurrogate(typeof(IdentifierBuilder))]
     public class Identifier : IEquatable<Identifier>, IComparable<Identifier>
     {
+        private const string Separator = "~";
+
         private readonly string _scheme;
         public string Scheme
         {
@@ -32,7 +34,7 @@ namespace OGDotNet.Mappedtypes.Id
 
         public static Identifier Parse(string s)
         {
-            string[] strings = s.Split(new[]{"::"},StringSplitOptions.None);
+            string[] strings = s.Split(new[] { Separator }, StringSplitOptions.None);
             return new Identifier(strings[0],strings[1]);
         }
 
@@ -52,7 +54,7 @@ namespace OGDotNet.Mappedtypes.Id
 
         public override string ToString()
         {
-            return string.Format("{0}::{1}", Scheme, Value);
+            return string.Format("{0}{1}{2}", Scheme, Separator, Value);
         }
 
         public bool Equals(Identifier other)

@@ -8,7 +8,7 @@ namespace OGDotNet.Mappedtypes.Id
 {
     public class UniqueIdentifier : IComparable<UniqueIdentifier>, IEquatable<UniqueIdentifier>, IComparable
     {
-        private const string Separator = "::";
+        private const string Separator = "~";
 
         private const String SchemeFudgeFieldName = "Scheme";
         private const String ValueFudgeFieldName = "Value";
