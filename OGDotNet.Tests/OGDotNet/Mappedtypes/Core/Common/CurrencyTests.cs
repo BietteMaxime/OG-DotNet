@@ -1,4 +1,5 @@
 ﻿using System;
+using OGDotNet.Mappedtypes.Id;
 using Xunit;
 using OGDotNet.Mappedtypes.Core.Common;
 
@@ -15,7 +16,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
         [Fact]
         public void CantGetBadCurrency()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => Currency.Create("CurrencyISO::USD"));
+            Assert.Throws<ArgumentOutOfRangeException>(() => Currency.Create(UniqueIdentifier.Of("CurrencyISO","USD").ToString()));
         }
 
         [Fact]

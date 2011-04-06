@@ -11,13 +11,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteLiveDataInjectorTests : TestWithContextBase
     {
+        readonly UniqueIdentifier _bloombergId = UniqueIdentifier.Of("BLOOMBERG_TICKER","USDRG Curncy");
 
         [Fact]
         public void CanAddValue()
         {
             RemoteView remoteView = GetView();
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
-            liveDataOverrideInjector.AddValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy"))), 100.0);
+
+            liveDataOverrideInjector.AddValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId)), 100.0);
         }
 
         [Fact]
@@ -25,7 +27,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             RemoteView remoteView = GetView();
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
-            liveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy"))));
+            liveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId)));
         }
 
 
@@ -35,7 +37,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void ValueChangesResults()
         {
             RemoteView remoteView = GetView();
-            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy")));
+            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId));
 
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
             const double newValue = 1234.5678;
@@ -59,7 +61,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void RemoveChangesResults()
         {
             RemoteView remoteView = GetView();
-            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy")));
+            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId));
 
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
             const double newValue = 1234.5678;
@@ -84,7 +86,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private RemoteView GetView()
         {
             return CreateView(new ValueRequirement(
-                "Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::USDRG Curncy")))
+                "Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId))
                 );
         }
     }

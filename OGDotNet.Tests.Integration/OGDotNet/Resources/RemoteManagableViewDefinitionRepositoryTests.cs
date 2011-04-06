@@ -197,7 +197,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static ValueRequirement GetRequirement()
         {
-            return new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Parse("BLOOMBERG_TICKER::BP/ LN Equity")));
+            return new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Of("BLOOMBERG_TICKER","BP/ LN Equity")));
         }
     }
 }

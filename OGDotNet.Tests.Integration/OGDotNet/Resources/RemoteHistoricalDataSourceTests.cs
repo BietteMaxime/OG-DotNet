@@ -23,7 +23,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var end = DateTimeOffset.Now;
             var start = end - TimeSpan.FromDays(7);
 
-            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Parse("Tss::3580"), start, false, end,true);
+            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Of("Tss","3580"), start, false, end,true);
             AssertSane(series, start, end);
         }
 
@@ -34,7 +34,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var end = DateTimeOffset.Now;
 
-            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Parse("Tss::3580"));
+            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Of("Tss","3580"));
             AssertSane(series, end);
         }
 
