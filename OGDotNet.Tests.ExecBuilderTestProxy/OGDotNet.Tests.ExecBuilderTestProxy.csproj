@@ -35,9 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fudge">
-      <HintPath>..\..\Fudge-CSharp\Fudge\bin\Debug\Fudge.dll</HintPath>
-    </Reference>
+    <Reference Include="Fudge, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -67,4 +65,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Import Project="..\MSBuild\Common.Targets" />
 </Project>
