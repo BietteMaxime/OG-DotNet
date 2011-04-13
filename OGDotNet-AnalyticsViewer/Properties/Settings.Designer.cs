@@ -37,6 +37,7 @@ namespace OGDotNet.AnalyticsViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string PreviousViewName {
             get {
                 return ((string)(this["PreviousViewName"]));
@@ -48,6 +49,7 @@ namespace OGDotNet.AnalyticsViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string WindowLocationPersisterData {
             get {
                 return ((string)(this["WindowLocationPersisterData"]));
