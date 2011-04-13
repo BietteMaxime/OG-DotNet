@@ -9,6 +9,7 @@
 using System;
 using System.Diagnostics;
 using Castle.Core;
+using Castle.Core.Logging;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Serialization.Reflection;
@@ -19,6 +20,12 @@ namespace OGDotNet.Model
     [Singleton]
     public class OpenGammaFudgeContext : FudgeContext
     {
+        //TODO inject this
+        private readonly ILogger _logger = NullLogger.Instance;
+
+        //DOTNET-12
+        private static readonly Type[] ForcedReferences = new[]{typeof(Apache.NMS.ActiveMQ.ConnectionFactory)};
+
         private readonly MemoizingFudgeSurrogateSelector _fudgeSurrogateSelector;
 
         public OpenGammaFudgeContext()
@@ -26,6 +33,8 @@ namespace OGDotNet.Model
             SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategy("OGDotNet.Mappedtypes", "com.opengamma"));
             SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
             _fudgeSurrogateSelector = new MemoizingFudgeSurrogateSelector(this);
+
+            _logger.Debug("Forced references to {0} types", ForcedReferences.Length);
         }
 
         public FudgeSerializer GetSerializer()
