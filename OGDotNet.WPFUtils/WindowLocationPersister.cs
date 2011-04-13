@@ -25,9 +25,8 @@ namespace OGDotNet.WPFUtils
         {
             const string settingName = "WindowLocationPersisterData";
             string id = idGenerator(window);
-
-            {//Init data
-                Dictionary<string, object> data = GetData((string) settings[settingName], id);
+            { // Init data
+                Dictionary<string, object> data = GetData((string)settings[settingName], id);
                 InitWindow(window, data);
             }
 
@@ -60,12 +59,12 @@ namespace OGDotNet.WPFUtils
 
         private static string SaveData(Dictionary<string, object> data, string id)
         {
-            return String.Join(",", data.Select(kvp => GetKeyPrefix(id)+kvp.Key + '|' + kvp.Value));
+            return string.Join(",", data.Select(kvp => GetKeyPrefix(id)+kvp.Key + '|' + kvp.Value));
         }
 
         private static Dictionary<string, object> GetData(string stringEncoded, string id)
         {
-            if (String.IsNullOrEmpty(stringEncoded))
+            if (string.IsNullOrEmpty(stringEncoded))
                 return new Dictionary<string, object>();
 
             string keyPrefix = GetKeyPrefix(id);
@@ -88,7 +87,7 @@ namespace OGDotNet.WPFUtils
 
         private static string GetKeyPrefix(string id)
         {
-            return GetKey(id, "");
+            return GetKey(id, string.Empty);
         }
 
         private static string GetKey(string id, string property)

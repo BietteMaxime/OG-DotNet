@@ -18,15 +18,15 @@ namespace OGDotNet.Mappedtypes.Id
     {
         private const string Separator = "~";
 
-        private const String SchemeFudgeFieldName = "Scheme";
-        private const String ValueFudgeFieldName = "Value";
-        private const String VersionFudgeFieldName = "Version";
+        private const string SchemeFudgeFieldName = "Scheme";
+        private const string ValueFudgeFieldName = "Value";
+        private const string VersionFudgeFieldName = "Version";
 
-        private readonly String _scheme;
-        private readonly String _value;
-        private readonly String _version;
+        private readonly string _scheme;
+        private readonly string _value;
+        private readonly string _version;
 
-        public static UniqueIdentifier Of(String scheme, String value, String version = null)
+        public static UniqueIdentifier Of(string scheme, string value, string version = null)
         {
             return new UniqueIdentifier(scheme, value, version);
         }
@@ -37,11 +37,10 @@ namespace OGDotNet.Mappedtypes.Id
             return new UniqueIdentifier(id.Scheme, id.Value, null);
         }
 
-        public static UniqueIdentifier Parse(String uidStr)
+        public static UniqueIdentifier Parse(string uidStr)
         {
-
             ArgumentChecker.NotEmpty(uidStr, "uidStr");
-            String[] split = uidStr.Split(new[] { Separator }, StringSplitOptions.None);
+            string[] split = uidStr.Split(new[] { Separator }, StringSplitOptions.None);
             switch (split.Length)
             {
                 case 2:
@@ -52,7 +51,7 @@ namespace OGDotNet.Mappedtypes.Id
             throw new ArgumentException("Invalid identifier format: " + uidStr);
         }
 
-        private UniqueIdentifier(String scheme, String value, String version)
+        private UniqueIdentifier(string scheme, string value, string version)
         {
             ArgumentChecker.NotEmpty(scheme, "scheme");
             ArgumentChecker.NotEmpty(value, "value");
@@ -62,17 +61,17 @@ namespace OGDotNet.Mappedtypes.Id
         }
 
         //-------------------------------------------------------------------------
-        public String Scheme
+        public string Scheme
         {
             get { return _scheme; }
         }
 
-        public String Value
+        public string Value
         {
             get { return _value; }
         }
 
-        public String Version
+        public string Version
         {
             get { return _version; }
         }
@@ -102,7 +101,7 @@ namespace OGDotNet.Mappedtypes.Id
             }
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             StringBuilder buf = new StringBuilder()
                 .Append(_scheme).Append(Separator).Append(_value);
@@ -173,7 +172,7 @@ namespace OGDotNet.Mappedtypes.Id
         {
             unchecked
             {
-                int result = (_scheme != null ? _scheme.GetHashCode() : 0);
+                int result = _scheme != null ? _scheme.GetHashCode() : 0;
                 result = (result * 397) ^ (_value != null ? _value.GetHashCode() : 0);
                 result = (result * 397) ^ (_version != null ? _version.GetHashCode() : 0);
                 return result;

@@ -96,7 +96,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 
         private static DateTimeOffset GetDateTime(IFudgeField zonedDateTimeField)
         {
-            var inner = ((IFudgeFieldContainer)zonedDateTimeField.Value);
+            var inner = (IFudgeFieldContainer)zonedDateTimeField.Value;
             string zone = inner.GetString("zone");//TODO this
             string odt = inner.GetString("odt");
             DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(odt);

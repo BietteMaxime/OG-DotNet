@@ -11,18 +11,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.Util.Time;
-using OGDotNet.Mappedtypes.Core.Common;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
 {
     public class VolatilitySurfaceData
     {
-        private readonly String _definitionName;
-        private readonly String _specificationName;
+        private readonly string _definitionName;
+        private readonly string _specificationName;
         private readonly Currency _currency;
-        private readonly String _interpolatorName;
+        private readonly string _interpolatorName;
         private readonly Dictionary<Tuple<Tenor, Tenor>, double> _values;
         private readonly IList<Tenor> _xs;
         private readonly IList<Tenor> _ys;
@@ -93,9 +93,9 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
         {
             string currencyName = ffc.GetValue<string>("currency");
             Currency currency = Currency.Create(currencyName);
-            string definitionName = ffc.GetValue<String>("definitionName");
-            string specificationName = ffc.GetValue<String>("specificationName");
-            string interpolatorName = ffc.GetValue<String>("interpolatorName");
+            string definitionName = ffc.GetValue<string>("definitionName");
+            string specificationName = ffc.GetValue<string>("specificationName");
+            string interpolatorName = ffc.GetValue<string>("interpolatorName");
 
 
             IList<Tenor> xs = ffc.GetAllByName("xs").Select(deserializer.FromField<Tenor>).ToList();

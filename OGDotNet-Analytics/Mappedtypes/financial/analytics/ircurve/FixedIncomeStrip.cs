@@ -17,7 +17,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
     {
         public StripInstrumentType InstrumentType;
         public Tenor CurveNodePointTime;
-        public String ConventionName;
+        public string ConventionName;
         public int NthFutureFromTenor;
 
         public static FixedIncomeStrip FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)

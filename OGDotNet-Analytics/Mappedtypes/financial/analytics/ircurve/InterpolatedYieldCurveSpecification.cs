@@ -29,7 +29,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         private readonly List<FixedIncomeStripWithIdentifier> _resolvedStrips;
         private readonly Identifier _region;
 
-        public InterpolatedYieldCurveSpecification(DateTimeOffset curveDate, String name, Currency currency,  
+        public InterpolatedYieldCurveSpecification(DateTimeOffset curveDate, string name, Currency currency,  
                         List<FixedIncomeStripWithIdentifier> resolvedStrips, Identifier region)
         {
             _curveDate = curveDate;
@@ -66,9 +66,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 
         public static InterpolatedYieldCurveSpecification FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-
             var curveDate = ffc.GetValue<DateTimeOffset>("curveDate");
-            String name = ffc.GetString("name");
+            string name = ffc.GetString("name");
             var currency = Currency.Create(ffc.GetString("currency"));
             var region = Identifier.Parse(ffc.GetString("region"));
             var resolvedStripFields = ffc.GetAllByName("resolvedStrips");

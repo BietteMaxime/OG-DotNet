@@ -16,7 +16,7 @@ namespace OGDotNet.Builders
         internal static T Parse(string str)
         {
             T type;
-            if (!Enum.TryParse(str.Replace("_", ""), true, out type))
+            if (!Enum.TryParse(str.Replace("_", string.Empty), true, out type))
             {
                 throw new ArgumentException("Unhandled computation target type");
             }

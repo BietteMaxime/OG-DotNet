@@ -117,7 +117,7 @@ namespace OGDotNet.Mappedtypes.engine.view
             var uniqueId = uniqueIdString == null ? null : UniqueIdentifier.Parse(uniqueIdString);
 
             var resultModelDefinition = deserializer.FromField<ResultModelDefinition>(ffc.GetByName("resultModelDefinition"));
-            var portfolioIdentifier =ffc.GetAllByName("identifier").Any()  ? UniqueIdentifier.Parse(ffc.GetValue<String>("identifier")) : null;
+            var portfolioIdentifier =ffc.GetAllByName("identifier").Any()  ? UniqueIdentifier.Parse(ffc.GetValue<string>("identifier")) : null;
             var user = deserializer.FromField<UserPrincipal>(ffc.GetByName("user"));
 
             var currency = ffc.GetByName("currency")==null ? null : Currency.Create(ffc.GetValue<string>("currency"));
@@ -141,7 +141,9 @@ namespace OGDotNet.Mappedtypes.engine.view
         private static void WriteNullableLongField(IAppendingFudgeFieldContainer message, string name, long? value)
         {
             if (value.HasValue)
-            {message.Add(name,value.Value);}
+            {
+                message.Add(name,value.Value);
+            }
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer message, IFudgeSerializer s)

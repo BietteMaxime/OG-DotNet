@@ -46,7 +46,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             get { return _security; }
         }
 
-        public object this[String key]
+        public object this[string key]
         {
             get { return _columns[key]; }
         }

@@ -60,6 +60,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                            };
             }
         }
+
         /// <summary>
         /// Here to avoid unverifiable code
         /// </summary>

@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
@@ -20,7 +19,7 @@ using OGDotNet.Utils;
 namespace OGDotNet.Model.Resources
 {
     /// <summary>
-    /// DataViewClientResource
+    /// See DataViewClientResource on the java side
     /// </summary>
     public class RemoteViewClient : DisposableBase  //TODO IObservable<ViewComputationResultModel>
     {
@@ -107,10 +106,10 @@ namespace OGDotNet.Model.Resources
 
         public bool ResultAvailable
         {
-            get {
-
+            get 
+            {
                 var reponse = _rest.Resolve("resultAvailable").GetFudge();
-                return 1 == (sbyte) (reponse.GetByName("value").Value);
+                return 1 == (sbyte) reponse.GetByName("value").Value;
             }
         }
 

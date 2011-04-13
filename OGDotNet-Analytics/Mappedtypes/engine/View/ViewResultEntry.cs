@@ -12,7 +12,6 @@ namespace OGDotNet.Mappedtypes.engine.View
 {
     public class ViewResultEntry
     {
-
         private readonly string _calculationConfiguration;
         private readonly ComputedValue _computedValue;
 

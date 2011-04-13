@@ -11,11 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using OGDotNet.WPFUtils;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Utils;
+using OGDotNet.WPFUtils;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {

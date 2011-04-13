@@ -22,7 +22,7 @@ namespace OGDotNet.Model.Resources
             _rest = rest;
         }
 
-        public CurrencyMatrix GetCurrencyMatrix(String name)
+        public CurrencyMatrix GetCurrencyMatrix(string name)
         {
             return _rest.Resolve(name).Get<CurrencyMatrix>("matrix");
         }

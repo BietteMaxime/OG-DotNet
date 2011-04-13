@@ -74,19 +74,18 @@ namespace OGDotNet.Model
                 {
                     ConstructorInfo constructorInfo = exceptionType.GetConstructor(new Type[] { });
                     if (constructorInfo == null)
-                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
+                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
 
                     return (Exception)constructorInfo.Invoke(new object[] { });
                 }
-
                 else
                 {
                     ConstructorInfo constructorInfo = exceptionType.GetConstructor(new[] { typeof(string) });
 
                     if (constructorInfo == null)
-                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
+                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
                     if (constructorInfo.GetParameters()[0].Name != "message")
-                        throw new ArgumentException(String.Format("Exception type {0}->{1} expectes {2} not message", javaType, exceptionType, message), "javaType");
+                        throw new ArgumentException(string.Format("Exception type {0}->{1} expectes {2} not message", javaType, exceptionType, message), "javaType");
                     return (Exception)constructorInfo.Invoke(new object[] { message });
                 }
             }

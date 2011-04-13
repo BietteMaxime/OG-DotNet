@@ -12,10 +12,9 @@ using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using OGDotNet.Model.Context;
-using OGDotNet.WPFUtils;
-using OGDotNet.Model.Resources;
 using OGDotNet.AnalyticsViewer.ViewModel;
+using OGDotNet.Model.Resources;
+using OGDotNet.WPFUtils;
 using OGDotNet.WPFUtils.Windsor;
 
 namespace OGDotNet.AnalyticsViewer.View
@@ -79,7 +78,13 @@ namespace OGDotNet.AnalyticsViewer.View
 
         private void Invoke(Action action, CancellationToken token)
         {
-            Dispatcher.Invoke(((Action)delegate { if (!token.IsCancellationRequested) { action(); } }));
+            Dispatcher.Invoke(((Action)delegate
+                                            {
+                                                if (!token.IsCancellationRequested)
+                                                {
+                                                    action();
+                                                }
+                                            }));
             token.ThrowIfCancellationRequested();
         }
 
@@ -106,8 +111,6 @@ namespace OGDotNet.AnalyticsViewer.View
                 var resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource);
                 Invoke(delegate { resultsTableView.DataContext = resultsTable; }, cancellationToken);
                 
-                
-
                 int count = 0;
 
                 SetStatus("Creating client");
@@ -134,8 +137,9 @@ namespace OGDotNet.AnalyticsViewer.View
                     }
                 }
             }
-            catch (OperationCanceledException)//TODO don't use exceptions here
+            catch (OperationCanceledException)
             {
+                // TODO don't use exceptions here
             }
             catch (Exception ex)
             {

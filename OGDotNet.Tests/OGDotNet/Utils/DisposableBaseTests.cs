@@ -14,7 +14,7 @@ using Xunit;
 namespace OGDotNet.Tests.OGDotNet.Utils
 {
     public class DisposableBaseTests
-	{
+    {
         [Fact]
         public void ManualDispose_CalledExactlyOnce()
         {
@@ -38,13 +38,13 @@ namespace OGDotNet.Tests.OGDotNet.Utils
         {
             long manual = 0;
             long auto = 0;
-            DoAction(action, (delegate(bool disposing)
+            DoAction(action, delegate(bool disposing)
                                   {
                                       if (disposing)
                                           Interlocked.Increment(ref manual);
                                       else
                                           Interlocked.Increment(ref auto);
-                                  }));
+                                  });
             GC.Collect();
             GC.WaitForFullGCComplete();
             GC.WaitForPendingFinalizers();
@@ -75,5 +75,5 @@ namespace OGDotNet.Tests.OGDotNet.Utils
                 _onDispose(disposing);
             }
         }
-	}
+    }
 }

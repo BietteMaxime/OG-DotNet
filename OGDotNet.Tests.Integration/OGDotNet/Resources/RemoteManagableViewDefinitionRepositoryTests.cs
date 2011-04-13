@@ -144,7 +144,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(aVal.UserName, b.UserName);
         }
 
-        private static void AssertEquivalent(Dictionary<string, ViewCalculationConfiguration> a, Dictionary<string, ViewCalculationConfiguration>  b)
+        private static void AssertEquivalent(Dictionary<string, ViewCalculationConfiguration> a, Dictionary<string, ViewCalculationConfiguration> b)
         {
             Assert.Equal(a.Count, b.Count);
             foreach (var aEntry in a)

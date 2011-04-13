@@ -24,11 +24,11 @@ namespace OGDotNet.Builders
 
         public override ViewComputationResultModel DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            var viewName = msg.GetValue<String>("viewName");
+            var viewName = msg.GetValue<string>("viewName");
             var inputDataTimestamp = msg.GetValue<FudgeDateTime>("valuationTS");
             var resultTimestamp = msg.GetValue<FudgeDateTime>("resultTS");
-            var configurationMap = new Dictionary<String, ViewCalculationResultModel>();
-            var keys = new Queue<String>();
+            var configurationMap = new Dictionary<string, ViewCalculationResultModel>();
+            var keys = new Queue<string>();
             var values = new Queue<ViewCalculationResultModel>();
 
             foreach (var field in (IFudgeFieldContainer) msg.GetByName("results").Value)
@@ -36,7 +36,7 @@ namespace OGDotNet.Builders
                 switch (field.Ordinal)
                 {
                     case 1:
-                        String key = field.GetString();
+                        string key = field.GetString();
                         if (!values.Any())
                         {
                             keys.Enqueue(key);

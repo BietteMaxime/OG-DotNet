@@ -19,7 +19,7 @@ namespace OGDotNet.Model
         public MQTemplate(string activeMqSpec)
         {
             _activeMqSpec = activeMqSpec;
-            var oldSkooluri = new Uri(_activeMqSpec).LocalPath.Replace("(", "").Replace(")", "");
+            var oldSkooluri = new Uri(_activeMqSpec).LocalPath.Replace("(", string.Empty).Replace(")", string.Empty);
             _factory = new NMSConnectionFactory(oldSkooluri);
         }
 
@@ -30,8 +30,6 @@ namespace OGDotNet.Model
 
         public void Do(Action<ISession> action)
         {
-
-
             using (var connection = CreateConnection())
             using (var session = connection.CreateSession())
             {

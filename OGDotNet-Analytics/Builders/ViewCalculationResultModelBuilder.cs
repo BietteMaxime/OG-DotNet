@@ -36,7 +36,7 @@ namespace OGDotNet.Builders
                 
                 ComputationTargetSpecification target = value.Specification.TargetSpecification;
                 if (!map.ContainsKey(target)) {
-                    map.Add(target, new Dictionary<String, ComputedValue>());
+                    map.Add(target, new Dictionary<string, ComputedValue>());
                 }
                 map[target].Add(value.Specification.ValueName, value);
             }

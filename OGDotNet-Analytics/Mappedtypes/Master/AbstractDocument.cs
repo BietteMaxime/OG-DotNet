@@ -19,8 +19,8 @@ namespace OGDotNet.Mappedtypes.Master
 
         protected AbstractDocument() : this(default(DateTimeOffset), default(DateTimeOffset), default(DateTimeOffset), default(DateTimeOffset))
         {
-            
         }
+
         protected AbstractDocument(DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant)
         {
             _versionFromInstant = versionFromInstant;

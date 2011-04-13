@@ -204,15 +204,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             AssertEqual(mSnapshot.YieldCurves, retSnapshot.YieldCurves, AssertEqual);
 
-            
-            //TODO volatility surfaces etc.
+            // TODO volatility surfaces etc.
         }
 
         private static void AssertEqual(ManageableYieldCurveSnapshot a, ManageableYieldCurveSnapshot b)
         {
             AssertEqual(a.Values, b.Values);
-            var timeSpan = a.ValuationTime.LocalDateTime- b.ValuationTime.LocalDateTime;
-            Assert.InRange(timeSpan.TotalMilliseconds,0, 1000);//Only second accuracy
+            var timeSpan = a.ValuationTime.LocalDateTime - b.ValuationTime.LocalDateTime;
+            Assert.InRange(timeSpan.TotalMilliseconds, 0, 1000); //Only second accuracy
         }
 
         private static void AssertEqual(ManageableUnstructuredMarketDataSnapshot a, ManageableUnstructuredMarketDataSnapshot b)
@@ -220,17 +219,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             AssertEqual(a.Values, b.Values, AssertEqual);
         }
 
-        private static void AssertEqual(IDictionary<string, ValueSnapshot> a, IDictionary<string,ValueSnapshot> b)
+        private static void AssertEqual(IDictionary<string, ValueSnapshot> a, IDictionary<string, ValueSnapshot> b)
         {
             AssertEqual(a, b, AssertEqual);
         }
+
         private static void AssertEqual(ValueSnapshot a, ValueSnapshot b)
         {
-            Assert.Equal(a.MarketValue,b.MarketValue);
+            Assert.Equal(a.MarketValue, b.MarketValue);
             Assert.Equal(a.OverrideValue, b.OverrideValue);
         }
 
-        private static void AssertEqual<TKey,TValue>(IDictionary<TKey,TValue> a,IDictionary<TKey,TValue> b, Action<TValue,TValue> assert)
+        private static void AssertEqual<TKey, TValue>(IDictionary<TKey, TValue> a, IDictionary<TKey, TValue> b, Action<TValue, TValue> assert)
         {
             Assert.Equal(a.Keys.OrderBy(x => x.GetHashCode()), b.Keys.OrderBy(x => x.GetHashCode()));
 

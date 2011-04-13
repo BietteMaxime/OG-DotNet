@@ -26,10 +26,11 @@ using OGDotNet.Utils;
 namespace OGDotNet.Model.Context
 {
     /// <summary>
-    /// This class handles creating and mutating snapshots based on Views and live data
-    /// 
-    /// TODO: this implementation probably shouldn't be client side
-    /// TODO: we fetch way more data then I think is neccesary
+    /// <para>This class handles creating and mutating snapshots based on Views and live data</para>
+    /// <list type="table">
+    /// <item>TODO: this implementation probably shouldn't be client side</item>
+    /// <item>TODO: we fetch way more data then I think is neccesary</item>
+    /// </list>
     /// </summary>
     public class MarketDataSnapshotProcessor : DisposableBase
     {
@@ -119,7 +120,7 @@ namespace OGDotNet.Model.Context
             OverridesAndLiveValues
         }
 
-        private class ValueReqComparer  : IEqualityComparer<ValueRequirement>
+        private class ValueReqComparer : IEqualityComparer<ValueRequirement>
         {
             public static readonly ValueReqComparer Instance = new ValueReqComparer();
             public bool Equals(ValueRequirement x, ValueRequirement y)
@@ -136,9 +137,8 @@ namespace OGDotNet.Model.Context
         {
             //TODO this is a hack since I can't do structured overrides in the engine yet
             var values = 
-                (_snapshot.Values.Concat(_snapshot.YieldCurves.SelectMany(y=>y.Value.Values.Values)
+                _snapshot.Values.Concat(_snapshot.YieldCurves.SelectMany(y=>y.Value.Values.Values)
                 ).SelectMany(kvp => kvp.Value.Select(v => Tuple.Create(GetOverrideReq(kvp.Key, v), v.Value)))
-                 )
                 .ToLookup(t => t.Item1, t => t.Item2, ValueReqComparer.Instance);
 
             Dictionary<ValueRequirement, double> overrides = GetOverrides(options, values);
@@ -230,7 +230,6 @@ namespace OGDotNet.Model.Context
 
         private static bool Matches(ViewResultEntry r, YieldCurveKey key)
         {
-
             if (! r.ComputedValue.Specification.TargetSpecification.Uid.Equals(key.Currency.Identifier))
                 return false;
 

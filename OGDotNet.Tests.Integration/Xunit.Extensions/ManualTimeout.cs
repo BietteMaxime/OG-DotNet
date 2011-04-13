@@ -9,14 +9,13 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using Xunit.Sdk;
 using TimeoutException = Xunit.Sdk.TimeoutException;
 
 namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {
     internal static class ManualTimeout
     {
-        private static int  DefaultTimeout
+        private static int DefaultTimeout
         {
             get { return (int) TimeSpan.FromMinutes(5).TotalMilliseconds; }
         }
@@ -57,7 +56,6 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             {
                 if (innerEx != null)
                 {
-
                     ExceptionUtility.RethrowWithNoStackTraceLoss(innerEx);
                 }
                 ret =innerResult;

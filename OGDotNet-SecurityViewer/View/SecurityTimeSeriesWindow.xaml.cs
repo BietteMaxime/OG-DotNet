@@ -16,12 +16,8 @@ using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using OGDotNet.Mappedtypes.Core.Security;
-using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
-using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
 using OGDotNet.WPFUtils.Windsor;
 
@@ -59,7 +55,7 @@ namespace OGDotNet.SecurityViewer.View
         
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Title = string.Join(",",Securities.Select(s=>s.Name));
+            Title = string.Join(",", Securities.Select(s => s.Name));
             chart.Title = Title;
             UpdateDetailsBlock();
             BeginInvokeOnIdle(delegate
@@ -179,7 +175,7 @@ namespace OGDotNet.SecurityViewer.View
                 if (Cursor != Cursors.Hand)
                     return;
 
-                var delta = (_startDragPosition) - (endDragPosition);
+                var delta = _startDragPosition - endDragPosition;
                 chart.RenderTransform = new TranslateTransform(-delta.X, -delta.Y);
             }
             else
@@ -342,7 +338,7 @@ namespace OGDotNet.SecurityViewer.View
             var xRange = xMax - xMin;
             var xScale = Mult(xRange, 1.0 / XAxis.ActualWidth);
 
-            var xScaled = xMin + (Mult(xScale,xAxisX));
+            var xScaled = xMin + Mult(xScale,xAxisX);
 
             return Tuple.Create(xScaled, yScaled);
         }

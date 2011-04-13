@@ -80,7 +80,6 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         {
             if (value != default(DateTimeOffset))
             {
-                
                 a.Add(fieldName, new FudgeDateTime(value));
             }
         }

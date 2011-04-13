@@ -28,7 +28,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var viewNames = remoteViewProcessor.ViewNames;
             Assert.NotEmpty(viewNames);
             Assert.DoesNotContain(null, viewNames);
-            Assert.DoesNotContain("", viewNames);
+            Assert.DoesNotContain(string.Empty, viewNames);
         }
 
         [Theory]

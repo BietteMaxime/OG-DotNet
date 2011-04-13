@@ -18,8 +18,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
     public class YieldCurveDefinition
     {
         private readonly Currency _currency;
-        private readonly String _name;
-        private readonly String _interpolatorName;
+        private readonly string _name;
+        private readonly string _interpolatorName;
         private readonly List<FixedIncomeStrip> _strips = new List<FixedIncomeStrip>();
         private Identifier _region;
 
@@ -93,7 +93,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
                 }
             }
 
-            var yieldCurveDefinition = new YieldCurveDefinition(currency,name,interpolatorName);
+            var yieldCurveDefinition = new YieldCurveDefinition(currency, name, interpolatorName);
             yieldCurveDefinition.Region = region;
             yieldCurveDefinition.AddStrip(strips.ToArray());
             return yieldCurveDefinition;

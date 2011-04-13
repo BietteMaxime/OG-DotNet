@@ -18,8 +18,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class MarketDataSnapshotManagerTests : ViewTestsBase
     {
-        
-
         [Theory]
         [TypedPropertyData("FastTickingViews")]
         public void CanCreateFromView(RemoteView view)

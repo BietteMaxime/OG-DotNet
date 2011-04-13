@@ -14,8 +14,8 @@ using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
-using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -115,7 +115,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
 
-                foreach (Identifier region  in new[]{null, new Identifier("XX","12"),new Identifier("asd","asd") })
+                foreach (Identifier region in new[]{null, new Identifier("XX","12"),new Identifier("asd","asd") })
                 {
                     YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
 

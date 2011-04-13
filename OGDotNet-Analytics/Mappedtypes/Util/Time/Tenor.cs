@@ -39,7 +39,7 @@ namespace OGDotNet.Mappedtypes.Util.Time
         }
 
         /// <summary>
-        /// This will return a TimeSpan that might vaguelly represent the period of this tenor
+        /// Gets  a TimeSpan that might vaguelly represent the period of this tenor
         /// </summary>
         public TimeSpan TimeSpan
         {
@@ -60,7 +60,7 @@ namespace OGDotNet.Mappedtypes.Util.Time
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Tenor)) return false;
+            if (obj.GetType() != typeof(Tenor)) return false;
             return Equals((Tenor) obj);
         }
 

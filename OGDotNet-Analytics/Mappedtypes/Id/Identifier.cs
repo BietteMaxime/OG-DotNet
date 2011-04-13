@@ -76,7 +76,7 @@ namespace OGDotNet.Mappedtypes.Id
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Identifier)) return false;
+            if (obj.GetType() != typeof(Identifier)) return false;
             return Equals((Identifier) obj);
         }
 

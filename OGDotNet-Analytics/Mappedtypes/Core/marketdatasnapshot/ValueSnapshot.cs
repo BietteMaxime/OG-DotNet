@@ -25,7 +25,10 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 
         public double MarketValue
         {
-            get { return _marketValue; }
+            get
+            {
+                return _marketValue;
+            }
             set
             {
                 InvokePropertyChanged("MarketValue");
@@ -35,7 +38,10 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 
         public double? OverrideValue
         {
-            get { return _overrideValue; }
+            get
+            {
+                return _overrideValue;
+            }
             set
             {
                 if (value != _overrideValue)

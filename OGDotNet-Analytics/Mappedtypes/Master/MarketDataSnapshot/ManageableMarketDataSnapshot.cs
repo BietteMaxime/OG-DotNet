@@ -35,7 +35,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         private readonly Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> _yieldCurves;
 
-        //TODO private Map<Triple<String, CurrencyUnit, CurrencyUnit>, FXVolatilitySurfaceSnapshot> _fxVolatilitySurfaces;
+        //TODO private Map<Triple<string, CurrencyUnit, CurrencyUnit>, FXVolatilitySurfaceSnapshot> _fxVolatilitySurfaces;
 
 
         public ManageableMarketDataSnapshot(string basisViewName, ManageableUnstructuredMarketDataSnapshot globalValues,
@@ -94,7 +94,6 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         public UpdateAction PrepareUpdateFrom(ManageableMarketDataSnapshot newSnapshot)
         {
-
             UpdateAction globalUpdate = _globalValues.PrepareUpdateFrom(newSnapshot._globalValues);
 
             var ycActions = _yieldCurves.ProjectStructure(newSnapshot._yieldCurves,

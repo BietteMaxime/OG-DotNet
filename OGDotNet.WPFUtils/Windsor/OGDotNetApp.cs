@@ -47,10 +47,9 @@ namespace OGDotNet.WPFUtils.Windsor
             windowStyle.Setters.Add(new Setter(OGContextProperty,
                 new Binding("OGContext") { Source = this }));
             
-            FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata
-            {
-                DefaultValue = windowStyle
-            });
+            FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), 
+                new FrameworkPropertyMetadata { DefaultValue = windowStyle }
+                );
         }
 
         protected override void OnExit(ExitEventArgs e)

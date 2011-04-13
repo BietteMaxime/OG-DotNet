@@ -117,6 +117,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             AssertSane(series,DateTimeOffset.FromFileTime(0),end);
         }
+
         private static void AssertSane(ILocalDateDoubleTimeSeries series, DateTimeOffset start, DateTimeOffset end)
         {
             Assert.NotNull(series);

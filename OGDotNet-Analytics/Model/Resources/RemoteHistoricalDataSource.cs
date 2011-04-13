@@ -43,7 +43,7 @@ namespace OGDotNet.Model.Resources
         }
 
         
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, String configDocName=null)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, string configDocName=null)
         {
             return GetHistoricalData(identifiers, default(DateTimeOffset), configDocName);
         }
@@ -56,12 +56,12 @@ namespace OGDotNet.Model.Resources
             return DecodePairMessage(target.GetFudge());
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd, String configDocName=null)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd, string configDocName=null)
         {
             return GetHistoricalData(identifiers, default(DateTimeOffset), configDocName, start, inclusiveStart, end, exclusiveEnd);
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset currentDate, String configDocName, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset currentDate, string configDocName, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
         {
             RestTarget target = _rest.Resolve("defaultByDate")
                                 .Resolve(EncodeDate(currentDate))

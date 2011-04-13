@@ -34,7 +34,7 @@ namespace OGDotNet.Model.Context
 
 
             var configsMsg = _rootRest.Resolve("configuration").GetFudge();
-            var configMsg = ((IFudgeFieldContainer)configsMsg.GetByName(_configId).Value);
+            var configMsg = (IFudgeFieldContainer)configsMsg.GetByName(_configId).Value;
 
             _activeMQSpec = configMsg.GetValue<string>("activeMQ");
             _serviceUris = GetServiceUris(configMsg);
@@ -93,7 +93,7 @@ namespace OGDotNet.Model.Context
         {
             var validServiceUris = new Dictionary<string, Uri>();
 
-            var asyncRequests = new List<Tuple<String, HttpWebRequest, IAsyncResult>>();
+            var asyncRequests = new List<Tuple<string, HttpWebRequest, IAsyncResult>>();
 
             foreach (var potentialServiceId in potentialServiceIds)
             {
@@ -110,7 +110,6 @@ namespace OGDotNet.Model.Context
 
             while (asyncRequests.Any())
             {
-
                 var waitHandles = asyncRequests.Select(kvp => kvp.Item3.AsyncWaitHandle).ToArray();
 
                 var index = WaitHandle.WaitAny(waitHandles, 5000); //Have to timeout by hand, see http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx

@@ -15,7 +15,7 @@ namespace OGDotNet.WPFUtils
     {
         public static Binding GetIndexerBinding(string index)
         {
-            return new Binding{Mode = BindingMode.OneWay, Path =  new PropertyPath(".[(0)]", index)};
+            return new Binding{Mode = BindingMode.OneWay, Path = new PropertyPath(".[(0)]", index)};
         }
     }
 }

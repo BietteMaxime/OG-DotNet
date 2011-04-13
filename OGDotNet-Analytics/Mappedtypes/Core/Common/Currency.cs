@@ -17,8 +17,8 @@ namespace OGDotNet.Mappedtypes.Core.Common
 {
     public class Currency : IEquatable<Currency>
     {
-        private const String IdentificationDomain = "CurrencyISO";
-        private readonly static Memoizer<String, Currency> InstanceMap = new Memoizer<String, Currency>(GetInstanceImpl);
+        private const string IdentificationDomain = "CurrencyISO";
+        private static readonly Memoizer<string, Currency> InstanceMap = new Memoizer<string, Currency>(GetInstanceImpl);
 
         private static Currency GetInstanceImpl(string isoCode)
         {

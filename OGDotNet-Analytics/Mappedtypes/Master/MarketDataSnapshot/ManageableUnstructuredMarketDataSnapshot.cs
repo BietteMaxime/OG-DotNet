@@ -103,7 +103,6 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         private UpdateAction PrepareRemoveAction(MarketDataValueSpecification marketDataValueSpecification, IDictionary<string, ValueSnapshot> valueSnapshots)
         {
-            
             return new UpdateAction(
                 delegate
                 {
@@ -116,11 +115,14 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         private UpdateAction PrepareUpdateFrom(MarketDataValueSpecification currSpec, IDictionary<string, ValueSnapshot> currValues, MarketDataValueSpecification newSpec, IDictionary<string, ValueSnapshot> newValues)
         {
-
             var actions = currValues.ProjectStructure(newValues,
                                                 (k, a, b) => new UpdateAction(delegate { a.MarketValue = b.MarketValue; }),
                                                 (k, v) => PrepareRemoveAction(currSpec, currValues, k, v),
-                                                (k, v) => new UpdateAction(delegate { currValues.Add(k, v); InvokePropertyChanged("Values"); })
+                                                (k, v) => new UpdateAction(delegate
+                                                                               {
+                                                                                   currValues.Add(k, v);
+                                                                                   InvokePropertyChanged("Values");
+                                                                               })
                 );
            
             UpdateAction ret = UpdateAction.Of(actions);

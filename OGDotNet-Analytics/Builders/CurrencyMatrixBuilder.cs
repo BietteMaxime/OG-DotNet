@@ -18,13 +18,12 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Builders
 {
-    internal  class CurrencyMatrixBuilder : BuilderBase<CurrencyMatrix>
+    internal class CurrencyMatrixBuilder : BuilderBase<CurrencyMatrix>
     {
-
-        private const String UniqueIDFieldName = "uniqueId";
-        private const String FixedRateFieldName = "fixedRate";
-        private const String ValueRequirementsFieldName = "valueReq";
-        private const String CrossConvertFieldName = "crossConvert";
+        private const string UniqueIDFieldName = "uniqueId";
+        private const string FixedRateFieldName = "fixedRate";
+        private const string ValueRequirementsFieldName = "valueReq";
+        private const string CrossConvertFieldName = "crossConvert";
 
         public CurrencyMatrixBuilder(FudgeContext context, Type type) : base(context, type)
         {
@@ -113,7 +112,7 @@ namespace OGDotNet.Builders
                         }
                         else
                         {
-                            Currency target = Currency.Create((String)field2.Value);
+                            Currency target = Currency.Create((string)field2.Value);
                             values.Add(Tuple.Create(source, target), cross);
                             values.Add(Tuple.Create(target, source), cross);
                         }
@@ -138,7 +137,6 @@ namespace OGDotNet.Builders
 
                         if (field2.Value is IFudgeFieldContainer)
                         {
-
                             CurrencyMatrixValue value = deserializer.FromField<CurrencyMatrixValue.CurrencyMatrixValueRequirement>(field2);
                             values.Add(Tuple.Create(source, target), value);
                             values.Add(Tuple.Create(target, source), value.GetReciprocal());

@@ -132,6 +132,6 @@ namespace OGDotNet.Mappedtypes.financial.currency
             return EqualsInner(other);
         }
 
-        protected  abstract bool EqualsInner(CurrencyMatrixValue other);
+        protected abstract bool EqualsInner(CurrencyMatrixValue other);
     }
 }

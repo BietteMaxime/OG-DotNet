@@ -15,6 +15,7 @@ namespace OGDotNet.Utils
     class BlockingQueueWithCancellation<T> : DisposableBase
     {
         private readonly Semaphore _semaphore = new Semaphore(0, int.MaxValue);
+
         /// <summary>
         /// I still use this ConcurrentQueue because it still needs a thread safe en/dequeue, it will just always succeed
         /// </summary>

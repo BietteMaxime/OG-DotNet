@@ -22,7 +22,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Mappedtypes
         {
             get
             {
-                var mappedTypes = typeof (UniqueIdentifier).Assembly.GetTypes().Where(t => t.FullName.StartsWith("OGDotNet.Mappedtypes")).ToList();
+                var mappedTypes = typeof(UniqueIdentifier).Assembly.GetTypes().Where(t => t.FullName.StartsWith("OGDotNet.Mappedtypes")).ToList();
                 Assert.NotEmpty(mappedTypes);
                 return mappedTypes;
             }

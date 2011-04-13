@@ -12,8 +12,8 @@ using OGDotNet.Mappedtypes.Core.Security;
 
 namespace OGDotNet.Model.Resources
 {
-    public interface  IFinancialSecuritySource : ISecuritySource
+    public interface IFinancialSecuritySource : ISecuritySource
     {
-        IEnumerable<Security> GetBondsWithIssuerName(String issuerName);
+        IEnumerable<Security> GetBondsWithIssuerName(string issuerName);
     }
 }

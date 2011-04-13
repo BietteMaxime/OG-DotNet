@@ -22,7 +22,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             return string.Format("{0}-{1}", ExecutingTestName, Guid.NewGuid());
         }
 
-        public static  string ExecutingTestName
+        public static string ExecutingTestName
         {
             get
             {

@@ -5,10 +5,10 @@
     <Setting Name="ShowVolatilityCurveToScale" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="PreviousViewName" Type="System.String" Scope="User">
+    <Setting Name="PreviousViewName" Type="System.string" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WindowLocationPersisterData" Type="System.String" Scope="User">
+    <Setting Name="WindowLocationPersisterData" Type="System.string" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

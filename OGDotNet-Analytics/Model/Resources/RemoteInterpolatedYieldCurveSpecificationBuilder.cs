@@ -25,7 +25,7 @@ namespace OGDotNet.Model.Resources
         public InterpolatedYieldCurveSpecification BuildCurve(DateTimeOffset curveDate, YieldCurveDefinition curveDefinition)
         {
             RestTarget target = _rest.Resolve(UriEncoding.ToString(curveDate));
-            return  target.Post<InterpolatedYieldCurveSpecification>(new YieldCurveDefinitionDocument{Definition =  curveDefinition}, "specification");
+            return target.Post<InterpolatedYieldCurveSpecification>(new YieldCurveDefinitionDocument{Definition = curveDefinition}, "specification");
         }
     }
 }

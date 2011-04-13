@@ -7,13 +7,12 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
-using Assert=global::Xunit.Assert;
+using Assert = global::Xunit.Assert;
+
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class InterpolatedYieldCurveSpecificationBuilderTests : TestWithContextBase

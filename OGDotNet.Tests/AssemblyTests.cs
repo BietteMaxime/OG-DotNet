@@ -19,7 +19,7 @@ namespace OGDotNet.Tests
     public class AssemblyTests
     {
         private static readonly Type[] ForcedReferences = new[] { typeof(MainWindow), typeof(SecurityWindow) };
-        private static readonly string Namespace = typeof(AssemblyTests).Namespace.Replace(".Tests", "");
+        private static readonly string Namespace = typeof(AssemblyTests).Namespace.Replace(".Tests", string.Empty);
         private static readonly IEnumerable<Assembly> Assemblies = GetAssemblies();
 
         [Fact]

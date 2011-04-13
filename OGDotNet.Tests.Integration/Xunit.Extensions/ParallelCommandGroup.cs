@@ -17,7 +17,6 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {
     internal class ParallelCommandGroup
     {
-
         public static IEnumerable<ITestCommand> WrapGroup(IEnumerable<ITestCommand> commands)
         {
             var group = new ParallelCommandGroup(commands);

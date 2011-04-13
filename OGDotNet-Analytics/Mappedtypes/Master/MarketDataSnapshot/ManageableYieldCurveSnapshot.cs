@@ -63,7 +63,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         public static ManageableYieldCurveSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             DateTimeOffset valuationTime = ((FudgeDateTime) ffc.GetByName("valuationTime").Value).ToDateTimeOffset();
-            return new ManageableYieldCurveSnapshot(deserializer.FromField < ManageableUnstructuredMarketDataSnapshot>(ffc.GetByName("values")), valuationTime);
+            return new ManageableYieldCurveSnapshot(deserializer.FromField<ManageableUnstructuredMarketDataSnapshot>(ffc.GetByName("values")), valuationTime);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

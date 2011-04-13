@@ -22,11 +22,11 @@ namespace OGDotNet.Builders
 
         public override ComputationTargetSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            ComputationTargetType type = EnumBuilder<ComputationTargetType>.Parse(msg.GetValue<String>("computationTargetType"));
+            ComputationTargetType type = EnumBuilder<ComputationTargetType>.Parse(msg.GetValue<string>("computationTargetType"));
             UniqueIdentifier uid = null;
             var ctiField = msg.GetByName("computationTargetIdentifier");
             if (ctiField !=null) {
-                uid = UniqueIdentifier.Parse(msg.GetValue<String>("computationTargetIdentifier"));
+                uid = UniqueIdentifier.Parse(msg.GetValue<string>("computationTargetIdentifier"));
             }
             return new ComputationTargetSpecification(type, uid);
         }

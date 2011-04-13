@@ -37,7 +37,7 @@ namespace OGDotNet.Mappedtypes.engine.View
 
         public FudgeDateTime ValuationTime { get { return _inputDataTimestamp; } }
         public FudgeDateTime ResultTimestamp { get { return _resultTimestamp; } }
-        public String ViewName { get { return _viewName; } }
+        public string ViewName { get { return _viewName; } }
 
         public ComputedValue this[string calculationConfiguration, ValueRequirement valueRequirement]
         {

@@ -38,7 +38,7 @@ namespace OGDotNet.Model.Resources
             ThreadPool.RegisterWaitForSingleObject(cancellationToken.WaitHandle, SendHeartBeats, cancellationToken, TimeSpan.FromMinutes(5), true);
         }
 
-        private  void SendHeartBeats(object context, bool timedOut)
+        private void SendHeartBeats(object context, bool timedOut)
         {
             var token = (CancellationToken) context;
             if (! token.IsCancellationRequested)

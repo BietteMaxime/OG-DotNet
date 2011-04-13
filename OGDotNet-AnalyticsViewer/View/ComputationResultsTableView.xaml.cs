@@ -11,10 +11,10 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using OGDotNet.SecurityViewer.View;
-using OGDotNet.WPFUtils;
 using OGDotNet.AnalyticsViewer.View.CellTemplates;
 using OGDotNet.AnalyticsViewer.ViewModel;
+using OGDotNet.SecurityViewer.View;
+using OGDotNet.WPFUtils;
 
 namespace OGDotNet.AnalyticsViewer.View
 {
@@ -82,14 +82,14 @@ namespace OGDotNet.AnalyticsViewer.View
         }
         private Window GetWindow()
         {
-            DependencyObject obj =this;
+            DependencyObject obj = this;
             do
-                 {
-                    obj = LogicalTreeHelper.GetParent(obj);
-               } while (! typeof(Window).IsAssignableFrom(obj.GetType()));
+            {
+                obj = LogicalTreeHelper.GetParent(obj);
+            } 
+            while (!typeof(Window).IsAssignableFrom(obj.GetType()));
 
             return (Window) obj;
         }
-        
     }
 }

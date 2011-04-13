@@ -31,9 +31,10 @@ namespace OGDotNet.Model.Context
 {
     /// <summary>
     /// This class handles getting values from the engine useful for creating snapshots
-    /// 
-    /// TODO: this implementation is evidence for the fact that the Snapshotting shouldn't be client
-    /// TODO: we fetch way more data then I think is neccesary
+    /// <list type="table">
+    /// <item>TODO: this implementation is evidence for the fact that the Snapshotting shouldn't be client</item>
+    /// <item>TODO: we fetch way more data then I think is neccesary</item>
+    /// </list>
     /// </summary>
     internal class RawMarketDataSnapper : DisposableBase
     {
@@ -79,7 +80,6 @@ namespace OGDotNet.Model.Context
 
         private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(ViewComputationResultModel tempResults)
         {
-
             var resultsByKey = tempResults.AllResults.Where(r => r.ComputedValue.Specification.ValueName == YieldCurveSpecValueReqName)
                 .Select(r => (InterpolatedYieldCurveSpecificationWithSecurities)r.ComputedValue.Value)
                 .ToLookup(GetYieldCurveKey, s => s);
@@ -127,10 +127,9 @@ namespace OGDotNet.Model.Context
             {
                 foreach (var config in tempResults.CalculationResultsByConfiguration.Keys)
                 {
-
                     ComputedValue ret;
                     if (tempResults.TryGetComputedValue(config, valueRequirement, out ret))
-                    {//TODO what should I do if I can't get a value
+                    { // TODO what should I do if I can't get a value
                         yield return ret;
                         break;
                     }
@@ -256,12 +255,13 @@ namespace OGDotNet.Model.Context
 
         private static ViewCalculationConfiguration AddReqs(ViewCalculationConfiguration calculationConfigurationsByName, IEnumerable<ValueRequirement> extraReqs)
         {
+            var specificRequirements = calculationConfigurationsByName.SpecificRequirements.Concat(extraReqs).ToList();
             return new ViewCalculationConfiguration(calculationConfigurationsByName.Name,
-                                                    calculationConfigurationsByName.SpecificRequirements.Concat(
-                                                        extraReqs).ToList(),
+                                                    specificRequirements,
                                                     calculationConfigurationsByName.PortfolioRequirementsBySecurityType,
                                                     calculationConfigurationsByName.DefaultProperties);
         }
+
         #endregion
 
         protected override void Dispose(bool disposing)

@@ -64,7 +64,7 @@ namespace OGDotNet.Mappedtypes.engine.value
             var targetSpec = new ComputationTargetSpecification(EnumBuilder<ComputationTargetType>.Parse(computationTargetType), UniqueIdentifier.Parse(computationTargetIdentifier));
             var valueName = ffc.GetValue<string>("valueName");
 
-            return new ValueRequirement(valueName, targetSpec , constraints);
+            return new ValueRequirement(valueName, targetSpec, constraints);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer msg, IFudgeSerializer s)

@@ -54,7 +54,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                 get { return Enumerable.Empty<string>(); }
             }
 
-            public new static EmptyValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+            public static new EmptyValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
             }
@@ -88,7 +88,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                 }
             }
 
-            public new static FiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+            public static new FiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
             }
@@ -115,7 +115,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                 get { return Enumerable.Empty<string>(); }
             }
 
-            public new static InfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+            public static new InfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
             }
@@ -145,7 +145,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                 get { return Without.Contains(curve) ? null : Enumerable.Empty<string>(); }
             }
 
-            public new static NearlyInfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+            public static new NearlyInfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
             }

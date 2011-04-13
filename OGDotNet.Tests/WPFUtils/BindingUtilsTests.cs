@@ -15,13 +15,12 @@ using Xunit.Extensions;
 
 namespace OGDotNet.Tests.WPFUtils
 {
-
     public class BindingUtilsTests
     {
         [Fact]
         public void BindingModeIsOneWay()
         {
-            var indexerBinding = BindingUtils.GetIndexerBinding("");
+            var indexerBinding = BindingUtils.GetIndexerBinding(string.Empty);
             Assert.Equal(BindingMode.OneWay, indexerBinding.Mode);
         }
 
@@ -58,7 +57,7 @@ namespace OGDotNet.Tests.WPFUtils
 
         public class ReflectingIndexer
         {
-            public string this[String s]
+            public string this[string s]
             {
                 get { return s; }
             }

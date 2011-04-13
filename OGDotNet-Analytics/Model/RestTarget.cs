@@ -44,13 +44,13 @@ namespace OGDotNet.Model
             var safeMethod = Uri.EscapeDataString(method);
             var uriBuilder = new UriBuilder(_serviceUri);
             uriBuilder.Path = Path.Combine(uriBuilder.Path, safeMethod);
-            uriBuilder.Query = String.Join("&",
+            uriBuilder.Query = string.Join("&",
             queryParams.Select(p => string.Format("{0}={1}", Uri.EscapeDataString(p.Item1), Uri.EscapeDataString(p.Item2))));
             var serviceUri = uriBuilder.Uri;
 
             UriHacks.LeaveDotsAndSlashesEscaped(serviceUri);
-            Debug.Assert(_serviceUri.IsBaseOf(serviceUri));
-            Debug.Assert(serviceUri.Segments.Last() == safeMethod);
+            Debug.Assert(_serviceUri.IsBaseOf(serviceUri), "Failed to resolve uri sensibly");
+            Debug.Assert(serviceUri.Segments.Last() == safeMethod, "Failed to resolve uri sensibly");
             
             return new RestTarget(_fudgeContext, serviceUri);
         }
@@ -129,7 +129,7 @@ namespace OGDotNet.Model
 
         public void Post(string obj)
         {
-            RestExceptionMapping.DoWithExceptionMapping(delegate()
+            RestExceptionMapping.DoWithExceptionMapping(delegate
             {
                 HttpWebRequest request = GetBasicRequest();
                 request.Method = "POST";
@@ -215,7 +215,7 @@ namespace OGDotNet.Model
 
         private HttpWebResponse RequestImpl(string method = "GET", FudgeMsg reqMsg = null)
         {
-            return RestExceptionMapping.GetWithExceptionMapping(delegate()
+            return RestExceptionMapping.GetWithExceptionMapping(delegate
             {
                 HttpWebRequest request = GetBasicRequest();
                 request.Method = method;

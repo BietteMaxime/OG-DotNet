@@ -42,7 +42,7 @@ namespace OGDotNet.Mappedtypes.LiveData
 
         private static string GetIP()
         {
-            String strHostName = Dns.GetHostName();
+            string strHostName = Dns.GetHostName();
             IPHostEntry iphostentry = Dns.GetHostEntry(strHostName);
             foreach (IPAddress ipaddress in iphostentry.AddressList)
             {

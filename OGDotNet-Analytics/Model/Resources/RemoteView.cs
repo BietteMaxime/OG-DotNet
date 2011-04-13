@@ -117,7 +117,6 @@ namespace OGDotNet.Model.Resources
 
         public RemoteViewClient CreateClient()
         {
-
             var clientUri = _rest.Resolve("clients").Create(UserPrincipal.DefaultUser);
 
             return new RemoteViewClient(_fudgeContext, clientUri, _mqTemplate);
@@ -135,17 +134,17 @@ namespace OGDotNet.Model.Resources
             return new List<ValueRequirement>(target.Get<ValueRequirement[]>());
         }
 
-        public HashSet<String> GetAllSecurityTypes()
+        public HashSet<string> GetAllSecurityTypes()
         {
             var target = _rest.Resolve("allSecurityTypes");
-            return new HashSet<String>(target.Get<String[]>());
+            return new HashSet<string>(target.Get<string[]>());
         }
 
         public bool IsLiveComputationRunning()
         {
             var target = _rest.Resolve("liveComputationRunning");
             var reponse = target.GetFudge();
-            return 1 == (sbyte)(reponse.GetByName("value").Value);
+            return 1 == (sbyte)reponse.GetByName("value").Value;
         }
 
 

@@ -17,7 +17,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
     public class TestWithContextBase : IUseFixture<TestViewFactory>
     {
         private static RemoteEngineContext _context;
-        protected static  RemoteEngineContext Context
+        protected static RemoteEngineContext Context
         { 
             get
             {

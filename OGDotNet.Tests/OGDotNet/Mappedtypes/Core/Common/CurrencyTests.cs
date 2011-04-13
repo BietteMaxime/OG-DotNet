@@ -7,9 +7,9 @@
 //-----------------------------------------------------------------------
 
 using System;
+using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
-using OGDotNet.Mappedtypes.Core.Common;
 
 namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
 {

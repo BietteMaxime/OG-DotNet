@@ -10,7 +10,7 @@ namespace OGDotNet.Mappedtypes.Util.Db
 {
     public class PagingRequest
     {
-        public static readonly  PagingRequest All = new PagingRequest(1, int.MaxValue);
+        public static readonly PagingRequest All = new PagingRequest(1, int.MaxValue);
         private readonly int _page;
         public int Page
         {

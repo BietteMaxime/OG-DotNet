@@ -46,7 +46,7 @@ namespace OGDotNet.Mappedtypes.engine.Value
 
         public static ValueSpecification FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var valueName = ffc.GetValue<String>("valueName");
+            var valueName = ffc.GetValue<string>("valueName");
             var targetSpecification = new ComputationTargetSpecificationBuilder(deserializer.Context, typeof(ComputationTargetSpecification)).DeserializeImpl(ffc, deserializer); //Can't register twice
             var properties = deserializer.FromField<ValueProperties>(ffc.GetByName("properties"));
 

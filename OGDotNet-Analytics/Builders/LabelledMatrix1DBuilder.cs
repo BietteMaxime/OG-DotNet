@@ -22,7 +22,7 @@ namespace OGDotNet.Builders
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TMatrix"></typeparam>
-    internal class LabelledMatrix1DBuilder<TKey, TMatrix> :  BuilderBase<TMatrix> where TMatrix : LabelledMatrix1D<TKey>
+    internal class LabelledMatrix1DBuilder<TKey, TMatrix> : BuilderBase<TMatrix> where TMatrix : LabelledMatrix1D<TKey>
     {
         private const string MatrixField = "matrix";
         private const int LabelTypeOrdinal = 0;
@@ -70,7 +70,7 @@ namespace OGDotNet.Builders
                     string labelTypeName = labelTypes.Dequeue();
                     IFudgeField labelValue = labelValues.Dequeue();
 
-                    if (labelTypeName == "java.lang.String")
+                    if (labelTypeName == "java.lang.string")
                     {
                         labels.Add((string)labelValue.Value);
                     }

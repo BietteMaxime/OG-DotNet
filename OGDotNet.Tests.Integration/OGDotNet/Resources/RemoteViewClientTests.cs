@@ -195,10 +195,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         Assert.True(InvokeWithTimeout(act, timeout, ref pendingResult));
                         Assert.False(endOfStream);
                         remoteViewClient.Pause();
-
                         {
                             int got = 0;
-                            for (int i = 0; i < forbiddenAfterPause;i++)
+                            for (int i = 0; i < forbiddenAfterPause; i++)
                             {
                                 if (InvokeWithTimeout(act, timeout, ref pendingResult))
                                 {
@@ -258,7 +257,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
 
-        readonly static Memoizer<string, ViewComputationResultModel> GetOneResultCache = new Memoizer<string, ViewComputationResultModel>(GetOneResult);
+        static readonly Memoizer<string, ViewComputationResultModel> GetOneResultCache = new Memoizer<string, ViewComputationResultModel>(GetOneResult);
         private static ViewComputationResultModel GetOneResult(string viewName)
         {
             var view = Context.ViewProcessor.GetView(viewName);

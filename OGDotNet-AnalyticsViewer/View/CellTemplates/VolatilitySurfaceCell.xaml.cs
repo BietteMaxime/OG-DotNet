@@ -1,10 +1,10 @@
 //-----------------------------------------------------------------------
 // <copyright file="VolatilitySurfaceCell.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+
 
 using System;
 using System.Collections.Generic;
@@ -17,10 +17,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+using OGDotNet.AnalyticsViewer.Properties;
 using OGDotNet.AnalyticsViewer.View.Charts;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.Util.Time;
-using OGDotNet.AnalyticsViewer.Properties;
 using OGDotNet.WPFUtils;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
@@ -37,17 +37,17 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private bool _haveInitedData;
         private readonly DispatcherTimer _timer;
-        
+
 
         public VolatilitySurfaceCell()
         {
             InitializeComponent();
-            _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(80.0)};
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(80.0) };
 
             double speed = 0.02;
 
             double t = Math.PI / 4.0;
-            const double maxT= Math.PI/2.0;
+            const double maxT = Math.PI / 2.0;
             const double minT = 0;
             SetCamera(t);
             _timer.Start();
@@ -58,10 +58,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                    {
                                        speed = -Math.Abs(speed);
                                    }
+
                                    if (t < minT)
                                    {
                                        speed = Math.Abs(speed);
                                    }
+
                                    t += speed;
 
                                    SetCamera(t);
@@ -73,7 +75,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             const double circleRadius = 3.8;
 
-            camera.Position = Center + new Vector3D(Math.Sin(t), Math.Cos(t), 0) * circleRadius;
+            camera.Position = Center + (new Vector3D(Math.Sin(t), Math.Cos(t), 0) * circleRadius);
             camera.LookDirection = Center - camera.Position;
         }
 
@@ -90,17 +92,17 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 var binding = BindingUtils.GetIndexerBinding(x.ToString());
                 binding.Converter = new ValueToColorConverter();
                 textBlockStyle.Setters.Add(new Setter(BackgroundProperty, binding));
-                
-                
+
+
                 detailsList.Columns.Add(new DataGridTextColumn
                                      {
-                                         Width=60,
+                                         Width = 60,
                                          Header = x,
                                          CellStyle = textBlockStyle,
                                          Binding = BindingUtils.GetIndexerBinding(x.ToString())
                                      });
             }
-            
+
             var rows = new List<Dictionary<string, object>>();
 
             foreach (var y in data.Ys)
@@ -112,6 +114,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 {
                     row[x.ToString()] = data[x, y];
                 }
+
                 rows.Add(row);
             }
 
@@ -152,10 +155,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
             var models = new Model3DCollection
                             {
-                                new DirectionalLight(Colors.White, new Vector3D(-1, -1, -1)),
-                                BuildBaseModel(surfaceModel),
-                                BuildGraphModel(),
-                                surfaceModel,
+                                new DirectionalLight(Colors.White, new Vector3D(-1, -1, -1)), 
+                                BuildBaseModel(surfaceModel), 
+                                BuildGraphModel(), 
+                                surfaceModel, 
                             };
 
             var groupModel = new ModelVisual3D { Content = new Model3DGroup { Children = models } };
@@ -176,14 +179,14 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             return new Model3DGroup
                        {
-                        Children = new Model3DCollection
+                           Children = new Model3DCollection
                                         {
-                                            BuildXSliceGraphModel(),
-                                            BuildYSliceGraphModel(),
+                                            BuildXSliceGraphModel(), 
+                                            BuildYSliceGraphModel(), 
                                         }
                        };
         }
-        
+
         private CurveControl _xSliceCurveControl;
         private GeometryModel3D BuildXSliceGraphModel()
         {
@@ -200,29 +203,29 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             {
                 Positions = new Point3DCollection
                                                {
-                                                   new Point3D(-GraphOffset,0, 0),
-                                                   new Point3D(-GraphOffset,1, 0),
-                                                   new Point3D(-GraphOffset,0, 1),
-                                                   new Point3D(-GraphOffset,1, 1)
+                                                   new Point3D(-GraphOffset, 0, 0), 
+                                                   new Point3D(-GraphOffset, 1, 0), 
+                                                   new Point3D(-GraphOffset, 0, 1), 
+                                                   new Point3D(-GraphOffset, 1, 1)
                                                },
                 Normals = new Vector3DCollection
                                              {
-                                                 normal,
-                                                 normal,
-                                                 normal,
+                                                 normal, 
+                                                 normal, 
+                                                 normal, 
                                                  normal
                                              },
                 TriangleIndices = new Int32Collection
                                                      {
-                                                         0,1,3,
-                                                         0,3,2
+                                                         0, 1, 3, 
+                                                         0, 3, 2
                                                      },
                 TextureCoordinates = new PointCollection
                                                         {
-                                                                 new Point(0,ProjectedCurveSize),
-                                                                 new Point(ProjectedCurveSize,ProjectedCurveSize),
-                                                                 new Point(0,0),
-                                                                 new Point(ProjectedCurveSize,0),
+                                                                 new Point(0, ProjectedCurveSize), 
+                                                                 new Point(ProjectedCurveSize, ProjectedCurveSize), 
+                                                                 new Point(0, 0), 
+                                                                 new Point(ProjectedCurveSize, 0), 
                                                         }
             };
 
@@ -233,10 +236,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private CurveControl _ySliceCurveControl;
         private GeometryModel3D BuildYSliceGraphModel()
         {
-            _ySliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = ZRange, StrokeThickness = 5.0, ShowName = false};
+            _ySliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = ZRange, StrokeThickness = 5.0, ShowName = false };
             var brush = new VisualBrush(_ySliceCurveControl);
-            
-            
+
+
             var material = new DiffuseMaterial(brush);
 
             var normal = new Vector3D(0, -1, 0);
@@ -246,29 +249,29 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                            {
                                Positions = new Point3DCollection
                                                {
-                                                   new Point3D(0, -GraphOffset, 0),
-                                                   new Point3D(1, -GraphOffset, 0),
-                                                   new Point3D(0, -GraphOffset, 1),
+                                                   new Point3D(0, -GraphOffset, 0), 
+                                                   new Point3D(1, -GraphOffset, 0), 
+                                                   new Point3D(0, -GraphOffset, 1), 
                                                    new Point3D(1, -GraphOffset, 1)
                                                },
                                Normals = new Vector3DCollection
                                              {
-                                                 normal,
-                                                 normal,
-                                                 normal,
+                                                 normal, 
+                                                 normal, 
+                                                 normal, 
                                                  normal
                                              },
                                TriangleIndices = new Int32Collection
                                                      {
-                                                         0,1,3,
-                                                         0,3,2
+                                                         0, 1, 3, 
+                                                         0, 3, 2
                                                      },
-                                TextureCoordinates = new PointCollection
+                               TextureCoordinates = new PointCollection
                                                         {
-                                                                 new Point(0,ProjectedCurveSize),
-                                                                 new Point(ProjectedCurveSize,ProjectedCurveSize),
-                                                                 new Point(0,0),
-                                                                 new Point(ProjectedCurveSize,0),
+                                                                 new Point(0, ProjectedCurveSize), 
+                                                                 new Point(ProjectedCurveSize, ProjectedCurveSize), 
+                                                                 new Point(0, 0), 
+                                                                 new Point(ProjectedCurveSize, 0), 
                                                         }
                            };
 
@@ -276,16 +279,17 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             return new GeometryModel3D(mesh, material) { BackMaterial = material };
         }
 
-       
+
 
         private static GeometryModel3D BuildBaseModel(GeometryModel3D buildSurfaceModel)
         {
-            var geometryModel3D = new GeometryModel3D(buildSurfaceModel.Geometry, buildSurfaceModel.Material) { BackMaterial = buildSurfaceModel.BackMaterial};
-            geometryModel3D.Transform = new MatrixTransform3D(new Matrix3D(
-                                                                  1, 0, 0, 0
-                                                                  , 0, 1, 0, 0,
-                                                                  0, 0, 0, 0,
-                                                                  0, 0, 0, 1));
+            var geometryModel3D = new GeometryModel3D(buildSurfaceModel.Geometry, buildSurfaceModel.Material) { BackMaterial = buildSurfaceModel.BackMaterial };
+            var transform = new Matrix3D(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 1);
+            geometryModel3D.Transform = new MatrixTransform3D(transform);
             return geometryModel3D;
         }
 
@@ -293,17 +297,18 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                if (! (value is double))
+                if (!(value is double))
                     throw new NotImplementedException();
 
                 if (targetType == typeof(Color))
                 {
-                    var colorQuotient =  (double) value;
+                    var colorQuotient = (double)value;
                     return GetColor(colorQuotient / ZRange);
                 }
+
                 if (targetType == typeof(Brush))
                 {
-                    var color = (Color) Convert(value, typeof (Color), parameter, culture);
+                    var color = (Color)Convert(value, typeof(Color), parameter, culture);
                     return new SolidColorBrush(color);
                 }
                 else
@@ -314,8 +319,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
             public static Color GetColor(double colorQuotientDouble)
             {
-                var colorQuotient = (float) colorQuotientDouble;
-                return (Colors.Yellow*(1 - colorQuotient) + Colors.Red*colorQuotient);
+                var colorQuotient = (float)colorQuotientDouble;
+                return Colors.Yellow * (1 - colorQuotient) + Colors.Red * colorQuotient;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -326,7 +331,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private GeometryModel3D BuildSurfaceModel()
         {
-            
             const double zScale = 1.0 / ZRange;
 
             var mesh = new MeshGeometry3D();
@@ -334,48 +338,46 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             var xKeys = Surface.Xs;
             var yKeys = Surface.Ys;
 
-            
-            //TODO this should really be a texture generated by interpolating the surface
-
+            // TODO this should really be a texture generated by interpolating the surface
             var linearGradientBrush = new LinearGradientBrush();
 
-            linearGradientBrush.StartPoint=new Point(0,0);
+            linearGradientBrush.StartPoint = new Point(0, 0);
             linearGradientBrush.EndPoint = new Point(1, 0);
 
 
-            int bands = 2;
-            for (int i=0;i<bands;i++)
+            const int bands = 2;
+            for (int i = 0; i < bands; i++)
             {
-                var offset = i/(float)bands;
+                var offset = i / (float)bands;
                 Color color = ValueToColorConverter.GetColor(offset * ZRange);
                 linearGradientBrush.GradientStops.Add(new GradientStop(color - Color.FromArgb(10, 0, 0, 0), offset));
             }
 
             var diffuseMaterial = new DiffuseMaterial(linearGradientBrush);
-            
 
-            //Points
+
+            // Points
             if (ToScale)
             {
                 var xMax = Surface.Xs.Select(GetScaledValue).Max();
                 var xMin = Surface.Xs.Select(GetScaledValue).Min();
-                double xScale = 1.0 / (xMax-xMin);
+                double xScale = 1.0 / (xMax - xMin);
                 var yMax = Surface.Ys.Select(GetScaledValue).Max();
                 var yMin = Surface.Ys.Select(GetScaledValue).Min();
-                double yScale = 1.0 / (yMax-yMin);
+                double yScale = 1.0 / (yMax - yMin);
 
                 var scaleMatrix = new Matrix3D(
                     xScale, 0, 0, 0,
                     0, yScale, 0, 0,
                     0, 0, zScale, 0,
 
-                    -xMin*xScale, -yMin*yScale, 0, 1);
+                    -xMin * xScale, -yMin * yScale, 0, 1);
 
                 for (int yi = 0; yi < yKeys.Count; yi++)
                 {
                     for (int xi = 0; xi < xKeys.Count; xi++)
                     {
-                        var xValue= GetScaledValue(xKeys[xi]);
+                        var xValue = GetScaledValue(xKeys[xi]);
                         var yValue = GetScaledValue(yKeys[yi]);
                         var zValue = Surface[xKeys[xi], yKeys[yi]];
                         var point3D = new Point3D(xValue, yValue, zValue) * scaleMatrix;
@@ -407,14 +409,14 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 }
             }
 
-            //Triangles and normals
+            // Triangles and normals
             for (int yi = 0; yi < yKeys.Count; yi++)
             {
                 for (int xi = 0; xi < xKeys.Count; xi++)
                 {
                     var normals = new List<Vector3D>(4);
-                   
-                    if (yi < yKeys.Count - 1 && xi < xKeys.Count-1)
+
+                    if (yi < yKeys.Count - 1 && xi < xKeys.Count - 1)
                     {
                         var p0 = xi + (yi * xKeys.Count);
                         var p1 = xi + 1 + (yi * xKeys.Count);
@@ -426,7 +428,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
                         normals.Add(CalculateNormal(mesh.Positions[p0], mesh.Positions[p1], mesh.Positions[p2]));
                     }
-                    if (yi >0 && xi >0)
+
+                    if (yi > 0 && xi > 0)
                     {
                         var p0 = xi + (yi * xKeys.Count);
                         var p1 = xi - 1 + (yi * xKeys.Count);
@@ -439,16 +442,17 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                         normals.Add(CalculateNormal(mesh.Positions[p0], mesh.Positions[p1], mesh.Positions[p2]));
                     }
 
-                    //We don't need triangles here, but we need normals
-                    if (yi>0 && xi < xKeys.Count-1)
+                    // We don't need triangles here, but we need normals
+                    if (yi > 0 && xi < xKeys.Count - 1)
                     {
                         var p0 = xi + (yi * xKeys.Count);
                         var p1 = xi + ((yi - 1) * xKeys.Count);
                         var p2 = xi + 1 + (yi * xKeys.Count);
-                        
+
                         normals.Add(CalculateNormal(mesh.Positions[p0], mesh.Positions[p1], mesh.Positions[p2]));
                     }
-                    if (yi < yKeys.Count-1 && xi >0)
+
+                    if (yi < yKeys.Count - 1 && xi > 0)
                     {
                         var p0 = xi + (yi * xKeys.Count);
                         var p1 = xi + ((yi + 1) * xKeys.Count);
@@ -461,7 +465,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 }
             }
 
-            //Texture co-ordinates
+            // Texture co-ordinates
             const double colorScale = 1 / ZRange;
             for (int yi = 0; yi < yKeys.Count; yi++)
             {
@@ -469,7 +473,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 {
                     var zValue = Surface[xKeys[xi], yKeys[yi]];
 
-                    //Try and make sure all the triangles are real in texture space
+                    // Try and make sure all the triangles are real in texture space
                     var fakeYValue = (xi / (float)xKeys.Count + yi / (float)yKeys.Count) * 0.5;
 
                     var point = new Point(zValue * colorScale, fakeYValue);
@@ -497,7 +501,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private VolatilitySurfaceData Surface
         {
-            get { return (VolatilitySurfaceData) DataContext; }
+            get { return (VolatilitySurfaceData)DataContext; }
         }
 
 
@@ -516,12 +520,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UpdateToolTip(Point position)
         {
-            if (Surface == null ||ToScale)
+            if (Surface == null || ToScale)
             {
-                //TODO this isn't right if we're 'ToScale'ing
+                // TODO this isn't right if we're 'ToScale'ing
                 toolTip.IsOpen = false;
                 return;
             }
+
             var xs = Surface.Xs.ToList();
             var ys = Surface.Ys.ToList();
 
@@ -531,11 +536,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
 
             HitTestResult hitTestResult = VisualTreeHelper.HitTest(mainViewport, position);
-            if (hitTestResult!= null && hitTestResult.VisualHit != null)
+            if (hitTestResult != null && hitTestResult.VisualHit != null)
             {
                 if (!(hitTestResult is RayMeshGeometry3DHitTestResult))
                     throw new ArgumentException();
-                var result = (RayMeshGeometry3DHitTestResult) hitTestResult;
+                var result = (RayMeshGeometry3DHitTestResult)hitTestResult;
 
                 var point = result.PointHit;
 
@@ -543,7 +548,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 var xFloor = (int)Math.Round(point.X / xScale);
 
                 if (xFloor < 0 || yFloor < 0)
-                {//The graph slices
+                {// The graph slices
                     toolTip.IsOpen = false;
                     return;
                 }
@@ -566,7 +571,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             InitTableData();
 
-            Func<Dictionary<string, object>, bool> rowPredicate = row=> row["Length"].Equals(y);
+            Func<Dictionary<string, object>, bool> rowPredicate = row => row["Length"].Equals(y);
 
             Func<DataGridColumn, bool> columnPredicate = c => c.Header.Equals(x);
 
@@ -579,7 +584,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UpdateToolTip(Tenor x, Tenor y)
         {
-            toolTipBox.Text = string.Format("{0},{1},{2}", x,y, Surface[x,y]);
+            toolTipBox.Text = string.Format("{0},{1},{2}", x, y, Surface[x, y]);
             toolTip.IsOpen = true;
         }
 
@@ -609,9 +614,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             {
                 SetXSliceGraph(x);
             }
+
             if (y != null)
             {
-                SetYSliceGraph((Tenor) y["Length"]);
+                SetYSliceGraph((Tenor)y["Length"]);
             }
 
         }

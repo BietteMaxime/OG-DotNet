@@ -21,7 +21,7 @@ namespace OGDotNet.Model
     {
         private readonly MemoizingFudgeSurrogateSelector _fudgeSurrogateSelector;
 
-        public  OpenGammaFudgeContext()
+        public OpenGammaFudgeContext()
         {
             SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategy("OGDotNet.Mappedtypes", "com.opengamma"));
             SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
@@ -42,7 +42,7 @@ namespace OGDotNet.Model
         /// NOTE: There's all sorts of bugs with this if the context changes.
         ///         We're largely saved by the fact that we only cache Surrogates we found, not the failure to find one
         /// </remarks>
-        private class MemoizingFudgeSurrogateSelector  : FudgeSurrogateSelector
+        private class MemoizingFudgeSurrogateSelector : FudgeSurrogateSelector
         {
             readonly Memoizer<Type,FudgeFieldNameConvention,IFudgeSerializationSurrogate> _memoizer;
 

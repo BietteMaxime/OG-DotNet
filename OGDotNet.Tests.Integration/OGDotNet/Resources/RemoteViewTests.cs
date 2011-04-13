@@ -17,7 +17,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteViewTests : ViewTestsBase
     {
-
         [Theory]
         [TypedPropertyData("Views")]
         public void CanGetViewsDefinitions(RemoteView remoteView)

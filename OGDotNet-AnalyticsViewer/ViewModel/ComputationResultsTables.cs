@@ -149,7 +149,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private static IEnumerable<string> GetPortfolioColumns(ViewDefinition viewDefinition)
         {
-
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
                 foreach (var secType in configuration.Value.PortfolioRequirementsBySecurityType)
@@ -164,7 +163,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private static string GetColumnHeading(string configuration, string valueName)
         {
-            return String.Format("{0}/{1}", configuration, valueName);
+            return string.Format("{0}/{1}", configuration, valueName);
         }
 
         
@@ -178,11 +177,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private IEnumerable<TreeNode> GetPortfolioNodesInner(PortfolioNode node, int depth)
         {
-            yield return  new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name, ComputationTargetType.PortfolioNode, null, depth);
+            yield return new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name, ComputationTargetType.PortfolioNode, null, depth);
             foreach (var position in node.Positions)
             {
                 var security = _remoteSecuritySource.GetSecurity(position.SecurityKey);
-                yield return new TreeNode(position.Identifier, String.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security, depth+1);
+                yield return new TreeNode(position.Identifier, string.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security, depth+1);
             }
 
             foreach (var portfolioNode in node.SubNodes)
@@ -247,7 +246,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                     {
                         foreach (var tuple in req.Value)
                         {
-                            string header = String.Format("{0}/{1}", configuration.Key, tuple.Item1);
+                            string header = string.Format("{0}/{1}", configuration.Key, tuple.Item1);
 
                             object result;
                             if (results.TryGetValue(configuration.Key, new ValueRequirement(tuple.Item1, position.ComputationTargetSpecification), out result))
