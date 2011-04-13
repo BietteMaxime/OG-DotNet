@@ -14,3 +14,4 @@ _ReSharper.*
 *.ReSharper.user
 *.ReSharper
 test-reports
+StyleCop.Cache
