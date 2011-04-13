@@ -18,16 +18,16 @@ namespace OGDotNet.Tests
 {
     public class AssemblyTests
     {
-        private static readonly  Type[] ForcedReferences = new[]{typeof(MainWindow), typeof(SecurityWindow)};
-        private static readonly string Namespace = typeof (AssemblyTests).Namespace.Replace(".Tests","");
-        private static readonly IEnumerable<Assembly> Assemblies =GetAssemblies();
+        private static readonly Type[] ForcedReferences = new[] { typeof(MainWindow), typeof(SecurityWindow) };
+        private static readonly string Namespace = typeof(AssemblyTests).Namespace.Replace(".Tests", "");
+        private static readonly IEnumerable<Assembly> Assemblies = GetAssemblies();
 
         [Fact]
         public void CopyrightIsSane()
         {
             const string companyName = "OpenGamma Inc. and the OpenGamma group of companies";
 
-            string expected = string.Format("Copyright © 2009 - present by {0}",companyName);
+            string expected = string.Format("Copyright © 2009 - present by {0}", companyName);
 
             foreach (var assembly in Assemblies)
             {
@@ -53,7 +53,7 @@ namespace OGDotNet.Tests
             }
 
             return GetAllDependencies(n => n.Name.StartsWith(Namespace), Assembly.GetExecutingAssembly().GetName()).Distinct().ToList();
-            
+
         }
 
         private static IEnumerable<Assembly> GetAllDependencies(Predicate<AssemblyName> filter, AssemblyName root)
@@ -73,7 +73,7 @@ namespace OGDotNet.Tests
 
         private static T GetLoneAttribute<T>(Assembly assembly) where T : Attribute
         {
-            return (T) assembly.GetCustomAttributes(typeof (T), false).First();
+            return (T)assembly.GetCustomAttributes(typeof(T), false).First();
         }
     }
 }

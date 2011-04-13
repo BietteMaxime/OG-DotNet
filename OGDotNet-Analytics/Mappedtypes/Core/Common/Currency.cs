@@ -34,14 +34,14 @@ namespace OGDotNet.Mappedtypes.Core.Common
 
         public static Currency Create(UniqueIdentifier isoCode)
         {
-            if (isoCode.Scheme !=IdentificationDomain)
-                throw new ArgumentException("Unexpected Scheme","isoCode");
+            if (isoCode.Scheme != IdentificationDomain)
+                throw new ArgumentException("Unexpected Scheme", "isoCode");
             if (isoCode.IsVersioned)
                 throw new ArgumentException("Unexpected Versioned UID", "isoCode");
-            
+
             Currency ret = Create(isoCode.Value);
-            
-            if (! ret.Identifier.Equals(isoCode))
+
+            if (!ret.Identifier.Equals(isoCode))
                 throw new ArgumentException("Unexpected UID", "isoCode");
 
             return ret;
@@ -91,8 +91,8 @@ namespace OGDotNet.Mappedtypes.Core.Common
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Currency)) return false;
-            return Equals((Currency) obj);
+            if (obj.GetType() != typeof(Currency)) return false;
+            return Equals((Currency)obj);
         }
 
         public override int GetHashCode()

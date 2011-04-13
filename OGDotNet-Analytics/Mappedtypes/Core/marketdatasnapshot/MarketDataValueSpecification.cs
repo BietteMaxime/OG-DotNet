@@ -46,15 +46,15 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (MarketDataValueSpecification)) return false;
-            return Equals((MarketDataValueSpecification) obj);
+            if (obj.GetType() != typeof(MarketDataValueSpecification)) return false;
+            return Equals((MarketDataValueSpecification)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (_type.GetHashCode()*397) ^ (_uniqueId != null ? _uniqueId.GetHashCode() : 0);
+                return (_type.GetHashCode() * 397) ^ (_uniqueId != null ? _uniqueId.GetHashCode() : 0);
             }
         }
 

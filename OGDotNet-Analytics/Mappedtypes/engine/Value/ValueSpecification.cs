@@ -69,15 +69,15 @@ namespace OGDotNet.Mappedtypes.engine.Value
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (ValueSpecification)) return false;
-            return Equals((ValueSpecification) obj);
+            if (obj.GetType() != typeof(ValueSpecification)) return false;
+            return Equals((ValueSpecification)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((_valueName != null ? _valueName.GetHashCode() : 0)*397) ^ (_targetSpecification != null ? _targetSpecification.GetHashCode() : 0);
+                return ((_valueName != null ? _valueName.GetHashCode() : 0) * 397) ^ (_targetSpecification != null ? _targetSpecification.GetHashCode() : 0);
             }
         }
     }

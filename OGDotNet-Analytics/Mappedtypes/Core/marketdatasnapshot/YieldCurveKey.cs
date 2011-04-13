@@ -10,7 +10,7 @@ using System;
 using System.Diagnostics;
 using Fudge;
 using Fudge.Serialization;
-using Currency=OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
@@ -44,8 +44,8 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add("currency",_currency.ISOCode);
-            a.Add("name",Name);
+            a.Add("currency", _currency.ISOCode);
+            a.Add("name", Name);
         }
 
         public int CompareTo(YieldCurveKey other)
@@ -67,15 +67,15 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (YieldCurveKey)) return false;
-            return Equals((YieldCurveKey) obj);
+            if (obj.GetType() != typeof(YieldCurveKey)) return false;
+            return Equals((YieldCurveKey)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((_currency != null ? _currency.GetHashCode() : 0)*397) ^ (_name != null ? _name.GetHashCode() : 0);
+                return ((_currency != null ? _currency.GetHashCode() : 0) * 397) ^ (_name != null ? _name.GetHashCode() : 0);
             }
         }
     }

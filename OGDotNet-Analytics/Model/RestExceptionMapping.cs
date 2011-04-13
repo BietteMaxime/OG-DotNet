@@ -20,7 +20,7 @@ namespace OGDotNet.Model
     {
         public static void DoWithExceptionMapping(Action action)
         {
-            GetWithExceptionMapping(() => { action();return 0;});
+            GetWithExceptionMapping(() => { action(); return 0; });
         }
         public static TRet GetWithExceptionMapping<TRet>(Func<TRet> func)
         {
@@ -42,11 +42,11 @@ namespace OGDotNet.Model
 
                         string[] messages = e.Response.Headers.GetValues("X-OpenGamma-ExceptionMessage");
 
-                        if (messages==null)
+                        if (messages == null)
                             throw BuildException(type);
                         if (messages.Length > 1)
                             throw new ArgumentException("Too many exception messages");
-                        
+
                         string message = messages[0];
                         throw BuildException(type, message);
                     }
@@ -72,22 +72,22 @@ namespace OGDotNet.Model
             {
                 if (message == null)
                 {
-                    ConstructorInfo constructorInfo = exceptionType.GetConstructor(new Type[] {});
+                    ConstructorInfo constructorInfo = exceptionType.GetConstructor(new Type[] { });
                     if (constructorInfo == null)
-                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType),"javaType");
+                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
 
-                    return (Exception) constructorInfo.Invoke(new object[] {});
+                    return (Exception)constructorInfo.Invoke(new object[] { });
                 }
 
                 else
                 {
-                    ConstructorInfo constructorInfo = exceptionType.GetConstructor(new[] {typeof (string)});
+                    ConstructorInfo constructorInfo = exceptionType.GetConstructor(new[] { typeof(string) });
 
                     if (constructorInfo == null)
-                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType),"javaType");
+                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
                     if (constructorInfo.GetParameters()[0].Name != "message")
                         throw new ArgumentException(String.Format("Exception type {0}->{1} expectes {2} not message", javaType, exceptionType, message), "javaType");
-                    return (Exception) constructorInfo.Invoke(new object[] {message});
+                    return (Exception)constructorInfo.Invoke(new object[] { message });
                 }
             }
             else

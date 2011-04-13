@@ -19,8 +19,8 @@ namespace OGDotNet.Mappedtypes.Id
     {
         private readonly HashSet<Identifier> _identifiers;
 
-        public IdentifierBundle(params Identifier[] identifiers) : this (new HashSet<Identifier>(identifiers)){}
-        public IdentifierBundle(IEnumerable<Identifier> identifiers) : this (new HashSet<Identifier>(identifiers)){}
+        public IdentifierBundle(params Identifier[] identifiers) : this(new HashSet<Identifier>(identifiers)) { }
+        public IdentifierBundle(IEnumerable<Identifier> identifiers) : this(new HashSet<Identifier>(identifiers)) { }
 
         public IdentifierBundle(HashSet<Identifier> identifiers)
         {
@@ -41,7 +41,7 @@ namespace OGDotNet.Mappedtypes.Id
                 switch (field.Name)
                 {
                     case "ID":
-                        var i = (Identifier) deserializer.FromField(field, typeof (Identifier));
+                        var i = (Identifier)deserializer.FromField(field, typeof(Identifier));
                         identifiers.Add(i);
                         break;
                     default:
@@ -82,13 +82,13 @@ namespace OGDotNet.Mappedtypes.Id
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (IdentifierBundle)) return false;
-            return Equals((IdentifierBundle) obj);
+            if (obj.GetType() != typeof(IdentifierBundle)) return false;
+            return Equals((IdentifierBundle)obj);
         }
 
         public override int GetHashCode()
         {
-            return _identifiers.OrderBy(i => i).Aggregate(0, (a,i)=> (a * 397) ^ i.GetHashCode() );
+            return _identifiers.OrderBy(i => i).Aggregate(0, (a, i) => (a * 397) ^ i.GetHashCode());
         }
 
         public static bool operator ==(IdentifierBundle left, IdentifierBundle right)
