@@ -70,7 +70,7 @@ namespace OGDotNet.Builders
                     string labelTypeName = labelTypes.Dequeue();
                     IFudgeField labelValue = labelValues.Dequeue();
 
-                    if (labelTypeName == "java.lang.string")
+                    if (labelTypeName == "java.lang.String")
                     {
                         labels.Add((string)labelValue.Value);
                     }
