@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
+  
+  <Target Name="BeforeBuild" DependsOnTargets="DontSetVersionTarget;SetVersionTarget;SetSearchPathTarget;WarnOnNoStyleCop" />
+  
+  <!-- StyleCop -->
   <Import Project="$(ProgramFiles)\MSBuild\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets" Condition="exists('$(ProgramFiles)\MSBuild\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" /> 
 
+  <Target Name="WarnOnNoStyleCop" Condition="('$(BuildingInsideVisualStudio)'!='true') and ! exists('$(ProgramFiles)\MSBuild\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" >
+	<Warning Text="Not checking StyleCop rules due to missing Microsoft.StyleCop.targets" />
+  </Target>
+  
+  <!-- Set version -->
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"
   Condition="exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')"/>
   
   
-  <Target Name="BeforeBuild" DependsOnTargets="DontSetVersionTarget;SetVersionTarget;SetSearchPathTarget;WarnOnNoStyleCop" />
-  
-  <Target Name="WarnOnNoStyleCop" Condition="('$(BuildingInsideVisualStudio)'!='true') and ! exists('$(ProgramFiles)\MSBuild\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" >
-	<Warning Text="Not checking StyleCop rules due to missing Microsoft.StyleCop.targets" />
-  </Target>
   <Target Name="DontSetVersionTarget" Condition=" ('$(BuildingInsideVisualStudio)'!='true') and ( ! exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets') or '$(Revision)' == '' )" >
 	<Warning Text="Not setting version information from command line due to missing MSBuild.Community.Tasks.targets" Condition="! exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')" />
 	<Warning Text="Not setting version information from command line due to no revision being specified" Condition="'$(Revision)' == '' " />
@@ -38,6 +41,7 @@
     </ItemGroup>
   </Target>
 
+  <!-- Search path -->
   <Target Name="SetSearchPathTarget" >
   
     <CreateProperty  Value="$(MSBuildProjectDirectory)\..\lib\;$(AssemblySearchPaths)">  
