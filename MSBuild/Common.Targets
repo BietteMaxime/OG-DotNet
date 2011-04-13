@@ -3,17 +3,28 @@
 
   <Import Project="$(ProgramFiles)\MSBuild\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets" Condition="exists('$(ProgramFiles)\MSBuild\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" /> 
 
-  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"
+  Condition="exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')"/>
   
-  <Target Name="BeforeBuild" Condition=" '$(BuildingInsideVisualStudio)'!='true' ">
+  
+  <Target Name="BeforeBuild" DependsOnTargets="DontSetVersionTarget;SetVersionTarget;SetSearchPathTarget;WarnOnNoStyleCop" />
+  
+  <Target Name="WarnOnNoStyleCop" Condition="('$(BuildingInsideVisualStudio)'!='true') and ! exists('$(ProgramFiles)\MSBuild\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" >
+	<Warning Text="Not checking StyleCop rules due to missing Microsoft.StyleCop.targets" />
+  </Target>
+  <Target Name="DontSetVersionTarget" Condition=" ('$(BuildingInsideVisualStudio)'!='true') and ( ! exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets') or '$(Revision)' == '' )" >
+	<Warning Text="Not setting version information from command line due to missing MSBuild.Community.Tasks.targets" Condition="! exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')" />
+	<Warning Text="Not setting version information from command line due to no revision being specified" Condition="'$(Revision)' == '' " />
+  </Target>
+  <Target Name="SetVersionTarget" Condition=" ('$(BuildingInsideVisualStudio)'!='true') and exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets') and '$(Revision)' != ''" >
     <PropertyGroup>
       <VersionString>1.0.0.$(Revision)</VersionString>
       <VersionFileName>Properties\VersionInfo.cs</VersionFileName>
     </PropertyGroup>
 
-    <Error Condition=" '$(Revision)' == ''" Text="Revision number not specified, this will break the build" />
-    
-    <AssemblyInfo CodeLanguage="CS"
+	<Message Text="Setting version information from environment to revision $(Revision)" />
+
+	<AssemblyInfo CodeLanguage="CS"
                   OutputFile="$(VersionFileName)"
                   AssemblyVersion="$(VersionString)"
                   AssemblyFileVersion="$(VersionString)"
@@ -27,7 +38,8 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="BeforeBuild" >
+  <Target Name="SetSearchPathTarget" >
+  
     <CreateProperty  Value="$(MSBuildProjectDirectory)\..\lib\;$(AssemblySearchPaths)">  
 		<Output TaskParameter="Value" PropertyName="AssemblySearchPaths" />  
 	</CreateProperty>  
