@@ -1,4 +1,12 @@
-﻿using System;
+//-----------------------------------------------------------------------
+// <copyright file="RemoteSecuritySourceTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;

@@ -1,4 +1,12 @@
-﻿using System.IO;
+//-----------------------------------------------------------------------
+// <copyright file="RemoteLiveDataInjector.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.IO;
 using Fudge;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine;

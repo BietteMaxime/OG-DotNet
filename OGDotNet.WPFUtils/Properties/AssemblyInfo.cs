@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("OGDotNet.WPFUtils")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("OpenGamma Limited")]
+[assembly: AssemblyCompany("OpenGamma Inc. and the OpenGamma group of companies")]
 [assembly: AssemblyProduct("OGDotNet.WPFUtils")]
-[assembly: AssemblyCopyright("Copyright © OpenGamma Limited 2011")]
+[assembly: AssemblyCopyright("Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

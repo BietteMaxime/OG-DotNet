@@ -1,4 +1,12 @@
-﻿using System;
+//-----------------------------------------------------------------------
+// <copyright file="YieldCurve.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using OGDotNet.Mappedtypes.math.curve;
 
 namespace OGDotNet.Mappedtypes.financial.model.interestrate.curve

@@ -1,4 +1,12 @@
-﻿using System;
+//-----------------------------------------------------------------------
+// <copyright file="AssemblyTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright (C) 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -17,9 +25,9 @@ namespace OGDotNet.Tests
         [Fact]
         public void CopyrightIsSane()
         {
-            const string companyName = "OpenGamma Limited";
+            const string companyName = "OpenGamma Inc. and the OpenGamma group of companies";
 
-            var expected = string.Format("Copyright © {0} {1}", companyName, DateTime.Now.Year);
+            string expected = string.Format("Copyright © 2009 - present by {0}",companyName);
 
             foreach (var assembly in Assemblies)
             {

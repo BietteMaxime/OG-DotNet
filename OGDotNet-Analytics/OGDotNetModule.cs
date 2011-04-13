@@ -1,4 +1,12 @@
-﻿using Castle.MicroKernel.Registration;
+//-----------------------------------------------------------------------
+// <copyright file="OGDotNetModule.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using OGDotNet.Model;

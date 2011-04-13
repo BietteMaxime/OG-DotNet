@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("OGDotNet.Tests.ExecBuilderTestProxy")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("OpenGamma Inc. and the OpenGamma group of companies")]
 [assembly: AssemblyProduct("OGDotNet.Tests.ExecBuilderTestProxy")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCopyright("Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

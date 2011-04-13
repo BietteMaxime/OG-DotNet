@@ -1,4 +1,12 @@
-﻿using System;
+//-----------------------------------------------------------------------
+// <copyright file="CurrencyMatrixSourcingFunction.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using OGDotNet.Mappedtypes.engine.value;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 

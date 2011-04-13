@@ -1,4 +1,12 @@
-﻿using Xunit.Sdk;
+//-----------------------------------------------------------------------
+// <copyright file="CustomizingCommand.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using Xunit.Sdk;
 
 namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {

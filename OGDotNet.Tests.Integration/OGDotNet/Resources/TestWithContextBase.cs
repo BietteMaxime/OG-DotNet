@@ -1,4 +1,12 @@
-﻿using OGDotNet.Mappedtypes.engine.value;
+//-----------------------------------------------------------------------
+// <copyright file="TestWithContextBase.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.OGDotNet.Model.Context;

@@ -1,4 +1,12 @@
-﻿using System.Windows;
+//-----------------------------------------------------------------------
+// <copyright file="OGDotNetApp.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Castle.Core.Resource;

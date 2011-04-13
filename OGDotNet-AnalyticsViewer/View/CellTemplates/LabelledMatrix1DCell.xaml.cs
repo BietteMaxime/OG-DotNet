@@ -1,4 +1,12 @@
-﻿using System.Windows.Controls;
+//-----------------------------------------------------------------------
+// <copyright file="LabelledMatrix1DCell.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates

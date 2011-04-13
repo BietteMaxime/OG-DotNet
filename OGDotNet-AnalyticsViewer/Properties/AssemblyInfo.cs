@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -8,9 +8,9 @@ using System.Windows;
 [assembly: AssemblyTitle("OGDotNet-AnalyticsViewer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("OpenGamma Limited")]
+[assembly: AssemblyCompany("OpenGamma Inc. and the OpenGamma group of companies")]
 [assembly: AssemblyProduct("OGDotNet-AnalyticsViewer")]
-[assembly: AssemblyCopyright("Copyright © OpenGamma Limited 2011")]
+[assembly: AssemblyCopyright("Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

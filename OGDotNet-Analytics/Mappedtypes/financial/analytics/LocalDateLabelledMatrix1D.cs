@@ -1,4 +1,12 @@
-﻿using System.Collections.Generic;
+//-----------------------------------------------------------------------
+// <copyright file="LocalDateLabelledMatrix1D.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Collections.Generic;
 using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Builders;
