@@ -42,8 +42,8 @@ namespace OGDotNet.Model.Resources
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
-        
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, string configDocName=null)
+
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, string configDocName = null)
         {
             return GetHistoricalData(identifiers, default(DateTimeOffset), configDocName);
         }
@@ -56,7 +56,7 @@ namespace OGDotNet.Model.Resources
             return DecodePairMessage(target.GetFudge());
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd, string configDocName=null)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd, string configDocName = null)
         {
             return GetHistoricalData(identifiers, default(DateTimeOffset), configDocName, start, inclusiveStart, end, exclusiveEnd);
         }

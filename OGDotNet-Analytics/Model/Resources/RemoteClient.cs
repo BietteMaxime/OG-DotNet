@@ -12,7 +12,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {
-    public class RemoteClient:DisposableBase
+    public class RemoteClient : DisposableBase
     {
         private readonly string _clientId;
         private readonly RestTarget _rest;
@@ -39,7 +39,7 @@ namespace OGDotNet.Model.Resources
 
         private void SendHeartBeats(object context, bool timedOut)
         {
-            var token = (CancellationToken) context;
+            var token = (CancellationToken)context;
             if (token.IsCancellationRequested)
             {
                 _cts.Dispose();
@@ -59,7 +59,7 @@ namespace OGDotNet.Model.Resources
 
         private void SendHeartbeat()
         {
-            _rest.Resolve("heartbeat").Post(); 
+            _rest.Resolve("heartbeat").Post();
         }
 
         public RemoteSecurityMaster SecurityMaster

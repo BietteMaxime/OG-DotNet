@@ -67,7 +67,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         {
             Currency currency = null;
             string name = null;
-            string interpolatorName=null;
+            string interpolatorName = null;
             var strips = new List<FixedIncomeStrip>();
             Identifier region = null;
             foreach (var fudgeField in ffc.GetAllFields())
@@ -75,16 +75,16 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
                 switch (fudgeField.Name)
                 {
                     case "currency":
-                        currency = Currency.Create((string) fudgeField.Value);
+                        currency = Currency.Create((string)fudgeField.Value);
                         break;
                     case "name":
-                        name = (string) fudgeField.Value;
+                        name = (string)fudgeField.Value;
                         break;
                     case "interpolatorName":
-                        interpolatorName = (string) fudgeField.Value;
+                        interpolatorName = (string)fudgeField.Value;
                         break;
                     case "region":
-                        region = Identifier.Parse((string) fudgeField.Value);
+                        region = Identifier.Parse((string)fudgeField.Value);
                         break;
                     case "strip":
                         strips.Add(deserializer.FromField<FixedIncomeStrip>(fudgeField));

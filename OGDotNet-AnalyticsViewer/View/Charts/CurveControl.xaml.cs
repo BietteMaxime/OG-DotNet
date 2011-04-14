@@ -28,13 +28,14 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
         public double? YMin { get; set; }
         public double StrokeThickness
         {
-            get { return myLine.StrokeThickness; } set { myLine.StrokeThickness = value; }
+            get { return myLine.StrokeThickness; }
+            set { myLine.StrokeThickness = value; }
         }
 
         public bool ShowName
         {
             get { return nameGroup.Height == 0.0; }
-            set { nameGroup.Height = value ? double.NaN: 0.0; }
+            set { nameGroup.Height = value ? double.NaN : 0.0; }
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)

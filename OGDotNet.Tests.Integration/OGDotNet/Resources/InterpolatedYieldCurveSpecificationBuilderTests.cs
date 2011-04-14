@@ -45,7 +45,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             foreach (var fixedIncomeStrip in reqDef.Strips)
             {
                 var matches = interpolatedYieldCurveSpecification.ResolvedStrips.Where(
-                    s=>fixedIncomeStrip.CurveNodePointTime == s.Maturity && s.InstrumentType == fixedIncomeStrip.InstrumentType
+                    s => fixedIncomeStrip.CurveNodePointTime == s.Maturity && s.InstrumentType == fixedIncomeStrip.InstrumentType
                     ).ToList();
                 Assert.Single(matches);
                 var fixedIncomeStripWithIdentifier = matches.First();

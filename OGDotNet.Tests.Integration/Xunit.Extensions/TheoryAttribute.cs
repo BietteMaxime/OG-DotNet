@@ -30,7 +30,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             return (!Debugger.IsAttached && Parallel) ? ParallelCommandGroup.WrapGroup(serialCommands) : serialCommands;
         }
 
-        private bool _parallel=true;
+        private bool _parallel = true;
         public bool Parallel
         {
             get { return _parallel; }
@@ -49,7 +49,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             public override MethodResult Execute(object testClass)
             {
                 var inner = new TimeoutException("Parameter generation timed out");
-                throw ExceptionUtility.GetExceptionWithStackTrace(inner, _timedOutTrace);                
+                throw ExceptionUtility.GetExceptionWithStackTrace(inner, _timedOutTrace);
             }
 
             public static IEnumerable<ITestCommand> GetSingleCommand(IMethodInfo method, StackTrace timedOutTrace)
@@ -69,4 +69,4 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             return base.EnumerateTestCommands(method);
         }
     }
-} 
+}

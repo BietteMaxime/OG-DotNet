@@ -17,14 +17,14 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
     {
         private static int DefaultTimeout
         {
-            get { return (int) TimeSpan.FromMinutes(5).TotalMilliseconds; }
+            get { return (int)TimeSpan.FromMinutes(5).TotalMilliseconds; }
         }
 
         internal static T ExecuteWithTimeout<T>(Func<T> work)
         {
             T ret;
             StackTrace timedOutTrace;
-            if (! TryExecuteWithTimeout(work, out ret, out timedOutTrace))
+            if (!TryExecuteWithTimeout(work, out ret, out timedOutTrace))
             {
                 throw ExceptionUtility.GetExceptionWithStackTrace(new TimeoutException(DefaultTimeout), timedOutTrace);
             }
@@ -47,7 +47,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                                     {
                                         innerEx = e;
                                     }
-                                })) {Name = "Timeout thread", IsBackground = true};
+                                })) { Name = "Timeout thread", IsBackground = true };
             thread.Start();
             if (Debugger.IsAttached)
                 thread.Join();
@@ -57,7 +57,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                 {
                     ExceptionUtility.RethrowWithNoStackTraceLoss(innerEx);
                 }
-                ret =innerResult;
+                ret = innerResult;
                 timedOutTrace = null;
                 return true;
             }

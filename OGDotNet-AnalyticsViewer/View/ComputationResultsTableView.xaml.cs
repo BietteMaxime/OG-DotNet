@@ -42,9 +42,9 @@ namespace OGDotNet.AnalyticsViewer.View
             TrimColumns(portfolioView.Columns, 1);
             TrimColumns(primitivesView.Columns, 1);
 
-            if ((DataContext as ComputationResultsTables)!= null)
+            if ((DataContext as ComputationResultsTables) != null)
             {
-                var resultsTables = (ComputationResultsTables) DataContext;
+                var resultsTables = (ComputationResultsTables)DataContext;
                 var primitiveColumns = resultsTables.PrimitiveColumns;
                 var portfolioColumns = resultsTables.PortfolioColumns;
 
@@ -74,8 +74,8 @@ namespace OGDotNet.AnalyticsViewer.View
 
         private void portfolioTable_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var selectedItem = (PortfolioRow) portfolioTable.SelectedItem;
-            if (selectedItem!= null && selectedItem.Security != null)
+            var selectedItem = (PortfolioRow)portfolioTable.SelectedItem;
+            if (selectedItem != null && selectedItem.Security != null)
             {
                 SecurityTimeSeriesWindow.ShowDialog(new[] { selectedItem.Security }, GetWindow());
             }
@@ -86,10 +86,10 @@ namespace OGDotNet.AnalyticsViewer.View
             do
             {
                 obj = LogicalTreeHelper.GetParent(obj);
-            } 
+            }
             while (!typeof(Window).IsAssignableFrom(obj.GetType()));
 
-            return (Window) obj;
+            return (Window)obj;
         }
     }
 }

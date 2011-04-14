@@ -56,7 +56,7 @@ namespace OGDotNet.SecurityViewer.View
 
             string type = typeBox.Text;
             string name = nameBox.Text;
-            
+
             int currentPage = CurrentPage;
 
             ThreadPool.QueueUserWorkItem(delegate
@@ -66,7 +66,7 @@ namespace OGDotNet.SecurityViewer.View
                                                      CancelIfCancelled(token);
                                                      var results = SecurityMaster.Search(name, type, new PagingRequest(currentPage, 20));
                                                      CancelIfCancelled(token);
-                                                     Dispatcher.Invoke((Action) (() =>
+                                                     Dispatcher.Invoke((Action)(() =>
                                                                                           {
                                                                                               CancelIfCancelled(token);
                                                                                               itemGrid.DataContext = results.Documents.Select(s => s.Security).ToList(); //TODO
@@ -87,14 +87,15 @@ namespace OGDotNet.SecurityViewer.View
             get
             {
                 int currentPage;
-                if (! int.TryParse(currentPageLabel.Text, out currentPage))
+                if (!int.TryParse(currentPageLabel.Text, out currentPage))
                 {
                     currentPage = 1;
                 }
                 return currentPage;
             }
-            set { 
-                if (value<1)
+            set
+            {
+                if (value < 1)
                 {
                     value = 1;
                 }
@@ -105,7 +106,7 @@ namespace OGDotNet.SecurityViewer.View
         {
             get
             {
-                return (int) pageCountLabel.Content; 
+                return (int)pageCountLabel.Content;
             }
         }
 
@@ -115,7 +116,7 @@ namespace OGDotNet.SecurityViewer.View
                 Update();
         }
 
-        
+
 
         private void nameBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
@@ -140,9 +141,9 @@ namespace OGDotNet.SecurityViewer.View
         {
             if (itemGrid.SelectedItem != null)
             {
-                Security security = (Security) itemGrid.SelectedItem;
+                Security security = (Security)itemGrid.SelectedItem;
 
-                var securities = new[] {security};
+                var securities = new[] { security };
 
                 ShowSecurities(securities);
             }

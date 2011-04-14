@@ -25,7 +25,7 @@ using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
-using Currency=OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Model.Context
 {
@@ -42,7 +42,7 @@ namespace OGDotNet.Model.Context
         internal const string YieldCurveSpecValueReqName = "YieldCurveSpec";
         private const string MarketValueReqName = "Market_Value";
 
-        
+
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly RemoteView _view;
 
@@ -65,10 +65,10 @@ namespace OGDotNet.Model.Context
 
             ct.ThrowIfCancellationRequested();
             ViewComputationResultModel allResults = GetAllResults(valuationTime, ct);
-            
+
             ct.ThrowIfCancellationRequested();
             var requiredLiveData = _view.GetRequiredLiveData();
-            
+
             ct.ThrowIfCancellationRequested();
             return new ManageableMarketDataSnapshot(_view.Name, GetUnstructuredData(allResults, requiredLiveData), GetYieldCurves(allResults));
         }
@@ -141,18 +141,18 @@ namespace OGDotNet.Model.Context
         #endregion
 
         #region view defn building
-        public ViewComputationResultModel GetAllResults(DateTimeOffset valuationTime, Dictionary<ValueRequirement, double> overrides, CancellationToken ct=default(CancellationToken))
+        public ViewComputationResultModel GetAllResults(DateTimeOffset valuationTime, Dictionary<ValueRequirement, double> overrides, CancellationToken ct = default(CancellationToken))
         {
             ct.ThrowIfCancellationRequested();
             var yieldCurveSpecReqs = GetYieldCurveSpecReqs(_view, valuationTime);
-            
+
             ct.ThrowIfCancellationRequested();
             var allDataViewDefn = GetTempViewDefinition(_view, new ResultModelDefinition(ResultOutputMode.All), yieldCurveSpecReqs);
-            
+
             ct.ThrowIfCancellationRequested();
             var viewComputationResultModel = RunOneCycle(allDataViewDefn, valuationTime, overrides);
-            
-            
+
+
             return viewComputationResultModel;
         }
 
@@ -226,7 +226,7 @@ namespace OGDotNet.Model.Context
             extraReqs = extraReqs ?? Enumerable.Empty<ValueRequirement>();
 
             var tempViewName = string.Format("{0}.{1}.{2}", typeof(MarketDataSnapshotManager).Name, view.Name, Guid.NewGuid());
-            
+
             var viewDefinition = view.Definition;
 
             return new ViewDefinition(tempViewName, resultModelDefinition,

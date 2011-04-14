@@ -22,7 +22,7 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
     {
         static void Main(string[] args)
         {
-            if (args.Length!=1)
+            if (args.Length != 1)
             {
                 throw new ArgumentException("Unexpected number of arguments");
             }
@@ -37,21 +37,21 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
                 var fudgeEncodedStreamWriter = new FudgeEncodedStreamWriter(openGammaFudgeContext, openStandardOutput);
                 var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(openGammaFudgeContext, openStandardInput);
 
-                var mappingStrategy = (IFudgeTypeMappingStrategy) openGammaFudgeContext.GetProperty(ContextProperties.TypeMappingStrategyProperty);
+                var mappingStrategy = (IFudgeTypeMappingStrategy)openGammaFudgeContext.GetProperty(ContextProperties.TypeMappingStrategyProperty);
 
                 var mappedtype = mappingStrategy.GetType(typeHint);
 
                 object hydratedObject;
 
-                
 
-                if (mappedtype!=null)
+
+                if (mappedtype != null)
                 {
                     hydratedObject = Deserialize(fudgeSerializer, mappedtype, fudgeEncodedStreamReader);
                 }
                 else
                 {
-                    hydratedObject = fudgeSerializer.Deserialize(fudgeEncodedStreamReader);                    
+                    hydratedObject = fudgeSerializer.Deserialize(fudgeEncodedStreamReader);
                 }
 
 
@@ -64,12 +64,12 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
         private static object Deserialize(FudgeSerializer fudgeSerializer, Type mappedtype, FudgeEncodedStreamReader fudgeEncodedStreamReader)
         {
             var methodInfo = fudgeSerializer.GetType().GetMethods().Where(
-                m=>m.Name == "Deserialize" 
-                    &&m.GetParameters().Count() == 1 && m.GetParameters().Single().ParameterType.IsAssignableFrom(fudgeEncodedStreamReader.GetType())
+                m => m.Name == "Deserialize"
+                    && m.GetParameters().Count() == 1 && m.GetParameters().Single().ParameterType.IsAssignableFrom(fudgeEncodedStreamReader.GetType())
                     && m.ContainsGenericParameters
-                ).Select(m=>m.MakeGenericMethod(new[]{mappedtype})).Single();
+                ).Select(m => m.MakeGenericMethod(new[] { mappedtype })).Single();
 
-            return methodInfo.Invoke(fudgeSerializer, new object[] {fudgeEncodedStreamReader});
+            return methodInfo.Invoke(fudgeSerializer, new object[] { fudgeEncodedStreamReader });
         }
     }
 }

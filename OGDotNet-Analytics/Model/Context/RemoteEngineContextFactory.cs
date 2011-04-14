@@ -44,9 +44,9 @@ namespace OGDotNet.Model.Context
         private IFudgeFieldContainer GetConfigMessage()
         {
             var msg = _rootRest.Resolve("configuration").GetFudge().GetMessage(_configId);
-            if (msg==null)
+            if (msg == null)
             {
-                throw new OpenGammaException("Missing config "+_configId);
+                throw new OpenGammaException("Missing config " + _configId);
             }
             return msg;
         }
@@ -67,7 +67,7 @@ namespace OGDotNet.Model.Context
 
         private static Dictionary<string, List<string>> GetPotentialServiceUris(IFudgeFieldContainer configMsg)
         {
-            var potentialServiceIds =new Dictionary<string, List<string>>();
+            var potentialServiceIds = new Dictionary<string, List<string>>();
             foreach (var userDataField in configMsg)
             {
                 if (!(userDataField.Value is IFudgeFieldContainer))
@@ -77,7 +77,7 @@ namespace OGDotNet.Model.Context
 
 
                 var uris = new List<string>();
-                foreach (var field in ((IFudgeFieldContainer) userDataField.Value).GetAllFields())
+                foreach (var field in ((IFudgeFieldContainer)userDataField.Value).GetAllFields())
                 {
                     switch (field.Name)
                     {
@@ -94,7 +94,7 @@ namespace OGDotNet.Model.Context
                             continue;
                     }
                 }
-                
+
                 potentialServiceIds.Add(userDataField.Name, uris);
             }
             return potentialServiceIds;

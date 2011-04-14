@@ -40,7 +40,7 @@ namespace OGDotNet.Model.Resources
             _connection = _mqTemplate.CreateConnection();
             _session = _connection.CreateSession();
 
-            _destination = _session.GetDestination("topic://"+topicName);
+            _destination = _session.GetDestination("topic://" + topicName);
 
             _consumer = _session.CreateConsumer(_destination);
 
@@ -54,13 +54,13 @@ namespace OGDotNet.Model.Resources
             cancellationToken.ThrowIfCancellationRequested();
 
             IMessage message = _messageQueue.TryDequeue(cancellationToken);
-            
+
             return Deserialize(message);
         }
 
         private T Deserialize(IMessage message)
         {
-            var bytesMessage = (IBytesMessage) message;
+            var bytesMessage = (IBytesMessage)message;
             using (var memoryStream = new MemoryStream(bytesMessage.Content))
             {
                 var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(_fudgeContext, memoryStream);

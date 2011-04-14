@@ -12,7 +12,7 @@ using Fudge.Serialization;
 
 namespace OGDotNet.Builders
 {
-    internal abstract class BuilderBase<T>: IFudgeSerializationSurrogate
+    internal abstract class BuilderBase<T> : IFudgeSerializationSurrogate
     {
         protected readonly FudgeContext Context;
 
@@ -27,7 +27,7 @@ namespace OGDotNet.Builders
 
         public void Serialize(object obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
         {
-            SerializeImpl((T) obj, msg, serializer);
+            SerializeImpl((T)obj, msg, serializer);
         }
 
         protected virtual void SerializeImpl(T obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)

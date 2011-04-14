@@ -24,7 +24,9 @@ namespace OGDotNet.Builders
             return FromFudgeMsg(dictMessage, deserializer, keyFactory, valueFactory);
         }
 
-        public static Dictionary<TKey, TValue> FromFudgeMsg<TKey, TValue>(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer,  Func<IFudgeField, TKey> keyFactory = null, Func<IFudgeField, TValue> valueFactory = null) where TKey : class where TValue : class
+        public static Dictionary<TKey, TValue> FromFudgeMsg<TKey, TValue>(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer, Func<IFudgeField, TKey> keyFactory = null, Func<IFudgeField, TValue> valueFactory = null)
+            where TKey : class
+            where TValue : class
         {
             if (ffc == null)
             {
@@ -33,7 +35,7 @@ namespace OGDotNet.Builders
             keyFactory = keyFactory ?? deserializer.FromField<TKey>;
             valueFactory = valueFactory ?? deserializer.FromField<TValue>;
 
-            if (ffc.Any(f=>f.Ordinal.GetValueOrDefault(0) > 2))
+            if (ffc.Any(f => f.Ordinal.GetValueOrDefault(0) > 2))
             {
                 throw new ArgumentException();
             }
@@ -46,7 +48,7 @@ namespace OGDotNet.Builders
         {
             var fudgeSerializer = new FudgeSerializer(s.Context);
 
-            keyMsgGen = keyMsgGen ?? (k=>fudgeSerializer.SerializeToMsg(k));
+            keyMsgGen = keyMsgGen ?? (k => fudgeSerializer.SerializeToMsg(k));
             valueMsgGen = valueMsgGen ?? (v => fudgeSerializer.SerializeToMsg(v));
 
             FudgeMsg valuesMessage = new FudgeMsg(s.Context);
