@@ -131,8 +131,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
         public static ManageableMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc,
                                                                 IFudgeDeserializer deserializer)
         {
-            var uidString = ffc.GetString("uniqueId");
-            UniqueIdentifier uid = uidString == null ? null : UniqueIdentifier.Parse(uidString);
+            var uid = ffc.GetValue<UniqueIdentifier>("uniqueId");
 
             var manageableMarketDataSnapshot = new ManageableMarketDataSnapshot(
                 ffc.GetString("basisViewName"),

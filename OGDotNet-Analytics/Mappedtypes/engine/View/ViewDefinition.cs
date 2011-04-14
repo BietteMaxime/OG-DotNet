@@ -112,11 +112,10 @@ namespace OGDotNet.Mappedtypes.engine.view
         public static ViewDefinition FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var name = ffc.GetValue<string>("name");
-            var uniqueIdString = ffc.GetString("uniqueId");
-            var uniqueId = uniqueIdString == null ? null : UniqueIdentifier.Parse(uniqueIdString);
+            var uniqueId = ffc.GetValue<UniqueIdentifier>("uniqueId");
 
             var resultModelDefinition = deserializer.FromField<ResultModelDefinition>(ffc.GetByName("resultModelDefinition"));
-            var portfolioIdentifier =ffc.GetAllByName("identifier").Any()  ? UniqueIdentifier.Parse(ffc.GetValue<string>("identifier")) : null;
+            var portfolioIdentifier = ffc.GetValue<UniqueIdentifier>("identifier");
             var user = deserializer.FromField<UserPrincipal>(ffc.GetByName("user"));
 
             var currency = ffc.GetByName("currency")==null ? null : Currency.Create(ffc.GetValue<string>("currency"));

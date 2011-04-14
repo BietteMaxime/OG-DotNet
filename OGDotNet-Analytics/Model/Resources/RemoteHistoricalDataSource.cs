@@ -80,8 +80,8 @@ namespace OGDotNet.Model.Resources
                 return new Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries>(null, null);
             }
 
-            var uniqueIdString = message.GetString("uniqueId");
-            if (uniqueIdString == null)
+            var uniqueId = message.GetValue<UniqueIdentifier>("uniqueId");
+            if (uniqueId == null)
             {
                 throw new ArgumentException("uniqueId not present in message");
             }
@@ -90,7 +90,7 @@ namespace OGDotNet.Model.Resources
             {
                 throw new ArgumentException("timeSeries not present in message");
             }
-            return Tuple.Create(UniqueIdentifier.Parse(uniqueIdString), _fudgeContext.GetSerializer().Deserialize<ILocalDateDoubleTimeSeries>(timeSeriesField));
+            return Tuple.Create(uniqueId, _fudgeContext.GetSerializer().Deserialize<ILocalDateDoubleTimeSeries>(timeSeriesField));
         }
 
 
