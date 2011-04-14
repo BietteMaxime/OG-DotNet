@@ -53,7 +53,10 @@
           </RuleSettings>
         </Rule>
       </Rules>
-      <AnalyzerSettings />
+      <AnalyzerSettings>
+        <StringProperty Name="CompanyName">OpenGamma Inc. and the OpenGamma group of companies</StringProperty>
+        <StringProperty Name="Copyright"></StringProperty>
+      </AnalyzerSettings>
     </Analyzer>
     <Analyzer AnalyzerId="Microsoft.StyleCop.CSharp.OrderingRules">
       <Rules>
