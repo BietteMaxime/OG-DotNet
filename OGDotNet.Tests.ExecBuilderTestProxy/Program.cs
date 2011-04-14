@@ -16,7 +16,7 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
 {
     /// <summary>
     /// A proxy which can be used by com.opengamma.engine.fudgemsg.BuilderTestProxyFactory.ExecBuilderTestProxy in order to test the serialization
-    /// TODO: make this get run as part of the build
+    /// TODO DOTNET-6: make this get run as part of the build
     /// </summary>
     class Program
     {
