@@ -112,7 +112,7 @@ namespace OGDotNet.Model.Context
         #region BuildOverridenView
         //TODO this shouldn't require so much hackery
 
-        public enum ViewOptions
+        public enum ViewOption
         {
             AllSnapshotValues,
             OverridesAndLiveValues
@@ -131,7 +131,7 @@ namespace OGDotNet.Model.Context
                 return obj.TargetSpecification.GetHashCode();
             }
         }
-        public RemoteView GetViewOfSnapshot(ViewOptions options)
+        public RemoteView GetViewOfSnapshot(ViewOption option)
         {
             //TODO this is a hack since I can't do structured overrides in the engine yet
             var values =
@@ -139,17 +139,17 @@ namespace OGDotNet.Model.Context
                 ).SelectMany(kvp => kvp.Value.Select(v => Tuple.Create(GetOverrideReq(kvp.Key, v), v.Value)))
                 .ToLookup(t => t.Item1, t => t.Item2, ValueReqComparer.Instance);
 
-            Dictionary<ValueRequirement, double> overrides = GetOverrides(options, values);
+            Dictionary<ValueRequirement, double> overrides = GetOverrides(option, values);
             return _rawMarketDataSnapper.GetViewOfSnapshot(overrides);
         }
 
-        private static Dictionary<ValueRequirement, double> GetOverrides(ViewOptions options, ILookup<ValueRequirement, ValueSnapshot> values)
+        private static Dictionary<ValueRequirement, double> GetOverrides(ViewOption option, ILookup<ValueRequirement, ValueSnapshot> values)
         {
-            switch (options)
+            switch (option)
             {
-                case ViewOptions.AllSnapshotValues:
+                case ViewOption.AllSnapshotValues:
                     return values.ToDictionary(g => g.Key, ChoseBestOverrideValue);
-                case ViewOptions.OverridesAndLiveValues:
+                case ViewOption.OverridesAndLiveValues:
                     var dictionary = new Dictionary<ValueRequirement, double>();
                     foreach (var group in values)
                     {
@@ -161,7 +161,7 @@ namespace OGDotNet.Model.Context
                     }
                     return dictionary;
                 default:
-                    throw new ArgumentOutOfRangeException("options");
+                    throw new ArgumentOutOfRangeException("option");
             }
         }
 

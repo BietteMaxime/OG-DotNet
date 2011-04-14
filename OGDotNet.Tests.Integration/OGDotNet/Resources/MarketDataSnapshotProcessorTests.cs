@@ -47,7 +47,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 using (var marketDataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
                 {
-                    var viewOfSnapshot = marketDataSnapshotProcessor.GetViewOfSnapshot(MarketDataSnapshotProcessor.ViewOptions.AllSnapshotValues);
+                    var viewOfSnapshot = marketDataSnapshotProcessor.GetViewOfSnapshot(MarketDataSnapshotProcessor.ViewOption.AllSnapshotValues);
                     try
                     {
                         using (var remoteViewClient = viewOfSnapshot.CreateClient())
@@ -124,7 +124,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 valueSnapshots[valueName].OverrideValue = valueSnapshots[valueName].MarketValue * 1.01;
                 valueSnapsYC[valueName].OverrideValue = valueSnapshots[valueName].MarketValue * 0.99;
 
-                Assert.Throws<InvalidOperationException>(() => dataSnapshotProcessor.GetViewOfSnapshot(MarketDataSnapshotProcessor.ViewOptions.AllSnapshotValues));
+                Assert.Throws<InvalidOperationException>(() => dataSnapshotProcessor.GetViewOfSnapshot(MarketDataSnapshotProcessor.ViewOption.AllSnapshotValues));
             }
         }
     }
