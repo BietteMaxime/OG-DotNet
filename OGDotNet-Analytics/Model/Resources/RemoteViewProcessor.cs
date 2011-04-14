@@ -25,14 +25,11 @@ namespace OGDotNet.Model.Resources
             _activeMqSpec = activeMqSpec;
         }
 
-        public IEnumerable<string> ViewNames
+        public IEnumerable<string> GetViewNames()
         {
-            get
-            {
-                var fudgeMsg = _rest.Resolve("viewNames").GetFudge();
+            var fudgeMsg = _rest.Resolve("viewNames").GetFudge();
 
-                return fudgeMsg.GetAllByOrdinal(1).Select(fudgeField => (string) fudgeField.Value);
-            }
+            return fudgeMsg.GetAllByOrdinal(1).Select(fudgeField => (string) fudgeField.Value);
         }
 
         public RemoteView GetView(string viewName)

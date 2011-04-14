@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteManagableViewDefinitionRepositoryTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -62,7 +62,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 remoteClient.ViewDefinitionRepository.RemoveViewDefinition(vd.Name);
 
-                Assert.DoesNotContain(vd.Name, Context.ViewProcessor.ViewNames);
+                Assert.DoesNotContain(vd.Name, Context.ViewProcessor.GetViewNames());
             }
         }
 

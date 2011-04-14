@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="MainWindow.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -56,7 +56,7 @@ namespace OGDotNet.AnalyticsViewer.View
 
 
             _remoteViewProcessor = OGContext.ViewProcessor;
-            var viewNames = _remoteViewProcessor.ViewNames;
+            var viewNames = _remoteViewProcessor.GetViewNames();
             _remoteSecuritySource = OGContext.SecuritySource;
             viewSelector.DataContext = viewNames;
 

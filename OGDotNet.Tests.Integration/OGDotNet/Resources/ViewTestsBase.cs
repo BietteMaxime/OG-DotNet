@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ViewTestsBase.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -43,7 +43,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             get
             {
                 var remoteEngineContext = Context;
-                return remoteEngineContext.ViewProcessor.ViewNames.Where(IsNotBanned);
+                return remoteEngineContext.ViewProcessor.GetViewNames().Where(IsNotBanned);
             }
         }
 

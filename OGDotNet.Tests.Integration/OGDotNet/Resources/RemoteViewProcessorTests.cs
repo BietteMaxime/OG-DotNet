@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteViewProcessorTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -25,7 +25,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanGetNames()
         {
             var remoteViewProcessor = Context.ViewProcessor;
-            var viewNames = remoteViewProcessor.ViewNames;
+            var viewNames = remoteViewProcessor.GetViewNames();
             Assert.NotEmpty(viewNames);
             Assert.DoesNotContain(null, viewNames);
             Assert.DoesNotContain(string.Empty, viewNames);
