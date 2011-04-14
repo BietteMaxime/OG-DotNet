@@ -24,7 +24,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Model.Context
         [Fact]
         public void CanCreateRemoteEngineContext()
         {
-            GetContextFactory();
+            var remoteEngineContextFactory = GetContextFactory();
+            remoteEngineContextFactory.CreateRemoteEngineContext();
         }
 
         [Fact]
