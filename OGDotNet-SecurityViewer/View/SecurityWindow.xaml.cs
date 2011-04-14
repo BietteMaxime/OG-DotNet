@@ -67,7 +67,7 @@ namespace OGDotNet.SecurityViewer.View
                                                      Dispatcher.Invoke((Action)(() =>
                                                                                           {
                                                                                               CancelIfCancelled(token);
-                                                                                              itemGrid.DataContext = results.Documents.Select(s => s.Security).ToList(); //TODO
+                                                                                              itemGrid.DataContext = results.Documents.Select(s => s.Security).ToList();
                                                                                               itemGrid.SelectedIndex = 0;
                                                                                               pageCountLabel.DataContext = results.Paging;
                                                                                               currentPageLabel.DataContext = results.Paging;
