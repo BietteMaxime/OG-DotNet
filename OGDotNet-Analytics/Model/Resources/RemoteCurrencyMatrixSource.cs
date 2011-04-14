@@ -6,19 +6,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using OGDotNet.Mappedtypes.financial.currency;
 
 namespace OGDotNet.Model.Resources
 {
     public class RemoteCurrencyMatrixSource
     {
-        private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly RestTarget _rest;
 
-        public RemoteCurrencyMatrixSource(OpenGammaFudgeContext fudgeContext, RestTarget rest)
+        public RemoteCurrencyMatrixSource(RestTarget rest)
         {
-            _fudgeContext = fudgeContext;
             _rest = rest;
         }
 

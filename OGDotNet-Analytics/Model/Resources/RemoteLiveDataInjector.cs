@@ -6,12 +6,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.IO;
 using Fudge;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources

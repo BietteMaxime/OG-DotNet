@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.Security;
 

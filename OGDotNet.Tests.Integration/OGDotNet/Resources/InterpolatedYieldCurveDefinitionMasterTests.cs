@@ -136,12 +136,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 foreach (StripInstrumentType stripInstrumentType in Enum.GetValues(typeof(StripInstrumentType)))
                 {
-                    FixedIncomeStrip fixedIncomeStrip = new FixedIncomeStrip()
-                    {
-                        ConventionName = "DEFAULT",
-                        CurveNodePointTime = Tenor.Day,
-                        InstrumentType = stripInstrumentType
-                    };
+                    var fixedIncomeStrip = new FixedIncomeStrip
+                                            {
+                                                ConventionName = "DEFAULT",
+                                                CurveNodePointTime = Tenor.Day,
+                                                InstrumentType = stripInstrumentType
+                                            };
                     if (stripInstrumentType == StripInstrumentType.FUTURE)
                         fixedIncomeStrip.NthFutureFromTenor = 12;
 

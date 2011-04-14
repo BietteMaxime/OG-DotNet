@@ -47,8 +47,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                                     {
                                         innerEx = e;
                                     }
-                                })) { Name = "Timeout thread"};
-            thread.IsBackground = true;
+                                })) {Name = "Timeout thread", IsBackground = true};
             thread.Start();
             if (Debugger.IsAttached)
                 thread.Join();

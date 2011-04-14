@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
@@ -25,16 +24,16 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 
         public YieldCurveDefinition(Currency currency, string name, string interpolatorName)
         {
-            this._currency = currency;
-            this._name = name;
-            this._interpolatorName = interpolatorName;
+            _currency = currency;
+            _name = name;
+            _interpolatorName = interpolatorName;
         }
 
         public void AddStrip(params FixedIncomeStrip[] newStrips)
         {
             foreach (var fixedIncomeStrip in newStrips)
             {
-                this._strips.Add(fixedIncomeStrip);
+                _strips.Add(fixedIncomeStrip);
             }
         }
 

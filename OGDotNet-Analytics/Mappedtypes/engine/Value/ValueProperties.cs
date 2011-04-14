@@ -262,7 +262,7 @@ namespace OGDotNet.Mappedtypes.engine.value
 
         public bool IsSatisfiedBy(ValueProperties properties)
         {
-            if (this.IsEmpty)
+            if (IsEmpty)
                 return true;
             throw new NotImplementedException();
         }

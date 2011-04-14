@@ -10,7 +10,6 @@ using System;
 using System.Threading;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Resources;
-using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context
 {

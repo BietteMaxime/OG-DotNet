@@ -6,7 +6,7 @@
         MinWidth="200"
         ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
-        Loaded="Window_Loaded" xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" xmlns:DataVisualization="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit" xmlns:Windsor="clr-namespace:OGDotNet.WPFUtils.Windsor;assembly=OGDotNet.WPFUtils" Cursor="Wait">
+        Loaded="Window_Loaded" xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" xmlns:Windsor="clr-namespace:OGDotNet.WPFUtils.Windsor;assembly=OGDotNet.WPFUtils" Cursor="Wait">
 
     <Grid>
         <Grid.RowDefinitions>

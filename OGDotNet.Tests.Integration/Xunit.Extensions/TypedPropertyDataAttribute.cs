@@ -77,7 +77,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                     case 1:
                         if (methodUnderTest.GetParameters()[0].ParameterType.IsAssignableFrom(enumType))
                         {
-                            return ((IEnumerable)valueSource).Cast<object>().Select(o => new object[] { o });
+                            return ((IEnumerable)valueSource).Cast<object>().Select(o => new[] { o });
                         }
                         else
                         {

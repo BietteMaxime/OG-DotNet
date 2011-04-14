@@ -13,12 +13,10 @@ namespace OGDotNet.Model.Resources
 {
     public class RemoteInterpolatedYieldCurveSpecificationBuilder   
     {
-        private readonly OpenGammaFudgeContext _context;
         private readonly RestTarget _rest;
 
-        public RemoteInterpolatedYieldCurveSpecificationBuilder(OpenGammaFudgeContext context, RestTarget rest)
+        public RemoteInterpolatedYieldCurveSpecificationBuilder(RestTarget rest)
         {
-            _context = context;
             _rest = rest;
         }
 

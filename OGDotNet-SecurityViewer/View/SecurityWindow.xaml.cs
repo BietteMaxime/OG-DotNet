@@ -143,7 +143,7 @@ namespace OGDotNet.SecurityViewer.View
             {
                 Security security = (Security) itemGrid.SelectedItem;
 
-                Security[] securities = new Security[] {security};
+                var securities = new[] {security};
 
                 ShowSecurities(securities);
             }

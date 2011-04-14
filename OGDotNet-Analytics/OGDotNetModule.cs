@@ -11,7 +11,6 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using OGDotNet.Model;
 using OGDotNet.Model.Context;
-using OGDotNet.Model.Resources;
 
 namespace OGDotNet
 {

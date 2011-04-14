@@ -154,18 +154,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static MarketDataSnapshotDocument GetDocument(string name)
         {
             var manageableUnstructuredMarketDataSnapshot = new ManageableUnstructuredMarketDataSnapshot(
-                new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>()
+                new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>
                     {
                         {
                             new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("AA","XX")),
-                            new Dictionary<string,ValueSnapshot>()
+                            new Dictionary<string,ValueSnapshot>
                                 {
                                     {"SomeValue", new ValueSnapshot(12)}
                                 }
                             },
                         {
                             new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("AA","YY")),
-                            new Dictionary<string,ValueSnapshot>()
+                            new Dictionary<string,ValueSnapshot>
                                 {
                                     {"SomeOtherValue", new ValueSnapshot(12){OverrideValue = 13}}
                                 }
@@ -175,7 +175,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             return new MarketDataSnapshotDocument(null,
                 new ManageableMarketDataSnapshot("SomeView", 
                     manageableUnstructuredMarketDataSnapshot, 
-                    new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>()
+                    new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>
                         {
                             {new YieldCurveKey(Currency.Create("USD"), "Default"), new ManageableYieldCurveSnapshot(manageableUnstructuredMarketDataSnapshot, DateTimeOffset.Now)}
                         }

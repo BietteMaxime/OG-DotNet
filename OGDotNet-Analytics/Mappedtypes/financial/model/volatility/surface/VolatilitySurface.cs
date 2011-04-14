@@ -6,12 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Fudge;
-using Fudge.Serialization;
 using OGDotNet.Mappedtypes.math.surface;
 
 namespace OGDotNet.Mappedtypes.financial.model.volatility.surface

@@ -52,11 +52,6 @@ namespace OGDotNet.Model.Context
             _view = view;
         }
 
-        public RemoteEngineContext RemoteEngineContext
-        {
-            get { return _remoteEngineContext; }
-        }
-
         public RemoteView View
         {
             get { return _view; }

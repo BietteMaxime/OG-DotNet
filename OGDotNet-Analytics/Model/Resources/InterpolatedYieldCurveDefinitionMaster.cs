@@ -7,10 +7,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.IO;
-using System.Net;
-using System.Reflection;
-using Fudge;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.Id;
 
