@@ -82,7 +82,7 @@ namespace OGDotNet.Builders
                     }
                     else
                     {//TODO work out whether this is right (and fast enough) in the general case
-                        var typeMapper = (IFudgeTypeMappingStrategy) deserializer.Context.GetProperty(ContextProperties.TypeMappingStrategyProperty);
+                        var typeMapper = (IFudgeTypeMappingStrategy) Context.GetProperty(ContextProperties.TypeMappingStrategyProperty);
                         Type labelType = typeMapper.GetType(labelTypeName);
                         
                         object label = deserializer.FromField(labelValue, labelType);

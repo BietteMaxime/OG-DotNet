@@ -15,12 +15,15 @@ namespace OGDotNet.Builders
     internal abstract class BuilderBase<T>: IFudgeSerializationSurrogate
     {
         protected readonly FudgeContext Context;
-        protected readonly Type Type;
 
         protected BuilderBase(FudgeContext context, Type type)
         {
+            if (type != typeof(T))
+            {
+                throw new ArgumentException("Type paramter doesn't match generic parameter", "type");
+            }
             Context = context;
-            Type = type;
+
         }
 
         public void Serialize(object obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
