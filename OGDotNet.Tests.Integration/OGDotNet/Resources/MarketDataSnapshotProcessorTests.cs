@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
@@ -73,20 +74,35 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var dataSnapshotProcessor = snapshotManager.CreateFromView(ViewName))
             {
+                var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
+
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
                 foreach (var valueSnapshot in ycSnapshot.Values)
                 {
                     foreach (var snapshot in valueSnapshot.Value)
                     {
-                        snapshot.Value.OverrideValue = 23;
+                        snapshot.Value.OverrideValue = snapshot.Value.MarketValue * 1.01;
                     }
                 }
 
-                var interpolatedDoublesCurves = dataSnapshotProcessor.GetYieldCurves();
-                Assert.NotEmpty(interpolatedDoublesCurves);
-                //TODO check that the curve changes
+                var afterCurves = dataSnapshotProcessor.GetYieldCurves();
+                Assert.NotEmpty(afterCurves);
+
+                var beforeCurve = beforeCurves.First().Value.Item1.Curve;
+                var afterCurve = afterCurves.First().Value.Item1.Curve;
+
+                //Curve should change Ys but not x
+                Assert.Equal(beforeCurve.XData, afterCurve.XData);
+
+                var diffs = beforeCurve.YData.Zip(afterCurve.YData, DiffProportion).ToList();
+                Assert.NotEmpty(diffs.Where(d => d > 0.01).ToList());
             }
+        }
+
+        private static double DiffProportion(double a, double b)
+        {
+            return Math.Abs(a - b) / Math.Max(Math.Abs(a), Math.Abs(b));
         }
 
         [Xunit.Extensions.Fact]
