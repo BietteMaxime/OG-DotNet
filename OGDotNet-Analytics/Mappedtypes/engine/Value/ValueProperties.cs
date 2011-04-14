@@ -209,37 +209,7 @@ namespace OGDotNet.Mappedtypes.engine.value
             var finite = this as FiniteValueProperties;
             if (finite != null)
             {
-                var withMessage = new FudgeMsg();
-
-                foreach (var property in finite.PropertyValues)
-                {
-                    if (property.Value == null)
-                    {
-                        var optMessage = new FudgeMsg(s.Context);
-                        optMessage.Add((string)null, IndicatorType.Instance);
-
-                        withMessage.Add(property.Key, optMessage);
-                    }
-                    else if (!property.Value.Any())
-                    {
-                        withMessage.Add(property.Key, IndicatorType.Instance);
-                    }
-                    else if (property.Value.Count == 1)
-                    {
-                        withMessage.Add(property.Key, property.Value.Single());
-                    }
-                    else
-                    {
-                        var manyMesssage = new FudgeMsg(s.Context);
-                        foreach (var val in property.Value)
-                        {
-                            manyMesssage.Add(property.Key, val);
-                        }
-                        withMessage.Add(property.Key, manyMesssage);
-                    }
-                }
-
-                a.Add("with", withMessage);
+                ToFudgeMsg(finite, a, s);
             }
             else
             {
@@ -254,6 +224,41 @@ namespace OGDotNet.Mappedtypes.engine.value
                 }
                 a.Add("without", withoutMessage);
             }
+        }
+
+        private static void ToFudgeMsg(FiniteValueProperties finite, IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            var withMessage = new FudgeMsg();
+
+            foreach (var property in finite.PropertyValues)
+            {
+                if (property.Value == null)
+                {
+                    var optMessage = new FudgeMsg(s.Context);
+                    optMessage.Add((string)null, IndicatorType.Instance);
+
+                    withMessage.Add(property.Key, optMessage);
+                }
+                else if (!property.Value.Any())
+                {
+                    withMessage.Add(property.Key, IndicatorType.Instance);
+                }
+                else if (property.Value.Count == 1)
+                {
+                    withMessage.Add(property.Key, property.Value.Single());
+                }
+                else
+                {
+                    var manyMesssage = new FudgeMsg(s.Context);
+                    foreach (var val in property.Value)
+                    {
+                        manyMesssage.Add(property.Key, val);
+                    }
+                    withMessage.Add(property.Key, manyMesssage);
+                }
+            }
+
+            a.Add("with", withMessage);
         }
 
         public bool IsSatisfiedBy(ValueProperties properties)
