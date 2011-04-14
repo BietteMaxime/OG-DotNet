@@ -57,7 +57,7 @@ namespace OGDotNet.Model.Resources
             IMessage ret = null;
             _mqTemplate.Do(delegate(ISession session)
             {
-                var temporaryTopic = session.CreateTemporaryTopic();//TODO we shouldn't be creating temporary topics all over the place
+                var temporaryTopic = session.CreateTemporaryTopic(); // TODO we shouldn't be creating temporary topics all over the place
                 try
                 {
                     using (var consumer = session.CreateConsumer(temporaryTopic))

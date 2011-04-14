@@ -28,7 +28,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         [Theory]
         [TypedPropertyData("Views")]
-        public void CanGetViewsPortfoliosAfterInit(RemoteView remoteView)//NOTE: I can't test the reverse, since the view might have been inited elsewhere
+        public void CanGetViewsPortfoliosAfterInit(RemoteView remoteView) // NOTE: I can't test the reverse, since the view might have been inited elsewhere
         {
             remoteView.Init();
             var portfolio = remoteView.Portfolio;
@@ -90,7 +90,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             remoteView.Init();
             var isLiveComputationRunningAfterInit = remoteView.IsLiveComputationRunning();
 
-            Assert.Equal(isLiveComputationRunningBeforeInit, isLiveComputationRunningAfterInit);//There is a race here, but meh
+            Assert.Equal(isLiveComputationRunningBeforeInit, isLiveComputationRunningAfterInit); // There is a race here, but meh
 
             using (var client = remoteView.CreateClient())
             {

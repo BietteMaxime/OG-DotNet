@@ -39,8 +39,7 @@ namespace OGDotNet.Builders
             }
 
             return ffc.GetAllByOrdinal(1).Zip(ffc.GetAllByOrdinal(2), Tuple.Create)
-                .ToDictionary(t => keyFactory(t.Item1), t => valueFactory(t.Item2))
-                ;
+                .ToDictionary(t => keyFactory(t.Item1), t => valueFactory(t.Item2));
         }
 
         public static FudgeMsg ToFudgeMsg<TKey, TValue>(IFudgeSerializer s, IDictionary<TKey, TValue> dict, Func<TKey, object> keyMsgGen = null, Func<TValue, object> valueMsgGen = null)

@@ -150,7 +150,7 @@ namespace OGDotNet.Mappedtypes.Id
                 return valueCompare;
             }
 
-            return string.Compare(_version, other._version, comparison);//This handles null the same as the java CompareUtils class
+            return string.Compare(_version, other._version, comparison); // This handles null the same as the java CompareUtils class
         }
 
         public bool Equals(UniqueIdentifier other)

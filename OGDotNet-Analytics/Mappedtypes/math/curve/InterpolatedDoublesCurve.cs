@@ -60,7 +60,7 @@ namespace OGDotNet.Mappedtypes.math.curve
 
         public override double GetYValue(double x)
         {
-            var index = Array.BinarySearch(_xData, x);//Using equals on double is ridiculous, this only works if they've read our x value out
+            var index = Array.BinarySearch(_xData, x); // Using equals on double is ridiculous, this only works if they've read our x value out
             if (index < 0 )
             {
                 throw new NotImplementedException("I'm not sure if the interpolation should happen client side");

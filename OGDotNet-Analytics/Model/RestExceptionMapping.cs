@@ -51,7 +51,7 @@ namespace OGDotNet.Model
                         throw BuildException(type, message);
                     }
                 }
-                throw;//TODO should probably wrap in this in something generic and less Webby
+                throw; // TODO should probably wrap in this in something generic and less Webby
             }
         }
 

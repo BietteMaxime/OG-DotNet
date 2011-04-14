@@ -48,7 +48,7 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast
         
         public DateTime ConvertToDateTime(long sourceValue)
         {
-            var daysSinceEpoch = ConvertToLong(sourceValue, Encoding.DATE_EPOCH_DAYS);//TODO don't use days
+            var daysSinceEpoch = ConvertToLong(sourceValue, Encoding.DATE_EPOCH_DAYS); // TODO don't use days
             return Epoch + TimeSpan.FromDays(daysSinceEpoch);
         }
 

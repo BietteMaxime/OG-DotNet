@@ -58,8 +58,7 @@ namespace OGDotNet.Utils
                )
                .Concat(
                    dictA.Where(k => !dictB.ContainsKey(k.Key)).Select(k => aOnlyProjecter(k.Key, k.Value))
-               )
-               ;
+               );
         }
 
         public static IEnumerable<TRet> ProjectStructure<TKey, TValue, TRet>(this IDictionary<TKey, TValue> dictA, IDictionary<TKey, TValue> dictB,

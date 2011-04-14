@@ -50,7 +50,7 @@ namespace OGDotNet.Mappedtypes.financial.currency
 
             protected override bool EqualsInner(CurrencyMatrixValue other)
             {
-                return ((CurrencyMatrixFixed) other)._fixedValue == _fixedValue;//TODO : this is an odd thing to do, since == on doubles rarely does what you want.  But it's what the Java side does
+                return ((CurrencyMatrixFixed) other)._fixedValue == _fixedValue; // TODO : this is an odd thing to do, since == on doubles rarely does what you want.  But it's what the Java side does
             }
         }
 

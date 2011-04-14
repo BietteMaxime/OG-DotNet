@@ -78,7 +78,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         {
             var ret =
                 new FixedIncomeStripWithSecurity(
-                    EnumBuilder<StripInstrumentType>.Parse((string) ffc.GetByName("type").Value),
+                    EnumBuilder<StripInstrumentType>.Parse((string)ffc.GetByName("type").Value),
                     new Tenor(ffc.GetString("tenor")),
                     new Tenor(ffc.GetString("resolvedTenor")),
                     ffc.GetInt("numFutures").GetValueOrDefault(-1),
@@ -87,7 +87,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
                     deserializer.FromField<Core.Security.Security>(ffc.GetByName("security"))
                     );
 
-            if ( (ret._instrumentType == StripInstrumentType.FUTURE) != ret._nthFutureFromTenor >=0)
+            if ((ret._instrumentType == StripInstrumentType.FUTURE) != ret._nthFutureFromTenor >= 0)
             {
                 throw new ArgumentException("Mismatched future options");
             }
@@ -97,10 +97,10 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         private static DateTimeOffset GetDateTime(IFudgeField zonedDateTimeField)
         {
             var inner = (IFudgeFieldContainer)zonedDateTimeField.Value;
-            string zone = inner.GetString("zone");//TODO this
+            string zone = inner.GetString("zone"); // TODO this
             string odt = inner.GetString("odt");
             DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(odt);
-            if (zone!="UTC")
+            if (zone != "UTC")
                 throw new NotImplementedException();
             return dateTimeOffset;
         }

@@ -19,11 +19,11 @@ namespace OGDotNet.Mappedtypes.Util.Db
 
         public int CurrentPage
         {
-            get{return Page;}
+            get { return Page; }
         }
         public int Pages
         {
-            get { return ((TotalItems -1)/PagingSize) + 1; }
+            get { return ((TotalItems - 1) / PagingSize) + 1; }
         }
     }
 }

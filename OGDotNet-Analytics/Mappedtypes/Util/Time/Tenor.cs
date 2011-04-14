@@ -26,7 +26,7 @@ namespace OGDotNet.Mappedtypes.Util.Time
 
         public static Tenor FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new Tenor(ffc.GetValue<string>("tenor"));//TODO Period type
+            return new Tenor(ffc.GetValue<string>("tenor")); // TODO Period type
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
@@ -45,7 +45,7 @@ namespace OGDotNet.Mappedtypes.Util.Time
         {
             get
             {
-                return System.Xml.XmlConvert.ToTimeSpan(_period);//This understands the ISO8601 standard, and does something vaguelly sane
+                return System.Xml.XmlConvert.ToTimeSpan(_period); // This understands the ISO8601 standard, and does something vaguelly sane
             }
         }
 

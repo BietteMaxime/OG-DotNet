@@ -344,9 +344,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var specifics = view.Definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.SpecificRequirements.Count());
             int rows = CountRows(view.Portfolio);
             var values = rows * view.Definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.PortfolioRequirementsBySecurityType.Single().Value.Count);
-            return specifics
-                + values
-                ;
+            return specifics + values;
         }
 
         private static int CountRows(IPortfolio portfolio)

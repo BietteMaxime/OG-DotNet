@@ -220,7 +220,7 @@ namespace OGDotNet.Model.Context
                 results.AllResults
                 .Where(r => Matches(r, yieldCurveSnapshot.Key))
                 .ToLookup(c => c.ComputedValue.Specification.ValueName, c => c.ComputedValue.Value)
-                .ToDictionary(g => g.Key, g => g.First());//We can get duplicate results in different configurations
+                .ToDictionary(g => g.Key, g => g.First()); // We can get duplicate results in different configurations
 
             var curve = (YieldCurve)curveResults[RawMarketDataSnapper.YieldCurveValueReqName];
             var spec = (InterpolatedYieldCurveSpecificationWithSecurities)curveResults[RawMarketDataSnapper.YieldCurveSpecValueReqName];

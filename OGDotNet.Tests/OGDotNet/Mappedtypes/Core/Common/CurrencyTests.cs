@@ -44,7 +44,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
             var b = Currency.Create("USD");
             Assert.False(a.Equals(b));
             Assert.False(((object)a).Equals(b));
-            Assert.NotEqual(a.GetHashCode(), b.GetHashCode());//This is obviously over strict
+            Assert.NotEqual(a.GetHashCode(), b.GetHashCode()); // This is obviously over strict
         }
 
         [Fact]
