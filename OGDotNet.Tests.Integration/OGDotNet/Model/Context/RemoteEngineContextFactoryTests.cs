@@ -41,7 +41,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Model.Context
             var configId = Guid.NewGuid().ToString();
             var remoteEngineContextFactory = GetContextFactory(new Uri(Settings.Default.ServiceUri), configId);
             var exception = Assert.Throws<OpenGammaException>(() => remoteEngineContextFactory.CreateRemoteEngineContext());
-            Assert.Equal("Missing config "+configId,exception.Message);
+            Assert.Equal("Missing config " + configId, exception.Message);
         }
         [Fact]
         public void CreatingContextFromBadUriThrows()
