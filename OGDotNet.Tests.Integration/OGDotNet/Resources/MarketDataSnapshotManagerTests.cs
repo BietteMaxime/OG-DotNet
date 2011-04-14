@@ -45,8 +45,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
                     var yieldCurveSnapshot =
-                        manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "SINGLE")
-                            ];
+                        manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.Create("USD"), "SINGLE")];
                     Assert.NotNull(yieldCurveSnapshot);
                 }
                 foreach (var curve in manageableMarketDataSnapshot.YieldCurves.Values)

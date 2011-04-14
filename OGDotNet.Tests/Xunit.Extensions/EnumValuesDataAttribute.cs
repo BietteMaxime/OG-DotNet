@@ -19,12 +19,12 @@ namespace OGDotNet.Tests.Xunit.Extensions
         public override IEnumerable<object[]> GetData(MethodInfo methodUnderTest, Type[] parameterTypes)
         {
             var type = parameterTypes.Single();
-            if (! type.IsEnum)
+            if (!type.IsEnum)
             {
                 throw new ArgumentException();
             }
 
-            return from object value in Enum.GetValues(type) select new[]{value};
+            return from object value in Enum.GetValues(type) select new[] { value };
         }
     }
 }
