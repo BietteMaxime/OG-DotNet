@@ -27,7 +27,7 @@ namespace OGDotNet.Builders
         {
             var netName = value.ToString();
             Regex humpExp = new Regex("([a-z])([A-Z])");
-            var javaName = humpExp.Replace(netName, "$1_$2").ToUpper();
+            var javaName = humpExp.Replace(netName, "$1_$2").ToUpperInvariant();
             return javaName;
         }
     }
