@@ -120,7 +120,7 @@ namespace OGDotNet.AnalyticsViewer.View
                 SetStatus("Creating client");
                 using (var client = remoteViewResource.CreateClient())
                 {
-                    //TODO get these off the UI thread but with order
+                    //TODO get these off the UI thread but with order, easier with IObservables
                     RoutedEventHandler pausedHandler = delegate { if (!cancellationToken.IsCancellationRequested) { client.Pause(); } };
                     RoutedEventHandler unpausedHandler = delegate { if (!cancellationToken.IsCancellationRequested) { client.Start(); } };
                     pauseToggle.Checked += pausedHandler;
