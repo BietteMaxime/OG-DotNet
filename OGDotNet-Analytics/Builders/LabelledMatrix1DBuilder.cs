@@ -71,11 +71,12 @@ namespace OGDotNet.Builders
 
                     if (labelTypeName == "java.lang.String")
                     {
-                        labels.Add((string)labelValue.Value);
+                        var value = (string)labelValue.Value;
+                        labels.Add(value);
                     }
                     else if (labelTypeName == "com.opengamma.util.time.Tenor")
                     {
-                        //TODO hack hack hack, this seems to get serialized as a string :S
+                        //TODO DOTNET-14 this is serialized as a string here
                         string period = (string)labelValue.Value;
                         labels.Add(new Tenor(period));
                     }
