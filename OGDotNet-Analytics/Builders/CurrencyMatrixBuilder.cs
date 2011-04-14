@@ -138,7 +138,7 @@ namespace OGDotNet.Builders
                         {
                             CurrencyMatrixValue value = deserializer.FromField<CurrencyMatrixValue.CurrencyMatrixValueRequirement>(field2);
                             values.Add(Tuple.Create(source, target), value);
-                            values.Add(Tuple.Create(target, source), value.GetReciprocal());
+                            values.Add(Tuple.Create(target, source), value.Reciprocal);
                         }
                         else
                         {

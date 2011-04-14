@@ -57,8 +57,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var fwd = currencyMatrix.GetConversion(sourceCurrency, foundTarget);
                     var bwd = currencyMatrix.GetConversion(foundTarget, sourceCurrency);
 
-                    Assert.Equal(bwd, fwd.GetReciprocal());
-                    Assert.Equal(fwd, bwd.GetReciprocal());
+                    Assert.Equal(bwd, fwd.Reciprocal);
+                    Assert.Equal(fwd, bwd.Reciprocal);
                     valueTypes.Add(fwd.GetType());
                 }
 

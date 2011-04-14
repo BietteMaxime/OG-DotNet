@@ -24,10 +24,6 @@ namespace OGDotNet.Model
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly Uri _serviceUri;
 
-        public RestTarget(OpenGammaFudgeContext fudgeContext, string serviceUri)
-            : this(fudgeContext, new Uri(serviceUri))
-        {
-        }
         public RestTarget(OpenGammaFudgeContext fudgeContext, Uri serviceUri)
         {
             _fudgeContext = fudgeContext;

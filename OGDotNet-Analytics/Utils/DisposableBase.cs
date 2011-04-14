@@ -18,8 +18,8 @@ namespace OGDotNet.Utils
         }
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected abstract void Dispose(bool disposing);

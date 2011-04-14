@@ -15,16 +15,16 @@ namespace OGDotNet.Mappedtypes.Id
 {
     public class IdentifierSearch
     {
-        private readonly List<Identifier> _identifiers;
+        private readonly IEnumerable<Identifier> _identifiers;
         private readonly IdentifierSearchType _searchType;
 
-        public IdentifierSearch(List<Identifier> identifiers, IdentifierSearchType searchType)
+        public IdentifierSearch(IEnumerable<Identifier> identifiers, IdentifierSearchType searchType)
         {
             _identifiers = identifiers;
             _searchType = searchType;
         }
 
-        public List<Identifier> Identifiers
+        public IEnumerable<Identifier> Identifiers
         {
             get { return _identifiers; }
         }

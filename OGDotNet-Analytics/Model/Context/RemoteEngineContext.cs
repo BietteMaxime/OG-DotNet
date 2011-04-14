@@ -57,7 +57,7 @@ namespace OGDotNet.Model.Context
         {//TODO this is a hack, should I even be exposing this?
             get
             {
-                return new RemoteSecurityMaster(new RestTarget(_fudgeContext, _serviceUris["securitySource"].ToString().Replace("securitySource", "securityMaster")));
+                return new RemoteSecurityMaster(new RestTarget(_fudgeContext, GetMasterUri("securityMaster")));
             }
         }
 
@@ -69,10 +69,10 @@ namespace OGDotNet.Model.Context
             }
         }
         public RemoteMarketDataSnapshotMaster MarketDataSnapshotMaster
-        {//TODO this is a hack, should I even be exposing this?
+        {
             get
             {
-                return new RemoteMarketDataSnapshotMaster(new RestTarget(_fudgeContext, _serviceUris["securitySource"].ToString().Replace("securitySource", "marketDataSnapshotMaster")));
+                return new RemoteMarketDataSnapshotMaster(new RestTarget(_fudgeContext, GetMasterUri("marketDataSnapshotMaster")));
             }
         }
 
@@ -98,6 +98,11 @@ namespace OGDotNet.Model.Context
             {
                 return new RemoteCurrencyMatrixSource(new RestTarget(_fudgeContext, _serviceUris["currencyMatrixSource"]));
             }
+        }
+
+        private Uri GetMasterUri(string masterName)
+        {//TODO this is a hack, should I even be exposing this?
+            return new Uri(_serviceUris["securitySource"].ToString().Replace("securitySource", masterName));
         }
     }
 }

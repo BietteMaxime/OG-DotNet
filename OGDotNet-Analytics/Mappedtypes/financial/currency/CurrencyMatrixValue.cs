@@ -16,7 +16,7 @@ namespace OGDotNet.Mappedtypes.financial.currency
 {
     public abstract class CurrencyMatrixValue : IEquatable<CurrencyMatrixValue>
     {
-        public abstract CurrencyMatrixValue GetReciprocal();
+        public abstract CurrencyMatrixValue Reciprocal { get; }
 
         public static CurrencyMatrixValue Of(Currency currency)
         {
@@ -42,9 +42,9 @@ namespace OGDotNet.Mappedtypes.financial.currency
                 get { return _fixedValue; }
             }
 
-            public override CurrencyMatrixValue GetReciprocal()
+            public override CurrencyMatrixValue Reciprocal
             {
-                return new CurrencyMatrixFixed(1 / _fixedValue);
+                get { return new CurrencyMatrixFixed(1 / _fixedValue); }
             }
 
             protected override bool EqualsInner(CurrencyMatrixValue other)
@@ -68,10 +68,11 @@ namespace OGDotNet.Mappedtypes.financial.currency
                 set { _crossCurrency = value; }
             }
 
-            public override CurrencyMatrixValue GetReciprocal()
+            public override CurrencyMatrixValue Reciprocal
             {
-                return this;
+                get { return this; }
             }
+
             protected override bool EqualsInner(CurrencyMatrixValue other)
             {
                 return ((CurrencyMatrixCross)other)._crossCurrency == _crossCurrency;
@@ -94,14 +95,14 @@ namespace OGDotNet.Mappedtypes.financial.currency
                 get { return _valueRequirement; }
             }
 
-            public bool Reciprocal
+            public bool IsReciprocal
             {
                 get { return _reciprocal; }
             }
 
-            public override CurrencyMatrixValue GetReciprocal()
+            public override CurrencyMatrixValue Reciprocal
             {
-                return new CurrencyMatrixValueRequirement(_valueRequirement, !_reciprocal);
+                get { return new CurrencyMatrixValueRequirement(_valueRequirement, !_reciprocal); }
             }
 
             public static CurrencyMatrixValueRequirement FromFudgeMsg(IFudgeFieldContainer message, IFudgeDeserializer deserializer)

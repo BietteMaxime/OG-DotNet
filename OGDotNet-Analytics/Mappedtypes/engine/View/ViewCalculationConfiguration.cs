@@ -18,15 +18,15 @@ namespace OGDotNet.Mappedtypes.engine.View
     public class ViewCalculationConfiguration
     {
         private readonly string _name;
-        private readonly List<ValueRequirement> _specificRequirements;
+        private readonly IEnumerable<ValueRequirement> _specificRequirements;
         private readonly Dictionary<string, HashSet<Tuple<string, ValueProperties>>> _portfolioRequirementsBySecurityType;
         private readonly ValueProperties _defaultProperties;
 
-        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType)
+        public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType)
             : this(name, specificRequirements, portfolioRequirementsBySecurityType, ValueProperties.Create())
         {
         }
-        public ViewCalculationConfiguration(string name, List<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, ValueProperties defaultProperties)
+        public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, ValueProperties defaultProperties)
         {
             _name = name;
             _specificRequirements = specificRequirements;

@@ -39,7 +39,7 @@ namespace OGDotNet.Mappedtypes.financial.currency
                 var valueRequirement = (CurrencyMatrixValue.CurrencyMatrixValueRequirement)currencyMatrixValue;
 
                 double rate = inputs(valueRequirement.ValueRequirement);
-                if (valueRequirement.Reciprocal)
+                if (valueRequirement.IsReciprocal)
                 {
                     rate = 1.0 / rate;
                 }
