@@ -14,7 +14,23 @@ namespace OGDotNet.Mappedtypes.Master
 {
     public class SearchResult<TDocument> //where TDocument extends Document
     {
-        public Paging Paging { get; set; }
-        public IList<TDocument> Documents { get; set; }
+        private readonly Paging _paging;
+        private readonly IList<TDocument> _documents;
+
+        public SearchResult(Paging paging, IList<TDocument> documents)
+        {
+            _paging = paging;
+            _documents = documents;
+        }
+
+        public Paging Paging
+        {
+            get { return _paging; }
+        }
+
+        public IList<TDocument> Documents
+        {
+            get { return _documents; }
+        }
     }
 }
