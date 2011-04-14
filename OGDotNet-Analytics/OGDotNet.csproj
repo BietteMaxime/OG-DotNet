@@ -86,6 +86,7 @@
     <Compile Include="Mappedtypes\financial\analytics\LocalDateLabelledMatrix1D.cs" />
     <Compile Include="Builders\CurrencyMatrixBuilder.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixValue.cs" />
+    <Compile Include="Mappedtypes\financial\Security\bond\BondSecurity.cs" />
     <Compile Include="Mappedtypes\math\surface\ConstantDoublesSurface.cs" />
     <Compile Include="Mappedtypes\financial\model\volatility\surface\VolatilitySurface.cs" />
     <Compile Include="Mappedtypes\Master\AbstractDocument.cs" />
