@@ -11,7 +11,7 @@ using OGDotNet.Mappedtypes.Id;
 namespace OGDotNet.Mappedtypes.Master.Security
 {
     /// <summary>
-    /// TODO: kill these with the .proto replacement
+    /// TODO DOTNET-5: kill these with the .proto replacement
     /// </summary>
     public class ManageableSecurity : Core.Security.Security
     {
