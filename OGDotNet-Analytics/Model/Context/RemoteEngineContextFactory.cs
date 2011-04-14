@@ -162,10 +162,6 @@ namespace OGDotNet.Model.Context
             {
                 return e.Response is HttpWebResponse && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.MethodNotAllowed;
             }
-            catch (Exception)
-            {
-                return false;
-            }
         }
         #endregion
     }
