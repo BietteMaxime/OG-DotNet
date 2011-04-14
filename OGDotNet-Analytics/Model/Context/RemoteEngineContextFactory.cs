@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using Fudge;
+using OGDotNet.Mappedtypes;
 
 namespace OGDotNet.Model.Context
 {
@@ -22,8 +23,10 @@ namespace OGDotNet.Model.Context
         private readonly string _configId;
         private readonly RestTarget _rootRest;
 
-        private readonly string _activeMQSpec;
-        private readonly IDictionary<string, Uri> _serviceUris;
+        //NOTE: don't do the blocking init in the constructor
+        private readonly Lazy<IFudgeFieldContainer> _configMessage;
+        private readonly Lazy<IDictionary<string, Uri>> _serviceUrisLazy;
+        private readonly Lazy<string> _activeMQSpecLazy;
 
         public RemoteEngineContextFactory(OpenGammaFudgeContext fudgeContext, Uri rootUri, string configId)
         {
@@ -33,16 +36,24 @@ namespace OGDotNet.Model.Context
             _rootRest = new RestTarget(_fudgeContext, rootUri);
 
 
-            var configsMsg = _rootRest.Resolve("configuration").GetFudge();
-            var configMsg = (IFudgeFieldContainer)configsMsg.GetByName(_configId).Value;
+            _configMessage = new Lazy<IFudgeFieldContainer>(GetConfigMessage);
+            _activeMQSpecLazy = new Lazy<string>(() => _configMessage.Value.GetValue<string>("activeMQ"));
+            _serviceUrisLazy = new Lazy<IDictionary<string, Uri>>(() => GetServiceUris(_configMessage.Value));
+        }
 
-            _activeMQSpec = configMsg.GetValue<string>("activeMQ");
-            _serviceUris = GetServiceUris(configMsg);
+        private IFudgeFieldContainer GetConfigMessage()
+        {
+            var msg = _rootRest.Resolve("configuration").GetFudge().GetMessage(_configId);
+            if (msg==null)
+            {
+                throw new OpenGammaException("Missing config "+_configId);
+            }
+            return msg;
         }
 
         public RemoteEngineContext CreateRemoteEngineContext()
         {
-            return new RemoteEngineContext(_fudgeContext, _rootUri, _activeMQSpec, _serviceUris);
+            return new RemoteEngineContext(_fudgeContext, _rootUri, _activeMQSpecLazy.Value, _serviceUrisLazy.Value);
         }
 
         #region ConfigReading

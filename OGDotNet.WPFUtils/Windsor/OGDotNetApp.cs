@@ -21,6 +21,7 @@ namespace OGDotNet.WPFUtils.Windsor
     public class OGDotNetApp : Application
     {
         public static readonly DependencyProperty OGContextProperty = DependencyProperty.RegisterAttached("OGContext", typeof(RemoteEngineContext), typeof(Control), new FrameworkPropertyMetadata { Inherits = true });
+        public static readonly DependencyProperty OGContextFactoryProperty = DependencyProperty.RegisterAttached("OGContextFactory", typeof(RemoteEngineContextFactory), typeof(Control), new FrameworkPropertyMetadata { Inherits = true });
 
         private readonly WindsorContainer _container;
 
@@ -29,6 +30,13 @@ namespace OGDotNet.WPFUtils.Windsor
             get
             {
                 return _container.Resolve<RemoteEngineContext>();
+            }
+        }
+        public RemoteEngineContextFactory OGContextFactory
+        {
+            get
+            {
+                return _container.Resolve<RemoteEngineContextFactory>();
             }
         }
 
@@ -44,8 +52,9 @@ namespace OGDotNet.WPFUtils.Windsor
             Style windowStyle = new Style(typeof(Window));
 
 
-            windowStyle.Setters.Add(new Setter(OGContextProperty,
-                new Binding("OGContext") { Source = this }));
+            windowStyle.Setters.Add(new Setter(OGContextProperty, new Binding("OGContext") { Source = this }));
+            windowStyle.Setters.Add(new Setter(OGContextFactoryProperty, new Binding("OGContextFactory") { Source = this }));
+
             
             FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), 
                 new FrameworkPropertyMetadata { DefaultValue = windowStyle }

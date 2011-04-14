@@ -21,5 +21,13 @@ namespace OGDotNet.WPFUtils.Windsor
                 return (RemoteEngineContext) Dispatcher.Invoke((Func<object>) ( ()=> GetValue(OGDotNetApp.OGContextProperty)));
             }
         }
+        protected RemoteEngineContextFactory OGContextFactory
+        {
+            get
+            {
+                return (RemoteEngineContextFactory)Dispatcher.Invoke((Func<object>)(() => GetValue(OGDotNetApp.OGContextFactoryProperty)));
+            }
+        }
+
     }
 }

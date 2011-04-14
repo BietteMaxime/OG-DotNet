@@ -8,7 +8,6 @@
 
 using System;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,26 +36,34 @@ namespace OGDotNet.AnalyticsViewer.View
 
         private void Window_Loaded(object sender, RoutedEventArgs args)
         {
-            try
+            if (OGContext == null)
             {
-                Title = string.Format("OGDotNet ({0})", OGContext.RootUri);
-
-
-                _remoteViewProcessor = OGContext.ViewProcessor;
-                var viewNames = _remoteViewProcessor.ViewNames;
-                _remoteSecuritySource = OGContext.SecuritySource;
-                viewSelector.DataContext = viewNames;
-
-                WindowLocationPersister.InitAndPersistPosition(this, Settings);
-
-                var viewToSelect = viewNames.Where(v => Settings.PreviousViewName == v).FirstOrDefault();
-                viewSelector.SelectedItem = viewToSelect;
-            }
-            catch (WebException e)
-            {
-                MessageBox.Show(e.ToString(), "Failed to connect to server");
+                try
+                {
+                    OGContextFactory.CreateRemoteEngineContext();
+                    throw new ArgumentException("Unexpectedly succeeded this time");
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString(), "Failed to connect to server");
+                }
+                
                 Close();
+                return;
             }
+
+            Title = string.Format("OGDotNet ({0})", OGContext.RootUri);
+
+
+            _remoteViewProcessor = OGContext.ViewProcessor;
+            var viewNames = _remoteViewProcessor.ViewNames;
+            _remoteSecuritySource = OGContext.SecuritySource;
+            viewSelector.DataContext = viewNames;
+
+            WindowLocationPersister.InitAndPersistPosition(this, Settings);
+
+            var viewToSelect = viewNames.Where(v => Settings.PreviousViewName == v).FirstOrDefault();
+            viewSelector.SelectedItem = viewToSelect;
         }
 
 
