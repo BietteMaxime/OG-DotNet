@@ -206,11 +206,12 @@ namespace OGDotNet.Mappedtypes.engine.value
             {
                 return;
             }
-            if (this is FiniteValueProperties)
+            var finite = this as FiniteValueProperties;
+            if (finite != null)
             {
                 var withMessage = new FudgeMsg();
 
-                foreach (var property in ((FiniteValueProperties)this).PropertyValues)
+                foreach (var property in finite.PropertyValues)
                 {
                     if (property.Value == null)
                     {

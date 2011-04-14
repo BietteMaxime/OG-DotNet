@@ -122,12 +122,13 @@ namespace OGDotNet.Mappedtypes.Id
             {
                 throw new ArgumentNullException("obj");
             }
-            if (!(obj is UniqueIdentifier))
+            var uniqueIdentifier = obj as UniqueIdentifier;
+            if (uniqueIdentifier == null)
             {
                 throw new ArgumentException(string.Format("Unexpected type {0}", obj.GetType()), "obj");
             }
 
-            return CompareTo((UniqueIdentifier) obj);
+            return CompareTo(uniqueIdentifier);
         }
 
         #region auto generated equality
