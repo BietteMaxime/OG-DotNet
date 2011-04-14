@@ -163,44 +163,12 @@ namespace OGDotNet.Model.Context
             }
             catch (WebException e)
             {
-                if (e.Response is HttpWebResponse && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.MethodNotAllowed)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return e.Response is HttpWebResponse && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.MethodNotAllowed;
             }
             catch (Exception)
             {
                 return false;
             }
-        }
-
-        private static IEnumerable<string> GetPotentialUris(IFudgeFieldContainer configMsg, string serviceId)
-        {
-            var userDataField = (FudgeMsg)configMsg.GetByName(serviceId).Value;
-
-            var uris = new List<string>();
-            foreach (var field in userDataField.GetAllFields())
-            {
-                switch (field.Name)
-                {
-                    case "type":
-                        if (!"Uri".Equals((string)field.Value))
-                        {
-                            throw new ArgumentOutOfRangeException();
-                        }
-                        break;
-                    case "uri":
-                        uris.Add((string)field.Value);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            return uris;
         }
 
         #endregion
