@@ -54,7 +54,6 @@ namespace OGDotNet.Model
             return new FudgeSerializer(this, new SerializationTypeMap(this, _fudgeSurrogateSelector));
         }
 
-
         /// <remarks>
         /// NOTE: There's all sorts of bugs with this if the context changes.
         ///         We're largely saved by the fact that we only cache Surrogates we found, not the failure to find one

@@ -5,7 +5,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -37,11 +36,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         const double GraphOffset = 0.4;
         const int ProjectedCurveSize = 400;
 
-
         private readonly DispatcherTimer _timer;
 
         private bool _haveInitedData;
-
 
         public VolatilitySurfaceCell()
         {
@@ -97,7 +94,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 binding.Converter = new ValueToColorConverter();
                 textBlockStyle.Setters.Add(new Setter(BackgroundProperty, binding));
 
-
                 detailsList.Columns.Add(new DataGridTextColumn
                                      {
                                          Width = 60,
@@ -136,7 +132,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             _timer.IsEnabled = true;
         }
 
-
         private void detailsButton_Checked(object sender, RoutedEventArgs e)
         {
             InitTableData();
@@ -171,8 +166,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             mainViewport.Children.Add(groupModel);
         }
 
-
-
         /// <summary>
         /// NOTE: these graphs are not on the same axis as the surface, since they are to scale
         /// </summary>
@@ -194,11 +187,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             _xSliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = ZRange, StrokeThickness = 5.0, ShowName = false };
             var brush = new VisualBrush(_xSliceCurveControl);
 
-
             var material = new DiffuseMaterial(brush);
 
             var normal = new Vector3D(1, 0, 0);
-
 
             var mesh = new MeshGeometry3D
             {
@@ -230,7 +221,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                         }
             };
 
-
             return new GeometryModel3D(mesh, material) { BackMaterial = material };
         }
 
@@ -243,7 +233,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             var material = new DiffuseMaterial(brush);
 
             var normal = new Vector3D(0, -1, 0);
-
 
             var mesh = new MeshGeometry3D
                            {
@@ -275,11 +264,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                         }
                            };
 
-
             return new GeometryModel3D(mesh, material) { BackMaterial = material };
         }
-
-
 
         private static GeometryModel3D BuildBaseModel(GeometryModel3D buildSurfaceModel)
         {
@@ -345,7 +331,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                               EndPoint = new Point(1, 0)
                                           };
 
-
             const int bands = 2;
             for (int i = 0; i < bands; i++)
             {
@@ -355,7 +340,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
 
             var diffuseMaterial = new DiffuseMaterial(linearGradientBrush);
-
 
             // Points
             if (ToScale)
@@ -485,14 +469,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             return new GeometryModel3D(mesh, diffuseMaterial) { BackMaterial = diffuseMaterial };
         }
 
-
         private static Vector3D CalculateNormal(Point3D p0, Point3D p1, Point3D p2)
         {
             var v0 = new Vector3D(p1.X - p0.X, p1.Y - p0.Y, p1.Z - p0.Z);
             var v1 = new Vector3D(p2.X - p1.X, p2.Y - p1.Y, p2.Z - p1.Z);
             return Vector3D.CrossProduct(v0, v1);
         }
-
 
         private static double GetScaledValue(Tenor t)
         {
@@ -503,7 +485,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             get { return (VolatilitySurfaceData)DataContext; }
         }
-
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -530,10 +511,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             var xs = Surface.Xs.ToList();
             var ys = Surface.Ys.ToList();
 
-
             double xScale = 1.0 / (xs.Count - 1);
             double yScale = 1.0 / (ys.Count - 1);
-
 
             HitTestResult hitTestResult = VisualTreeHelper.HitTest(mainViewport, position);
             if (hitTestResult != null && hitTestResult.VisualHit != null)
@@ -601,7 +580,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             _xSliceCurveControl.DataContext = slice;
             rightCurveControl.DataContext = slice;
         }
-
 
         private void detailsList_CurrentCellChanged(object sender, EventArgs e)
         {

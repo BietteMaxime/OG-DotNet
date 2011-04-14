@@ -17,7 +17,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-
         private readonly UniqueIdentifier _targetId;
         private Dictionary<string, object> _columns = new Dictionary<string, object>();
 

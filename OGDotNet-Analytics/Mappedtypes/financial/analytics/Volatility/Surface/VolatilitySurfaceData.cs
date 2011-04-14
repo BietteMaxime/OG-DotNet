@@ -96,7 +96,6 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
             string specificationName = ffc.GetValue<string>("specificationName");
             string interpolatorName = ffc.GetValue<string>("interpolatorName");
 
-
             IList<Tenor> xs = ffc.GetAllByName("xs").Select(deserializer.FromField<Tenor>).ToList();
             IList<Tenor> ys = ffc.GetAllByName("ys").Select(deserializer.FromField<Tenor>).ToList();
 

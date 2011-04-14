@@ -33,7 +33,6 @@ namespace OGDotNet.Tests.OGDotNet.Utils
             Assert.Equal(1, r.Item2);
         }
 
-
         private static Tuple<long, long> CountDisposedCalls(Action<IDisposable> action)
         {
             long manual = 0;

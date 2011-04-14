@@ -31,7 +31,6 @@ namespace OGDotNet.Mappedtypes.Core.Common
             return new Currency(isoCode.ToUpper(CultureInfo.CreateSpecificCulture("en")));
         }
 
-
         public static Currency Create(UniqueIdentifier isoCode)
         {
             if (isoCode.Scheme != IdentificationDomain)

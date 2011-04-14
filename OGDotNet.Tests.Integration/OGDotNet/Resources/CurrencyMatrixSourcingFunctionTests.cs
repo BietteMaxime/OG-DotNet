@@ -31,7 +31,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(1.0, conversionRate);
         }
 
-
         [Fact]
         public void CanGetNonIdentity()
         {

@@ -22,7 +22,6 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
             _marketValue = marketValue;
         }
 
-
         public double MarketValue
         {
             get

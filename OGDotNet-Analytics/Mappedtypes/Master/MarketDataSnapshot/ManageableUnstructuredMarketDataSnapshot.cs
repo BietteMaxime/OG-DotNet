@@ -159,8 +159,6 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             return _values.GetEnumerator();
         }
 
-
-
         public static ManageableUnstructuredMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new ManageableUnstructuredMarketDataSnapshot(

@@ -31,7 +31,6 @@ namespace OGDotNet.Mappedtypes.Id
             return new UniqueIdentifier(scheme, value, version);
         }
 
-
         public static UniqueIdentifier Of(Identifier id)
         {
             return new UniqueIdentifier(id.Scheme, id.Value, null);
@@ -195,7 +194,6 @@ namespace OGDotNet.Mappedtypes.Id
             string schema = null; 
             string value = null;
             string version = null;
-
 
             foreach (var field in ffc.GetAllFields())
             {

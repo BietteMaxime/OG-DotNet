@@ -38,7 +38,6 @@ namespace OGDotNet.AnalyticsViewer.View
             var portfolioView = (GridView)portfolioTable.View;
             var primitivesView = (GridView)primitivesTable.View;
 
-
             TrimColumns(portfolioView.Columns, 1);
             TrimColumns(primitivesView.Columns, 1);
 

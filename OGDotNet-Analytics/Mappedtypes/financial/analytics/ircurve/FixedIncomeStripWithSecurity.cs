@@ -26,7 +26,6 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         private readonly Identifier _securityIdentifier;
         private readonly Core.Security.Security _security;
 
-
         private FixedIncomeStripWithSecurity(StripInstrumentType instrumentType, Tenor tenor, Tenor resolvedTenor, int nthFutureFromTenor, DateTimeOffset maturity, Identifier securityIdentifier, Core.Security.Security security)
         {
             _instrumentType = instrumentType;
@@ -72,7 +71,6 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         {
             get { return _security; }
         }
-
 
         public static FixedIncomeStripWithSecurity FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {

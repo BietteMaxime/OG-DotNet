@@ -55,7 +55,6 @@
       </Rules>
       <AnalyzerSettings>
         <StringProperty Name="CompanyName">OpenGamma Inc. and the OpenGamma group of companies</StringProperty>
-        <StringProperty Name="Copyright"></StringProperty>
       </AnalyzerSettings>
     </Analyzer>
     <Analyzer AnalyzerId="Microsoft.StyleCop.CSharp.OrderingRules">
@@ -121,11 +120,6 @@
           </RuleSettings>
         </Rule>
         <Rule Name="CurlyBracketsMustNotBeOmitted">
-          <RuleSettings>
-            <BooleanProperty Name="Enabled">False</BooleanProperty>
-          </RuleSettings>
-        </Rule>
-        <Rule Name="CodeMustNotContainMultipleBlankLinesInARow">
           <RuleSettings>
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>

@@ -30,7 +30,6 @@ namespace OGDotNet.Builders
         private const int LabelOrdinal = 2;
         private const int ValueOrdinal = 3;
 
-
         public LabelledMatrix1DBuilder(FudgeContext context, Type type) : base(context, type)
         {
         }

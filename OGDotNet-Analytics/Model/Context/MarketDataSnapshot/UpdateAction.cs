@@ -40,7 +40,6 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             _updateActions = updateActions.ToList();
         }
 
-
         public IEnumerable<Warning> Warnings
         {
             get { return _warnings; }

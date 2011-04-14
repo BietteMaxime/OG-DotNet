@@ -37,7 +37,6 @@ namespace OGDotNet.Model.Context
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RawMarketDataSnapper _rawMarketDataSnapper;
 
-
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, RemoteView view, DateTimeOffset valuationTime, CancellationToken ct)
         {
             var rawMarketDataSnapper = new RawMarketDataSnapper(context, view);
@@ -65,7 +64,6 @@ namespace OGDotNet.Model.Context
         {
             get { return _rawMarketDataSnapper.View; }
         }
-
 
         public UpdateAction PrepareUpdate(CancellationToken ct = default(CancellationToken))
         {
@@ -255,7 +253,6 @@ namespace OGDotNet.Model.Context
             return EnumUtils<MarketDataValueType, ComputationTargetType>.ConvertTo(target.Type);
         }
         #endregion
-
 
         protected override void Dispose(bool disposing)
         {

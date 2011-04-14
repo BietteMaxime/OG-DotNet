@@ -27,7 +27,6 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             _values = values;
         }
 
-
         public DateTimeOffset ValuationTime
         {
             get { return _valuationTime; }
@@ -58,7 +57,6 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         {
             _values.RemoveAllOverrides();
         }
-
 
         public static ManageableYieldCurveSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {

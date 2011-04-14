@@ -121,14 +121,11 @@ namespace OGDotNet.Mappedtypes.engine.view
 
             var currency = ffc.GetValue<Currency>("currency");
 
-
             var minDeltaCalcPeriod = ffc.GetLong("minDeltaCalcPeriod");
             var maxDeltaCalcPeriod = ffc.GetLong("maxDeltaCalcPeriod");
 
             var minFullCalcPeriod = ffc.GetLong("fullDeltaCalcPeriod");
             var maxFullCalcPeriod = ffc.GetLong("maxFullCalcPeriod");
-
-
 
             var calculationConfigurationsByName = ffc.GetAllByName("calculationConfiguration")
                                                     .Select(deserializer.FromField<ViewCalculationConfiguration>)
@@ -165,7 +162,6 @@ namespace OGDotNet.Mappedtypes.engine.view
             WriteNullableLongField(message, "maxDeltaCalcPeriod", MaxDeltaCalcPeriod);
             WriteNullableLongField(message, "fullDeltaCalcPeriod", MinFullCalcPeriod);
             WriteNullableLongField(message, "maxFullCalcPeriod", MinFullCalcPeriod);
-
 
             foreach (var calcConfig in CalculationConfigurationsByName.Values)
             {

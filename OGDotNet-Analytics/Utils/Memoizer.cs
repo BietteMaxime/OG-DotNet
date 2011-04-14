@@ -39,7 +39,6 @@ namespace OGDotNet.Utils
             _func = func;
         }
 
-
         public TValue Get(TArg arg)
         {
             return _values.GetOrAdd(arg, _func);

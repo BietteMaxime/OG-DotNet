@@ -134,7 +134,6 @@ namespace OGDotNet.Builders
                     {
                         Currency target = Currency.Create(field2.Name);
 
-
                         if (field2.Value is IFudgeFieldContainer)
                         {
                             CurrencyMatrixValue value = deserializer.FromField<CurrencyMatrixValue.CurrencyMatrixValueRequirement>(field2);

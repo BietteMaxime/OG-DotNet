@@ -56,7 +56,6 @@ namespace OGDotNet.Model
             return new RestTarget(_fudgeContext, serviceUri);
         }
 
-
         public RestTarget Create(object reqObj)
         {
             FudgeSerializer fudgeSerializer = _fudgeContext.GetSerializer();
@@ -73,14 +72,11 @@ namespace OGDotNet.Model
             }
         }
 
-
         public TRet Get<TRet>()
         {
             FudgeMsg retMsg = GetFudge();
             return retMsg == null ? default(TRet) : Deserialize<TRet>(retMsg);
         }
-
-
 
         public FudgeMsg GetFudge()
         {
@@ -120,9 +116,6 @@ namespace OGDotNet.Model
             }
         }
 
-
-
-
         private FudgeMsg PostFudge(FudgeMsg reqMsg)
         {
             return FudgeRequestImpl("POST", reqMsg);
@@ -147,10 +140,6 @@ namespace OGDotNet.Model
                 }
             });
         }
-
-
-
-
 
         public void Delete()
         {
@@ -232,7 +221,6 @@ namespace OGDotNet.Model
                 return (HttpWebResponse)request.GetResponse();
             });
         }
-
 
         private HttpWebRequest GetBasicRequest()
         {

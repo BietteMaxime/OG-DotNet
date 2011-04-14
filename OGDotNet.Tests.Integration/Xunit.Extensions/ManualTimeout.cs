@@ -69,7 +69,6 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                 thread.Resume();
 #pragma warning restore 612,618
 
-
                 thread.Abort();
                 ret = default(T);
                 return false;

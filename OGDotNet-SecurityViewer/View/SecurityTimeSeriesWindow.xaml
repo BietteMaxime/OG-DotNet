@@ -14,7 +14,6 @@
             <RowDefinition Height="100" />
         </Grid.RowDefinitions>
 
-
         <Canvas Grid.Row="0"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="canvas">
 
             <chartingToolkit:Chart VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="chart" 
@@ -26,7 +25,6 @@
             </chartingToolkit:Chart>
             <Rectangle Visibility="Hidden" Fill="Gray" Stroke="Blue" Name="zoomRectangle" StrokeThickness="1" IsHitTestVisible="False" Opacity="0.5" />
         </Canvas>
-
 
         <TextBlock Grid.Row="1" Name="detailsBlock" />
     </Grid>

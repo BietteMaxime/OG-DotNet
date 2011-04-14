@@ -43,8 +43,6 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
 
                 object hydratedObject;
 
-
-
                 if (mappedtype != null)
                 {
                     hydratedObject = Deserialize(fudgeSerializer, mappedtype, fudgeEncodedStreamReader);
@@ -53,7 +51,6 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
                 {
                     hydratedObject = fudgeSerializer.Deserialize(fudgeEncodedStreamReader);
                 }
-
 
                 fudgeSerializer.Serialize(fudgeEncodedStreamWriter, hydratedObject);
 

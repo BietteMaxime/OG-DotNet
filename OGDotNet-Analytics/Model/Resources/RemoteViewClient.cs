@@ -112,7 +112,6 @@ namespace OGDotNet.Model.Resources
             }
         }
 
-
         public ViewComputationResultModel RunOneCycle(DateTimeOffset valuationTime)
         {
             return RunOneCycle((long) (valuationTime - DateTimeNumericEncoding.Epoch).TotalMilliseconds);

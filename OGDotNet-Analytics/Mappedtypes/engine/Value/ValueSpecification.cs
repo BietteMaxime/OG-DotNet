@@ -42,7 +42,6 @@ namespace OGDotNet.Mappedtypes.engine.Value
             get { return _targetSpecification; }
         }
 
-
         public static ValueSpecification FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var valueName = ffc.GetValue<string>("valueName");

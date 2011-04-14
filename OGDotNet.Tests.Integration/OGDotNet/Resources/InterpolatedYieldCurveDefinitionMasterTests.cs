@@ -89,7 +89,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
 
-
                 AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
             }
         }
@@ -105,7 +104,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.True(argumentException.Message.StartsWith("Not found"));
             }
         }
-
 
         [Fact]
         public void CanAddAndGetRegions()
@@ -160,7 +158,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
 
-
                 AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
                 interpolatedYieldCurveDefinitionMaster.Remove(yieldCurveDefinitionDocument.UniqueId);
 
@@ -176,7 +173,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             YieldCurveDefinitionDocument roundtrippedDoc = interpolatedYieldCurveDefinitionMaster.Get(yieldCurveDefinitionDocument.UniqueId);
 
             YieldCurveDefinition roundTripped = roundtrippedDoc.Definition;
-
 
             var yieldCurveDefinition = yieldCurveDefinitionDocument.Definition;
             Assert.Equal(yieldCurveDefinition.Name, roundTripped.Name);

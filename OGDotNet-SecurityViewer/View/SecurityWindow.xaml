@@ -15,7 +15,6 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-
         <StackPanel Grid.Row="0" Grid.Column="0" Height="26" Name="stackPanel2" Width="auto" Orientation="Horizontal">
                 <Label HorizontalAlignment="Right" Height="Auto" Width="Auto" Content="Name:"/>
                 <TextBox Height="26" Name="nameBox" Width="100" Text="*" TextChanged="nameBox_TextChanged" />
@@ -26,7 +25,6 @@
 
             <ListView.View >
                 <GridView AllowsColumnReorder="true">
-
 
                     <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Path=Name}" />
                     <GridViewColumn Header="Type" Width="Auto" DisplayMemberBinding="{Binding Path=SecurityType}" />

@@ -10,7 +10,6 @@ using System;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.Id;
 
-
 namespace OGDotNet.Model.Resources
 {
     public class InterpolatedYieldCurveDefinitionMaster
@@ -31,7 +30,6 @@ namespace OGDotNet.Model.Resources
         {
             return PostDefinition(document, "addOrUpdate");
         }
-
 
         private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
         {

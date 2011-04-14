@@ -73,7 +73,6 @@ namespace OGDotNet.Model.Resources
                         token.ThrowIfCancellationRequested();
                         call(temporaryTopic.TopicName);
 
-
                         var waitHandles = new[] { mre, token.WaitHandle };
                         while (WaitHandle.WaitAny(waitHandles) != 0)
                         {
@@ -127,7 +126,6 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("hasAccessToLiveData", Tuple.Create("userIp", user.IpAddress), Tuple.Create("userName", user.UserName)).Post();
         }
 
-
         public IEnumerable<ValueRequirement> GetRequiredLiveData()
         {
             var target = _rest.Resolve("requiredLiveData");
@@ -146,8 +144,6 @@ namespace OGDotNet.Model.Resources
             var reponse = target.GetFudge();
             return 1 == (sbyte)reponse.GetByName("value").Value;
         }
-
-
 
         public override string ToString()
         {

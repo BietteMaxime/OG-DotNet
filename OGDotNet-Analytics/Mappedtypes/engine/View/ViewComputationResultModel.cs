@@ -34,7 +34,6 @@ namespace OGDotNet.Mappedtypes.engine.View
             _configurationMap = configurationMap;
         }
 
-
         public FudgeDateTime ValuationTime { get { return _inputDataTimestamp; } }
         public FudgeDateTime ResultTimestamp { get { return _resultTimestamp; } }
         public string ViewName { get { return _viewName; } }

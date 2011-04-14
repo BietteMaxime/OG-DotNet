@@ -68,7 +68,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var historicalDataSource = Context.HistoricalDataSource;
 
-
             var remoteSecurityMaster = Context.SecurityMaster;
             var searchResult = remoteSecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 10));
             foreach (var securityDocument in searchResult.Documents)
@@ -82,7 +81,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanGetSeriesForSomeFuturesAlt()
         {
             var historicalDataSource = Context.HistoricalDataSource;
-
 
             var remoteSecurityMaster = Context.SecurityMaster;
             var searchResult = remoteSecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 10));

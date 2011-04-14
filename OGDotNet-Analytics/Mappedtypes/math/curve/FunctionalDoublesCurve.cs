@@ -51,7 +51,6 @@ namespace OGDotNet.Mappedtypes.math.curve
             get { return true; }
         }
 
-
         public override double GetYValue(double x)
         {
             return _function(x);

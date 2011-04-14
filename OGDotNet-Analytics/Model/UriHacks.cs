@@ -44,8 +44,6 @@ namespace OGDotNet.Model
 
             object uriSyntaxFlags = FlagsField.GetValue(uriParser);
 
-
-
             // Clear the flag that we don't want
             uriSyntaxFlags = (int)uriSyntaxFlags & ~UnEscapeDotsAndSlashes;
 

@@ -143,7 +143,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         enumerator.MoveNext();
                         Assert.NotNull(enumerator.Current);
 
-
                         var valuation = enumerator.Current.ValuationTime.ToDateTimeOffset();
                         var result = enumerator.Current.ResultTimestamp.ToDateTimeOffset();
                         var now = DateTimeOffset.Now;
@@ -156,7 +155,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 }
             }
         }
-
 
         [Theory]
         [TypedPropertyData("FastTickingViews")]
@@ -255,7 +253,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-
         static readonly Memoizer<string, ViewComputationResultModel> GetOneResultCache = new Memoizer<string, ViewComputationResultModel>(GetOneResult);
         private static ViewComputationResultModel GetOneResult(string viewName)
         {
@@ -288,7 +285,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotNull(viewResultEntry.ComputedValue.Value);
                 AssertDefinitionContains(view, viewResultEntry);
             }
-
 
             var countActualValues = viewComputationResultModel.AllResults.Count();
 

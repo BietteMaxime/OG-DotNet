@@ -24,7 +24,6 @@ namespace OGDotNet.Mappedtypes.financial.model.interestrate.curve
             _curve = curve;
         }
 
-
         public double GetInterestRate(double t)
         {
             return Curve.GetYValue(t);

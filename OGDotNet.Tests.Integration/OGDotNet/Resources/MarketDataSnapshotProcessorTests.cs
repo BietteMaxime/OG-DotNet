@@ -64,11 +64,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-
         private const string ViewName = "Equity Option Test View 1";
-
-
-
 
         [Xunit.Extensions.Fact]
         public void CanOverrideYieldCurveValuesEqView()

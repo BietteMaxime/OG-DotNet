@@ -51,8 +51,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             snapshotMaster.Remove(marketDataSnapshotDocument.UniqueId);
         }
 
-
-
         [Xunit.Extensions.Fact]
         public void CanAddAndSearch()
         {
@@ -61,8 +59,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var name = TestUtils.GetUniqueName();
 
             var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));
-
-
 
             var searchResult = snapshotMaster.Search(name, new PagingRequest(1, 10));
             Assert.NotEmpty(searchResult.Documents);
@@ -120,9 +116,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             snapshotMaster.Remove(afterUpdate);
         }
-
-
-
 
         [Xunit.Extensions.Fact(Skip = "This isn't a test, but it's quite useful")]
         public void CanRemoveAllMine()
@@ -182,7 +175,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     ) { Name = name });
         }
 
-
         private static void AssertEqual(MarketDataSnapshotDocument retDoc, MarketDataSnapshotDocument marketDataSnapshotDocument)
         {
             Assert.NotNull(retDoc.UniqueId);
@@ -199,8 +191,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(mSnapshot.BasisViewName, retSnapshot.BasisViewName);
 
             AssertEqual(mSnapshot.GlobalValues, retSnapshot.GlobalValues);
-
-
 
             AssertEqual(mSnapshot.YieldCurves, retSnapshot.YieldCurves, AssertEqual);
 

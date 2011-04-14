@@ -37,11 +37,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                                                {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)}
                                                                            };
 
-
         private static readonly Memoizer<string, Type, DataTemplate> TemplateMemoizer = new Memoizer<string, Type, DataTemplate>(BuildTemplate);
 
         private static readonly Memoizer<Type, Func<object, string, object>> IndexerMemoizer = new Memoizer<Type, Func<object, string, object>>(BuildIndexer);
-
 
         public CellTemplateSelector(string column, GridViewColumn gridViewColumn)
         {
@@ -61,9 +59,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             SetCellTemplate(item);
         }
-
-
-
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -95,13 +90,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             var type = cellValue.GetType();
 
-
             var template = TemplateMemoizer.Get(_column, type);
 
             _gridViewColumn.CellTemplateSelector = null;
             _gridViewColumn.CellTemplate = template;
         }
-
 
         private static DataTemplate BuildTemplate(string column, Type type)
         {

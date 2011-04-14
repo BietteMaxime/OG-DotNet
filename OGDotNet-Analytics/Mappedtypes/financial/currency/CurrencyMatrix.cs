@@ -11,7 +11,6 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
-
 namespace OGDotNet.Mappedtypes.financial.currency
 {
     [FudgeSurrogate(typeof(CurrencyMatrixBuilder))]

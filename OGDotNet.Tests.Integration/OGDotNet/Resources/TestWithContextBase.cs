@@ -38,7 +38,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             _testViewFactory = testViewFactory;
         }
 
-
         protected RemoteView CreateView(ValueRequirement valueRequirement)
         {
             return _testViewFactory.CreateView(Context, valueRequirement);

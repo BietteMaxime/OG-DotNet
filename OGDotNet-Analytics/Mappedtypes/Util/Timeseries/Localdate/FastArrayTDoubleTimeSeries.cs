@@ -27,7 +27,6 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast.integer
             _values = values;
         }
 
-
         protected static Tuple<DateTimeNumericEncoding, T[], double[]> FromFudgeMsgImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var encoding = deserializer.FromField<DateTimeNumericEncoding>(ffc.GetByOrdinal(1));

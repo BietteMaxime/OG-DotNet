@@ -87,7 +87,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     Assert.Equal(1, count);
                 }
 
-
                 remoteClient.ViewDefinitionRepository.RemoveViewDefinition(vd.Name);
             }
         }
@@ -122,7 +121,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 }
             }
         }
-
 
         private static void AssertEquivalent(ViewDefinition a, ViewDefinition b)
         {

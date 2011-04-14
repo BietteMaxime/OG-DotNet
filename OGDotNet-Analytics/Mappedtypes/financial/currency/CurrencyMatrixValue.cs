@@ -28,7 +28,6 @@ namespace OGDotNet.Mappedtypes.financial.currency
             return new CurrencyMatrixFixed(fixedValue);
         }
 
-
         public class CurrencyMatrixFixed : CurrencyMatrixValue
         {
             private readonly double _fixedValue;

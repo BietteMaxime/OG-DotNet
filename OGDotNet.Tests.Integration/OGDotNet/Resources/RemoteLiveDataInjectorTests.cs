@@ -38,9 +38,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             liveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId)));
         }
 
-
-
-
         [Fact]
         public void ValueChangesResults()
         {

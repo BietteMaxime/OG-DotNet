@@ -51,11 +51,9 @@ namespace OGDotNet.WPFUtils.Windsor
             //Give all of the windows the opportunity to pick up context
             Style windowStyle = new Style(typeof(Window));
 
-
             windowStyle.Setters.Add(new Setter(OGContextProperty, new Binding("OGContext") { Source = this }));
             windowStyle.Setters.Add(new Setter(OGContextFactoryProperty, new Binding("OGContextFactory") { Source = this }));
 
-            
             FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), 
                 new FrameworkPropertyMetadata { DefaultValue = windowStyle }
                 );

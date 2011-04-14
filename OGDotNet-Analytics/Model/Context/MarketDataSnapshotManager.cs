@@ -25,12 +25,10 @@ namespace OGDotNet.Model.Context
             _remoteEngineContext = remoteEngineContext;
         }
 
-
         public MarketDataSnapshotProcessor GetProcessor(ManageableMarketDataSnapshot snapshot)
         {
             return new MarketDataSnapshotProcessor(_remoteEngineContext, snapshot);
         }
-
 
         public MarketDataSnapshotProcessor CreateFromView(string viewName, CancellationToken ct = default(CancellationToken))
         {

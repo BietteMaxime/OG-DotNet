@@ -25,8 +25,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-
-
         private readonly ViewDefinition _viewDefinition;
         private readonly IPortfolio _portfolio;
         private readonly ISecuritySource _remoteSecuritySource;
@@ -48,13 +46,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             _primitiveColumns = GetPrimitiveColumns(viewDefinition).ToList();
         }
 
-
         public void Update(ViewComputationResultModel results, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             _portfolioRows = BuildPortfolioRows(results).ToList();
             InvokePropertyChanged("PortfolioRows");
-
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -95,7 +91,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             return rowsChanged;
         }
 
-
         public bool HavePortfolioRows { get { return PortfolioColumns.Count > 0; } }
         public bool HavePrimitiveRows { get { return PrimitiveColumns.Count > 0; } }
 
@@ -118,7 +113,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         {
             get { return _primitiveRows.Values.OrderBy(r => r.TargetName).ToList(); }
         }
-
 
         private void InvokePropertyChanged(string propertyName)
         {
@@ -163,14 +157,12 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             return string.Format("{0}/{1}", configuration, valueName);
         }
 
-
         private IEnumerable<TreeNode> GetPortfolioNodes()
         {
             //We cache these in order to cache security names
             _portfolioNodes = _portfolioNodes ?? GetPortfolioNodesInner(_portfolio.Root, 0).ToList();
             return _portfolioNodes;
         }
-
 
         private IEnumerable<TreeNode> GetPortfolioNodesInner(PortfolioNode node, int depth)
         {
@@ -189,7 +181,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 }
             }
         }
-
 
         private class TreeNode
         {
@@ -257,7 +248,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                         }
                     }
                 }
-
 
                 var treeName = string.Format("{0} {1}", new string('-', position.Depth), position.Name);
                 yield return new PortfolioRow(treeName, values, position.Security);

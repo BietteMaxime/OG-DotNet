@@ -23,10 +23,8 @@ namespace OGDotNet.Mappedtypes.engine.value
 
         public string ValueName { get { return _valueName; } }
 
-
         public ValueProperties Constraints { get { return _constraints; } }
         public ComputationTargetSpecification TargetSpecification{get { return _targetSpecification; }}
-
 
         public ValueRequirement(string valueName, ComputationTargetSpecification targetSpecification) : this(valueName, targetSpecification, ValueProperties.Create())
         {
@@ -51,9 +49,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             }
             return true;
         }
-
-
-
 
         public static ValueRequirement FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {

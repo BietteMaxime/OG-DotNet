@@ -36,7 +36,6 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
             get { return _name; }
         }
 
-
         public static YieldCurveKey FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new YieldCurveKey(ffc.GetValue<Currency>("currency"), ffc.GetString("name"));

@@ -51,7 +51,6 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             get { return _strips; }
         }
 
-        
         public static InterpolatedYieldCurveSpecificationWithSecurities FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new InterpolatedYieldCurveSpecificationWithSecurities(

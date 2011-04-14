@@ -126,16 +126,12 @@ namespace OGDotNet.SecurityViewer.View
             }
         }
 
-
-
-
         private void BeginInvokeOnIdle(Action act)
         {
             Dispatcher.BeginInvoke(act, DispatcherPriority.ContextIdle);
         }
 
         #region zooming
-
 
         private Point _startDragPosition;
 
@@ -167,7 +163,6 @@ namespace OGDotNet.SecurityViewer.View
 
             var endDragPosition = e.GetPosition(canvas);
 
-
             bool moving = (Keyboard.Modifiers & ModifierKeys.Control) == 0;
             if (moving)
             {
@@ -181,7 +176,6 @@ namespace OGDotNet.SecurityViewer.View
             {
                 if (zoomRectangle.Visibility != Visibility.Visible)
                     return;
-
 
                 Canvas.SetLeft(zoomRectangle, Math.Min(endDragPosition.X, _startDragPosition.X));
                 Canvas.SetTop(zoomRectangle, Math.Min(endDragPosition.Y, _startDragPosition.Y));
@@ -214,7 +208,6 @@ namespace OGDotNet.SecurityViewer.View
                 if (zoomRectangle.Visibility != Visibility.Visible)
                     return;
 
-
                 SetXRange(_startDragPosition, endDragPosition);
                 SetYRange(_startDragPosition, endDragPosition);
             }
@@ -226,7 +219,6 @@ namespace OGDotNet.SecurityViewer.View
         {
             ResetDrag();
         }
-
 
         private void chart_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -246,8 +238,6 @@ namespace OGDotNet.SecurityViewer.View
             chart.RenderTransform = null;
         }
 
-
-
         private void chart_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.LeftButton != MouseButtonState.Released || e.RightButton != MouseButtonState.Released)
@@ -256,7 +246,6 @@ namespace OGDotNet.SecurityViewer.View
                 return;
 
             bool moving = (Keyboard.Modifiers & ModifierKeys.Control) == 0;
-
 
             var centrePoint = e.GetPosition(canvas);
             var centre = GetChartPosition(centrePoint);
@@ -362,7 +351,6 @@ namespace OGDotNet.SecurityViewer.View
         {
             return x1 > x2 ? x2 : x1;
         }
-
 
         #endregion
     }

@@ -39,7 +39,6 @@ namespace OGDotNet.Model
                             throw new ArgumentException("Too many exception types");
                         string type = types[0];
 
-
                         string[] messages = e.Response.Headers.GetValues("X-OpenGamma-ExceptionMessage");
 
                         if (messages == null)
@@ -94,7 +93,6 @@ namespace OGDotNet.Model
                 return BuildGenericException(javaType, message);
             }
         }
-
 
         private static Exception BuildGenericException(string javaType, string message = null)
         {

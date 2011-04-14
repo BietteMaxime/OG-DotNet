@@ -27,7 +27,6 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         private readonly ManageableUnstructuredMarketDataSnapshot _globalValues;
 
-
         private readonly Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> _yieldCurves;
 
         //TODO private Map<Triple<string, CurrencyUnit, CurrencyUnit>, FXVolatilitySurfaceSnapshot> _fxVolatilitySurfaces;
@@ -43,7 +42,6 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             _yieldCurves = yieldCurves;
             _uniqueId = uniqueId;
         }
-
 
         public UniqueIdentifier UniqueId
         {
@@ -124,7 +122,6 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                );
         }
 
-
         public static ManageableMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc,
                                                                 IFudgeDeserializer deserializer)
         {
@@ -139,10 +136,8 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
                 ) { Name = ffc.GetString("name") };
 
-
             return manageableMarketDataSnapshot;
         }
-
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
@@ -159,7 +154,6 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
 
         public void InvokePropertyChanged(PropertyChangedEventArgs e)
         {

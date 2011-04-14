@@ -54,7 +54,6 @@ namespace OGDotNet.AnalyticsViewer.View
 
             Title = string.Format("OGDotNet ({0})", OGContext.RootUri);
 
-
             _remoteViewProcessor = OGContext.ViewProcessor;
             var viewNames = _remoteViewProcessor.GetViewNames();
             _remoteSecuritySource = OGContext.SecuritySource;
@@ -65,7 +64,6 @@ namespace OGDotNet.AnalyticsViewer.View
             var viewToSelect = viewNames.Where(v => Settings.PreviousViewName == v).FirstOrDefault();
             viewSelector.SelectedItem = viewToSelect;
         }
-
 
         private void viewSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -114,7 +112,6 @@ namespace OGDotNet.AnalyticsViewer.View
                 cancellationToken.ThrowIfCancellationRequested();
                 var viewDefinition = remoteViewResource.Definition;
 
-                
                 var resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource);
                 Invoke(delegate { resultsTableView.DataContext = resultsTable; }, cancellationToken);
                 
@@ -158,7 +155,6 @@ namespace OGDotNet.AnalyticsViewer.View
         {
             Dispatcher.Invoke((Action)(() => { statusText.Text = msg; }));
         }
-
 
         private void Window_Closed(object sender, EventArgs e)
         {

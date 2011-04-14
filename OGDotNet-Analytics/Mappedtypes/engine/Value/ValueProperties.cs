@@ -32,7 +32,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             return new FiniteValueProperties(propertyValues);
         }
 
-
         private class EmptyValueProperties : ValueProperties
         {
             public static readonly EmptyValueProperties Instance = new EmptyValueProperties();
@@ -152,9 +151,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             }
         }
 
-
-
-
         public static ValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var properties = new Dictionary<string, HashSet<string>>();
@@ -258,7 +254,6 @@ namespace OGDotNet.Mappedtypes.engine.value
                 a.Add("without", withoutMessage);
             }
         }
-
 
         public bool IsSatisfiedBy(ValueProperties properties)
         {

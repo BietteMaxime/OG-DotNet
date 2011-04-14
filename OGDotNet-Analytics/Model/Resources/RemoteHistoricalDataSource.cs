@@ -42,7 +42,6 @@ namespace OGDotNet.Model.Resources
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
-
         public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, string configDocName = null)
         {
             return GetHistoricalData(identifiers, default(DateTimeOffset), configDocName);
@@ -92,7 +91,6 @@ namespace OGDotNet.Model.Resources
             }
             return Tuple.Create(UniqueIdentifier.Parse(uniqueIdString), _fudgeContext.GetSerializer().Deserialize<ILocalDateDoubleTimeSeries>(timeSeriesField));
         }
-
 
         private static string EncodeDate(DateTimeOffset currentDate)
         {

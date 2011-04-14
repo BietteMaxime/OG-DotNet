@@ -23,7 +23,6 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast
             DATE_EPOCH_DAYS
         }
 
-
         private DateTimeNumericEncoding(Encoding encoding)
         {
             _encoding = encoding;

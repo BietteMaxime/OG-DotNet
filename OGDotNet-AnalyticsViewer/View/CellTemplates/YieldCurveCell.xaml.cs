@@ -23,7 +23,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             InitializeComponent();
         }
 
-
         private YieldCurve YieldCurve
         {
             get { return DataContext as YieldCurve; }

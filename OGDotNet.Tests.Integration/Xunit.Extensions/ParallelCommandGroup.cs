@@ -23,17 +23,11 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             return group.WrappedCommands;
         }
 
-
-
-
         private readonly List<ITestCommand> _innerCommands = new List<ITestCommand>();
         private readonly IList<ParallelCommand> _wrappedCommands;
 
-
         private readonly Dictionary<ITestCommand, Func<MethodResult>> _actions = new Dictionary<ITestCommand, Func<MethodResult>>();
         private readonly Dictionary<ITestCommand, IAsyncResult> _results = new Dictionary<ITestCommand, IAsyncResult>();
-
-
 
         private ParallelCommandGroup(IEnumerable<ITestCommand> commands)
         {
@@ -45,7 +39,6 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
         {
             get { return _wrappedCommands; }
         }
-
 
         readonly FieldInfo _methodInfoField = typeof(TestCommand).GetField("testMethod", BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic);
 

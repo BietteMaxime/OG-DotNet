@@ -42,7 +42,6 @@ namespace OGDotNet.Model.Context
         internal const string YieldCurveSpecValueReqName = "YieldCurveSpec";
         private const string MarketValueReqName = "Market_Value";
 
-
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly RemoteView _view;
 
@@ -84,13 +83,10 @@ namespace OGDotNet.Model.Context
             return resultByKey.ToDictionary(g => g.Key, g => GetYieldCurveSnapshot(g.Value, tempResults));
         }
 
-
         private static YieldCurveKey GetYieldCurveKey(InterpolatedYieldCurveSpecificationWithSecurities spec)
         {
             return new YieldCurveKey(spec.Currency, spec.Name);
         }
-
-
 
         private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecificationWithSecurities spec, ViewComputationResultModel tempResults)
         {
@@ -105,7 +101,6 @@ namespace OGDotNet.Model.Context
             IEnumerable<ValueRequirement> reqs = yieldCurveSpec.Strips.Select(s => new ValueRequirement(MarketValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Of(s.SecurityIdentifier))));
             return GetUnstructuredData(tempResults, reqs);
         }
-
 
         private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredData(ViewComputationResultModel tempResults, IEnumerable<ValueRequirement> requiredDataSet)
         {
@@ -133,7 +128,6 @@ namespace OGDotNet.Model.Context
             }
         }
 
-
         private static MarketDataValueType GetMarketType(ComputationTargetType type)
         {
             return EnumUtils<ComputationTargetType, MarketDataValueType>.ConvertTo(type);
@@ -152,7 +146,6 @@ namespace OGDotNet.Model.Context
             ct.ThrowIfCancellationRequested();
             var viewComputationResultModel = RunOneCycle(allDataViewDefn, valuationTime, overrides);
 
-
             return viewComputationResultModel;
         }
 
@@ -160,7 +153,6 @@ namespace OGDotNet.Model.Context
         {
             return GetAllResults(valuationTime, new Dictionary<ValueRequirement, double>(), ct);
         }
-
 
         private IEnumerable<ValueRequirement> GetYieldCurveSpecReqs(RemoteView view, DateTimeOffset valuationTime)
         {//TODO this is sloooow

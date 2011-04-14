@@ -9,7 +9,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace OGDotNet.Model.Resources
 {
     public class RemoteViewProcessor

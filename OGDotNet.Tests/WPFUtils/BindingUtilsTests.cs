@@ -23,7 +23,6 @@ namespace OGDotNet.Tests.WPFUtils
             Assert.Equal(BindingMode.OneWay, indexerBinding.Mode);
         }
 
-
         [Theory]
         [InlineData("")]
         [InlineData(" ")]
@@ -49,7 +48,6 @@ namespace OGDotNet.Tests.WPFUtils
 
             var boundClass = new BoundClass {DataContext = new ReflectingIndexer()};
             boundClass.SetBinding(TextBlock.TextProperty, indexerBinding);
-
 
             return boundClass.BoundValue;
         }

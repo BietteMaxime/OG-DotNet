@@ -35,7 +35,6 @@ namespace OGDotNet.Model.Context
             _configId = configId;
             _rootRest = new RestTarget(_fudgeContext, rootUri);
 
-
             _configMessage = new Lazy<IFudgeFieldContainer>(GetConfigMessage);
             _activeMQSpecLazy = new Lazy<string>(() => _configMessage.Value.GetValue<string>("activeMQ"));
             _serviceUrisLazy = new Lazy<IDictionary<string, Uri>>(() => GetServiceUris(_configMessage.Value));
@@ -74,7 +73,6 @@ namespace OGDotNet.Model.Context
                 {
                     continue;
                 }
-
 
                 var uris = new List<string>();
                 foreach (var field in ((IFudgeFieldContainer)userDataField.Value).GetAllFields())
@@ -117,7 +115,6 @@ namespace OGDotNet.Model.Context
                     asyncRequests.Add(new Tuple<string, HttpWebRequest, IAsyncResult>(serviceId, webRequest, result));
                 }
             }
-
 
             while (asyncRequests.Any())
             {

@@ -25,7 +25,6 @@ namespace OGDotNet.Model.Resources
         private readonly MQTemplate _mqTemplate;
         private readonly OpenGammaFudgeContext _fudgeContext;
 
-
         readonly BlockingQueueWithCancellation<IMessage> _messageQueue = new BlockingQueueWithCancellation<IMessage>();
 
         public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate, string topicName, Action stopAction)
@@ -33,9 +32,7 @@ namespace OGDotNet.Model.Resources
             _fudgeContext = fudgeContext;
             _stopAction = stopAction;
 
-
             _mqTemplate = mqTemplate;
-
 
             _connection = _mqTemplate.CreateConnection();
             _session = _connection.CreateSession();

@@ -95,7 +95,6 @@ namespace OGDotNet.Mappedtypes.engine.View
         {
             var fudgeSerializer = new FudgeSerializer(s.Context);
 
-
             calcConfigMsg.Add("name", Name);
             foreach (var securityTypeRequirements in PortfolioRequirementsBySecurityType)
             {
@@ -112,7 +111,6 @@ namespace OGDotNet.Mappedtypes.engine.View
 
                 calcConfigMsg.Add("portfolioRequirementsBySecurityType", securityTypeRequirementsMsg);
             }
-
 
             foreach (var specificRequirement in SpecificRequirements)
             {

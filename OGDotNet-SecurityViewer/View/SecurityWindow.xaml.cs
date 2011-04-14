@@ -25,13 +25,11 @@ namespace OGDotNet.SecurityViewer.View
     {
         long _cancellationToken = long.MinValue;
 
-
         public SecurityWindow()
         {
             InitializeComponent();
             itemGrid.Items.Clear();
         }
-
 
         private RemoteSecurityMaster SecurityMaster
         {
@@ -116,14 +114,11 @@ namespace OGDotNet.SecurityViewer.View
                 Update();
         }
 
-
-
         private void nameBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             if (IsLoaded)
                 Update();
         }
-
 
         private void nextPage_Click(object sender, RoutedEventArgs e)
         {
@@ -135,7 +130,6 @@ namespace OGDotNet.SecurityViewer.View
             CurrentPage = PageCount;
             Update();
         }
-
 
         private void grid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -159,14 +153,10 @@ namespace OGDotNet.SecurityViewer.View
             SecurityTimeSeriesWindow.ShowDialog(securities, this);
         }
 
-
-
-
         private void grid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             detailsGrid.DataContext = itemGrid.SelectedItem;
         }
-
 
         private void firstPage_Click(object sender, RoutedEventArgs e)
         {
