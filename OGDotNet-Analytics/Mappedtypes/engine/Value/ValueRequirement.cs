@@ -60,8 +60,8 @@ namespace OGDotNet.Mappedtypes.engine.value
             ValueProperties constraints = deserializer.FromField<ValueProperties>(ffc.GetByName("constraints")) ?? ValueProperties.Create();
 
             var computationTargetType = ffc.GetValue<string>("computationTargetType");
-            var computationTargetIdentifier = ffc.GetValue<UniqueIdentifier>("computationTargetIdentifier");
-            var targetSpec = new ComputationTargetSpecification(EnumBuilder<ComputationTargetType>.Parse(computationTargetType), computationTargetIdentifier);
+            var computationTargetIdentifier = ffc.GetValue<string>("computationTargetIdentifier");
+            var targetSpec = new ComputationTargetSpecification(EnumBuilder<ComputationTargetType>.Parse(computationTargetType), UniqueIdentifier.Parse(computationTargetIdentifier));
             var valueName = ffc.GetValue<string>("valueName");
 
             return new ValueRequirement(valueName, targetSpec, constraints);

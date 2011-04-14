@@ -33,9 +33,13 @@ namespace OGDotNet.Builders
         {
             var matrixImpl = new MatrixImpl();
 
-            matrixImpl.UniqueId = message.GetValue<UniqueIdentifier>(UniqueIDFieldName);
-            
-            IFudgeField field = message.GetByName(CrossConvertFieldName);
+            IFudgeField field = message.GetByName(UniqueIDFieldName);
+            if (field != null)
+            {
+                var uid = UniqueIdentifier.Parse((string)field.Value);
+                matrixImpl.UniqueId = uid;
+            }
+            field = message.GetByName(CrossConvertFieldName);
             if (field != null)
             {
                 var crossconvert = (FudgeMsg)field.Value;

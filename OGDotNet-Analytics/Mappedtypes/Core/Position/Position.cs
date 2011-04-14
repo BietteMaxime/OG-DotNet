@@ -43,11 +43,11 @@ namespace OGDotNet.Mappedtypes.Core.Position
 
         public static Position FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var id = ffc.GetValue<UniqueIdentifier>("identifier");
+            var id = ffc.GetValue<string>("identifier");
             var secKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
             var quant = ffc.GetValue<string>("quantity");
 
-            return new Position(id, long.Parse(quant), secKey);
+            return new Position(UniqueIdentifier.Parse(id), long.Parse(quant), secKey);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

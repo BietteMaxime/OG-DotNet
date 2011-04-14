@@ -7,18 +7,17 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position
 {
     public class PortfolioNode
     {
-        private readonly UniqueIdentifier _identifier;
+        private readonly string _identifier;
         private readonly string _name;
         private readonly IList<PortfolioNode> _subNodes;
         private readonly IList<Position> _positions;
 
-        public PortfolioNode(UniqueIdentifier identifier, string name, IList<PortfolioNode> subNodes, IList<Position> positions)
+        public PortfolioNode(string identifier, string name, IList<PortfolioNode> subNodes, IList<Position> positions)
         {
             _identifier = identifier;
             _name = name;
@@ -26,7 +25,7 @@ namespace OGDotNet.Mappedtypes.Core.Position
             _positions = positions;
         }
 
-        public UniqueIdentifier Identifier
+        public string Identifier
         {
             get { return _identifier; }
         }

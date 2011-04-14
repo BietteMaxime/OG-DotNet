@@ -13,8 +13,6 @@ using Castle.Core.Logging;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Serialization.Reflection;
-using Fudge.Types;
-using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model
@@ -34,17 +32,9 @@ namespace OGDotNet.Model
         {
             SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategy("OGDotNet.Mappedtypes", "com.opengamma"));
             SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
-            RegisterFieldTypes(TypeDictionary);
-
             _fudgeSurrogateSelector = new MemoizingFudgeSurrogateSelector(this);
 
-            
             _logger.Debug("Forced references to {0} types", ForcedReferences.Length);
-        }
-
-        private static void RegisterFieldTypes(FudgeTypeDictionary fudgeTypeDictionary)
-        {
-            fudgeTypeDictionary.AddType(new SecondaryFieldType<UniqueIdentifier, string>(StringFieldType.Instance, UniqueIdentifier.Parse, uid => uid.ToString()));
         }
 
         public FudgeSerializer GetSerializer()
