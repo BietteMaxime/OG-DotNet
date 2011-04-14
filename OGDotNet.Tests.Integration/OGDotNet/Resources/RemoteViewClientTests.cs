@@ -128,8 +128,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             view.Init();
             using (var remoteViewClient = view.CreateClient())
+            using (var cts = new CancellationTokenSource())
             {
-                var cts = new CancellationTokenSource();
                 var resultsEnum = remoteViewClient.GetResults(cts.Token);
 
                 using (var enumerator = resultsEnum.GetEnumerator())
@@ -260,8 +260,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             view.Init();
             using (var remoteViewClient = view.CreateClient())
+            using (var cts = new CancellationTokenSource())
             {
-                var cts = new CancellationTokenSource();
                 var resultsEnum = remoteViewClient.GetResults(cts.Token);
 
                 foreach (var viewComputationResultModel in resultsEnum)

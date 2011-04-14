@@ -128,7 +128,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact(Skip = "This isn't a test, but it's quite useful")]
         public void CanRemoveAll()
         {
-            string searchString = string.Format("*", GetType().Name);
+            const string searchString = "*";
 
             RemoveAll(searchString);
         }
