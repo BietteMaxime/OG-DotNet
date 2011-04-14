@@ -71,7 +71,10 @@ namespace OGDotNet.Model
             public override IFudgeSerializationSurrogate GetSurrogate(Type type, FudgeFieldNameConvention fieldNameConvention)
             {
                 var fudgeSerializationSurrogate = _memoizer.Get(type, fieldNameConvention);
-                Debug.Assert(fudgeSerializationSurrogate != null, "Returning a null surrogate may well expose our bugs");
+                if (fudgeSerializationSurrogate == null)
+                {
+                    throw new ArgumentException("Found a null surrogate for this type", "type"); // May expose our bugs
+                }
                 return fudgeSerializationSurrogate;
             }
 

@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Xunit.Sdk;
@@ -77,7 +76,10 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
 
             public override MethodResult Execute(object testClass)
             {
-                Debug.Assert(testClass == null, "We've double created our fixtures");
+                if (testClass != null)
+                {
+                    throw new ArgumentException("We've double created our fixtures", "testClass");
+                }
                 return _parallelCommandGroup.Execute(InnerCommand);
             }
 
