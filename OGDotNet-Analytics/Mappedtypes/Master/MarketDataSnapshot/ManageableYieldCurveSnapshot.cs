@@ -18,8 +18,8 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 {
     public class ManageableYieldCurveSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableYieldCurveSnapshot>
     {
-        private DateTimeOffset _valuationTime;
         private readonly ManageableUnstructuredMarketDataSnapshot _values;
+        private DateTimeOffset _valuationTime;
 
         public ManageableYieldCurveSnapshot(ManageableUnstructuredMarketDataSnapshot values, DateTimeOffset valuationTime)
         {

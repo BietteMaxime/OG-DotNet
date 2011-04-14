@@ -50,9 +50,9 @@ namespace OGDotNet.SecurityViewer.View
 
         private IEnumerable<Security> Securities
         {
-            get { return (IEnumerable<Security>) DataContext; }
+            get { return (IEnumerable<Security>)DataContext; }
         }
-        
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Title = string.Join(",", Securities.Select(s => s.Name));
@@ -78,7 +78,7 @@ namespace OGDotNet.SecurityViewer.View
                 }
                 sb.AppendLine(new string('-', 12));
             }
-            
+
             detailsBlock.Text = sb.ToString();
         }
 
@@ -88,11 +88,11 @@ namespace OGDotNet.SecurityViewer.View
             {
                 var security = tuple.Item1;
                 var style = tuple.Item2;
-                
+
                 var historicalData = DataSource.GetHistoricalData(security.Identifiers);
-                if (historicalData.Item1 == null && historicalData.Item2 ==null)
+                if (historicalData.Item1 == null && historicalData.Item2 == null)
                     continue;
-                
+
                 var timeSeries = historicalData.Item2;
                 //NOTE: the chart understands DateTime, but not DateTime Offset
                 var tuples = timeSeries.Values.Select(t => Tuple.Create(t.Item1.LocalDateTime, t.Item2)).ToList();
@@ -120,10 +120,10 @@ namespace OGDotNet.SecurityViewer.View
 
                 chart.Series.Add(lineSeries);
             }
-           if (chart.Series.Count ==0)
-           {
-               chart.Title = "No time series found";
-           }
+            if (chart.Series.Count == 0)
+            {
+                chart.Title = "No time series found";
+            }
         }
 
 
@@ -154,7 +154,7 @@ namespace OGDotNet.SecurityViewer.View
                 zoomRectangle.Visibility = Visibility.Visible;
             }
 
-            chart_MouseMove(sender,e);
+            chart_MouseMove(sender, e);
         }
 
         private void chart_MouseMove(object sender, MouseEventArgs e)
@@ -186,7 +186,7 @@ namespace OGDotNet.SecurityViewer.View
                 Canvas.SetLeft(zoomRectangle, Math.Min(endDragPosition.X, _startDragPosition.X));
                 Canvas.SetTop(zoomRectangle, Math.Min(endDragPosition.Y, _startDragPosition.Y));
                 zoomRectangle.Width = Math.Abs(endDragPosition.X - _startDragPosition.X);
-                zoomRectangle.Height = Math.Abs(endDragPosition.Y - _startDragPosition.Y);    
+                zoomRectangle.Height = Math.Abs(endDragPosition.Y - _startDragPosition.Y);
             }
         }
 
@@ -214,7 +214,7 @@ namespace OGDotNet.SecurityViewer.View
                 if (zoomRectangle.Visibility != Visibility.Visible)
                     return;
 
-                
+
                 SetXRange(_startDragPosition, endDragPosition);
                 SetYRange(_startDragPosition, endDragPosition);
             }
@@ -271,12 +271,12 @@ namespace OGDotNet.SecurityViewer.View
             }
             else
             {
-                double mult = e.Delta/361.0;
+                double mult = e.Delta / 361.0;
                 XAxis.Minimum = XAxis.ActualMinimum.Value + Mult(centre.Item1 - XAxis.ActualMinimum.Value, mult);
                 XAxis.Maximum = XAxis.ActualMaximum.Value - Mult(XAxis.ActualMaximum.Value - centre.Item1, mult);
 
-                YAxis.Minimum = YAxis.ActualMinimum.Value + (centre.Item2 - YAxis.ActualMinimum.Value)*mult;
-                YAxis.Maximum = YAxis.ActualMaximum.Value - (YAxis.ActualMaximum.Value - centre.Item2)*mult;
+                YAxis.Minimum = YAxis.ActualMinimum.Value + (centre.Item2 - YAxis.ActualMinimum.Value) * mult;
+                YAxis.Maximum = YAxis.ActualMaximum.Value - (YAxis.ActualMaximum.Value - centre.Item2) * mult;
             }
         }
 
@@ -302,7 +302,7 @@ namespace OGDotNet.SecurityViewer.View
             var y1 = GetChartPosition(startPosition).Item2;
             var y2 = GetChartPosition(endPosition).Item2;
 
-            if (y1==y2)
+            if (y1 == y2)
             {
                 YAxis.Minimum = y1;
                 YAxis.Maximum = y1;
@@ -310,7 +310,7 @@ namespace OGDotNet.SecurityViewer.View
             else
             {
                 YAxis.Minimum = Math.Min(y1, y2);
-                YAxis.Maximum= Math.Max(y1, y2);
+                YAxis.Maximum = Math.Max(y1, y2);
             }
         }
 
@@ -318,7 +318,7 @@ namespace OGDotNet.SecurityViewer.View
         /// </summary>
         /// <param name="p">relative to <see cref="canvas"/></param>
         /// <returns></returns>
-        private Tuple<DateTime,double> GetChartPosition(Point p)
+        private Tuple<DateTime, double> GetChartPosition(Point p)
         {
             var yAxisY = canvas.TranslatePoint(p, YAxis).Y;
             var yMax = YAxis.ActualMaximum.Value;
@@ -334,14 +334,14 @@ namespace OGDotNet.SecurityViewer.View
             var xRange = xMax - xMin;
             var xScale = Mult(xRange, 1.0 / XAxis.ActualWidth);
 
-            var xScaled = xMin + Mult(xScale,xAxisX);
+            var xScaled = xMin + Mult(xScale, xAxisX);
 
             return Tuple.Create(xScaled, yScaled);
         }
 
         private DateTimeAxis XAxis
         {
-            get { return (DateTimeAxis)((LineSeries) chart.Series[0]).ActualIndependentAxis; }
+            get { return (DateTimeAxis)((LineSeries)chart.Series[0]).ActualIndependentAxis; }
         }
 
         private NumericAxis YAxis
@@ -362,7 +362,7 @@ namespace OGDotNet.SecurityViewer.View
         {
             return x1 > x2 ? x2 : x1;
         }
-        
+
 
         #endregion
     }

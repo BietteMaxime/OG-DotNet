@@ -55,7 +55,7 @@ namespace OGDotNet.Mappedtypes.engine.View
 
         internal ViewCalculationResultModel ApplyDelta(ViewCalculationResultModel delta)
         {
-            var dictionary = _map.Merge(delta._map, (a,b) => a.Merge(b));
+            var dictionary = _map.Merge(delta._map, (a, b) => a.Merge(b));
             return new ViewCalculationResultModel(dictionary);
         }
     }

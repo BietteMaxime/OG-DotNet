@@ -16,13 +16,13 @@ namespace OGDotNet.Utils
     {
         internal static IDictionary<TKey, TValue> Merge<TKey, TValue>(this IDictionary<TKey, TValue> dicta, IDictionary<TKey, TValue> dictb)
         {
-            return Merge(dicta, dictb, (a,b) => b);
+            return Merge(dicta, dictb, (a, b) => b);
         }
 
         internal static IDictionary<TKey, TValue> Merge<TKey, TValue>(this IDictionary<TKey, TValue> dicta, IDictionary<TKey, TValue> dictb, Func<TValue, TValue, TValue> merge)
         {
-            var ret = new Dictionary<TKey,TValue>();
-            
+            var ret = new Dictionary<TKey, TValue>();
+
             foreach (var key in dicta.Keys.Concat(dictb.Keys).Distinct())
             {
                 TValue aValue;
@@ -68,7 +68,7 @@ namespace OGDotNet.Utils
             Func<TKey, TValue, TRet> bOnlyProjecter
             )
         {
-            return ProjectStructure((Dictionary<TKey, TValue>) dictA, (Dictionary<TKey, TValue>) dictB, (ka, va, kb, vb) => matchingProjecter(ka, va, vb), aOnlyProjecter, bOnlyProjecter);
+            return ProjectStructure((Dictionary<TKey, TValue>)dictA, (Dictionary<TKey, TValue>)dictB, (ka, va, kb, vb) => matchingProjecter(ka, va, vb), aOnlyProjecter, bOnlyProjecter);
         }
     }
 }

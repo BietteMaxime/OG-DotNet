@@ -96,12 +96,12 @@ namespace OGDotNet.Mappedtypes.engine.View
             if (!string.IsNullOrEmpty(delta._viewName) && delta._viewName != _viewName)
                 throw new ArgumentException("View name changed unexpectedly");
 
-            var viewCalculationResultModels = _configurationMap.Merge(delta._configurationMap, (a,b) =>a.ApplyDelta(b));
+            var viewCalculationResultModels = _configurationMap.Merge(delta._configurationMap, (a, b) => a.ApplyDelta(b));
 
             return new ViewComputationResultModel(
-                _viewName, 
-                delta._inputDataTimestamp, 
-                delta._resultTimestamp, 
+                _viewName,
+                delta._inputDataTimestamp,
+                delta._resultTimestamp,
                 viewCalculationResultModels
                 );
         }

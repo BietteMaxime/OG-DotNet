@@ -100,11 +100,11 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add("currency",_currency.ISOCode);
+            a.Add("currency", _currency.ISOCode);
             if (_region != null)
-                a.Add("region",_region);
-            a.Add("name",_name);
-            a.Add("interpolatorName",_interpolatorName);
+                a.Add("region", _region);
+            a.Add("name", _name);
+            a.Add("interpolatorName", _interpolatorName);
             foreach (var fixedIncomeStrip in Strips)
             {
                 s.WriteInline(a, "strip", fixedIncomeStrip);

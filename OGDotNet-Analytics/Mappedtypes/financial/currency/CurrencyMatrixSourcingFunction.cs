@@ -21,13 +21,13 @@ namespace OGDotNet.Mappedtypes.financial.currency
             _matrix = matrix;
         }
 
-        public double GetConversionRate( Func<ValueRequirement,double> inputs, Currency source, Currency target)
+        public double GetConversionRate(Func<ValueRequirement, double> inputs, Currency source, Currency target)
         {
-            var currencyMatrixValue = _matrix.GetConversion(source,target);
+            var currencyMatrixValue = _matrix.GetConversion(source, target);
             if (currencyMatrixValue is CurrencyMatrixValue.CurrencyMatrixCross)
             {
-                var cross = (CurrencyMatrixValue.CurrencyMatrixCross)currencyMatrixValue ;
-                return GetConversionRate(inputs, source, cross.CrossCurrency)*GetConversionRate(inputs, cross.CrossCurrency, target);
+                var cross = (CurrencyMatrixValue.CurrencyMatrixCross)currencyMatrixValue;
+                return GetConversionRate(inputs, source, cross.CrossCurrency) * GetConversionRate(inputs, cross.CrossCurrency, target);
             }
             else if (currencyMatrixValue is CurrencyMatrixValue.CurrencyMatrixFixed)
             {

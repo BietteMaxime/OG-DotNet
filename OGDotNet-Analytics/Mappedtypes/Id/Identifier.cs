@@ -37,13 +37,13 @@ namespace OGDotNet.Mappedtypes.Id
 
         public static Identifier Of(string scheme, string value)
         {
-            return new Identifier(scheme,value);
+            return new Identifier(scheme, value);
         }
 
         public static Identifier Parse(string s)
         {
             string[] strings = s.Split(new[] { Separator }, StringSplitOptions.None);
-            return new Identifier(strings[0],strings[1]);
+            return new Identifier(strings[0], strings[1]);
         }
 
         public int CompareTo(Identifier other)
@@ -77,14 +77,14 @@ namespace OGDotNet.Mappedtypes.Id
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != typeof(Identifier)) return false;
-            return Equals((Identifier) obj);
+            return Equals((Identifier)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((_scheme != null ? _scheme.GetHashCode() : 0)*397) ^ (_value != null ? _value.GetHashCode() : 0);
+                return ((_scheme != null ? _scheme.GetHashCode() : 0) * 397) ^ (_value != null ? _value.GetHashCode() : 0);
             }
         }
 

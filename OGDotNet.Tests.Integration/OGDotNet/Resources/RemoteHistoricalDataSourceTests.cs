@@ -27,11 +27,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanGetATimeSeries()
         {
             var historicalDataSource = Context.HistoricalDataSource;
-            
+
             var end = DateTimeOffset.Now;
             var start = end - TimeSpan.FromDays(7);
 
-            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Of("Tss","3580"), start, false, end,true);
+            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Of("Tss", "3580"), start, false, end, true);
             AssertSane(series, start, end);
         }
 
@@ -42,7 +42,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var end = DateTimeOffset.Now;
 
-            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Of("Tss","3580"));
+            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Of("Tss", "3580"));
             AssertSane(series, end);
         }
 
@@ -70,7 +70,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
 
             var remoteSecurityMaster = Context.SecurityMaster;
-            var searchResult = remoteSecurityMaster.Search("*","FUTURE",new PagingRequest(1,10));
+            var searchResult = remoteSecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 10));
             foreach (var securityDocument in searchResult.Documents)
             {
                 var identifierBundle = securityDocument.Security.Identifiers;
@@ -89,11 +89,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             foreach (var securityDocument in searchResult.Documents)
             {
                 var identifierBundle = securityDocument.Security.Identifiers;
-                
-                var end = DateTimeOffset.Now.Date;
-                var start = end-TimeSpan.FromDays(3650);
 
-                var result = historicalDataSource.GetHistoricalData(identifierBundle,start, false, end, true);
+                var end = DateTimeOffset.Now.Date;
+                var start = end - TimeSpan.FromDays(3650);
+
+                var result = historicalDataSource.GetHistoricalData(identifierBundle, start, false, end, true);
                 AssertSane(result);
                 AssertSane(result.Item2, start, end);
             }
@@ -114,7 +114,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static void AssertSane(ILocalDateDoubleTimeSeries series, DateTimeOffset end)
         {
-            AssertSane(series,DateTimeOffset.FromFileTime(0),end);
+            AssertSane(series, DateTimeOffset.FromFileTime(0), end);
         }
 
         private static void AssertSane(ILocalDateDoubleTimeSeries series, DateTimeOffset start, DateTimeOffset end)

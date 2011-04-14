@@ -16,7 +16,7 @@ namespace OGDotNet.Utils
     {
         public static void NotEmpty<T>(IEnumerable<T> arg, string argName)
         {
-            NotNull(arg,argName);
+            NotNull(arg, argName);
             if (!arg.Any())
             {
                 throw new ArgumentException("Cannot be empty", argName);

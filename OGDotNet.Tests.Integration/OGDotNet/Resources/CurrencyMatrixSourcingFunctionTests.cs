@@ -28,9 +28,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             CurrencyMatrixSourcingFunction currencyMatrixSourcingFunction = GetFunction();
             var conversionRate = currencyMatrixSourcingFunction.GetConversionRate(GetValue, Currency.Create("USD"), Currency.Create("USD"));
-            Assert.Equal(1.0,conversionRate);
+            Assert.Equal(1.0, conversionRate);
         }
-        
+
 
         [Fact]
         public void CanGetNonIdentity()
@@ -44,7 +44,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var reciprocal = currencyMatrixSourcingFunction.GetConversionRate(GetValue, target, source);
             Assert.NotEqual(1.0, reciprocal);
 
-            Assert.InRange(conversionRate, 0.99 / reciprocal, 1.01 / reciprocal );
+            Assert.InRange(conversionRate, 0.99 / reciprocal, 1.01 / reciprocal);
         }
 
         private static CurrencyMatrixSourcingFunction GetFunction()
@@ -74,7 +74,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var remoteViewClient = remoteView.CreateClient();
                     var viewComputationResultModel = remoteViewClient.RunOneCycle(DateTimeOffset.Now);
 
-                    return (double) viewComputationResultModel["Default", req].Value;
+                    return (double)viewComputationResultModel["Default", req].Value;
                 }
                 finally
                 {

@@ -24,19 +24,19 @@ namespace OGDotNet.Tests.Integration
 {
     static class ValueAssertions
     {
-        public static readonly Memoizer<Type,MethodInfo> MethodCache = new Memoizer<Type, MethodInfo>(GetAppropriateMethod);
+        public static readonly Memoizer<Type, MethodInfo> MethodCache = new Memoizer<Type, MethodInfo>(GetAppropriateMethod);
         private static MethodInfo GetAppropriateMethod(Type t)
         {
             var enumerable = typeof(ValueAssertions)
                 .GetMethods()
-                .Where(m => m.ReturnType == typeof(void) 
+                .Where(m => m.ReturnType == typeof(void)
                     && m.GetParameters().Length == 1
-                    && m.GetParameters()[0].ParameterType!= typeof(object)
+                    && m.GetParameters()[0].ParameterType != typeof(object)
                     && m.GetParameters()[0].ParameterType.IsAssignableFrom(t)
                     )
                 .OrderByDescending(m => Preference(m.GetParameters()[0].ParameterType))
                 .ToList();
-            Assert.True(enumerable.Count>0, string.Format("Don't know how to check value of type {0}", t));
+            Assert.True(enumerable.Count > 0, string.Format("Don't know how to check value of type {0}", t));
             return enumerable.First();
         }
 
@@ -55,7 +55,7 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(object value)
         {
             Assert.NotNull(value);
-            MethodCache.Get(value.GetType()).Invoke(null, new[] {value});
+            MethodCache.Get(value.GetType()).Invoke(null, new[] { value });
         }
 
         public static void AssertSensibleValue(IEnumerable values)
@@ -125,10 +125,10 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(value);
 
-            AssertSensibleValue(value.Xs); 
+            AssertSensibleValue(value.Xs);
             AssertSensibleValue(value.Ys);
 
-            AssertSensibleValue(value.Xs.Select(value.GetXSlice)); 
+            AssertSensibleValue(value.Xs.Select(value.GetXSlice));
             AssertSensibleValue(value.Ys.Select(value.GetYSlice));
 
             var allPoints = value.Xs.Join(value.Ys, x => 1, y => 1, (x, y) => new Tuple<Tenor, Tenor>(x, y)).ToList();
@@ -136,7 +136,7 @@ namespace OGDotNet.Tests.Integration
             {
                 var x = xy.Item1;
                 var y = xy.Item2;
-                var d = value[x,y];
+                var d = value[x, y];
                 AssertSensibleValue(d);
             }
         }

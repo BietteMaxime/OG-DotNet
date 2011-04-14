@@ -20,7 +20,7 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast.integer
 
         protected FastArrayTDoubleTimeSeries(DateTimeNumericEncoding encoding, T[] times, double[] values)
         {
-            if (times.Length!= values.Length)
+            if (times.Length != values.Length)
                 throw new ArgumentException("Graph is not square");
             Encoding = encoding;
             Times = times;
@@ -28,13 +28,13 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast.integer
         }
 
 
-        protected static Tuple<DateTimeNumericEncoding, T[],double[]> FromFudgeMsgImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        protected static Tuple<DateTimeNumericEncoding, T[], double[]> FromFudgeMsgImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var encoding = deserializer.FromField<DateTimeNumericEncoding>(ffc.GetByOrdinal(1));
             var times = ffc.GetValue<T[]>(2);
             var values = ffc.GetValue<double[]>(3);
 
-            return Tuple.Create(encoding, times, values); 
+            return Tuple.Create(encoding, times, values);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

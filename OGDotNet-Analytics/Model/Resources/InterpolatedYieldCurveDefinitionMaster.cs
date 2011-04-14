@@ -24,14 +24,14 @@ namespace OGDotNet.Model.Resources
 
         public YieldCurveDefinitionDocument Add(YieldCurveDefinitionDocument document)
         {
-                return PostDefinition(document, "add");
+            return PostDefinition(document, "add");
         }
 
         public YieldCurveDefinitionDocument AddOrUpdate(YieldCurveDefinitionDocument document)
         {
             return PostDefinition(document, "addOrUpdate");
         }
-        
+
 
         private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
         {
@@ -52,7 +52,7 @@ namespace OGDotNet.Model.Resources
             var resp = _restTarget.Resolve("curves").Resolve(uniqueId.ToString()).Get<YieldCurveDefinitionDocument>();
             if (resp == null || resp.UniqueId == null || resp.Definition == null)
             {
-                throw new ArgumentException("Not found","uniqueId");
+                throw new ArgumentException("Not found", "uniqueId");
             }
             return resp;
         }

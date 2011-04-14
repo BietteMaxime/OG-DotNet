@@ -24,7 +24,8 @@ namespace OGDotNet.Model
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly Uri _serviceUri;
 
-        public RestTarget(OpenGammaFudgeContext fudgeContext, string serviceUri) :this(fudgeContext, new Uri(serviceUri))
+        public RestTarget(OpenGammaFudgeContext fudgeContext, string serviceUri)
+            : this(fudgeContext, new Uri(serviceUri))
         {
         }
         public RestTarget(OpenGammaFudgeContext fudgeContext, Uri serviceUri)
@@ -39,7 +40,7 @@ namespace OGDotNet.Model
                 return this;
             return Resolve(segments.First()).Resolve(segments.Skip(1).ToArray());
         }
-        public RestTarget Resolve(string method, params Tuple<string,string>[] queryParams)
+        public RestTarget Resolve(string method, params Tuple<string, string>[] queryParams)
         {
             var safeMethod = Uri.EscapeDataString(method);
             var uriBuilder = new UriBuilder(_serviceUri);
@@ -51,7 +52,7 @@ namespace OGDotNet.Model
             UriHacks.LeaveDotsAndSlashesEscaped(serviceUri);
             Debug.Assert(_serviceUri.IsBaseOf(serviceUri), "Failed to resolve uri sensibly");
             Debug.Assert(serviceUri.Segments.Last() == safeMethod, "Failed to resolve uri sensibly");
-            
+
             return new RestTarget(_fudgeContext, serviceUri);
         }
 
@@ -79,13 +80,13 @@ namespace OGDotNet.Model
             return retMsg == null ? default(TRet) : Deserialize<TRet>(retMsg);
         }
 
-        
-        
+
+
         public FudgeMsg GetFudge()
         {
             return FudgeRequestImpl();
         }
-        
+
         public TRet Post<TRet>(object reqObj)
         {
             FudgeMsg retMsg = Post(reqObj);
@@ -110,12 +111,12 @@ namespace OGDotNet.Model
             else if (_fudgeContext.TypeDictionary.GetByCSharpType(reqObj.GetType()) != null)
             {
                 var reqMsg = _fudgeContext.NewMessage(new Field("value", reqObj));
-                return PostFudge(reqMsg);    
+                return PostFudge(reqMsg);
             }
             else
             {
                 var reqMsg = _fudgeContext.GetSerializer().SerializeToMsg(reqObj);
-                return PostFudge(reqMsg);    
+                return PostFudge(reqMsg);
             }
         }
 
@@ -148,8 +149,8 @@ namespace OGDotNet.Model
         }
 
 
-        
-        
+
+
 
         public void Delete()
         {
@@ -159,7 +160,7 @@ namespace OGDotNet.Model
         public TRet Put<TRet>(object reqObj, string subMessageField)
         {
             var reqMsg = _fudgeContext.GetSerializer().SerializeToMsg(reqObj);
-            FudgeMsg retMsg  = FudgeRequestImpl("PUT", reqMsg);
+            FudgeMsg retMsg = FudgeRequestImpl("PUT", reqMsg);
             return ProjectSubMessage<TRet>(retMsg, subMessageField);
         }
 
@@ -200,7 +201,7 @@ namespace OGDotNet.Model
             {//See RestClient.getMsgEnvelope
                 if (e.Response == null)
                     throw;
-                var httpWebResponse = (HttpWebResponse) e.Response;
+                var httpWebResponse = (HttpWebResponse)e.Response;
                 switch (httpWebResponse.StatusCode)
                 {
                     case HttpStatusCode.NoContent://204
@@ -238,7 +239,7 @@ namespace OGDotNet.Model
             var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
             request.Accept = FudgeMimeType;
             request.ContentType = FudgeMimeType;
-            var uaAssembly = Assembly.GetEntryAssembly()  ?? Assembly.GetExecutingAssembly();
+            var uaAssembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             request.UserAgent = string.Format("{0}/{1}", uaAssembly.GetName().Name, uaAssembly.GetName().Version);
             return request;
         }

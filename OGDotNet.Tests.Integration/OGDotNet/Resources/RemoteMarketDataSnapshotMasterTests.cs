@@ -63,7 +63,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));
 
 
-            
+
             var searchResult = snapshotMaster.Search(name, new PagingRequest(1, 10));
             Assert.NotEmpty(searchResult.Documents);
             Assert.Equal(1, searchResult.Documents.Count);
@@ -94,7 +94,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(DateTimeOffset.MinValue, retDoc.CorrectionFromInstant);
 
             AssertEqual(retDoc, marketDataSnapshotDocument);
-            
+
             snapshotMaster.Remove(marketDataSnapshotDocument.UniqueId);
         }
 
@@ -112,7 +112,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(marketDataSnapshotDocument.UniqueId, marketDataSnapshotDocument.Snapshot.UniqueId);
 
             snapshotMaster.Update(marketDataSnapshotDocument);
-            
+
             UniqueIdentifier afterUpdate = marketDataSnapshotDocument.UniqueId;
             Assert.True(afterUpdate.IsVersioned);
             Assert.Equal("1", afterUpdate.Version);
@@ -121,8 +121,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             snapshotMaster.Remove(afterUpdate);
         }
 
-       
-       
+
+
 
         [Xunit.Extensions.Fact(Skip = "This isn't a test, but it's quite useful")]
         public void CanRemoveAllMine()
@@ -147,7 +147,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var searchResult = snapshotMaster.Search(searchString, PagingRequest.All);
             foreach (var dataSnapshotDocument in searchResult.Documents)
             {
-                snapshotMaster.Remove(dataSnapshotDocument.UniqueId);    
+                snapshotMaster.Remove(dataSnapshotDocument.UniqueId);
             }
         }
 
@@ -157,15 +157,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>
                     {
                         {
-                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("AA","XX")),
-                            new Dictionary<string,ValueSnapshot>
+                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("AA", "XX")),
+                            new Dictionary<string, ValueSnapshot>
                                 {
                                     {"SomeValue", new ValueSnapshot(12)}
                                 }
                             },
                         {
-                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("AA","YY")),
-                            new Dictionary<string,ValueSnapshot>
+                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("AA", "YY")),
+                            new Dictionary<string, ValueSnapshot>
                                 {
                                     {"SomeOtherValue", new ValueSnapshot(12){OverrideValue = 13}}
                                 }
@@ -173,8 +173,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     }
                 );
             return new MarketDataSnapshotDocument(null,
-                new ManageableMarketDataSnapshot("SomeView", 
-                    manageableUnstructuredMarketDataSnapshot, 
+                new ManageableMarketDataSnapshot("SomeView",
+                    manageableUnstructuredMarketDataSnapshot,
                     new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>
                         {
                             {new YieldCurveKey(Currency.Create("USD"), "Default"), new ManageableYieldCurveSnapshot(manageableUnstructuredMarketDataSnapshot, DateTimeOffset.Now)}
@@ -199,7 +199,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(mSnapshot.BasisViewName, retSnapshot.BasisViewName);
 
             AssertEqual(mSnapshot.GlobalValues, retSnapshot.GlobalValues);
-            
+
 
 
             AssertEqual(mSnapshot.YieldCurves, retSnapshot.YieldCurves, AssertEqual);

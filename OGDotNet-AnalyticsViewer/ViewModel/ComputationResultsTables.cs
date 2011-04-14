@@ -32,9 +32,9 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         private readonly ISecuritySource _remoteSecuritySource;
         private readonly List<string> _portfolioColumns;
         private readonly List<string> _primitiveColumns;
-        
+
         private readonly Dictionary<UniqueIdentifier, PrimitiveRow> _primitiveRows = new Dictionary<UniqueIdentifier, PrimitiveRow>();
-        
+
         private List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
 
         private IEnumerable<TreeNode> _portfolioNodes;
@@ -52,7 +52,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         public void Update(ViewComputationResultModel results, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            _portfolioRows= BuildPortfolioRows(results).ToList();
+            _portfolioRows = BuildPortfolioRows(results).ToList();
             InvokePropertyChanged("PortfolioRows");
 
 
@@ -67,7 +67,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         private bool MergeUpdatePrimitiveRows(ViewComputationResultModel results)
         {
             bool rowsChanged = false;
-            
+
             var targets = _viewDefinition.CalculationConfigurationsByName.SelectMany(conf => conf.Value.SpecificRequirements).Select(s => s.TargetSpecification.Uid).Distinct();
             foreach (var target in targets.Where(target => !_primitiveRows.ContainsKey(target)))
             {
@@ -83,7 +83,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                     foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r => r.TargetSpecification.Type == ComputationTargetType.Primitive && r.TargetSpecification.Uid == row.TargetId))
                     {
                         object result;
-                        if (results.TryGetValue(configuration.Key, valueReq, out result ))
+                        if (results.TryGetValue(configuration.Key, valueReq, out result))
                         {
                             values.Add(GetColumnHeading(configuration.Key, valueReq.ValueName), result);
                         }
@@ -116,7 +116,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         public List<PrimitiveRow> PrimitiveRows
         {
-            get { return _primitiveRows.Values.OrderBy(r=>r.TargetName).ToList(); }
+            get { return _primitiveRows.Values.OrderBy(r => r.TargetName).ToList(); }
         }
 
 
@@ -163,7 +163,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             return string.Format("{0}/{1}", configuration, valueName);
         }
 
-        
+
         private IEnumerable<TreeNode> GetPortfolioNodes()
         {
             //We cache these in order to cache security names
@@ -178,12 +178,12 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             foreach (var position in node.Positions)
             {
                 var security = _remoteSecuritySource.GetSecurity(position.SecurityKey);
-                yield return new TreeNode(position.Identifier, string.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security, depth+1);
+                yield return new TreeNode(position.Identifier, string.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security, depth + 1);
             }
 
             foreach (var portfolioNode in node.SubNodes)
             {
-                foreach (var treeNode in GetPortfolioNodesInner(portfolioNode, depth+1))
+                foreach (var treeNode in GetPortfolioNodesInner(portfolioNode, depth + 1))
                 {
                     yield return treeNode;
                 }
@@ -259,7 +259,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 }
 
 
-                var treeName = string.Format("{0} {1}",new string('-',position.Depth), position.Name);
+                var treeName = string.Format("{0} {1}", new string('-', position.Depth), position.Name);
                 yield return new PortfolioRow(treeName, values, position.Security);
             }
         }

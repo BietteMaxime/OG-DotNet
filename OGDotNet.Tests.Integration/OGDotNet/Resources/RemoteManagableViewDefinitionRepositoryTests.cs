@@ -49,7 +49,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var remoteClient = Context.CreateUserClient())
             {
-                ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName()+hardUriPart);
+                ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName() + hardUriPart);
 
                 Assert.Null(vd.UniqueID);
 
@@ -84,7 +84,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var viewComputationResultModel = remoteViewClient.RunOneCycle(DateTimeOffset.Now);
                     Assert.NotNull(viewComputationResultModel);
                     var count = viewComputationResultModel.AllResults.Where(spec => req.IsSatisfiedBy(spec.ComputedValue.Specification)).Count();
-                    Assert.Equal(1,count);
+                    Assert.Equal(1, count);
                 }
 
 
@@ -131,7 +131,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(a.MinDeltaCalcPeriod, b.MinDeltaCalcPeriod);
             Assert.Equal(a.MaxFullCalcPeriod, b.MaxFullCalcPeriod);
             Assert.Equal(a.MinFullCalcPeriod, b.MinFullCalcPeriod);
-            Assert.Equal(a.Name,b.Name);
+            Assert.Equal(a.Name, b.Name);
             Assert.Equal(a.DefaultCurrency, b.DefaultCurrency);
             AssertEquivalent(a.User, b.User);
             AssertEquivalent(a.ResultModelDefinition, b.ResultModelDefinition);
@@ -152,16 +152,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var aVal = aEntry.Value;
                 var bVal = b[aEntry.Key];
 
-                AssertEquivalent(aVal,bVal);
+                AssertEquivalent(aVal, bVal);
             }
         }
 
         private static void AssertEquivalent(ViewCalculationConfiguration aVal, ViewCalculationConfiguration bVal)
         {
-            Assert.Equal(aVal.Name,bVal.Name);
+            Assert.Equal(aVal.Name, bVal.Name);
             Assert.Equal(aVal.SpecificRequirements.ToList().Count, bVal.SpecificRequirements.ToList().Count);
 
-            var matchedRequirements = aVal.SpecificRequirements.Join(bVal.SpecificRequirements, a => a, b => b, (a,b)=>a, new ValueReqEquivalentComparer() );
+            var matchedRequirements = aVal.SpecificRequirements.Join(bVal.SpecificRequirements, a => a, b => b, (a, b) => a, new ValueReqEquivalentComparer());
             Assert.Equal(aVal.SpecificRequirements.Count(), matchedRequirements.Count());
 
             Assert.Equal(aVal.PortfolioRequirementsBySecurityType.ToList().Count, bVal.PortfolioRequirementsBySecurityType.ToList().Count);
@@ -169,23 +169,23 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private class ValueReqEquivalentComparer : IEqualityComparer<ValueRequirement>
         {
-                public bool Equals(ValueRequirement a, ValueRequirement b)
-                {
-                    return a.Constraints.Properties.Count == b.Constraints.Properties.Count &&
-                           a.TargetSpecification.Equals(b.TargetSpecification)
-                           &&
-                           a.ValueName.Equals(b.ValueName);
-                }
+            public bool Equals(ValueRequirement a, ValueRequirement b)
+            {
+                return a.Constraints.Properties.Count == b.Constraints.Properties.Count &&
+                       a.TargetSpecification.Equals(b.TargetSpecification)
+                       &&
+                       a.ValueName.Equals(b.ValueName);
+            }
 
-                public int GetHashCode(ValueRequirement obj)
-                {
-                    return obj.TargetSpecification.GetHashCode();
-                }
+            public int GetHashCode(ValueRequirement obj)
+            {
+                return obj.TargetSpecification.GetHashCode();
+            }
         }
 
         private static void AssertEquivalent(ResultModelDefinition a, ResultModelDefinition b)
         {
-            Assert.Equal(a.AggregatePositionOutputMode,b.AggregatePositionOutputMode);
+            Assert.Equal(a.AggregatePositionOutputMode, b.AggregatePositionOutputMode);
             Assert.Equal(a.PositionOutputMode, b.PositionOutputMode);
             Assert.Equal(a.PrimitiveOutputMode, b.PrimitiveOutputMode);
             Assert.Equal(a.SecurityOutputMode, b.SecurityOutputMode);
@@ -204,7 +204,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static ValueRequirement GetRequirement()
         {
-            return new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Of("BLOOMBERG_TICKER","BP/ LN Equity")));
+            return new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Of("BLOOMBERG_TICKER", "BP/ LN Equity")));
         }
     }
 }

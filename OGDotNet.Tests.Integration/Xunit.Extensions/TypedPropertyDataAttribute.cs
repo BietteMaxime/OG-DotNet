@@ -63,16 +63,16 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             }
             if (valueSource is IEnumerable<object[]>)
             {
-                return (IEnumerable<object[]>) valueSource;
+                return (IEnumerable<object[]>)valueSource;
             }
 
             var type = valueSource.GetType();
             var interfaces = type.GetInterfaces();
-            var ienumInterface = interfaces.Where(i => i.FullName.StartsWith("System.Collections.Generic.IEnumerable`1")).ToList(). FirstOrDefault();
+            var ienumInterface = interfaces.Where(i => i.FullName.StartsWith("System.Collections.Generic.IEnumerable`1")).ToList().FirstOrDefault();
             if (ienumInterface != null)
             {
                 var enumType = ienumInterface.GetGenericArguments().First();
-                switch (methodUnderTest.GetParameters().Length )
+                switch (methodUnderTest.GetParameters().Length)
                 {
                     case 1:
                         if (methodUnderTest.GetParameters()[0].ParameterType.IsAssignableFrom(enumType))
@@ -88,7 +88,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                 }
             }
 
-            throw new ArgumentException(string.Format("Property {0} on {1} did not return IEnumerable<object[]> or an IEnumerable<T>",_propertyName, declaringType.FullName));
+            throw new ArgumentException(string.Format("Property {0} on {1} did not return IEnumerable<object[]> or an IEnumerable<T>", _propertyName, declaringType.FullName));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace OGDotNet.Model.Context
         private readonly string _activeMQSpec;
         private readonly IDictionary<string, Uri> _serviceUris;
 
-        internal RemoteEngineContext(OpenGammaFudgeContext fudgeContext, Uri rootUri, string activeMQSpec, IDictionary<string,Uri> serviceUris)
+        internal RemoteEngineContext(OpenGammaFudgeContext fudgeContext, Uri rootUri, string activeMQSpec, IDictionary<string, Uri> serviceUris)
         {
             _fudgeContext = fudgeContext;
             _rootUri = rootUri;
@@ -41,14 +41,15 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteViewProcessor(_fudgeContext, new RestTarget(_fudgeContext,  _serviceUris["viewProcessor"]), _activeMQSpec);
+                return new RemoteViewProcessor(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["viewProcessor"]), _activeMQSpec);
             }
         }
 
         public IFinancialSecuritySource SecuritySource
         {
-            get {
-                return new RemoteSecuritySource(_fudgeContext, new RestTarget(_fudgeContext,  _serviceUris["securitySource"]));
+            get
+            {
+                return new RemoteSecuritySource(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["securitySource"]));
             }
         }
 
@@ -56,7 +57,7 @@ namespace OGDotNet.Model.Context
         {//TODO this is a hack, should I even be exposing this?
             get
             {
-                return new RemoteSecurityMaster(new RestTarget(_fudgeContext,  _serviceUris["securitySource"].ToString().Replace("securitySource", "securityMaster")));
+                return new RemoteSecurityMaster(new RestTarget(_fudgeContext, _serviceUris["securitySource"].ToString().Replace("securitySource", "securityMaster")));
             }
         }
 

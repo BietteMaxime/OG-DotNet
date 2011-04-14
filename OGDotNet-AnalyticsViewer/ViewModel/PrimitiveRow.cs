@@ -41,7 +41,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             get { return _columns.ContainsKey(key) ? _columns[key] : null; }
         }
 
-        internal void Update(Dictionary<string,object> newColumnValues)
+        internal void Update(Dictionary<string, object> newColumnValues)
         {
             _columns = newColumnValues;
             PropertyChangedEventHandler onPropertyChanged = PropertyChanged;

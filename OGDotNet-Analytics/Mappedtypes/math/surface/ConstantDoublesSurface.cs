@@ -14,7 +14,7 @@ namespace OGDotNet.Mappedtypes.math.surface
 {
     public class ConstantDoublesSurface
     {
-         private readonly double _z;
+        private readonly double _z;
         private readonly string _name;
 
         private ConstantDoublesSurface(double z, string name)
@@ -37,7 +37,7 @@ namespace OGDotNet.Mappedtypes.math.surface
         {
             double z = ffc.GetDouble("z value").Value;
             string name = ffc.GetString("surface name");
-            return new ConstantDoublesSurface(z,name);
+            return new ConstantDoublesSurface(z, name);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

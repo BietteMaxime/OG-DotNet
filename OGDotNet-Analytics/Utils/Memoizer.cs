@@ -11,11 +11,11 @@ using System.Collections.Concurrent;
 
 namespace OGDotNet.Utils
 {
-    public class Memoizer<TArg1,TArg2, TValue>
+    public class Memoizer<TArg1, TArg2, TValue>
     {
         private readonly Memoizer<Tuple<TArg1, TArg2>, TValue> _inner;
 
-        public Memoizer(Func<TArg1,TArg2,TValue> func)
+        public Memoizer(Func<TArg1, TArg2, TValue> func)
         {
             _inner = new Memoizer<Tuple<TArg1, TArg2>, TValue>(a => func(a.Item1, a.Item2));
         }
@@ -29,12 +29,12 @@ namespace OGDotNet.Utils
     /// <summary>
     /// TODO fix leak
     /// </summary>
-    public class Memoizer<TArg,TValue>
+    public class Memoizer<TArg, TValue>
     {
         private readonly ConcurrentDictionary<TArg, TValue> _values = new ConcurrentDictionary<TArg, TValue>();
         private readonly Func<TArg, TValue> _func;
 
-        public Memoizer(Func<TArg,TValue> func)
+        public Memoizer(Func<TArg, TValue> func)
         {
             _func = func;
         }

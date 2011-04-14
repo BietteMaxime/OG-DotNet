@@ -54,7 +54,7 @@ namespace OGDotNet.Builders
                         labelTypes.Enqueue((string)field.Value);
                         break;
                     case KeyOrdinal:
-                        keys.Add((TKey) field.Value);
+                        keys.Add((TKey)field.Value);
                         break;
                     case LabelOrdinal:
                         labelValues.Enqueue(field);
@@ -82,9 +82,9 @@ namespace OGDotNet.Builders
                     }
                     else
                     {//TODO work out whether this is right (and fast enough) in the general case
-                        var typeMapper = (IFudgeTypeMappingStrategy) Context.GetProperty(ContextProperties.TypeMappingStrategyProperty);
+                        var typeMapper = (IFudgeTypeMappingStrategy)Context.GetProperty(ContextProperties.TypeMappingStrategyProperty);
                         Type labelType = typeMapper.GetType(labelTypeName);
-                        
+
                         object label = deserializer.FromField(labelValue, labelType);
                         labels.Add(label);
                     }
@@ -94,10 +94,10 @@ namespace OGDotNet.Builders
             var constructorInfo = typeof(TMatrix).GetConstructor(new[]
                                                                      {
                                                                          typeof(IList<TKey>),
-                                                                         typeof(IList<object>),//TODO type up this (if the java side does)
+                                                                         typeof(IList<object>), //TODO type up this (if the java side does)
                                                                          typeof(IList<double>)
                                                                      });
-            return (TMatrix) constructorInfo.Invoke(new object[] { keys, labels, values });
+            return (TMatrix)constructorInfo.Invoke(new object[] { keys, labels, values });
         }
     }
 }

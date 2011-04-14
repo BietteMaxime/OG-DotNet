@@ -18,10 +18,10 @@ namespace OGDotNet.WPFUtils
     {
         public static void InitAndPersistPosition(Window window, SettingsBase settings)
         {
-            InitAndPersistPosition(window, settings , w=> w.GetType().FullName);
+            InitAndPersistPosition(window, settings, w => w.GetType().FullName);
         }
 
-        private static void InitAndPersistPosition(Window window, SettingsBase settings, Func<Window,string> idGenerator)
+        private static void InitAndPersistPosition(Window window, SettingsBase settings, Func<Window, string> idGenerator)
         {
             const string settingName = "WindowLocationPersisterData";
             string id = idGenerator(window);
@@ -50,16 +50,16 @@ namespace OGDotNet.WPFUtils
         {
             foreach (var property in data)
             {
-                window.GetType().GetProperty(property.Key).GetSetMethod().Invoke(window, new[] {property.Value});
+                window.GetType().GetProperty(property.Key).GetSetMethod().Invoke(window, new[] { property.Value });
             }
 
-            if (! Double.IsNaN(window.Top))
+            if (!Double.IsNaN(window.Top))
                 window.WindowStartupLocation = WindowStartupLocation.Manual;
         }
 
         private static string SaveData(Dictionary<string, object> data, string id)
         {
-            return string.Join(",", data.Select(kvp => GetKeyPrefix(id)+kvp.Key + '|' + kvp.Value));
+            return string.Join(",", data.Select(kvp => GetKeyPrefix(id) + kvp.Key + '|' + kvp.Value));
         }
 
         private static Dictionary<string, object> GetData(string stringEncoded, string id)
@@ -71,7 +71,7 @@ namespace OGDotNet.WPFUtils
 
             return stringEncoded.Split(',').Select(s => s.Split('|'))
                 .Where(p => p[0].StartsWith(keyPrefix)).
-                ToDictionary(p => p[0].Substring(keyPrefix.Length), p=>UnPickle(p[1]));
+                ToDictionary(p => p[0].Substring(keyPrefix.Length), p => UnPickle(p[1]));
         }
 
         private static object UnPickle(string o)

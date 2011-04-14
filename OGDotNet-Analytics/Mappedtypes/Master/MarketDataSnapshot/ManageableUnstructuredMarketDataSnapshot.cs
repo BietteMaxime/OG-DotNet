@@ -57,7 +57,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                                      PrepareUpdateFrom,
                                      PrepareRemoveAction,
                                      PrepareAddAction
-                ).Aggregate((a,b)=>a.Concat(b));
+                ).Aggregate((a, b) => a.Concat(b));
         }
 
         private static Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> GetUpdateDictionary(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> values)
@@ -67,7 +67,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                 IgnoreVersionComparer.Instance
                 );
         }
-        private class IgnoreVersionComparer :IEqualityComparer<MarketDataValueSpecification>
+        private class IgnoreVersionComparer : IEqualityComparer<MarketDataValueSpecification>
         {
             public static readonly IEqualityComparer<MarketDataValueSpecification> Instance = new IgnoreVersionComparer();
 
@@ -90,14 +90,14 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             }
         }
 
-        private UpdateAction PrepareAddAction(MarketDataValueSpecification marketDataValueSpecification,  IDictionary<string, ValueSnapshot> valueSnapshots)
+        private UpdateAction PrepareAddAction(MarketDataValueSpecification marketDataValueSpecification, IDictionary<string, ValueSnapshot> valueSnapshots)
         {
             return new UpdateAction(
                 delegate
-                    {
-                        Values.Add(marketDataValueSpecification, valueSnapshots);
-                        InvokePropertyChanged("Values");
-                    }
+                {
+                    Values.Add(marketDataValueSpecification, valueSnapshots);
+                    InvokePropertyChanged("Values");
+                }
                 );
         }
 
@@ -124,7 +124,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                                                                                    InvokePropertyChanged("Values");
                                                                                })
                 );
-           
+
             UpdateAction ret = UpdateAction.Of(actions);
 
             if (!currSpec.Equals(newSpec))
@@ -166,7 +166,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             return new ManageableUnstructuredMarketDataSnapshot(
                 MapBuilder.FromFudgeMsg<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(ffc, deserializer, "values",
                 deserializer.FromField<MarketDataValueSpecification>,
-                vm => MapBuilder.FromFudgeMsg((IFudgeFieldContainer)vm.Value, deserializer, km=>(string) km.Value, deserializer.FromField<ValueSnapshot>)
+                vm => MapBuilder.FromFudgeMsg((IFudgeFieldContainer)vm.Value, deserializer, km => (string)km.Value, deserializer.FromField<ValueSnapshot>)
                 )
                 );
         }

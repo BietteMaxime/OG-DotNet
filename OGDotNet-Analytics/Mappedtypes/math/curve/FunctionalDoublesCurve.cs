@@ -57,7 +57,7 @@ namespace OGDotNet.Mappedtypes.math.curve
             return _function(x);
         }
 
-        public static FunctionalDoublesCurve From(Func<double,double> function, string name)
+        public static FunctionalDoublesCurve From(Func<double, double> function, string name)
         {
             return new FunctionalDoublesCurve(function, name);
         }

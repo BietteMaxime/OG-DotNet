@@ -88,7 +88,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
 
                 YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
-                
+
 
                 AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
             }
@@ -114,7 +114,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
 
-                foreach (Identifier region in new[]{null, new Identifier("XX","12"),new Identifier("asd","asd") })
+                foreach (Identifier region in new[] { null, new Identifier("XX", "12"), new Identifier("asd", "asd") })
                 {
                     YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
 
@@ -146,7 +146,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                     yieldCurveDefinitionDocument.Definition.AddStrip(fixedIncomeStrip);
                 }
-                
+
                 AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
             }
         }
@@ -191,7 +191,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             string curveName = TestUtils.GetUniqueName();
 
-            var yieldCurveDefinition = new YieldCurveDefinition(Currency.Create("USD"), curveName, "Linear"){Region = new Identifier("SOMEWHERE","Europe")};
+            var yieldCurveDefinition = new YieldCurveDefinition(Currency.Create("USD"), curveName, "Linear") { Region = new Identifier("SOMEWHERE", "Europe") };
             yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.CASH });
             yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.TwoYears, InstrumentType = StripInstrumentType.FUTURE, NthFutureFromTenor = 23 });
             return new YieldCurveDefinitionDocument

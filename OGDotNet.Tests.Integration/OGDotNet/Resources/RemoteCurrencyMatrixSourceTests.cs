@@ -54,7 +54,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     matchedTargets.Add(foundTarget);
 
-                    var fwd = currencyMatrix.GetConversion(sourceCurrency,foundTarget);
+                    var fwd = currencyMatrix.GetConversion(sourceCurrency, foundTarget);
                     var bwd = currencyMatrix.GetConversion(foundTarget, sourceCurrency);
 
                     Assert.Equal(bwd, fwd.GetReciprocal());
@@ -66,12 +66,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Contains(sourceCurrency, foundTargets);
                 var identityConversion = currencyMatrix.GetConversion(sourceCurrency, sourceCurrency);
                 Assert.True(identityConversion is CurrencyMatrixValue.CurrencyMatrixFixed);
-                Assert.Equal(1.0,((CurrencyMatrixValue.CurrencyMatrixFixed)identityConversion).FixedValue);
+                Assert.Equal(1.0, ((CurrencyMatrixValue.CurrencyMatrixFixed)identityConversion).FixedValue);
             }
 
             foreach (var targetCurrency in currencyMatrix.TargetCurrencies)
             {
-                Assert.Contains(targetCurrency,matchedTargets);
+                Assert.Contains(targetCurrency, matchedTargets);
             }
         }
     }

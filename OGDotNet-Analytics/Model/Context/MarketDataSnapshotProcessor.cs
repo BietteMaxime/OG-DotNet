@@ -42,10 +42,10 @@ namespace OGDotNet.Model.Context
         {
             var rawMarketDataSnapper = new RawMarketDataSnapper(context, view);
             var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(valuationTime, ct);
-            return new MarketDataSnapshotProcessor(snapshot,rawMarketDataSnapper);
+            return new MarketDataSnapshotProcessor(snapshot, rawMarketDataSnapper);
         }
 
-        internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot):
+        internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot) :
             this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.GetView(snapshot.BasisViewName)))
         {
         }
@@ -63,7 +63,7 @@ namespace OGDotNet.Model.Context
 
         private RemoteView View
         {
-            get {return _rawMarketDataSnapper.View; }
+            get { return _rawMarketDataSnapper.View; }
         }
 
 
@@ -71,7 +71,7 @@ namespace OGDotNet.Model.Context
         {
             return PrepareUpdate(s => s, ct);
         }
-        
+
         public UpdateAction PrepareGlobalValuesUpdate(CancellationToken ct = default(CancellationToken))
         {
             return PrepareUpdate(s => s.GlobalValues, ct);
@@ -79,9 +79,9 @@ namespace OGDotNet.Model.Context
 
         public UpdateAction PrepareYieldCurveUpdate(YieldCurveKey yieldCurveKey, CancellationToken ct = default(CancellationToken))
         {
-            if (! _snapshot.YieldCurves.ContainsKey(yieldCurveKey))
+            if (!_snapshot.YieldCurves.ContainsKey(yieldCurveKey))
             {//TODO should I be able to add a yield curve like this?
-                throw new ArgumentException(string.Format("Nonexistant yield curve {0}",yieldCurveKey));
+                throw new ArgumentException(string.Format("Nonexistant yield curve {0}", yieldCurveKey));
             }
 
             ManageableMarketDataSnapshot newSnapshot = GetNewSnapshotForUpdate(ct);
@@ -95,7 +95,7 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        private UpdateAction PrepareUpdate<T>(Func<ManageableMarketDataSnapshot, T> scopeSelector, CancellationToken ct = default(CancellationToken)) where T: IUpdatableFrom<T>
+        private UpdateAction PrepareUpdate<T>(Func<ManageableMarketDataSnapshot, T> scopeSelector, CancellationToken ct = default(CancellationToken)) where T : IUpdatableFrom<T>
         {
             ManageableMarketDataSnapshot newSnapshot = GetNewSnapshotForUpdate(ct);
             return PrepareUpdate(scopeSelector, newSnapshot);
@@ -113,7 +113,7 @@ namespace OGDotNet.Model.Context
 
         #region BuildOverridenView
         //TODO this shouldn't require so much hackery
-        
+
         public enum ViewOptions
         {
             AllSnapshotValues,
@@ -136,8 +136,8 @@ namespace OGDotNet.Model.Context
         public RemoteView GetViewOfSnapshot(ViewOptions options)
         {
             //TODO this is a hack since I can't do structured overrides in the engine yet
-            var values = 
-                _snapshot.Values.Concat(_snapshot.YieldCurves.SelectMany(y=>y.Value.Values.Values)
+            var values =
+                _snapshot.Values.Concat(_snapshot.YieldCurves.SelectMany(y => y.Value.Values.Values)
                 ).SelectMany(kvp => kvp.Value.Select(v => Tuple.Create(GetOverrideReq(kvp.Key, v), v.Value)))
                 .ToLookup(t => t.Item1, t => t.Item2, ValueReqComparer.Instance);
 
@@ -201,7 +201,7 @@ namespace OGDotNet.Model.Context
             foreach (var manageableYieldCurveSnapshot in _snapshot.YieldCurves)
             {
                 ct.ThrowIfCancellationRequested();
-                ret.Add(manageableYieldCurveSnapshot.Key, GetYieldCurve(manageableYieldCurveSnapshot,  ct));
+                ret.Add(manageableYieldCurveSnapshot.Key, GetYieldCurve(manageableYieldCurveSnapshot, ct));
             }
             return ret;
         }
@@ -209,8 +209,8 @@ namespace OGDotNet.Model.Context
         public Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, CancellationToken ct = default(CancellationToken))
         {
             var overrides = yieldCurveSnapshot.Value.Values.Values.
-                    SelectMany(kvp =>kvp.Value.Select(v=>GetOverrideTuple(kvp,v))
-                ).ToDictionary(t=>t.Item1,t=>t.Item2);
+                    SelectMany(kvp => kvp.Value.Select(v => GetOverrideTuple(kvp, v))
+                ).ToDictionary(t => t.Item1, t => t.Item2);
 
             var results = _rawMarketDataSnapper.GetAllResults(yieldCurveSnapshot.Value.ValuationTime, overrides, ct);
 
@@ -218,11 +218,11 @@ namespace OGDotNet.Model.Context
 
             var curveResults =
                 results.AllResults
-                .Where(r =>Matches(r,yieldCurveSnapshot.Key))
+                .Where(r => Matches(r, yieldCurveSnapshot.Key))
                 .ToLookup(c => c.ComputedValue.Specification.ValueName, c => c.ComputedValue.Value)
-                .ToDictionary(g=>g.Key,g=>g.First());//We can get duplicate results in different configurations
+                .ToDictionary(g => g.Key, g => g.First());//We can get duplicate results in different configurations
 
-            var curve = (YieldCurve) curveResults[RawMarketDataSnapper.YieldCurveValueReqName];
+            var curve = (YieldCurve)curveResults[RawMarketDataSnapper.YieldCurveValueReqName];
             var spec = (InterpolatedYieldCurveSpecificationWithSecurities)curveResults[RawMarketDataSnapper.YieldCurveSpecValueReqName];
 
             return Tuple.Create(curve, spec);
@@ -230,14 +230,14 @@ namespace OGDotNet.Model.Context
 
         private static bool Matches(ViewResultEntry r, YieldCurveKey key)
         {
-            if (! r.ComputedValue.Specification.TargetSpecification.Uid.Equals(key.Currency.Identifier))
+            if (!r.ComputedValue.Specification.TargetSpecification.Uid.Equals(key.Currency.Identifier))
                 return false;
 
             var curve = r.ComputedValue.Specification.Properties["Curve"];
-            return curve != null && curve.SequenceEqual(new[]{key.Name});
+            return curve != null && curve.SequenceEqual(new[] { key.Name });
         }
 
-        private static Tuple<ValueRequirement,double> GetOverrideTuple(KeyValuePair<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> kvp, KeyValuePair<string, ValueSnapshot> snap)
+        private static Tuple<ValueRequirement, double> GetOverrideTuple(KeyValuePair<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> kvp, KeyValuePair<string, ValueSnapshot> snap)
         {
             return new Tuple<ValueRequirement, double>(
                 GetOverrideReq(kvp.Key, snap),

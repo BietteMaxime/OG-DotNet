@@ -20,7 +20,7 @@ using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
-    public class RemoteViewClientTests: ViewTestsBase
+    public class RemoteViewClientTests : ViewTestsBase
     {
         [Theory]
         [TypedPropertyData("Views")]
@@ -116,7 +116,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 //Now has a higher resolution
                 TimeSpan precision = TimeSpan.FromMilliseconds(1);
                 Assert.InRange(valuationTime - viewComputationResultModel.ValuationTime.ToDateTimeOffset(),
-                    TimeSpan.Zero-precision,
+                    TimeSpan.Zero - precision,
                     precision
                     );
             }
@@ -139,11 +139,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                     for (int i = 0; i < 5; i++)
                     {
-                        var requested= DateTimeOffset.Now;
+                        var requested = DateTimeOffset.Now;
                         enumerator.MoveNext();
                         Assert.NotNull(enumerator.Current);
 
-                        
+
                         var valuation = enumerator.Current.ValuationTime.ToDateTimeOffset();
                         var result = enumerator.Current.ResultTimestamp.ToDateTimeOffset();
                         var now = DateTimeOffset.Now;
@@ -239,7 +239,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            result = result ?? act.BeginInvoke(null,null);
+            result = result ?? act.BeginInvoke(null, null);
             var waitOne = result.AsyncWaitHandle.WaitOne(timeout);
             stopwatch.Stop();
             if (waitOne)
@@ -301,7 +301,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void ViewResultsHaveSaneValues(RemoteView view)
         {
             var viewComputationResultModel = GetOneResultCache.Get(view.Name);
-            
+
             foreach (var viewResultEntry in viewComputationResultModel.AllResults)
             {
                 ValueAssertions.AssertSensibleValue(viewResultEntry.ComputedValue.Value);
@@ -320,13 +320,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                 valueSpecification.TargetSpecification.Uid
                                 && req.TargetSpecification.Type == valueSpecification.TargetSpecification.Type
                                 && req.ValueName == valueSpecification.ValueName)
-                                && req.Constraints.IsSatisfiedBy(valueSpecification.Properties) ;
+                                && req.Constraints.IsSatisfiedBy(valueSpecification.Properties);
 
                 if (matches)
                     return;
             }
-            
-            var reqsByType= configuration.PortfolioRequirementsBySecurityType;
+
+            var reqsByType = configuration.PortfolioRequirementsBySecurityType;
             foreach (var valuePropertiese in reqsByType)
             {
                 var hashSet = valuePropertiese.Value;

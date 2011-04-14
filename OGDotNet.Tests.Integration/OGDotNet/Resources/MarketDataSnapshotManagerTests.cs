@@ -115,7 +115,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static void AssertSaneValue(ManageableYieldCurveSnapshot yieldCurveSnapshot)
         {
             Assert.NotNull(yieldCurveSnapshot);
-            Assert.InRange(yieldCurveSnapshot.Values.Values.Count(), 2,200);
+            Assert.InRange(yieldCurveSnapshot.Values.Values.Count(), 2, 200);
 
             foreach (var valueSnapshot in yieldCurveSnapshot.Values)
             {

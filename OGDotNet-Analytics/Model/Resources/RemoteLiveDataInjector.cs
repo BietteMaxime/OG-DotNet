@@ -27,7 +27,7 @@ namespace OGDotNet.Model.Resources
         {
             ArgumentChecker.NotNull(valueRequirement, "valueRequirement");
 
-            FudgeMsg msg = new FudgeMsg(new Field("value",value));
+            FudgeMsg msg = new FudgeMsg(new Field("value", value));
             GetValueReqTarget(valueRequirement).Put(msg);
         }
 

@@ -19,7 +19,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteLiveDataInjectorTests : TestWithContextBase
     {
-        readonly UniqueIdentifier _bloombergId = UniqueIdentifier.Of("BLOOMBERG_TICKER","USDRG Curncy");
+        readonly UniqueIdentifier _bloombergId = UniqueIdentifier.Of("BLOOMBERG_TICKER", "USDRG Curncy");
 
         [Fact]
         public void CanAddValue()
@@ -50,17 +50,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
             const double newValue = 1234.5678;
             liveDataOverrideInjector.AddValue(valueRequirement, newValue);
-            
+
             using (var cancellationTokenSource = new CancellationTokenSource())
             {
                 remoteView.Init(cancellationTokenSource.Token);
                 using (var remoteViewClient = remoteView.CreateClient())
                 {
                     remoteViewClient.Start();
-                    while (! remoteViewClient.ResultAvailable){}
+                    while (!remoteViewClient.ResultAvailable) { }
                     var viewComputationResultModel = remoteViewClient.GetLatestResult();
-                    var result=viewComputationResultModel.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
-                    Assert.Equal(newValue, (double) result.ComputedValue.Value);
+                    var result = viewComputationResultModel.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
+                    Assert.Equal(newValue, (double)result.ComputedValue.Value);
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
             const double newValue = 1234.5678;
-            
+
             using (var cancellationTokenSource = new CancellationTokenSource())
             {
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);

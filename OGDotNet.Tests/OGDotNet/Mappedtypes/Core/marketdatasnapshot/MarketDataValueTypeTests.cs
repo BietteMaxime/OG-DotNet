@@ -21,9 +21,9 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.marketdatasnapshot
         [EnumValuesData]
         public void CanRoundTrip(MarketDataValueType type)
         {
-            var computationTargetType = EnumUtils<MarketDataValueType,ComputationTargetType>.ConvertTo(type);
+            var computationTargetType = EnumUtils<MarketDataValueType, ComputationTargetType>.ConvertTo(type);
             var roundTripped = EnumUtils<ComputationTargetType, MarketDataValueType>.ConvertTo(computationTargetType);
-            Assert.Equal(type,roundTripped);
+            Assert.Equal(type, roundTripped);
         }
     }
 }

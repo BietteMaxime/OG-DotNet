@@ -71,17 +71,18 @@ namespace OGDotNet.Mappedtypes.engine.value
 
             public override ISet<string> Properties
             {
-                get { return new HashSet<string>(PropertyValues.Keys);}
+                get { return new HashSet<string>(PropertyValues.Keys); }
             }
 
             public override bool IsEmpty
             {
-                get { return ! PropertyValues.Any(); }
+                get { return !PropertyValues.Any(); }
             }
 
             public override IEnumerable<string> this[string curve]
             {
-                get {
+                get
+                {
                     HashSet<string> ret;
                     PropertyValues.TryGetValue(curve, out ret);
                     return ret;
@@ -98,7 +99,7 @@ namespace OGDotNet.Mappedtypes.engine.value
         {
             public static readonly InfiniteValueProperties Instance = new InfiniteValueProperties();
 
-            private InfiniteValueProperties(){}
+            private InfiniteValueProperties() { }
 
             public override ISet<string> Properties
             {
@@ -158,10 +159,10 @@ namespace OGDotNet.Mappedtypes.engine.value
         {
             var properties = new Dictionary<string, HashSet<string>>();
             var withoutMessage = ffc.GetMessage("without");
-            if (withoutMessage!= null)
+            if (withoutMessage != null)
             {
                 var without = new HashSet<string>(withoutMessage.GetAllFields().Select(f => f.Value).Cast<string>());
-                return without.Any() ? (ValueProperties) new NearlyInfiniteValueProperties(without) : InfiniteValueProperties.Instance;
+                return without.Any() ? (ValueProperties)new NearlyInfiniteValueProperties(without) : InfiniteValueProperties.Instance;
             }
 
             var withMessage = ffc.GetMessage("with");
@@ -177,9 +178,9 @@ namespace OGDotNet.Mappedtypes.engine.value
 
                 if (field.Value is string)
                 {
-                    string value = (string) field.Value;
+                    string value = (string)field.Value;
 
-                    properties.Add(name, new HashSet<string> {value});
+                    properties.Add(name, new HashSet<string> { value });
                 }
                 else if (field.Type == IndicatorFieldType.Instance)
                 {
@@ -187,15 +188,15 @@ namespace OGDotNet.Mappedtypes.engine.value
                 }
                 else
                 {
-                    var propMessage = (IFudgeFieldContainer) field.Value;
+                    var propMessage = (IFudgeFieldContainer)field.Value;
                     if (propMessage.Count() == 1 && propMessage.Single().Type == IndicatorFieldType.Instance)
                     {
-                        properties.Add(name,null);
+                        properties.Add(name, null);
                     }
                     else
                     {
                         var hashSet = new HashSet<string>(propMessage.Select(f => f.Value).Cast<string>());
-                        properties.Add(name, hashSet);                        
+                        properties.Add(name, hashSet);
                     }
                 }
             }
@@ -213,20 +214,20 @@ namespace OGDotNet.Mappedtypes.engine.value
             {
                 var withMessage = new FudgeMsg();
 
-                foreach (var property in ((FiniteValueProperties) this).PropertyValues)
+                foreach (var property in ((FiniteValueProperties)this).PropertyValues)
                 {
                     if (property.Value == null)
                     {
                         var optMessage = new FudgeMsg(s.Context);
-                        optMessage.Add((string) null, IndicatorType.Instance);
+                        optMessage.Add((string)null, IndicatorType.Instance);
 
                         withMessage.Add(property.Key, optMessage);
                     }
-                    else if (! property.Value.Any())
+                    else if (!property.Value.Any())
                     {
                         withMessage.Add(property.Key, IndicatorType.Instance);
                     }
-                    else if (property.Value.Count==1)
+                    else if (property.Value.Count == 1)
                     {
                         withMessage.Add(property.Key, property.Value.Single());
                     }
@@ -246,12 +247,12 @@ namespace OGDotNet.Mappedtypes.engine.value
             else
             {
                 var withoutMessage = new FudgeMsg();
-                
+
                 if (this is NearlyInfiniteValueProperties)
                 {
-                    foreach (var without in ((NearlyInfiniteValueProperties) this).Without)
+                    foreach (var without in ((NearlyInfiniteValueProperties)this).Without)
                     {
-                        withoutMessage.Add((string) null, without);
+                        withoutMessage.Add((string)null, without);
                     }
                 }
                 a.Add("without", withoutMessage);

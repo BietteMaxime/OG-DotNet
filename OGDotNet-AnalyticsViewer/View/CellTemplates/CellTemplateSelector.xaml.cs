@@ -38,10 +38,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                                            };
 
 
-        private static readonly Memoizer<string, Type, DataTemplate> TemplateMemoizer =new Memoizer<string,Type,DataTemplate>(BuildTemplate);
+        private static readonly Memoizer<string, Type, DataTemplate> TemplateMemoizer = new Memoizer<string, Type, DataTemplate>(BuildTemplate);
 
-        private static readonly Memoizer<Type, Func<object, string, object>> IndexerMemoizer = new Memoizer<Type, Func<object, string,object>>(BuildIndexer);
-        
+        private static readonly Memoizer<Type, Func<object, string, object>> IndexerMemoizer = new Memoizer<Type, Func<object, string, object>>(BuildIndexer);
+
 
         public CellTemplateSelector(string column, GridViewColumn gridViewColumn)
         {
@@ -53,8 +53,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             var indexerProperty = t.GetProperties().Where(p => p.GetIndexParameters().Length > 0).First();
             var getMethod = indexerProperty.GetGetMethod();
-            
-            return (item, index) => getMethod.Invoke(item, new object[] {index});
+
+            return (item, index) => getMethod.Invoke(item, new object[] { index });
         }
 
         internal void UpdateNullTemplate(object item)
@@ -69,7 +69,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             if (!ReferenceEquals(this, _gridViewColumn.CellTemplateSelector))
                 throw new ArgumentException("I'm about to twiddle the wrong selector");
-            
+
             object cellValue = GetCellValue(item);
             if (cellValue == null)
             {//Let's late bind when we get a value
@@ -109,9 +109,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             if (TemplateTypes.TryGetValue(type, out templateType))
             {
                 var comboFactory = new FrameworkElementFactory(templateType);
-                comboFactory.SetValue(FrameworkElement.DataContextProperty, BindingUtils.GetIndexerBinding(column));  
+                comboFactory.SetValue(FrameworkElement.DataContextProperty, BindingUtils.GetIndexerBinding(column));
 
-                var itemsTemplate = new DataTemplate {VisualTree = comboFactory};
+                var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
 
                 return itemsTemplate;
             }
@@ -119,7 +119,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             {
                 var comboFactory = new FrameworkElementFactory(typeof(TextBlock));
                 comboFactory.SetValue(TextBlock.TextProperty, BindingUtils.GetIndexerBinding(column));
-                var itemsTemplate = new DataTemplate {VisualTree = comboFactory};
+                var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
                 return itemsTemplate;
             }
         }

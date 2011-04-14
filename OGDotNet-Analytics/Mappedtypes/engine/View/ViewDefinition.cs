@@ -21,7 +21,6 @@ namespace OGDotNet.Mappedtypes.engine.view
     [DebuggerDisplay("ViewDefinition {_name}")]
     public class ViewDefinition
     {
-        private string _name;
         private readonly UniqueIdentifier _portfolioIdentifier;
         private readonly UserPrincipal _user;
         private readonly UniqueIdentifier _uniqueID;
@@ -36,7 +35,8 @@ namespace OGDotNet.Mappedtypes.engine.view
         private readonly Currency _defaultCurrency;
 
         private readonly Dictionary<string, ViewCalculationConfiguration> _calculationConfigurationsByName;
-        
+
+        private string _name;
 
         public ViewDefinition(string name, ResultModelDefinition resultModelDefinition = null, UniqueIdentifier portfolioIdentifier = null, UserPrincipal user = null, Currency defaultCurrency = null, long? minDeltaCalcPeriod = null, long? maxDeltaCalcPeriod = null, long? minFullCalcPeriod = null, long? maxFullCalcPeriod = null, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName = null, UniqueIdentifier uniqueID = null)
         {
@@ -116,12 +116,12 @@ namespace OGDotNet.Mappedtypes.engine.view
             var uniqueId = uniqueIdString == null ? null : UniqueIdentifier.Parse(uniqueIdString);
 
             var resultModelDefinition = deserializer.FromField<ResultModelDefinition>(ffc.GetByName("resultModelDefinition"));
-            var portfolioIdentifier =ffc.GetAllByName("identifier").Any()  ? UniqueIdentifier.Parse(ffc.GetValue<string>("identifier")) : null;
+            var portfolioIdentifier = ffc.GetAllByName("identifier").Any() ? UniqueIdentifier.Parse(ffc.GetValue<string>("identifier")) : null;
             var user = deserializer.FromField<UserPrincipal>(ffc.GetByName("user"));
 
             var currency = ffc.GetValue<Currency>("currency");
 
-            
+
             var minDeltaCalcPeriod = ffc.GetLong("minDeltaCalcPeriod");
             var maxDeltaCalcPeriod = ffc.GetLong("maxDeltaCalcPeriod");
 
@@ -141,24 +141,24 @@ namespace OGDotNet.Mappedtypes.engine.view
         {
             if (value.HasValue)
             {
-                message.Add(name,value.Value);
+                message.Add(name, value.Value);
             }
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer message, IFudgeSerializer s)
         {
-            message.Add("name",Name);
+            message.Add("name", Name);
             if (_uniqueID != null)
             {
                 message.Add("uniqueId", _uniqueID.ToString());
             }
-            s.WriteInline(message,"identifier", PortfolioIdentifier);
+            s.WriteInline(message, "identifier", PortfolioIdentifier);
             s.WriteInline(message, "user", User);
             s.WriteInline(message, "resultModelDefinition", ResultModelDefinition);
 
             if (DefaultCurrency != null)
             {
-                message.Add("currency",DefaultCurrency.ISOCode);
+                message.Add("currency", DefaultCurrency.ISOCode);
             }
 
             WriteNullableLongField(message, "minDeltaCalcPeriod", MinDeltaCalcPeriod);
@@ -173,7 +173,7 @@ namespace OGDotNet.Mappedtypes.engine.view
 
                 calcConfig.ToFudgeMsg(calcConfigMsg, s);
 
-                message.Add("calculationConfiguration",calcConfigMsg);
+                message.Add("calculationConfiguration", calcConfigMsg);
             }
         }
     }

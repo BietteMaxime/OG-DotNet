@@ -34,9 +34,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         static readonly Point3D Center = new Point3D(0.5, 0.5, 0.5);
 
         const double ZRange = 100.0;
+        const double GraphOffset = 0.4;
+        const int ProjectedCurveSize = 400;
+
+
+        private readonly DispatcherTimer _timer;
 
         private bool _haveInitedData;
-        private readonly DispatcherTimer _timer;
 
 
         public VolatilitySurfaceCell()
@@ -168,8 +172,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         }
 
 
-        const double GraphOffset = 0.4;
-        const int ProjectedCurveSize = 400;
 
         /// <summary>
         /// NOTE: these graphs are not on the same axis as the surface, since they are to scale

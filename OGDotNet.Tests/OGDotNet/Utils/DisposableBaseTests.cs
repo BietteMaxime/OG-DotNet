@@ -27,14 +27,14 @@ namespace OGDotNet.Tests.OGDotNet.Utils
         [Fact]
         public void Finalize_CalledExactlyOnce()
         {
-            var r = CountDisposedCalls(d => {});
+            var r = CountDisposedCalls(d => { });
 
             Assert.Equal(0, r.Item1);
             Assert.Equal(1, r.Item2);
         }
-        
 
-        private static Tuple<long,long> CountDisposedCalls(Action<IDisposable> action)
+
+        private static Tuple<long, long> CountDisposedCalls(Action<IDisposable> action)
         {
             long manual = 0;
             long auto = 0;

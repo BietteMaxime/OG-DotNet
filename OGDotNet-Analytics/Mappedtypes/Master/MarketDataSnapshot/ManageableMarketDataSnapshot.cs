@@ -23,8 +23,6 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 {
     public class ManageableMarketDataSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableMarketDataSnapshot>
     {
-        private UniqueIdentifier _uniqueId;
-
         private readonly string _basisViewName;
 
         private readonly ManageableUnstructuredMarketDataSnapshot _globalValues;
@@ -34,6 +32,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         //TODO private Map<Triple<string, CurrencyUnit, CurrencyUnit>, FXVolatilitySurfaceSnapshot> _fxVolatilitySurfaces;
 
+        private UniqueIdentifier _uniqueId;
 
         public ManageableMarketDataSnapshot(string basisViewName, ManageableUnstructuredMarketDataSnapshot globalValues,
                                             Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurves,
@@ -106,10 +105,10 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
         {
             return new UpdateAction(
                 delegate
-                    {
-                        _yieldCurves.Remove(key);
-                        InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
-                    },
+                {
+                    _yieldCurves.Remove(key);
+                    InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
+                },
                     OverriddenYieldCurveDisappearingWarning.Of(key, value)
                 );
         }
@@ -119,7 +118,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             return new UpdateAction(
                delegate
                {
-                   _yieldCurves.Add(key,value);
+                   _yieldCurves.Add(key, value);
                    InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
                }
                );
@@ -138,7 +137,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                 MapBuilder.FromFudgeMsg<YieldCurveKey, ManageableYieldCurveSnapshot>(ffc, deserializer, "yieldCurves"),
                 uid
 
-                ) {Name = ffc.GetString("name")};
+                ) { Name = ffc.GetString("name") };
 
 
             return manageableMarketDataSnapshot;
@@ -155,7 +154,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             {
                 a.Add("uniqueId", _uniqueId);
             }
-            
+
             a.Add("yieldCurves", MapBuilder.ToFudgeMsg(s, _yieldCurves));
         }
 

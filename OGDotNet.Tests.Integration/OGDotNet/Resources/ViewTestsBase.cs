@@ -17,9 +17,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
     {
         private static readonly HashSet<string> BannedViews = new HashSet<string>
                                                                   {
-                                                                      "10K Swap Test View",//Slow
+                                                                      // Slow
+                                                                      "10K Swap Test View",
 
-                                                                      //Broken
+                                                                      // Broken
                                                                       "TestDefinition",
                                                                       "Swap Test View",
                                                                       "Primitives Only",
@@ -58,7 +59,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static bool IsNotBanned(string n)
         {
-            return !BannedViews.Contains(n) && ! ContainsGuid(n);
+            return !BannedViews.Contains(n) && !ContainsGuid(n);
         }
 
         private static readonly Regex GuidRegex = new Regex(@"\w{8}\-\w{4}\-\w{4}\-\w{4}\-\w{12}", RegexOptions.Compiled);
@@ -72,7 +73,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             get
             {
-                return Views.Where(n => ! IsSlowTickingView(n));
+                return Views.Where(n => !IsSlowTickingView(n));
             }
         }
     }

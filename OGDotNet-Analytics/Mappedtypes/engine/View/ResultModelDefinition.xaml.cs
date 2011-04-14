@@ -21,7 +21,7 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly ResultOutputMode _securityOutputMode;
         private readonly ResultOutputMode _primitiveOutputMode;
 
-        public ResultModelDefinition(ResultOutputMode aggregatePositionOutputMode, ResultOutputMode positionOutputMode, ResultOutputMode tradeOutputMode,  ResultOutputMode securityOutputMode, ResultOutputMode primitiveOutputMode)
+        public ResultModelDefinition(ResultOutputMode aggregatePositionOutputMode, ResultOutputMode positionOutputMode, ResultOutputMode tradeOutputMode, ResultOutputMode securityOutputMode, ResultOutputMode primitiveOutputMode)
         {
             _aggregatePositionOutputMode = aggregatePositionOutputMode;
             _positionOutputMode = positionOutputMode;
@@ -30,11 +30,13 @@ namespace OGDotNet.Mappedtypes.engine.View
             _primitiveOutputMode = primitiveOutputMode;
         }
 
-        public ResultModelDefinition() : this(ResultOutputMode.TerminalOutputs)
+        public ResultModelDefinition()
+            : this(ResultOutputMode.TerminalOutputs)
         {
         }
 
-        public ResultModelDefinition(ResultOutputMode defaultMode) : this(defaultMode, defaultMode, defaultMode, defaultMode, defaultMode)
+        public ResultModelDefinition(ResultOutputMode defaultMode)
+            : this(defaultMode, defaultMode, defaultMode, defaultMode, defaultMode)
         {
         }
 
@@ -76,7 +78,7 @@ namespace OGDotNet.Mappedtypes.engine.View
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add("aggregatePositionOutputMode",EnumBuilder<ResultOutputMode>.GetJavaName(AggregatePositionOutputMode));
+            a.Add("aggregatePositionOutputMode", EnumBuilder<ResultOutputMode>.GetJavaName(AggregatePositionOutputMode));
             a.Add("positionOutputMode", EnumBuilder<ResultOutputMode>.GetJavaName(PositionOutputMode));
             a.Add("tradeOutputMode", EnumBuilder<ResultOutputMode>.GetJavaName(TradeOutputMode));
             a.Add("securityOutputMode", EnumBuilder<ResultOutputMode>.GetJavaName(SecurityOutputMode));
