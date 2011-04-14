@@ -8,18 +8,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Fudge;
 
 namespace OGDotNet.Mappedtypes.math.curve
 {
-    public static class CurveExtensionMethods
-    {
-        public static IEnumerable<Tuple<double, double>> GetData(this Curve c)
-        {
-            return c.XData.Zip(c.YData, (x, y) => new Tuple<double, double>(x, y)).ToList();
-        }
-    }
     public abstract class Curve
     {
         private readonly string _name;
