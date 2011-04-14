@@ -80,7 +80,6 @@ namespace OGDotNet.SecurityViewer.View
                                                  {
                                                  }
                                              });
-            
         }
 
         private int CurrentPage

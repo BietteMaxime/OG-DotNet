@@ -98,6 +98,5 @@ namespace OGDotNet.Model.Resources
         {
             return (currentDate != default(DateTimeOffset)) ? UriEncoding.ToString(currentDate) : "null";
         }
-
     }
 }

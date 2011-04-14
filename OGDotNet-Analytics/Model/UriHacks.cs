@@ -51,6 +51,5 @@ namespace OGDotNet.Model
 
             FlagsField.SetValue(uriParser, uriSyntaxFlags);
         }
-
     }
 }

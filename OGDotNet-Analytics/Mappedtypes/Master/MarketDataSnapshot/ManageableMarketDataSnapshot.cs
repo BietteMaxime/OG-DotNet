@@ -100,7 +100,6 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                 );
 
             return globalUpdate.Concat(UpdateAction.Of(ycActions));
-
         }
 
         internal UpdateAction PrepareRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
@@ -113,7 +112,6 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                     },
                     OverriddenYieldCurveDisappearingWarning.Of(key, value)
                 );
-
         }
 
         private UpdateAction PrepareAddAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
@@ -144,7 +142,6 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
 
             return manageableMarketDataSnapshot;
-
         }
 
 

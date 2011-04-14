@@ -60,8 +60,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Model
             Assert.Null(graphRet.B.C.A.B.C);
             return fudgeSerializer;
         }
-
-        
     }
 }
 namespace OGDotNet.Mappedtypes

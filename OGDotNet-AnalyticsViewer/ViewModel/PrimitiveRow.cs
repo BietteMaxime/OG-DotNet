@@ -48,7 +48,5 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             if (onPropertyChanged != null)
                 onPropertyChanged(this, new PropertyChangedEventArgs(Binding.IndexerName));
         }
-
-
     }
 }

@@ -80,7 +80,6 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                 : base(inner)
             {
                 _parallelCommandGroup = parallelCommandGroup;
-
             }
 
             public override MethodResult Execute(object testClass)
@@ -96,7 +95,6 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                     return false;
                 }
             }
-
         }
     }
 }

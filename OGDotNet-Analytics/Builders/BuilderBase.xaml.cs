@@ -23,7 +23,6 @@ namespace OGDotNet.Builders
                 throw new ArgumentException("Type paramter doesn't match generic parameter", "type");
             }
             Context = context;
-
         }
 
         public void Serialize(object obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)

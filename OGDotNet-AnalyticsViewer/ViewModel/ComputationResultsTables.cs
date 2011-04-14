@@ -61,7 +61,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
             if (rowsChanged)
                 InvokePropertyChanged("PrimitiveRows");//TODO this could be an ObservableCollection for extra niceness
-
         }
 
         private bool MergeUpdatePrimitiveRows(ViewComputationResultModel results)

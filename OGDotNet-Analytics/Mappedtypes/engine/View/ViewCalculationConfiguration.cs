@@ -118,7 +118,6 @@ namespace OGDotNet.Mappedtypes.engine.View
             {
                 var sReqMsg = fudgeSerializer.SerializeToMsg(specificRequirement);
                 calcConfigMsg.Add("specificRequirement", sReqMsg);
-
             }
 
             var defaultPropsMessage = fudgeSerializer.SerializeToMsg(DefaultProperties);

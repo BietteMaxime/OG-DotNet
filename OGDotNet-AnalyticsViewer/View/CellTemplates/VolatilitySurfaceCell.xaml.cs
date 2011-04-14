@@ -165,7 +165,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
             mainViewport.Children.Clear();
             mainViewport.Children.Add(groupModel);
-
         }
 
 
@@ -238,7 +237,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             _ySliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = ZRange, StrokeThickness = 5.0, ShowName = false };
             var brush = new VisualBrush(_ySliceCurveControl);
-
 
             var material = new DiffuseMaterial(brush);
 
@@ -479,7 +477,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
                     var point = new Point(zValue * colorScale, fakeYValue);
                     mesh.TextureCoordinates.Add(point);
-
                 }
             }
 
@@ -620,9 +617,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             {
                 SetYSliceGraph((Tenor)y["Length"]);
             }
-
         }
     }
-
-
 }

@@ -51,7 +51,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var historicalDataSource = Context.HistoricalDataSource;
             Assert.Throws<ArgumentException>(() => historicalDataSource.GetHistoricalData(new IdentifierBundle()));
-            
         }
 
         [FactAttribute]

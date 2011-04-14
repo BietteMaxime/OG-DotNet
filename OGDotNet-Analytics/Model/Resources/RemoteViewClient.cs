@@ -65,7 +65,6 @@ namespace OGDotNet.Model.Resources
                     }
                     results = results.ApplyDelta(delta);
                 }
-
             }
         }
 
@@ -146,6 +145,4 @@ namespace OGDotNet.Model.Resources
             Stop();
         }
     }
-
-
 }

@@ -165,7 +165,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(aVal.SpecificRequirements.Count(), matchedRequirements.Count());
 
             Assert.Equal(aVal.PortfolioRequirementsBySecurityType.ToList().Count, bVal.PortfolioRequirementsBySecurityType.ToList().Count);
-
         }
 
         private class ValueReqEquivalentComparer : IEqualityComparer<ValueRequirement>

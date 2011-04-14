@@ -86,7 +86,6 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                     default:
                         throw new NotImplementedException("TODO: should probably handle tuples and/or property bags here");
                 }
-                
             }
 
             throw new ArgumentException(string.Format("Property {0} on {1} did not return IEnumerable<object[]> or an IEnumerable<T>",_propertyName, declaringType.FullName));

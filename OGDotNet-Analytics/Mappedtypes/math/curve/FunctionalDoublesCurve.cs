@@ -66,6 +66,5 @@ namespace OGDotNet.Mappedtypes.math.curve
         {
             throw new NotImplementedException();
         }
-
     }
 }

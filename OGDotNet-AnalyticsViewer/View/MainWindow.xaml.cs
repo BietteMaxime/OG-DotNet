@@ -165,8 +165,6 @@ namespace OGDotNet.AnalyticsViewer.View
             Settings.Save();
             viewSelector.SelectedItem = null;
         }
-
-
     }
 }
 

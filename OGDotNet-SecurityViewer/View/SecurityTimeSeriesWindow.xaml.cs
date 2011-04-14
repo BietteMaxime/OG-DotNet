@@ -119,7 +119,6 @@ namespace OGDotNet.SecurityViewer.View
                 lineSeries.DataPointStyle.Setters.Add(backgroundSetter);
 
                 chart.Series.Add(lineSeries);
-
             }
            if (chart.Series.Count ==0)
            {
@@ -218,12 +217,9 @@ namespace OGDotNet.SecurityViewer.View
                 
                 SetXRange(_startDragPosition, endDragPosition);
                 SetYRange(_startDragPosition, endDragPosition);
-
-
             }
 
             ResetDrag();
-
         }
 
         private void chart_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -369,9 +365,5 @@ namespace OGDotNet.SecurityViewer.View
         
 
         #endregion
-
-        
-
-        
     }
 }

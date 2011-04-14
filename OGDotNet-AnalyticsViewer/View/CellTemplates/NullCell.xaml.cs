@@ -35,6 +35,5 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 CellTemplateSelector.UpdateNullTemplate(DataContext);
             }
         }
-
     }
 }

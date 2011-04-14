@@ -50,7 +50,6 @@ namespace OGDotNet.Builders
             keyMsgGen = keyMsgGen ?? (k=>fudgeSerializer.SerializeToMsg(k));
             valueMsgGen = valueMsgGen ?? (v => fudgeSerializer.SerializeToMsg(v));
 
-
             FudgeMsg valuesMessage = new FudgeMsg(s.Context);
             foreach (var value in dict)
             {

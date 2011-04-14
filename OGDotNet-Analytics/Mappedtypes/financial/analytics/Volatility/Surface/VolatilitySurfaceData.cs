@@ -111,14 +111,11 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
                 values.Add(new Tuple<Tenor, Tenor>(x, y), value);
             }
             return new VolatilitySurfaceData(definitionName, specificationName, currency, interpolatorName, xs, ys, values);
-
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             throw new NotImplementedException();
         }
-
-       
     }
 }

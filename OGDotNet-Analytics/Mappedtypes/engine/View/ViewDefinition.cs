@@ -175,8 +175,6 @@ namespace OGDotNet.Mappedtypes.engine.view
 
                 message.Add("calculationConfiguration",calcConfigMsg);
             }
-            
         }
-
     }
 }

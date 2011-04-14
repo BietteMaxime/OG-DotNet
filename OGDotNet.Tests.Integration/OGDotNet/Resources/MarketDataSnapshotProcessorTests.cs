@@ -113,7 +113,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 valueSnapsYC[valueName].OverrideValue = valueSnapshots[valueName].MarketValue * 0.99;
 
                 Assert.Throws<InvalidOperationException>(() => dataSnapshotProcessor.GetViewOfSnapshot(MarketDataSnapshotProcessor.ViewOptions.AllSnapshotValues));
-                
             }
         }
     }

@@ -187,7 +187,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                             {
                                 endOfStream = true;
                             }
-                                
                         };
 
                         IAsyncResult pendingResult = null;
@@ -325,7 +324,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 if (matches)
                     return;
-
             }
             
             var reqsByType= configuration.PortfolioRequirementsBySecurityType;

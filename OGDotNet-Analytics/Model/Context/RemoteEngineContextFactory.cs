@@ -170,8 +170,6 @@ namespace OGDotNet.Model.Context
                 return false;
             }
         }
-
         #endregion
-
     }
 }

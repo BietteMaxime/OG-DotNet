@@ -67,7 +67,5 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         {
             return Concat(r._warnings).Concat(r._updateActions);
         }
-
-
     }
 }

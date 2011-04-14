@@ -30,7 +30,6 @@ namespace OGDotNet.Model.Resources
             _rest = userDataRest.Resolve(username).Resolve("clients").Resolve(_clientId);
 
             QueueHeartbeat(_cts.Token);
-
         }
 
         private void QueueHeartbeat(CancellationToken cancellationToken)

@@ -83,7 +83,5 @@ namespace OGDotNet.Model.Resources
             _restTarget.Resolve("snapshots").Resolve(uniqueId.ToString()).Delete();
         }
         //TODO correct
-
-        
     }
 }

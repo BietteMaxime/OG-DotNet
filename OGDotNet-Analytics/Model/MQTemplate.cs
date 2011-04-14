@@ -37,7 +37,5 @@ namespace OGDotNet.Model
                 action(session);
             }
         }
-
-       
     }
 }

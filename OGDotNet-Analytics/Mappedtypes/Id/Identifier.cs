@@ -97,7 +97,5 @@ namespace OGDotNet.Mappedtypes.Id
         {
             return !Equals(left, right);
         }
-
-
     }
 }

@@ -80,7 +80,6 @@ namespace OGDotNet.Model
             {
                 return base.GetSurrogate(type, fieldNameConvention);
             }
-
         }
     }
 }

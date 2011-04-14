@@ -53,7 +53,6 @@ namespace OGDotNet.Tests
             }
 
             return GetAllDependencies(n => n.Name.StartsWith(Namespace), Assembly.GetExecutingAssembly().GetName()).Distinct().ToList();
-
         }
 
         private static IEnumerable<Assembly> GetAllDependencies(Predicate<AssemblyName> filter, AssemblyName root)

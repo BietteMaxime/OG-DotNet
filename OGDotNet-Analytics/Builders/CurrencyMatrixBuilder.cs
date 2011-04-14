@@ -158,7 +158,6 @@ namespace OGDotNet.Builders
                 Dictionary<Currency, CurrencyMatrixValue> conversions = _values.GetOrAdd(source, new Dictionary<Currency, CurrencyMatrixValue>());
                 conversions[target] = rate;
             }
-
         }
     }
 }

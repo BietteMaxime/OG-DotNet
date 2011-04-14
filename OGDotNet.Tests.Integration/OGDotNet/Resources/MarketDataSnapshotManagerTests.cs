@@ -124,9 +124,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     ValueAssertions.AssertSensibleValue(snapshot.Value.MarketValue);
                     Assert.Null(snapshot.Value.OverrideValue);
                 }
-
             }
         }
-
     }
 }

@@ -60,7 +60,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     Assert.Null(security);
                 }
-                
             }
         }
     }

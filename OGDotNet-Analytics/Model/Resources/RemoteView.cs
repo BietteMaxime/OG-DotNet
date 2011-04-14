@@ -154,6 +154,4 @@ namespace OGDotNet.Model.Resources
             return string.Format("[View {0}]", _name);
         }
     }
-
-
 }

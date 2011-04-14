@@ -77,7 +77,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var yieldCurveDefinitionDocument = GenerateDocument();
                 interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
                 interpolatedYieldCurveDefinitionMaster.AddOrUpdate(yieldCurveDefinitionDocument);
-
             }
         }
 

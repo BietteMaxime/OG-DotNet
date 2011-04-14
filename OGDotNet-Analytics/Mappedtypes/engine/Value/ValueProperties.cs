@@ -256,7 +256,6 @@ namespace OGDotNet.Mappedtypes.engine.value
                 }
                 a.Add("without", withoutMessage);
             }
-            
         }
 
 
@@ -266,7 +265,5 @@ namespace OGDotNet.Mappedtypes.engine.value
                 return true;
             throw new NotImplementedException();
         }
-
-        
     }
 }

@@ -27,6 +27,4 @@ namespace OGDotNet.Mappedtypes.financial.model.volatility.surface
             get { return _sigma; }
         }
     }
-
-
 }

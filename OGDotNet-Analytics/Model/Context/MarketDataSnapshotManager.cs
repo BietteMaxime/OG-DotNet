@@ -49,7 +49,5 @@ namespace OGDotNet.Model.Context
         {
             return MarketDataSnapshotProcessor.Create(_remoteEngineContext, view, offset, ct);
         }
-
-       
     }
 }
