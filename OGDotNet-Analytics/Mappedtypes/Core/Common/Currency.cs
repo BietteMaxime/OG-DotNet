@@ -8,8 +8,6 @@
 
 using System;
 using System.Globalization;
-using Fudge;
-using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 
