@@ -33,9 +33,10 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         private readonly List<string> _portfolioColumns;
         private readonly List<string> _primitiveColumns;
         
-        #region PropertyBag
-        private List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
         private readonly Dictionary<UniqueIdentifier, PrimitiveRow> _primitiveRows = new Dictionary<UniqueIdentifier, PrimitiveRow>();
+        
+        private List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
+
         private IEnumerable<TreeNode> _portfolioNodes;
 
         public ComputationResultsTables(ViewDefinition viewDefinition, IPortfolio portfolio, ISecuritySource remoteSecuritySource)
@@ -129,8 +130,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, e);
         }
-
-        #endregion
 
         private static IEnumerable<string> GetPrimitiveColumns(ViewDefinition viewDefinition)
         {
