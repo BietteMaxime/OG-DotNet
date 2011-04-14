@@ -41,7 +41,11 @@ namespace OGDotNet.Model.Resources
         private void SendHeartBeats(object context, bool timedOut)
         {
             var token = (CancellationToken) context;
-            if (! token.IsCancellationRequested)
+            if (token.IsCancellationRequested)
+            {
+                _cts.Dispose();
+            }
+            else
             {
                 try
                 {
@@ -52,7 +56,6 @@ namespace OGDotNet.Model.Resources
                     QueueHeartbeat(token);
                 }
             }
-
         }
 
         private void SendHeartbeat()
@@ -87,7 +90,7 @@ namespace OGDotNet.Model.Resources
         protected override void Dispose(bool disposing)
         {
             _cts.Cancel();
-            _cts.Dispose();
+            //NOTE: I can't dispose of _cts here, because then calling WaitHandle on it would throw
         }
     }
 }
