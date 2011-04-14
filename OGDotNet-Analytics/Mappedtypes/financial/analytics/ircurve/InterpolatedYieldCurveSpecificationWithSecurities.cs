@@ -12,6 +12,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
+using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 {
@@ -19,10 +20,10 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
     {
         private readonly DateTimeOffset _curveDate;
         private readonly string _name;
-        private readonly string _currency;
+        private readonly Currency _currency;
         private readonly List<FixedIncomeStripWithSecurity> _strips;
 
-        private InterpolatedYieldCurveSpecificationWithSecurities(DateTimeOffset curveDate, string name, string currency, List<FixedIncomeStripWithSecurity> strips)
+        private InterpolatedYieldCurveSpecificationWithSecurities(DateTimeOffset curveDate, string name, Currency currency, List<FixedIncomeStripWithSecurity> strips)
         {
             _curveDate = curveDate;
             _name = name;
@@ -40,7 +41,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             get { return _name; }
         }
 
-        public string Currency
+        public Currency Currency
         {
             get { return _currency; }
         }
@@ -57,7 +58,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
                 new DateTimeOffset( 
                 ((FudgeDate) ffc.GetValue("curveDate")).ToDateTime()),
                 (string) ffc.GetValue("name"),
-                (string) ffc.GetValue("currency"),
+                ffc.GetValue<Currency>("currency"),
                 ffc.GetAllByName("resolvedStrips").Select(deserializer.FromField<FixedIncomeStripWithSecurity>).ToList()
                 );
         }

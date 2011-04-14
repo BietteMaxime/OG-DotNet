@@ -87,7 +87,7 @@ namespace OGDotNet.Model.Context
 
         private static YieldCurveKey GetYieldCurveKey(InterpolatedYieldCurveSpecificationWithSecurities spec)
         {
-            return new YieldCurveKey(Currency.Create(spec.Currency), spec.Name);
+            return new YieldCurveKey(spec.Currency, spec.Name);
         }
 
 

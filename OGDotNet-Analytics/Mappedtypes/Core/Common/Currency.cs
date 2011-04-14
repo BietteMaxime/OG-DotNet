@@ -68,17 +68,6 @@ namespace OGDotNet.Mappedtypes.Core.Common
             get { return _identifier.Value; }
         }
 
-
-        public static Currency FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            return Create(ffc.GetString("code"));
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            a.Add("code", _identifier.Value);
-        }
-
         public bool Equals(Currency other)
         {
             if (ReferenceEquals(null, other)) return false;

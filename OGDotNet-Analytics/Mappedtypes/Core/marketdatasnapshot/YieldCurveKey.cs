@@ -39,12 +39,12 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 
         public static YieldCurveKey FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new YieldCurveKey(Currency.Create(ffc.GetString("currency")), ffc.GetString("name"));
+            return new YieldCurveKey(ffc.GetValue<Currency>("currency"), ffc.GetString("name"));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add("currency", _currency.ISOCode);
+            a.Add("currency", _currency);
             a.Add("name", Name);
         }
 

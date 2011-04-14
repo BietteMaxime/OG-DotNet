@@ -13,7 +13,9 @@ using Castle.Core.Logging;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Serialization.Reflection;
+using Fudge.Types;
 using OGDotNet.Utils;
+using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Model
 {
@@ -24,7 +26,7 @@ namespace OGDotNet.Model
         private readonly ILogger _logger = NullLogger.Instance;
 
         //DOTNET-12
-        private static readonly Type[] ForcedReferences = new[]{typeof(Apache.NMS.ActiveMQ.ConnectionFactory)};
+        private static readonly Type[] ForcedReferences = new[] { typeof(Apache.NMS.ActiveMQ.ConnectionFactory) };
 
         private readonly MemoizingFudgeSurrogateSelector _fudgeSurrogateSelector;
 
@@ -32,9 +34,15 @@ namespace OGDotNet.Model
         {
             SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategy("OGDotNet.Mappedtypes", "com.opengamma"));
             SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
+            AddSecondaryTypes(TypeDictionary);
             _fudgeSurrogateSelector = new MemoizingFudgeSurrogateSelector(this);
 
             _logger.Debug("Forced references to {0} types", ForcedReferences.Length);
+        }
+
+        private void AddSecondaryTypes(FudgeTypeDictionary typeDictionary)
+        {
+            typeDictionary.AddType(new SecondaryFieldType<Currency, string>(StringFieldType.Instance, Currency.Create, c => c.ISOCode));
         }
 
         public FudgeSerializer GetSerializer()
@@ -53,9 +61,10 @@ namespace OGDotNet.Model
         /// </remarks>
         private class MemoizingFudgeSurrogateSelector : FudgeSurrogateSelector
         {
-            readonly Memoizer<Type,FudgeFieldNameConvention,IFudgeSerializationSurrogate> _memoizer;
+            readonly Memoizer<Type, FudgeFieldNameConvention, IFudgeSerializationSurrogate> _memoizer;
 
-            public MemoizingFudgeSurrogateSelector(FudgeContext context) : base(context)
+            public MemoizingFudgeSurrogateSelector(FudgeContext context)
+                : base(context)
             {
                 _memoizer = new Memoizer<Type, FudgeFieldNameConvention, IFudgeSerializationSurrogate>(GetSurrogateImpl);
             }
@@ -63,7 +72,7 @@ namespace OGDotNet.Model
             public override IFudgeSerializationSurrogate GetSurrogate(Type type, FudgeFieldNameConvention fieldNameConvention)
             {
                 var fudgeSerializationSurrogate = _memoizer.Get(type, fieldNameConvention);
-                Debug.Assert(fudgeSerializationSurrogate!=null, "Returning a null surrogate may well expose our bugs");
+                Debug.Assert(fudgeSerializationSurrogate != null, "Returning a null surrogate may well expose our bugs");
                 return fudgeSerializationSurrogate;
             }
 
