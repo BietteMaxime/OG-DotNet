@@ -46,8 +46,14 @@ namespace OGDotNet.Model
             var serviceUri = uriBuilder.Uri;
 
             UriHacks.LeaveDotsAndSlashesEscaped(serviceUri);
-            Debug.Assert(_serviceUri.IsBaseOf(serviceUri), "Failed to resolve uri sensibly");
-            Debug.Assert(serviceUri.Segments.Last() == safeMethod, "Failed to resolve uri sensibly");
+            if (!_serviceUri.IsBaseOf(serviceUri))
+            {
+                throw new ArgumentException("Failed to resolve uri sensibly", "method");
+            }
+            if (serviceUri.Segments.Last() != safeMethod)
+            {
+                throw new ArgumentException("Failed to resolve uri sensibly", "method");
+            }
 
             return new RestTarget(_fudgeContext, serviceUri);
         }
