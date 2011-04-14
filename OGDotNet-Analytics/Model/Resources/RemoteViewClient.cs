@@ -73,7 +73,7 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("start").Post();
         }
 
-        private void Stop()//TODO make this stop the IEnumerables somehow
+        private void Stop()//TODO make this stop the IEnumerables somehow ( easier with IObservables)
         {
             _rest.Resolve("stop").Post();
         }

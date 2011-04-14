@@ -11,6 +11,9 @@ using System.Collections.Concurrent;
 
 namespace OGDotNet.Utils
 {
+    /// <summary>
+    /// NOTE: This Memoizer will grow unboundedly with the number of distinct arguments used
+    /// </summary>
     public class Memoizer<TArg1, TArg2, TValue>
     {
         private readonly Memoizer<Tuple<TArg1, TArg2>, TValue> _inner;
@@ -27,7 +30,7 @@ namespace OGDotNet.Utils
     }
 
     /// <summary>
-    /// TODO fix leak
+    /// NOTE: This Memoizer will grow unboundedly with the number of distinct arguments used
     /// </summary>
     public class Memoizer<TArg, TValue>
     {
