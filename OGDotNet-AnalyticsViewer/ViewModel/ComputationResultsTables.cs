@@ -46,7 +46,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             _primitiveColumns = GetPrimitiveColumns(viewDefinition).ToList();
         }
 
-        public void Update(ViewComputationResultModel results, CancellationToken cancellationToken)
+        public void Update(InMemoryViewComputationResultModel results, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             _portfolioRows = BuildPortfolioRows(results).ToList();
@@ -60,7 +60,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 InvokePropertyChanged("PrimitiveRows"); // TODO this could be an ObservableCollection for extra niceness
         }
 
-        private bool MergeUpdatePrimitiveRows(ViewComputationResultModel results)
+        private bool MergeUpdatePrimitiveRows(InMemoryViewComputationResultModel results)
         {
             bool rowsChanged = false;
 
@@ -220,7 +220,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             }
         }
 
-        private IEnumerable<PortfolioRow> BuildPortfolioRows(ViewComputationResultModel results)
+        private IEnumerable<PortfolioRow> BuildPortfolioRows(InMemoryViewComputationResultModel results)
         {
             if (_portfolio == null)
                 yield break;
