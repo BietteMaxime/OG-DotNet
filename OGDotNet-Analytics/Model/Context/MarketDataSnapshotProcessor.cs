@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="MarketDataSnapshotProcessor.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -14,6 +14,7 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
@@ -37,16 +38,17 @@ namespace OGDotNet.Model.Context
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RawMarketDataSnapper _rawMarketDataSnapper;
 
-        internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, RemoteView view, DateTimeOffset valuationTime, CancellationToken ct)
+        internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, DateTimeOffset valuationTime, CancellationToken ct)
         {
-            var rawMarketDataSnapper = new RawMarketDataSnapper(context, view);
+            var rawMarketDataSnapper = new RawMarketDataSnapper(context, definition);
             var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(valuationTime, ct);
             return new MarketDataSnapshotProcessor(snapshot, rawMarketDataSnapper);
         }
 
-        internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot) :
-            this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.GetView(snapshot.BasisViewName)))
+        internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot) 
+            //: this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.GetView(snapshot.BasisViewName)))
         {
+            throw new NotImplementedException();
         }
 
         private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RawMarketDataSnapper rawMarketDataSnapper)
@@ -58,11 +60,6 @@ namespace OGDotNet.Model.Context
         public ManageableMarketDataSnapshot Snapshot
         {
             get { return _snapshot; }
-        }
-
-        private RemoteView View
-        {
-            get { return _rawMarketDataSnapper.View; }
         }
 
         public UpdateAction PrepareUpdate(CancellationToken ct = default(CancellationToken))
@@ -131,7 +128,7 @@ namespace OGDotNet.Model.Context
                 return obj.TargetSpecification.GetHashCode();
             }
         }
-        public RemoteView GetViewOfSnapshot(ViewOption option)
+        public ViewDefinition GetViewOfSnapshot(ViewOption option)
         {
             //TODO this is a hack since I can't do structured overrides in the engine yet
             var values =

@@ -11,11 +11,13 @@ using System.IO;
 using System.Threading;
 using Apache.NMS;
 using Fudge.Encodings;
+using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {
-    public class ClientResultStream<T> : DisposableBase
+    public class ClientResultStream : DisposableBase
     {
         private readonly Action _stopAction;
         private readonly IConnection _connection;
@@ -46,22 +48,41 @@ namespace OGDotNet.Model.Resources
             _connection.Start();
         }
 
-        public T GetNext(CancellationToken cancellationToken)
+        public InMemoryViewComputationResultModel GetNext(CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            InMemoryViewComputationResultModel ret = null;
+            while (ret == null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
 
-            IMessage message = _messageQueue.TryDequeue(cancellationToken);
+                IMessage message = _messageQueue.TryDequeue(cancellationToken);
 
-            return Deserialize(message);
+                ret = Deserialize(message);
+            }
+            return ret;
         }
 
-        private T Deserialize(IMessage message)
+        private InMemoryViewComputationResultModel Deserialize(IMessage message)
         {
             var bytesMessage = (IBytesMessage)message;
             using (var memoryStream = new MemoryStream(bytesMessage.Content))
             {
                 var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(_fudgeContext, memoryStream);
-                return _fudgeContext.GetSerializer().Deserialize<T>(fudgeEncodedStreamReader);
+                var ret = _fudgeContext.GetSerializer().Deserialize(fudgeEncodedStreamReader);
+
+                //TODO less hideous
+                if (ret is CycleCompletedCall)
+                {
+                    return ((CycleCompletedCall)ret).FullResult;
+                }
+                else if (ret is ViewDefinitionCompiledCall)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
 

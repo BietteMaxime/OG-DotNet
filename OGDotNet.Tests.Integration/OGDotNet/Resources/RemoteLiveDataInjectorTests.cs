@@ -10,8 +10,9 @@ using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Model.Resources;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
@@ -24,73 +25,75 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CanAddValue()
         {
-            RemoteView remoteView = GetView();
-            var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
-
-            liveDataOverrideInjector.AddValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId)), 100.0);
+            var defn = GetViewDefinition();
+            using (var remoteClient = Context.ViewProcessor.CreateClient())
+            {
+                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
+                remoteClient.LiveDataOverrideInjector.AddValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId)), 100.0);
+            }
         }
 
         [Fact]
         public void CanRemoveValue()
         {
-            RemoteView remoteView = GetView();
-            var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
-            liveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId)));
+            var defn = GetViewDefinition();
+            using (var remoteClient = Context.ViewProcessor.CreateClient())
+            {
+                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
+                remoteClient.LiveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId)));
+            }
         }
 
         [Fact]
         public void ValueChangesResults()
         {
-            RemoteView remoteView = GetView();
             var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId));
 
-            var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
-            const double newValue = 1234.5678;
-            liveDataOverrideInjector.AddValue(valueRequirement, newValue);
 
-            using (var cancellationTokenSource = new CancellationTokenSource())
+            var defn = GetViewDefinition();
+            using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
-                remoteView.Init(cancellationTokenSource.Token);
-                using (var remoteViewClient = remoteView.CreateClient())
-                {
-                    remoteViewClient.Start();
-                    while (!remoteViewClient.ResultAvailable) { }
-                    var viewComputationResultModel = remoteViewClient.GetLatestResult();
-                    var result = viewComputationResultModel.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
-                    Assert.Equal(newValue, (double)result.ComputedValue.Value);
-                }
+                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
+
+                var liveDataOverrideInjector = remoteClient.LiveDataOverrideInjector;
+                const double newValue = 1234.5678;
+                liveDataOverrideInjector.AddValue(valueRequirement, newValue);
+                
+                var viewComputationResultModel = remoteClient.GetResults(default(CancellationToken)).First();
+                var result =
+                    viewComputationResultModel.AllResults.Where(
+                        r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
+                Assert.Equal(newValue, (double) result.ComputedValue.Value);
             }
         }
 
         [Fact]
         public void RemoveChangesResults()
         {
-            RemoteView remoteView = GetView();
             var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId));
-
-            var liveDataOverrideInjector = remoteView.LiveDataOverrideInjector;
             const double newValue = 1234.5678;
 
-            using (var cancellationTokenSource = new CancellationTokenSource())
+            var defn = GetViewDefinition();
+            using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
+                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
+
+                var liveDataOverrideInjector = remoteClient.LiveDataOverrideInjector;
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);
                 liveDataOverrideInjector.RemoveValue(valueRequirement);
-                remoteView.Init(cancellationTokenSource.Token);
 
-                using (var remoteViewClient = remoteView.CreateClient())
-                {
-                    remoteViewClient.Start();
-                    while (!remoteViewClient.ResultAvailable) { }
-                    var viewComputationResultModel = remoteViewClient.GetLatestResult();
-                    var result = viewComputationResultModel.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
-                    Assert.NotEqual(newValue, (double)result.ComputedValue.Value);
+                while (!remoteClient.IsResultAvailable)
+                {//TODO use batch
                 }
+                var viewComputationResultModel = remoteClient.GetLatestResult();
+                var result = viewComputationResultModel.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
+                Assert.NotEqual(newValue, (double)result.ComputedValue.Value);
             }
         }
 
-        private RemoteView GetView()
+        private ViewDefinition GetViewDefinition()
         {
-            return CreateView(new ValueRequirement(
+            return CreateViewDefinition(new ValueRequirement(
                 "Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId))
                 );
         }

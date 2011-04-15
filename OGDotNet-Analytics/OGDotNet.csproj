@@ -71,6 +71,12 @@
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
     <Compile Include="Mappedtypes\engine\depGraph\DependencyGraph\ResultOutputMode.cs" />
     <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
+    <Compile Include="Mappedtypes\engine\View\Execution\ExecutionOptions.cs" />
+    <Compile Include="Mappedtypes\engine\View\Execution\IViewCycleExecutionSequence.cs" />
+    <Compile Include="Mappedtypes\engine\View\Execution\ViewCycleExecutionOptions.cs" />
+    <Compile Include="Mappedtypes\engine\View\Execution\IViewExecutionOptions.cs" />
+    <Compile Include="Mappedtypes\engine\View\listener\CycleCompletedCall.cs" />
+    <Compile Include="Mappedtypes\engine\View\listener\ViewDefinitionCompiledCall.cs" />
     <Compile Include="Mappedtypes\engine\View\permission\ViewPermissionException.cs" />
     <Compile Include="Mappedtypes\engine\Value\ValueProperties.cs" />
     <Compile Include="Mappedtypes\engine\Value\ValueRequirement.cs" />
@@ -87,6 +93,7 @@
     <Compile Include="Builders\CurrencyMatrixBuilder.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixValue.cs" />
     <Compile Include="Mappedtypes\financial\Security\bond\BondSecurity.cs" />
+    <Compile Include="Mappedtypes\financial\view\rest\AttachToViewProcessRequest.cs" />
     <Compile Include="Mappedtypes\math\curve\CurveExtensionMethods.cs" />
     <Compile Include="Mappedtypes\math\surface\ConstantDoublesSurface.cs" />
     <Compile Include="Mappedtypes\financial\model\volatility\surface\VolatilitySurface.cs" />
@@ -130,6 +137,7 @@
     <Compile Include="Model\Resources\RemoteMarketDataSnapshotMaster.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinitionDocument.cs" />
+    <Compile Include="Model\Resources\RemoteViewDefinitionRepository.cs" />
     <Compile Include="Model\Resources\UriEncoding.cs" />
     <Compile Include="Mappedtypes\Util\PublicAPI\ViewClientState.cs" />
     <Compile Include="Model\RestExceptionMapping.cs" />
@@ -151,7 +159,6 @@
     <Compile Include="Model\Context\RemoteEngineContext.cs" />
     <Compile Include="Model\Resources\RemoteSecuritySource.cs" />
     <Compile Include="Model\Resources\RemoteViewProcessor.cs" />
-    <Compile Include="Model\Resources\RemoteView.cs" />
     <Compile Include="Model\Resources\RemoteViewClient.cs" />
     <Compile Include="Builders\ViewComputationResultModelBuilder.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewResultEntry.cs" />
@@ -159,7 +166,7 @@
     <Compile Include="Mappedtypes\engine\View\ViewCalculationResultModel.cs" />
     <Compile Include="Builders\ViewCalculationResultModelBuilder.cs" />
     <Compile Include="Mappedtypes\engine\Value\ValueSpecification.cs" />
-    <Compile Include="Mappedtypes\engine\View\ViewComputationResultModel.cs" />
+    <Compile Include="Mappedtypes\engine\View\InMemoryViewComputationResultModel.cs" />
     <Compile Include="Model\Resources\RemoteClient.cs" />
     <Compile Include="Mappedtypes\Id\IdentifierSearchType.cs" />
     <Compile Include="Mappedtypes\Master\SearchResult.cs" />

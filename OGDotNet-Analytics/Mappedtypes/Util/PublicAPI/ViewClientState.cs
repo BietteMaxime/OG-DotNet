@@ -11,7 +11,6 @@ namespace OGDotNet.Mappedtypes.util.PublicAPI
     public enum ViewClientState
     {
         Started,
-        Stopped,
         Paused,
         Terminated
     }

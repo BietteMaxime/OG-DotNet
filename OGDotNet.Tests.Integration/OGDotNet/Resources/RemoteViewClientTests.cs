@@ -11,7 +11,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -22,114 +24,68 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteViewClientTests : ViewTestsBase
     {
-        [Theory]
-        [TypedPropertyData("Views")]
-        public void CanGet(RemoteView view)
+        [Xunit.Extensions.Fact]
+        public void CanGet()
         {
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                Assert.NotNull(remoteViewClient);
             }
         }
 
-        [Theory]
-        [TypedPropertyData("Views")]
-        public void CanGetUid(RemoteView view)
+        [Xunit.Extensions.Theory]
+        [TypedPropertyData("ViewDefinitions")]
+        public void CanAttach(ViewDefinition vd)
         {
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                Assert.False(remoteViewClient.IsAttached);
+                remoteViewClient.AttachToViewProcess(vd.Name, new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false));
+                Assert.True(remoteViewClient.IsAttached);
+                remoteViewClient.DetachFromViewProcess();
+                Assert.False(remoteViewClient.IsAttached);
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetUid()
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 Assert.NotNull(remoteViewClient.GetUniqueId());
             }
         }
 
         [Theory]
-        [TypedPropertyData("Views")]
-        public void CanGetState(RemoteView view)
+        [TypedPropertyData("ViewDefinitions")]
+        public void CanGetIsLiveComputationRunning(ViewDefinition definition)
         {
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                var viewClientState = remoteViewClient.GetState();
-                Assert.Equal(ViewClientState.Stopped, viewClientState);
-
-                remoteViewClient.Start();
-                viewClientState = remoteViewClient.GetState();
-                Assert.Equal(ViewClientState.Started, viewClientState);
-
+                Assert.Equal(ViewClientState.Started, remoteViewClient.GetState());
                 remoteViewClient.Pause();
-                viewClientState = remoteViewClient.GetState();
-                Assert.Equal(ViewClientState.Paused, viewClientState);
+                Assert.Equal(ViewClientState.Paused, remoteViewClient.GetState());
+                remoteViewClient.Resume();
+                Assert.Equal(ViewClientState.Started, remoteViewClient.GetState());
             }
         }
 
         [Theory]
-        [TypedPropertyData("Views")]
-        public void CanStartAndGetAResult(RemoteView view)
+        [TypedPropertyData("ViewDefinitions")]
+        public void CanStartAndGetAResult(ViewDefinition definition)
         {
-            Assert.NotNull(GetOneResultCache.Get(view.Name));
+            Assert.NotNull(GetOneResultCache.Get(definition.Name));
         }
 
         [Theory]
-        [TypedPropertyData("Views")]
-        public void CanRunOneCycle(RemoteView view)
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanGetManyResults(ViewDefinition viewDefinition)
         {
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
-            {
-                var viewComputationResultModel = remoteViewClient.RunOneCycle(1000L);
-                Assert.NotNull(viewComputationResultModel);
-            }
-        }
-
-        [Theory]
-        [TypedPropertyData("Views")]
-        public void CanRunOneCycleByDate(RemoteView view)
-        {
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
-            {
-                var valuationTime = DateTimeOffset.Now;
-                var viewComputationResultModel = remoteViewClient.RunOneCycle(valuationTime);
-                Assert.NotNull(viewComputationResultModel);
-
-                //Now has a higher resolution
-                Assert.InRange(valuationTime - viewComputationResultModel.ValuationTime.ToDateTimeOffset(),
-                    TimeSpan.Zero,
-                    TimeSpan.FromMilliseconds(1)
-                    );
-            }
-        }
-
-        [Theory]
-        [TypedPropertyData("Views")]
-        public void CanRunOneCycleByFutureDate(RemoteView view)
-        {
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
-            {
-                var valuationTime = DateTimeOffset.Now + TimeSpan.FromDays(2);
-                var viewComputationResultModel = remoteViewClient.RunOneCycle(valuationTime);
-                Assert.NotNull(viewComputationResultModel);
-
-                //Now has a higher resolution
-                TimeSpan precision = TimeSpan.FromMilliseconds(1);
-                Assert.InRange(valuationTime - viewComputationResultModel.ValuationTime.ToDateTimeOffset(),
-                    TimeSpan.Zero - precision,
-                    precision
-                    );
-            }
-        }
-
-        [Theory]
-        [TypedPropertyData("FastTickingViews")]
-        public void CanGetManyResults(RemoteView view)
-        {
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
             using (var cts = new CancellationTokenSource())
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
+                var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
+                remoteViewClient.AttachToViewProcess(viewDefinition.Name, options);
+
                 var resultsEnum = remoteViewClient.GetResults(cts.Token);
 
                 using (var enumerator = resultsEnum.GetEnumerator())
@@ -150,24 +106,29 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         //Make sure we're not being shown up too much by the server
                         var timeToReceive = now - requested;
                         var timeToCalculate = result - valuation;
-                        Assert.InRange(timeToReceive, TimeSpan.Zero, TimeSpan.FromMilliseconds(timeToCalculate.TotalMilliseconds * 3.0));
+                        if (!Debugger.IsAttached)
+                        {
+                            Assert.InRange(timeToReceive, TimeSpan.Zero, TimeSpan.FromMilliseconds(timeToCalculate.TotalMilliseconds * 3.0));
+                        }
                     }
                 }
             }
         }
 
         [Theory]
-        [TypedPropertyData("FastTickingViews")]
-        public void CanPauseAndRestart(RemoteView view)
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanPauseAndRestart(ViewDefinition viewDefinition)
         {
-            Console.WriteLine(string.Format("Checking view {0}", view.Name));
+            Console.WriteLine(string.Format("Checking view {0}", viewDefinition.Name));
             const int forbiddenAfterPause = 3;
 
             var timeout = TimeSpan.FromMilliseconds(20000);
 
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
+                var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
+                remoteViewClient.AttachToViewProcess(viewDefinition.Name, options);
+
                 using (var cts = new CancellationTokenSource())
                 {
                     var resultsEnum = remoteViewClient.GetResults(cts.Token);
@@ -206,9 +167,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                     break;
                                 }
                             }
-                            Assert.True(got < forbiddenAfterPause, string.Format("I got {0} results for view {1} within {2} after pausing", got, view.Name, timeout));
+                            Assert.True(got < forbiddenAfterPause, string.Format("I got {0} results for view {1} within {2} after pausing", got, viewDefinition.Name, timeout));
                         }
-                        remoteViewClient.Start();
+                        remoteViewClient.Resume();
                         {
                             int got = 0;
                             for (int i = 0; i < forbiddenAfterPause; i++)
@@ -219,7 +180,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                     got++;
                                 }
                             }
-                            Assert.True(got == forbiddenAfterPause, string.Format("I got {0} results for view {1} within {2} after pausing", got, view.Name, timeout));
+                            Assert.True(got == forbiddenAfterPause, string.Format("I got {0} results for view {1} within {2} after pausing", got, viewDefinition.Name, timeout));
                         }
 
                         cts.Cancel();
@@ -229,7 +190,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     }
                 }
             }
-            Console.WriteLine(string.Format("Checked view {0}", view.Name));
+            Console.WriteLine(string.Format("Checked view {0}", viewDefinition.Name));
         }
 
         private static bool InvokeWithTimeout(Action act, TimeSpan timeout, ref IAsyncResult result)
@@ -253,50 +214,50 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        static readonly Memoizer<string, ViewComputationResultModel> GetOneResultCache = new Memoizer<string, ViewComputationResultModel>(GetOneResult);
-        private static ViewComputationResultModel GetOneResult(string viewName)
+        static readonly Memoizer<string, InMemoryViewComputationResultModel> GetOneResultCache = new Memoizer<string, InMemoryViewComputationResultModel>(GetOneResult);
+        private static InMemoryViewComputationResultModel GetOneResult(string viewDefinitionName)
         {
-            var view = Context.ViewProcessor.GetView(viewName);
 
-            view.Init();
-            using (var remoteViewClient = view.CreateClient())
-            using (var cts = new CancellationTokenSource())
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                var resultsEnum = remoteViewClient.GetResults(cts.Token);
-
-                foreach (var viewComputationResultModel in resultsEnum)
+                var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
+                remoteViewClient.AttachToViewProcess(viewDefinitionName, options);
+                Assert.False(remoteViewClient.IsCompleted);
+                //TODO
+                while ( ! remoteViewClient.IsResultAvailable)
                 {
-                    return viewComputationResultModel;
+                    Thread.Sleep(1000);    
                 }
+                var resultsEnum = remoteViewClient.GetLatestResult();
+                return resultsEnum;
             }
-            throw new Exception();
         }
 
         [Theory]
-        [TypedPropertyData("FastTickingViews")]
-        public void ViewResultsMatchDefinition(RemoteView view)
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void ViewResultsMatchDefinition(ViewDefinition viewDefinition)
         {
-            var countMaxExpectedValues = CountMaxExpectedValues(view);
+            var countMaxExpectedValues = CountMaxExpectedValues(viewDefinition);
 
-            var viewComputationResultModel = GetOneResultCache.Get(view.Name);
+            var viewComputationResultModel = GetOneResultCache.Get(viewDefinition.Name);
 
             foreach (var viewResultEntry in viewComputationResultModel.AllResults)
             {
                 Assert.NotNull(viewResultEntry.ComputedValue.Value);
-                AssertDefinitionContains(view, viewResultEntry);
+                AssertDefinitionContains(viewDefinition, viewResultEntry);
             }
 
             var countActualValues = viewComputationResultModel.AllResults.Count();
 
-            Console.Out.WriteLine("{0} {1} {2}", view.Name, countActualValues, countMaxExpectedValues);
+            Console.Out.WriteLine("{0} {1} {2}", viewDefinition.Name, countActualValues, countMaxExpectedValues);
             Assert.InRange(countActualValues, 1, countMaxExpectedValues);
         }
 
         [Theory]
-        [TypedPropertyData("Views")]
-        public void ViewResultsHaveSaneValues(RemoteView view)
+        [TypedPropertyData("ViewDefinitions")]
+        public void ViewResultsHaveSaneValues(ViewDefinition definition)
         {
-            var viewComputationResultModel = GetOneResultCache.Get(view.Name);
+            var viewComputationResultModel = GetOneResultCache.Get(definition.Name);
 
             foreach (var viewResultEntry in viewComputationResultModel.AllResults)
             {
@@ -304,9 +265,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private static void AssertDefinitionContains(RemoteView view, ViewResultEntry viewResultEntry)
+        private static void AssertDefinitionContains(ViewDefinition viewDefinition, ViewResultEntry viewResultEntry)
         {
-            var configuration = view.Definition.CalculationConfigurationsByName[viewResultEntry.CalculationConfiguration];
+            var configuration = viewDefinition.CalculationConfigurationsByName[viewResultEntry.CalculationConfiguration];
 
             var valueSpecification = viewResultEntry.ComputedValue.Specification;
 
@@ -330,17 +291,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     Assert.True(false, string.Format("Unmatched requirement {0},{1},{2} on {3}", valueSpecification.ValueName,
                                                      valueSpecification.TargetSpecification.Type,
-                                                     valueSpecification.TargetSpecification.Uid, view.Name));
+                                                     valueSpecification.TargetSpecification.Uid, viewDefinition.Name));
                 }
             }
         }
 
-        private static int CountMaxExpectedValues(RemoteView view)
+        private static int CountMaxExpectedValues(ViewDefinition definition)
         {
-            var specifics = view.Definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.SpecificRequirements.Count());
-            int rows = CountRows(view.Portfolio);
-            var values = rows * view.Definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.PortfolioRequirementsBySecurityType.Single().Value.Count);
-            return specifics + values;
+            var specifics = definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.SpecificRequirements.Count());
+            //int rows = CountRows(definition.PortfolioIdentifier.Portfolio);
+            //var values = rows * view.Definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.PortfolioRequirementsBySecurityType.Single().Value.Count);
+            //return specifics + values;
+            throw new NotImplementedException("Need to get portfolio by ID");
         }
 
         private static int CountRows(IPortfolio portfolio)

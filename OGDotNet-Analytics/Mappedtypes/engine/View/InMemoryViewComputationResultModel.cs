@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ViewComputationResultModel.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="InMemoryViewComputationResultModel.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -19,14 +19,14 @@ using OGDotNet.Utils;
 namespace OGDotNet.Mappedtypes.engine.View
 {
     [FudgeSurrogate(typeof(ViewComputationResultModelBuilder))]
-    public class ViewComputationResultModel
+    public class InMemoryViewComputationResultModel
     {
         private readonly string _viewName;
         private readonly FudgeDateTime _inputDataTimestamp;
         private readonly FudgeDateTime _resultTimestamp;
         private readonly IDictionary<string, ViewCalculationResultModel> _configurationMap;
 
-        public ViewComputationResultModel(string viewName, FudgeDateTime inputDataTimestamp, FudgeDateTime resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap)
+        public InMemoryViewComputationResultModel(string viewName, FudgeDateTime inputDataTimestamp, FudgeDateTime resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap)
         {
             _viewName = viewName;
             _inputDataTimestamp = inputDataTimestamp;
@@ -90,14 +90,14 @@ namespace OGDotNet.Mappedtypes.engine.View
             get { return _configurationMap; }
         }
 
-        public ViewComputationResultModel ApplyDelta(ViewComputationResultModel delta)
+        public InMemoryViewComputationResultModel ApplyDelta(InMemoryViewComputationResultModel delta)
         {
             if (!string.IsNullOrEmpty(delta._viewName) && delta._viewName != _viewName)
                 throw new ArgumentException("View name changed unexpectedly");
 
             var viewCalculationResultModels = _configurationMap.Merge(delta._configurationMap, (a, b) => a.ApplyDelta(b));
 
-            return new ViewComputationResultModel(
+            return new InMemoryViewComputationResultModel(
                 _viewName,
                 delta._inputDataTimestamp,
                 delta._resultTimestamp,

@@ -20,24 +20,5 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var remoteViewProcessor = Context.ViewProcessor;
             Assert.NotNull(remoteViewProcessor);
         }
-
-        [Fact]
-        public void CanGetNames()
-        {
-            var remoteViewProcessor = Context.ViewProcessor;
-            var viewNames = remoteViewProcessor.GetViewNames();
-            Assert.NotEmpty(viewNames);
-            Assert.DoesNotContain(null, viewNames);
-            Assert.DoesNotContain(string.Empty, viewNames);
-        }
-
-        [Theory]
-        [TypedPropertyData("ViewNames")]
-        public void CanGetViews(string viewName)
-        {
-            var remoteViewResource = Context.ViewProcessor.GetView(viewName);
-            Assert.NotNull(remoteViewResource);
-            Assert.Equal(viewName, remoteViewResource.Name);
-        }
     }
 }

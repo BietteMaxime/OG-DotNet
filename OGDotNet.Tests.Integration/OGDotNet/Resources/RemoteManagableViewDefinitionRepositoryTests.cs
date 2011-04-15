@@ -9,14 +9,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
-using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
@@ -55,14 +56,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
 
-                var roundTripped = Context.ViewProcessor.GetView(vd.Name);
+                var roundTripped = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(vd.Name);
                 Assert.NotNull(roundTripped);
 
-                AssertEquivalent(vd, roundTripped.Definition);
+                AssertEquivalent(vd, roundTripped);
 
                 remoteClient.ViewDefinitionRepository.RemoveViewDefinition(vd.Name);
 
-                Assert.DoesNotContain(vd.Name, Context.ViewProcessor.GetViewNames());
+                Assert.DoesNotContain(vd.Name, Context.ViewProcessor.ViewDefinitionRepository.GetDefinitionNames());
             }
         }
 
@@ -77,13 +78,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
 
-                var roundTripped = Context.ViewProcessor.GetView(vd.Name);
-                roundTripped.Init();
-                using (var remoteViewClient = roundTripped.CreateClient())
+                using (var cancellationTokenSource = new CancellationTokenSource())
+                using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                 {
-                    var viewComputationResultModel = remoteViewClient.RunOneCycle(DateTimeOffset.Now);
+                    remoteViewClient.AttachToViewProcess(vd.Name, ExecutionOptions.Live);
+
+                    var viewComputationResultModel = remoteViewClient.GetResults(cancellationTokenSource.Token).First();
                     Assert.NotNull(viewComputationResultModel);
-                    var count = viewComputationResultModel.AllResults.Where(spec => req.IsSatisfiedBy(spec.ComputedValue.Specification)).Count();
+                    var count = viewComputationResultModel.AllResults.Where( spec => req.IsSatisfiedBy(spec.ComputedValue.Specification)).Count();
                     Assert.Equal(1, count);
                 }
 
@@ -94,29 +96,25 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public class RemoteManagableViewDefinitionRepositoryRoundTripTests : ViewTestsBase
         {
             [Xunit.Extensions.Theory]
-            [TypedPropertyData("FastTickingViews")]
-            public void RoundTrippedViewsInit(RemoteView view)
+            [TypedPropertyData("FastTickingViewDefinitions")]
+            public void RoundTrippedViewsInit(ViewDefinition viewDefinition)
             {
-                view.Init();
                 using (var remoteClient = Context.CreateUserClient())
                 {
-                    ViewDefinition vd = view.Definition;
-                    vd.Name = vd.Name + "RoundTripped";
+                    viewDefinition.Name = viewDefinition.Name + "RoundTripped";
 
                     try
                     {
-                        remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
-
-                        var roundTripped = Context.ViewProcessor.GetView(vd.Name);
-                        Assert.NotNull(roundTripped);
-
-                        AssertEquivalent(vd, roundTripped.Definition);
-
-                        roundTripped.Init();
+                        remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
+                        using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+                        {
+                            remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.Live);
+                            Assert.NotNull(remoteViewClient.GetResults(default(CancellationToken)).First());
+                        }
                     }
                     finally
                     {
-                        remoteClient.ViewDefinitionRepository.RemoveViewDefinition(vd.Name);
+                        remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewDefinition.Name);
                     }
                 }
             }

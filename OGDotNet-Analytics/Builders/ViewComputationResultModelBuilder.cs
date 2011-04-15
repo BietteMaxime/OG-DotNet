@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ViewComputationResultModelBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -16,13 +16,13 @@ using OGDotNet.Mappedtypes.engine.View;
 
 namespace OGDotNet.Builders
 {
-    internal class ViewComputationResultModelBuilder : BuilderBase<ViewComputationResultModel>
+    internal class ViewComputationResultModelBuilder : BuilderBase<InMemoryViewComputationResultModel>
     {
         public ViewComputationResultModelBuilder(FudgeContext context, Type type) : base(context, type)
         {
         }
 
-        public override ViewComputationResultModel DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
+        public override InMemoryViewComputationResultModel DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             var viewName = msg.GetValue<string>("viewName");
             var inputDataTimestamp = msg.GetValue<FudgeDateTime>("valuationTS");
@@ -65,7 +65,7 @@ namespace OGDotNet.Builders
                 }
             }
 
-            return new ViewComputationResultModel(viewName, inputDataTimestamp, resultTimestamp, configurationMap);
+            return new InMemoryViewComputationResultModel(viewName, inputDataTimestamp, resultTimestamp, configurationMap);
         }
     }
 }

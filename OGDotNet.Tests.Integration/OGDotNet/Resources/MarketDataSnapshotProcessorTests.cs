@@ -9,6 +9,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -19,12 +22,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
     public class MarketDataSnapshotProcessorTests : ViewTestsBase
     {
         [Theory]
-        [TypedPropertyData("FastTickingViews")]
-        public void CanGetYieldCurveValues(RemoteView view)
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanGetYieldCurveValues(ViewDefinition viewDefinition)
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
 
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromView(view))
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
             {
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 using (var marketDataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
@@ -36,13 +39,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Theory]
-        [TypedPropertyData("FastTickingViews")]
-        public void CanGetViewOverSnapshot(RemoteView view)
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanGetViewOverSnapshot(ViewDefinition viewDefinition)
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
 
             using (var remoteClient = Context.CreateUserClient())
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromView(view))
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
             {
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 using (var marketDataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
@@ -50,9 +53,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var viewOfSnapshot = marketDataSnapshotProcessor.GetViewOfSnapshot(MarketDataSnapshotProcessor.ViewOption.AllSnapshotValues);
                     try
                     {
-                        using (var remoteViewClient = viewOfSnapshot.CreateClient())
+                        using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                         {
-                            var runOneCycle = remoteViewClient.RunOneCycle(DateTimeOffset.Now);
+                            remoteViewClient.AttachToViewProcess(viewOfSnapshot.Name, ExecutionOptions.Live);
+
+                            var runOneCycle = remoteViewClient.GetResults(default(CancellationToken)).First();
                             Assert.NotNull(runOneCycle);
                             Assert.NotEmpty(runOneCycle.AllResults);
                         }
@@ -65,14 +70,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private const string ViewName = "Equity Option Test View 1";
+        private const string ViewDefinitionName = "Equity Option Test View 1";
 
         [Xunit.Extensions.Fact]
         public void CanOverrideYieldCurveValuesEqView()
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
 
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromView(ViewName))
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
             {
                 var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
 
@@ -110,7 +115,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
 
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromView(ViewName))
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
             {
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 dataSnapshotProcessor.PrepareYieldCurveUpdate(manageableMarketDataSnapshot.YieldCurves.Keys.First()).Execute();

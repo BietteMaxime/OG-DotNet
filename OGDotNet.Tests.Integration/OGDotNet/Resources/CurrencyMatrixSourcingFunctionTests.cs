@@ -13,6 +13,7 @@ using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.financial.currency;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -68,12 +69,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 try
                 {
-                    var remoteView = Context.ViewProcessor.GetView(viewDefinition.Name);
-                    remoteView.Init();
-                    var remoteViewClient = remoteView.CreateClient();
-                    var viewComputationResultModel = remoteViewClient.RunOneCycle(DateTimeOffset.Now);
-
-                    return (double)viewComputationResultModel["Default", req].Value;
+                    using (var viewClient = Context.ViewProcessor.CreateClient())
+                    {
+                        viewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.Live);
+                        //TODO use batch
+                        while (! viewClient.IsResultAvailable)
+                        {   
+                        }
+                        var viewComputationResultModel = viewClient.GetLatestResult();
+                        return (double)viewComputationResultModel["Default", req].Value;
+                    }
                 }
                 finally
                 {

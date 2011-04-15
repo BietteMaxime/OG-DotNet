@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Threading;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.Execution;
+using OGDotNet.Mappedtypes.financial.view.rest;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Mappedtypes.util.timeseries.fast;
@@ -34,27 +36,25 @@ namespace OGDotNet.Model.Resources
             _rest = clientUri;
         }
 
-        public IEnumerable<ViewComputationResultModel> GetResults(CancellationToken token)
+        public IEnumerable<InMemoryViewComputationResultModel> GetResults(CancellationToken token)
         {
-            Start();
-
             if (token.IsCancellationRequested) yield break;
-            using (var deltaStream = StartDeltaStream())
+            using (var deltaStream = StartResultStream())
             {//NOTE: by starting the delta stream first I believe I am ok to use this latest result
 
-                while (!ResultAvailable)
-                {
+                while (!IsResultAvailable)
+                {//TODO this is unnecesary
                     if (token.IsCancellationRequested) yield break;
                 }
 
                 if (token.IsCancellationRequested) yield break;
-                ViewComputationResultModel results = GetLatestResult();
+                var results = GetLatestResult();
                 
                 while (!token.IsCancellationRequested)
                 {
                     yield return results;
 
-                    ViewComputationResultModel delta;
+                    InMemoryViewComputationResultModel delta;
                     try
                     {
                         delta = deltaStream.GetNext(token);
@@ -68,67 +68,95 @@ namespace OGDotNet.Model.Resources
             }
         }
 
-        public void Start()
-        {
-            _rest.Resolve("start").Post();
-        }
-
-        private void Stop()//TODO make this stop the IEnumerables somehow ( easier with IObservables)
-        {
-            _rest.Resolve("stop").Post();
-        }
-
         public void Pause()
         {
             _rest.Resolve("pause").Post();
         }
 
-        private ClientResultStream<ViewComputationResultModel> StartResultStream()
+        public void Resume()
+        {
+            _rest.Resolve("resume").Post();
+        }
+
+        public void Shutdown()
+        {
+            _rest.Resolve("shutdown").Post();
+        }
+
+        private ClientResultStream StartResultStream()
         {
             var reponse = _rest.Resolve("startJmsResultStream").Post();
-            return new ClientResultStream<ViewComputationResultModel>(_fudgeContext, _mqTemplate, reponse.GetValue<string>("value"), StopResultStream);
+            return new ClientResultStream(_fudgeContext, _mqTemplate, reponse.GetValue<string>("value"), StopResultStream);
         }
         private void StopResultStream()
         {
             _rest.Resolve("endJmsResultStream").Post();
         }
 
-        private ClientResultStream<ViewComputationResultModel> StartDeltaStream()
+        public void SetUpdatePeriod(long periodMillis)
         {
-            var reponse = _rest.Resolve("startJmsDeltaStream").Post();
-            return new ClientResultStream<ViewComputationResultModel>(_fudgeContext, _mqTemplate, reponse.GetValue<string>("value"), StopDeltaStream);
-        }
-        private void StopDeltaStream()
-        {
-            _rest.Resolve("endJmsDeltaStream").Post();
+            _rest.Resolve("updatePeriod").Post<object>(periodMillis, "updatePeriod");
         }
 
-        public bool ResultAvailable
+        public bool IsAttached
         {
-            get 
+            get
             {
-                var reponse = _rest.Resolve("resultAvailable").GetFudge();
-                return 1 == (sbyte) reponse.GetByName("value").Value;
+                var reponse = _rest.Resolve("isAttached").GetFudge();
+                return 1 == (sbyte)reponse.GetByName("value").Value;
             }
         }
 
-        public ViewComputationResultModel RunOneCycle(DateTimeOffset valuationTime)
+        public void AttachToViewProcess(string viewDefinitionName, IViewExecutionOptions executionOptions)
         {
-            return RunOneCycle((long) (valuationTime - DateTimeNumericEncoding.Epoch).TotalMilliseconds);
-        }
-        public ViewComputationResultModel RunOneCycle(long valuationTime)
-        {
-            return _rest.Resolve("runOneCycle").Post<ViewComputationResultModel>(valuationTime, "runOneCycle");
+            AttachToViewProcess(viewDefinitionName, executionOptions, false);
         }
 
-        public ViewComputationResultModel GetLatestResult()
+        public void AttachToViewProcess(string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
         {
-            return _rest.Resolve("latestResult").Get<ViewComputationResultModel>("latestResult");
+            AttachToViewProcessRequest request = new AttachToViewProcessRequest(viewDefinitionName, executionOptions, newBatchProcess);
+            var reponse = _rest.Resolve("attachSearch").Post(request);
+        }
+        public void DetachFromViewProcess()
+        {
+            _rest.Resolve("detach").Post();
+        }
+
+
+        public RemoteLiveDataInjector LiveDataOverrideInjector
+        {
+            get
+            {
+                return new RemoteLiveDataInjector(_rest.Resolve("overrides"));
+            }
+        }
+
+        public bool IsResultAvailable//TODO use batch
+        {
+            get
+            {
+                var reponse = _rest.Resolve("resultAvailable").GetFudge();
+                return 1 == (sbyte)reponse.GetByName("value").Value;
+            }
+        }
+
+        public bool IsCompleted
+        {
+            get
+            {
+                var reponse = _rest.Resolve("completed").GetFudge();
+                return 1 == (sbyte)reponse.GetByName("value").Value;
+            }
+        }
+
+        public InMemoryViewComputationResultModel GetLatestResult()
+        {
+            return _rest.Resolve("latestResult").Get<InMemoryViewComputationResultModel>();
         }
 
         public UniqueIdentifier GetUniqueId()
         {
-            var restTarget = _rest.Resolve("uniqueIdentifier");
+            var restTarget = _rest.Resolve("id");
             return restTarget.Get<UniqueIdentifier>();
         }
         public ViewClientState GetState()
@@ -141,7 +169,7 @@ namespace OGDotNet.Model.Resources
 
         protected override void Dispose(bool disposing)
         {
-            Stop();
+            Shutdown();
         }
     }
 }

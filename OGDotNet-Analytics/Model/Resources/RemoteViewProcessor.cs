@@ -6,8 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
+using OGDotNet.Mappedtypes.LiveData;
 
 namespace OGDotNet.Model.Resources
 {
@@ -16,24 +15,33 @@ namespace OGDotNet.Model.Resources
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly RestTarget _rest;
         private readonly string _activeMqSpec;
+        private readonly MQTemplate _mqTemplate;
 
         public RemoteViewProcessor(OpenGammaFudgeContext fudgeContext, RestTarget rest, string activeMqSpec)
         {
             _fudgeContext = fudgeContext;
             _rest = rest;
             _activeMqSpec = activeMqSpec;
+            _mqTemplate = new MQTemplate(_activeMqSpec);
         }
 
-        public IEnumerable<string> GetViewNames()
+        public RemoteViewDefinitionRepository ViewDefinitionRepository
         {
-            var fudgeMsg = _rest.Resolve("viewNames").GetFudge();
-
-            return fudgeMsg.GetAllByOrdinal(1).Select(fudgeField => (string) fudgeField.Value);
+            get
+            {
+                return new RemoteViewDefinitionRepository(_fudgeContext, _rest.Resolve("definitions"), _activeMqSpec);
+            }
         }
 
-        public RemoteView GetView(string viewName)
+        public RemoteViewClient CreateClient(UserPrincipal userPrincipal)
         {
-            return new RemoteView(_fudgeContext, _rest.Resolve("views").Resolve(viewName), _activeMqSpec, viewName);
+            var clientUri = _rest.Resolve("clients").Create(userPrincipal);
+
+            return new RemoteViewClient(_fudgeContext, clientUri, _mqTemplate);
+        }
+        public RemoteViewClient CreateClient()
+        {
+            return CreateClient(UserPrincipal.DefaultUser);
         }
     }
 }

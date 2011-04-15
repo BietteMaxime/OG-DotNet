@@ -8,6 +8,7 @@
 
 using System;
 using System.Threading;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Resources;
 
@@ -30,22 +31,22 @@ namespace OGDotNet.Model.Context
             return new MarketDataSnapshotProcessor(_remoteEngineContext, snapshot);
         }
 
-        public MarketDataSnapshotProcessor CreateFromView(string viewName, CancellationToken ct = default(CancellationToken))
+        public MarketDataSnapshotProcessor CreateFromViewDefinition(string name, CancellationToken ct = default(CancellationToken))
         {
-            return CreateFromView(viewName, DateTimeOffset.Now, ct);
+            return CreateFromViewDefinition(name, DateTimeOffset.Now, ct);
         }
-        public MarketDataSnapshotProcessor CreateFromView(RemoteView view, CancellationToken ct = default(CancellationToken))
+        public MarketDataSnapshotProcessor CreateFromViewDefinition(ViewDefinition definition, CancellationToken ct = default(CancellationToken))
         {
-            return CreateFromView(view, DateTimeOffset.Now, ct);
+            return CreateFromViewDefinition(definition, DateTimeOffset.Now, ct);
         }
 
-        public MarketDataSnapshotProcessor CreateFromView(string viewName, DateTimeOffset offset, CancellationToken ct = default(CancellationToken))
+        public MarketDataSnapshotProcessor CreateFromViewDefinition(string name, DateTimeOffset offset, CancellationToken ct = default(CancellationToken))
         {
-            return CreateFromView(_remoteEngineContext.ViewProcessor.GetView(viewName), offset, ct);
+            return CreateFromViewDefinition(_remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(name), offset, ct);
         }
-        public MarketDataSnapshotProcessor CreateFromView(RemoteView view, DateTimeOffset offset, CancellationToken ct = default(CancellationToken))
+        public MarketDataSnapshotProcessor CreateFromViewDefinition(ViewDefinition definition, DateTimeOffset offset, CancellationToken ct = default(CancellationToken))
         {
-            return MarketDataSnapshotProcessor.Create(_remoteEngineContext, view, offset, ct);
+            return MarketDataSnapshotProcessor.Create(_remoteEngineContext, definition, offset, ct);
         }
     }
 }

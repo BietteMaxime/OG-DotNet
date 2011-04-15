@@ -6,9 +6,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
@@ -28,32 +30,32 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Equity Strategies View 1"
                                                                   };
 
-        private static bool IsSlowTickingView(RemoteView view)
+        private static bool IsSlowTicking(string definitionName)
         {
-            if (view.Name == "Primitives Only")
+            if (definitionName == "Primitives Only")
                 return true;
-            if (view.Name == "Bond Future Test View")
+            if (definitionName == "Bond Future Test View")
                 return true;
-            if (view.Name.StartsWith("Cash Equity"))
+            if (definitionName.StartsWith("Cash Equity"))
                 return true;
             return false;
         }
 
-        public static IEnumerable<string> ViewNames
+        public static IEnumerable<string> DefinitionNames
         {
             get
             {
                 var remoteEngineContext = Context;
-                return remoteEngineContext.ViewProcessor.GetViewNames().Where(IsNotBanned);
+                return remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetDefinitionNames().Where(IsNotBanned);
             }
         }
 
-        public static IEnumerable<RemoteView> Views
+        public static IEnumerable<ViewDefinition> ViewDefinitions
         {
             get
             {
                 var remoteEngineContext = Context;
-                return ViewNames.Where(IsNotBanned).Select(n => remoteEngineContext.ViewProcessor.GetView(n));
+                return DefinitionNames.Where(IsNotBanned).Select(n => remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(n));
             }
         }
 
@@ -69,11 +71,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             return containsGuid;
         }
 
-        public static IEnumerable<RemoteView> FastTickingViews
+        public static IEnumerable<ViewDefinition> FastTickingViewDefinitions
         {
             get
             {
-                return Views.Where(n => !IsSlowTickingView(n));
+                return ViewDefinitions.Where(n => !IsSlowTicking(n.Name));
             }
         }
     }

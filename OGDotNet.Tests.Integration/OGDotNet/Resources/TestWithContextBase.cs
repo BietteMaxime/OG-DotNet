@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="TestWithContextBase.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -7,8 +7,8 @@
 //-----------------------------------------------------------------------
 
 using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Model.Context;
-using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.OGDotNet.Model.Context;
 using Xunit;
 
@@ -38,9 +38,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             _testViewFactory = testViewFactory;
         }
 
-        protected RemoteView CreateView(ValueRequirement valueRequirement)
+        protected ViewDefinition CreateViewDefinition(ValueRequirement valueRequirement)
         {
-            return _testViewFactory.CreateView(Context, valueRequirement);
+            return _testViewFactory.CreateViewDefinition(Context, valueRequirement);
         }
     }
 }

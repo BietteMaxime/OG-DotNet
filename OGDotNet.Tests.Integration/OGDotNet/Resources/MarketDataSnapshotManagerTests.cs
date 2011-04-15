@@ -9,6 +9,7 @@
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -19,11 +20,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
     public class MarketDataSnapshotManagerTests : ViewTestsBase
     {
         [Theory]
-        [TypedPropertyData("FastTickingViews")]
-        public void CanCreateFromView(RemoteView view)
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanCreateFromView(ViewDefinition viewDefinition)
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
-            using (var proc = snapshotManager.CreateFromView(view))
+            using (var proc = snapshotManager.CreateFromViewDefinition(viewDefinition))
             {
                 var manageableMarketDataSnapshot = proc.Snapshot;
                 Assert.Null(manageableMarketDataSnapshot.Name);
@@ -39,9 +40,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     }
                 }
 
-                Assert.InRange(manageableMarketDataSnapshot.YieldCurves.Count, ExpectedYieldCurves(view),
+                Assert.InRange(manageableMarketDataSnapshot.YieldCurves.Count, ExpectedYieldCurves(viewDefinition),
                                int.MaxValue);
-                if (view.Name == "Equity Option Test View 1")
+                if (viewDefinition.Name == "Equity Option Test View 1")
                 {
                     Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
                     var yieldCurveSnapshot =
@@ -55,19 +56,19 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private static int ExpectedYieldCurves(RemoteView view)
+        private static int ExpectedYieldCurves(ViewDefinition viewDefinition)
         {
             return
-                view.Definition.CalculationConfigurationsByName.Select(
+                viewDefinition.CalculationConfigurationsByName.Select(
                     c => c.Value.SpecificRequirements.Where(r => r.ValueName.Contains("YieldCurve")).Count()).Distinct().Single();
         }
 
         [Theory]
-        [TypedPropertyData("FastTickingViews")]
-        public void CanUpdateFromView(RemoteView view)
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanUpdateFromView(ViewDefinition viewDefinition)
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
-            using (var proc = snapshotManager.CreateFromView(view))
+            using (var proc = snapshotManager.CreateFromViewDefinition(viewDefinition))
             {
                 var updated = proc.Snapshot;
 

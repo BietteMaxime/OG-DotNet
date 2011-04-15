@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -55,7 +56,7 @@ namespace OGDotNet.AnalyticsViewer.View
             Title = string.Format("OGDotNet ({0})", OGContext.RootUri);
 
             _remoteViewProcessor = OGContext.ViewProcessor;
-            var viewNames = _remoteViewProcessor.GetViewNames();
+            var viewNames = _remoteViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
             _remoteSecuritySource = OGContext.SecuritySource;
             viewSelector.DataContext = viewNames;
 
