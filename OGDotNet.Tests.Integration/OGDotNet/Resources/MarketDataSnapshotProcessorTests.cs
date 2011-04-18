@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Model.Context;
@@ -51,13 +52,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
-                foreach (var valueSnapshot in ycSnapshot.Values)
-                {
-                    foreach (var snapshot in valueSnapshot.Value)
-                    {
-                        snapshot.Value.OverrideValue = snapshot.Value.MarketValue * 1.01;
-                    }
-                }
+
+                ValueSnapshot value = ycSnapshot.Values.Values.First().Value.First().Value;
+                value.OverrideValue = value.MarketValue * 1.01;
 
                 var afterCurves = dataSnapshotProcessor.GetYieldCurves();
                 Assert.NotEmpty(afterCurves);
@@ -69,7 +66,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Equal(beforeCurve.XData, afterCurve.XData);
 
                 var diffs = beforeCurve.YData.Zip(afterCurve.YData, DiffProportion).ToList();
-                Assert.NotEmpty(diffs.Where(d => d > 0.01).ToList());
+                Assert.NotEmpty(diffs.Where(d => d > 0.001).ToList());
             }
         }
 
