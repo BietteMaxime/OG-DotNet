@@ -55,7 +55,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     {
                         using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                         {
-                            var runOneCycle = remoteViewClient.GetResults(viewOfSnapshot.Name, ExecutionOptions.Live, default(CancellationToken)).First();
+                            var runOneCycle = remoteViewClient.GetResults(viewOfSnapshot.Name, ExecutionOptions.Live).First();
                             Assert.NotNull(runOneCycle);
                             Assert.NotEmpty(runOneCycle.AllResults);
                         }

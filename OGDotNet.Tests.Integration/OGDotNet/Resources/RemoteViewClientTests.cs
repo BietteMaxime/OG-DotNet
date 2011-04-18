@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -83,11 +82,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanGetManyResults(ViewDefinition viewDefinition)
         {
-            using (var cts = new CancellationTokenSource())
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
-                var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options, cts.Token);
+                var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
 
                 using (var enumerator = resultsEnum.GetEnumerator())
                 {
@@ -128,66 +126,64 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
-                
-                using (var cts = new CancellationTokenSource())
-                {
-                    var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options, cts.Token);
+                var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
 
-                    using (var enumerator = resultsEnum.GetEnumerator())
+                using (var enumerator = resultsEnum.GetEnumerator())
+                {
+                    bool endOfStream = false;
+                    Action act = delegate
+                                     {
+                                         if (enumerator.MoveNext())
+                                         {
+                                             Assert.NotNull(enumerator.Current);
+                                         }
+                                         else
+                                         {
+                                             endOfStream = true;
+                                         }
+                                     };
+
+                    IAsyncResult pendingResult = null;
+
+                    Assert.True(InvokeWithTimeout(act, timeout, ref pendingResult));
+                    Assert.False(endOfStream);
+                    remoteViewClient.Pause();
                     {
-                        bool endOfStream = false;
-                        Action act = delegate
+                        int got = 0;
+                        for (int i = 0; i < forbiddenAfterPause; i++)
                         {
-                            if (enumerator.MoveNext())
+                            if (InvokeWithTimeout(act, timeout, ref pendingResult))
                             {
-                                Assert.NotNull(enumerator.Current);
+                                got++;
+                                Assert.False(endOfStream);
                             }
                             else
                             {
-                                endOfStream = true;
+                                break;
                             }
-                        };
-
-                        IAsyncResult pendingResult = null;
-
-                        Assert.True(InvokeWithTimeout(act, timeout, ref pendingResult));
-                        Assert.False(endOfStream);
-                        remoteViewClient.Pause();
-                        {
-                            int got = 0;
-                            for (int i = 0; i < forbiddenAfterPause; i++)
-                            {
-                                if (InvokeWithTimeout(act, timeout, ref pendingResult))
-                                {
-                                    got++;
-                                    Assert.False(endOfStream);
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                            Assert.True(got < forbiddenAfterPause, string.Format("I got {0} results for view {1} within {2} after pausing", got, viewDefinition.Name, timeout));
                         }
-                        remoteViewClient.Resume();
-                        {
-                            int got = 0;
-                            for (int i = 0; i < forbiddenAfterPause; i++)
-                            {
-                                if (InvokeWithTimeout(act, timeout, ref pendingResult))
-                                {
-                                    Assert.False(endOfStream);
-                                    got++;
-                                }
-                            }
-                            Assert.True(got == forbiddenAfterPause, string.Format("I got {0} results for view {1} within {2} after pausing", got, viewDefinition.Name, timeout));
-                        }
-
-                        cts.Cancel();
-
-                        Assert.True(InvokeWithTimeout(act, timeout, ref pendingResult));
-                        Assert.True(endOfStream);
+                        Assert.True(got < forbiddenAfterPause,
+                                    string.Format("I got {0} results for view {1} within {2} after pausing", got,
+                                                  viewDefinition.Name, timeout));
                     }
+                    remoteViewClient.Resume();
+                    {
+                        int got = 0;
+                        for (int i = 0; i < forbiddenAfterPause; i++)
+                        {
+                            if (InvokeWithTimeout(act, timeout, ref pendingResult))
+                            {
+                                Assert.False(endOfStream);
+                                got++;
+                            }
+                        }
+                        Assert.True(got == forbiddenAfterPause,
+                                    string.Format("I got {0} results for view {1} within {2} after pausing", got,
+                                                  viewDefinition.Name, timeout));
+                    }
+
+                    Assert.True(InvokeWithTimeout(act, timeout, ref pendingResult));
+                    Assert.True(endOfStream);
                 }
             }
             Console.WriteLine(string.Format("Checked view {0}", viewDefinition.Name));
