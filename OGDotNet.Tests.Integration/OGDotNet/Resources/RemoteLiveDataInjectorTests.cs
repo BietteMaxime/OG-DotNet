@@ -15,7 +15,6 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Model.Resources;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
@@ -105,7 +104,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 mre.Reset();
 
                 var result = results.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
-                Assert.Equal(newValue, (double)result.ComputedValue.Value);
+                Assert.NotEqual(newValue, (double)result.ComputedValue.Value);
             }
         }
 
