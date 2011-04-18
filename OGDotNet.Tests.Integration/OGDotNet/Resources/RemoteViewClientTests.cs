@@ -243,7 +243,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.Live);
 
-                if (!resultsReady.WaitOne(TimeSpan.FromSeconds(15)))
+                if (!resultsReady.WaitOne(TimeSpan.FromMinutes(2)))
                     throw new TimeoutException("Failed to get results for " + viewDefinition.Name + " client " + remoteViewClient.GetUniqueId());
 
                 Assert.NotNull(compiledViewDefinition);
