@@ -70,7 +70,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);
 
-
                 mre.WaitOne();
                 var result = results.AllResults.Where(
                         r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
