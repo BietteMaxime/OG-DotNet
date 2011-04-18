@@ -84,23 +84,32 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void RemoveChangesResults()
         {
             var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId));
-            const double newValue = 1234.5678;
+
 
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
-
                 var liveDataOverrideInjector = remoteClient.LiveDataOverrideInjector;
+                const double newValue = 1234.5678;
+
+                ManualResetEvent mre = new ManualResetEvent(false);
+                InMemoryViewComputationResultModel results = null;
+                var listener = new EventViewResultListener();
+                listener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
+                {
+                    results = e.FullResult;
+                    mre.Set();
+                };
+                remoteClient.SetResultListener(listener);
+                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);
                 liveDataOverrideInjector.RemoveValue(valueRequirement);
+                
+                mre.WaitOne();
+                mre.Reset();
 
-                while (!remoteClient.IsResultAvailable)
-                {//TODO use batch
-                }
-                var viewComputationResultModel = remoteClient.GetLatestResult();
-                var result = viewComputationResultModel.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
-                Assert.NotEqual(newValue, (double)result.ComputedValue.Value);
+                var result = results.AllResults.Where(r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
+                Assert.Equal(newValue, (double)result.ComputedValue.Value);
             }
         }
 
