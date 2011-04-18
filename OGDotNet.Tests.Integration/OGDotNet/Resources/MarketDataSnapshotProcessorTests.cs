@@ -38,36 +38,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
-        [TypedPropertyData("FastTickingViewDefinitions")]
-        public void CanGetViewOverSnapshot(ViewDefinition viewDefinition)
-        {
-            var snapshotManager = Context.MarketDataSnapshotManager;
-
-            using (var remoteClient = Context.CreateUserClient())
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
-            {
-                var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
-                using (var marketDataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
-                {
-                    var viewOfSnapshot = marketDataSnapshotProcessor.GetViewOfSnapshot(MarketDataSnapshotProcessor.ViewOption.AllSnapshotValues);
-                    try
-                    {
-                        using (var remoteViewClient = Context.ViewProcessor.CreateClient())
-                        {
-                            var runOneCycle = remoteViewClient.GetResults(viewOfSnapshot.Name, ExecutionOptions.Live).First();
-                            Assert.NotNull(runOneCycle);
-                            Assert.NotEmpty(runOneCycle.AllResults);
-                        }
-                    }
-                    finally
-                    {
-                        remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewOfSnapshot.Name);
-                    }
-                }
-            }
-        }
-
         private const string ViewDefinitionName = "Equity Option Test View 1";
 
         [Xunit.Extensions.Fact]
@@ -106,29 +76,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static double DiffProportion(double a, double b)
         {
             return Math.Abs(a - b) / Math.Max(Math.Abs(a), Math.Abs(b));
-        }
-
-        [Xunit.Extensions.Fact]
-        public void CantGetContradictoryViewOverSnapshot()
-        {
-            var snapshotManager = Context.MarketDataSnapshotManager;
-
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
-            {
-                var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
-                dataSnapshotProcessor.PrepareYieldCurveUpdate(manageableMarketDataSnapshot.YieldCurves.Keys.First()).Execute();
-
-                var marketDataValueSpecification = manageableMarketDataSnapshot.YieldCurves.Values.First().Values.Values.Keys.First();
-                var valueSnapshots = manageableMarketDataSnapshot.Values[marketDataValueSpecification];
-                var valueSnapsYC = manageableMarketDataSnapshot.YieldCurves.First().Value.Values.Values[marketDataValueSpecification];
-
-                var valueName = valueSnapshots.Keys.First();
-
-                valueSnapshots[valueName].OverrideValue = valueSnapshots[valueName].MarketValue * 1.01;
-                valueSnapsYC[valueName].OverrideValue = valueSnapshots[valueName].MarketValue * 0.99;
-
-                Assert.Throws<InvalidOperationException>(() => dataSnapshotProcessor.GetViewOfSnapshot(MarketDataSnapshotProcessor.ViewOption.AllSnapshotValues));
-            }
         }
     }
 }

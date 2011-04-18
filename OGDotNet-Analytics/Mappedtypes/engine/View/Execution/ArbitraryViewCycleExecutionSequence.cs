@@ -23,13 +23,13 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
             return Of((IEnumerable<DateTimeOffset>) valuationTimes);
         }
 
-        private static ArbitraryViewCycleExecutionSequence Of(IEnumerable<DateTimeOffset> valuationTimes)
+        public static ArbitraryViewCycleExecutionSequence Of(IEnumerable<DateTimeOffset> valuationTimes)
         {
             var executionSequence = valuationTimes.Select(t => new ViewCycleExecutionOptions(t, t));
             return new ArbitraryViewCycleExecutionSequence(executionSequence.ToList());
         }
 
-        public ArbitraryViewCycleExecutionSequence(IEnumerable<ViewCycleExecutionOptions> executionSequence)
+        private ArbitraryViewCycleExecutionSequence(IEnumerable<ViewCycleExecutionOptions> executionSequence)
         {
             _executionSequence = new Queue<ViewCycleExecutionOptions>(executionSequence);
         }

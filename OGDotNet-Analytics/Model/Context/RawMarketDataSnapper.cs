@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -18,6 +19,9 @@ using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.compilation;
+using OGDotNet.Mappedtypes.engine.View.Execution;
+using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
@@ -25,7 +29,6 @@ using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Model.Context
 {
@@ -57,14 +60,15 @@ namespace OGDotNet.Model.Context
             ct.ThrowIfCancellationRequested();
 
             ct.ThrowIfCancellationRequested();
-            InMemoryViewComputationResultModel allResults = GetAllResults(valuationTime, ct);
+            var t = GetAllResults(valuationTime, ct);
+            InMemoryViewComputationResultModel allResults = t.Item2;
+            var compiledViewDefinition = t.Item1;
 
             ct.ThrowIfCancellationRequested();
-            //var requiredLiveData = _view.GetRequiredLiveData();
-            throw new NotImplementedException();
-
-            //ct.ThrowIfCancellationRequested();
-            //return new ManageableMarketDataSnapshot(_view.Name, GetUnstructuredData(allResults, requiredLiveData), GetYieldCurves(allResults));
+            var requiredLiveData = compiledViewDefinition.LiveDataRequirements;
+            
+            ct.ThrowIfCancellationRequested();
+            return new ManageableMarketDataSnapshot(_definition.Name, GetUnstructuredData(allResults, requiredLiveData.Keys), GetYieldCurves(allResults));
         }
 
         private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(InMemoryViewComputationResultModel tempResults)
@@ -130,23 +134,19 @@ namespace OGDotNet.Model.Context
         #endregion
 
         #region view defn building
-        public InMemoryViewComputationResultModel GetAllResults(DateTimeOffset valuationTime, Dictionary<ValueRequirement, double> overrides, CancellationToken ct = default(CancellationToken))
+        public Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> GetAllResults(DateTimeOffset valuationTime, Dictionary<ValueRequirement, double> overrides, CancellationToken ct = default(CancellationToken))
         {
-            throw new NotImplementedException();
-            /*
             ct.ThrowIfCancellationRequested();
-            var yieldCurveSpecReqs = GetYieldCurveSpecReqs(_view, valuationTime);
+            var yieldCurveSpecReqs = GetYieldCurveSpecReqs(_definition, valuationTime);
 
             ct.ThrowIfCancellationRequested();
-            var allDataViewDefn = GetTempViewDefinition(_view, new ResultModelDefinition(ResultOutputMode.All), yieldCurveSpecReqs);
+            var allDataViewDefn = GetTempViewDefinition(_definition, new ResultModelDefinition(ResultOutputMode.All), yieldCurveSpecReqs);
 
             ct.ThrowIfCancellationRequested();
-            var viewComputationResultModel = RunOneCycle(allDataViewDefn, valuationTime, overrides);
-
-            return viewComputationResultModel;*/
+            return RunOneCycle(allDataViewDefn, valuationTime, overrides);
         }
 
-        private InMemoryViewComputationResultModel GetAllResults(DateTimeOffset valuationTime, CancellationToken ct)
+        private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> GetAllResults(DateTimeOffset valuationTime, CancellationToken ct)
         {
             return GetAllResults(valuationTime, new Dictionary<ValueRequirement, double>(), ct);
         }
@@ -156,44 +156,44 @@ namespace OGDotNet.Model.Context
             var tempViewDefinition = GetTempViewDefinition(viewDefinition, new ResultModelDefinition(ResultOutputMode.All));
             var tempResults = RunOneCycle(tempViewDefinition, valuationTime, new Dictionary<ValueRequirement, double>());
 
-            return GetYieldCurveSpecReqs(tempResults);
+            return GetYieldCurveSpecReqs(tempResults.Item2);
         }
 
-        public ViewDefinition GetViewOfSnapshot(Dictionary<ValueRequirement, double> overrides)
-        {
-            var viewDefinition = _remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(_definition.Name);
-            var tempViewDefinition = GetTempViewDefinition(_definition, viewDefinition.ResultModelDefinition);
-            using (var remoteClient = _remoteEngineContext.CreateUserClient())
-            {
-                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(tempViewDefinition));
-                //var tempView = _remoteEngineContext.ViewProcessor.GetView(tempViewDefinition.Name);
-                //tempView.Init();
-                //ApplyOverrides(tempView, overrides);
-                //return tempView;
-                throw new NotImplementedException();
-            }
-        }
-
-        private InMemoryViewComputationResultModel RunOneCycle(ViewDefinition tempViewDefinition, DateTimeOffset valuationTime, Dictionary<ValueRequirement, double> overrides)
+        private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> RunOneCycle(ViewDefinition tempViewDefinition, DateTimeOffset valuationTime, Dictionary<ValueRequirement, double> overrides)
         {
             using (var remoteClient = _remoteEngineContext.CreateUserClient())
             {
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(tempViewDefinition));
                 try
                 {
-                    /*
-                    var tempView = _remoteEngineContext.ViewProcessor.GetView(tempViewDefinition.Name);
-
-                    tempView.Init();
-                    using (var remoteViewClient = tempView.CreateClient())
+                    using (var completedEvent = new ManualResetEvent(false))
+                    using (var cycleCompletedEvent = new ManualResetEvent(false))
+                    using (var remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient())
                     {
-                        ApplyOverrides(tempView, overrides);
-                        var tempResults = remoteViewClient.RunOneCycle(valuationTime);
+                        var cycles = new ConcurrentQueue<CycleCompletedArgs>();
+                        var compiles = new ConcurrentQueue<ViewDefinitionCompiledArgs>();
 
-                        return tempResults;
+                        var listener = new EventViewResultListener();
+                        listener.ViewDefinitionCompiled += (sender, e) => compiles.Enqueue(e);
+                        listener.CycleCompleted += (sender, e) =>
+                                                       {
+                                                           cycles.Enqueue(e);
+                                                           cycleCompletedEvent.Set();
+                                                       };
+                        listener.ProcessCompleted += (sender, e) => completedEvent.Set();
+                        remoteViewClient.SetResultListener(listener);
+
+                        //TODO: This is a hack
+                        remoteViewClient.AttachToViewProcess(tempViewDefinition.Name,
+                                                             ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(Enumerable.Repeat(valuationTime, overrides.Count + 2))));
+
+                        ApplyOverrides(remoteViewClient, overrides);
+                        cycleCompletedEvent.Reset();
+                        cycleCompletedEvent.WaitOne();
+                        cycleCompletedEvent.Reset();
+                        cycleCompletedEvent.WaitOne();
+                        return Tuple.Create(compiles.Last().CompiledViewDefinition, cycles.Last().FullResult);
                     }
-                     * */
-                    throw new NotImplementedException();
                 }
                 finally
                 {
@@ -202,12 +202,21 @@ namespace OGDotNet.Model.Context
             }
         }
 
+        private static void ApplyOverrides(RemoteViewClient remoteViewClient, Dictionary<ValueRequirement, double> overrides)
+        {
+            RemoteLiveDataInjector liveDataOverrideInjector = remoteViewClient.LiveDataOverrideInjector;
+            foreach (var @override in overrides)
+            {
+                liveDataOverrideInjector.AddValue(@override.Key, @override.Value);
+            }
+        }
+
         private static IEnumerable<ValueRequirement> GetYieldCurveSpecReqs(InMemoryViewComputationResultModel tempResults)
         {
             return tempResults.AllResults.Where(r => r.ComputedValue.Specification.ValueName == YieldCurveValueReqName).Select(r => r.ComputedValue.Specification).Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Properties));
         }
 
-        private ViewDefinition GetTempViewDefinition(ViewDefinition viewDefinition, ResultModelDefinition resultModelDefinition, IEnumerable<ValueRequirement> extraReqs = null)
+        private static ViewDefinition GetTempViewDefinition(ViewDefinition viewDefinition, ResultModelDefinition resultModelDefinition, IEnumerable<ValueRequirement> extraReqs = null)
         {
             extraReqs = extraReqs ?? Enumerable.Empty<ValueRequirement>();
 

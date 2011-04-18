@@ -21,6 +21,7 @@ using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
+using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context
@@ -45,9 +46,8 @@ namespace OGDotNet.Model.Context
         }
 
         internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot) 
-            //: this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.GetView(snapshot.BasisViewName)))
+            : this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(snapshot.BasisViewName)))
         {
-            throw new NotImplementedException();
         }
 
         private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RawMarketDataSnapper rawMarketDataSnapper)
@@ -127,17 +127,6 @@ namespace OGDotNet.Model.Context
                 return obj.TargetSpecification.GetHashCode();
             }
         }
-        public ViewDefinition GetViewOfSnapshot(ViewOption option)
-        {
-            //TODO this is a hack since I can't do structured overrides in the engine yet
-            var values =
-                _snapshot.Values.Concat(_snapshot.YieldCurves.SelectMany(y => y.Value.Values.Values)
-                ).SelectMany(kvp => kvp.Value.Select(v => Tuple.Create(GetOverrideReq(kvp.Key, v), v.Value)))
-                .ToLookup(t => t.Item1, t => t.Item2, ValueReqComparer.Instance);
-
-            Dictionary<ValueRequirement, double> overrides = GetOverrides(option, values);
-            return _rawMarketDataSnapper.GetViewOfSnapshot(overrides);
-        }
 
         private static Dictionary<ValueRequirement, double> GetOverrides(ViewOption option, ILookup<ValueRequirement, ValueSnapshot> values)
         {
@@ -211,7 +200,7 @@ namespace OGDotNet.Model.Context
             ct.ThrowIfCancellationRequested();
 
             var curveResults =
-                results.AllResults
+                results.Item2.AllResults
                 .Where(r => Matches(r, yieldCurveSnapshot.Key))
                 .ToLookup(c => c.ComputedValue.Specification.ValueName, c => c.ComputedValue.Value)
                 .ToDictionary(g => g.Key, g => g.First()); // We can get duplicate results in different configurations

@@ -57,43 +57,44 @@ namespace OGDotNet.Model.Resources
 
         private void ListenerResultReceived(object sender, ResultEvent e)
         {
+            IViewResultListener viewResultListener;
             lock (_listenerLock)
             {
-                if (_resultListener == null)
-                {
-                    throw new InvalidOperationException("Listener not set");
-                }
-                e.ApplyTo(_resultListener);
+                viewResultListener = _resultListener;
             }
+            if (viewResultListener == null)
+            {
+                return;
+            }
+            e.ApplyTo(viewResultListener); // If this is done in the lock then dispose can deadlock
         }
 
         public void RemoveResultListener()
         {
+            RemoveResultListenerInner(true);
+        }
+
+        private void RemoveResultListenerInner(bool throwOnNotSet)
+        {
+            ClientResultStream<object> listenerResultStream;
             lock (_listenerLock)
             {
                 if (_resultListener == null)
                 {
-                    throw new InvalidOperationException("Result listener not currently set");
+                    if (throwOnNotSet)
+                    {
+                        throw new InvalidOperationException("Result listener not currently set");
+                    }
+                    return;
                 }
                 _resultListener = null;
-                _listenerResultStream.Dispose();
+
+                listenerResultStream = _listenerResultStream;
                 _listenerResultStream = null;
                 StopResultStream();
             }
+            listenerResultStream.Dispose(); // If this is done in the lock then dispose can deadlock
         }
-
-        private void RemoveResultListenerIfSet()
-        {
-            lock (_listenerLock)
-            {
-                if (_resultListener == null)
-                {
-                    return;
-                }
-                RemoveResultListener();
-            }
-        }
-
         public void Pause()
         {
             _rest.Resolve("pause").Post();
@@ -195,7 +196,7 @@ namespace OGDotNet.Model.Resources
 
         protected override void Dispose(bool disposing)
         {
-            RemoveResultListenerIfSet();
+            RemoveResultListenerInner(false);
             Shutdown();
         }
     }
