@@ -106,7 +106,7 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("resume").Post();
         }
 
-        public void Shutdown()
+        private void Shutdown()
         {
             _rest.Resolve("shutdown").Post();
         }
@@ -117,9 +117,6 @@ namespace OGDotNet.Model.Resources
             return new ClientResultStream<object>(_fudgeContext, _mqTemplate, reponse.GetValue<string>("value"));
         }
 
-        /// <summary>
-        /// TODO call this automatically
-        /// </summary>
         private void StopResultStream()
         {
             _rest.Resolve("endJmsResultStream").Post();
@@ -154,7 +151,6 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("detach").Post();
         }
 
-
         public RemoteLiveDataInjector LiveDataOverrideInjector
         {
             get
@@ -163,7 +159,7 @@ namespace OGDotNet.Model.Resources
             }
         }
 
-        public bool IsResultAvailable//TODO use batch
+        public bool IsResultAvailable
         {
             get
             {
