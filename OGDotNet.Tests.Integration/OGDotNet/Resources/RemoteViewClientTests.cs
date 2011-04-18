@@ -216,16 +216,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
-                remoteViewClient.AttachToViewProcess(viewDefinitionName, options);
-                Assert.False(remoteViewClient.IsCompleted);
-                //TODO
-                while ( ! remoteViewClient.IsResultAvailable)
-                {
-                    Thread.Sleep(1000);    
-                }
-                var resultsEnum = remoteViewClient.GetLatestResult();
-                return resultsEnum;
+                var options = ExecutionOptions.Live;
+                return remoteViewClient.GetResults(viewDefinitionName, options).First();
             }
         }
 
@@ -257,7 +249,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     throw new TimeoutException("Failed to get results for " + viewDefinition.Name + " client " + remoteViewClient.GetUniqueId());
 
                 Assert.NotNull(compiledViewDefinition);
-
 
                 foreach (var viewResultEntry in viewComputationResultModel.AllResults)
                 {
