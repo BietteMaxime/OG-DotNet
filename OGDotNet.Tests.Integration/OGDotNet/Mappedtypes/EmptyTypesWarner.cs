@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
@@ -34,6 +35,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Mappedtypes
         [TypedPropertyData("MappedTypes")]
         public void TypesArentUseless(Type mappedType)
         {
+            if (mappedType == typeof(ProcessCompletedCall))
+                return;
             if (mappedType.IsInterface)
                 return;
             Assert.True(GetUsefuleness(mappedType)  > LeastUseful, string.Format("Useless mapped type {0}", mappedType.FullName));
