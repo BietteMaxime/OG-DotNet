@@ -18,8 +18,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
-    [FudgeSurrogate(typeof(ViewComputationResultModelBuilder))]
-    public class InMemoryViewComputationResultModel
+    public class InMemoryViewComputationResultModel : ViewComputationResultModel
     {
         private readonly string _viewName;
         private readonly FudgeDateTime _inputDataTimestamp;
