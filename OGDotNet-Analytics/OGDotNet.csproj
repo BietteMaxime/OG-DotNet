@@ -142,7 +142,6 @@
     <Compile Include="Model\Resources\RemoteMarketDataSnapshotMaster.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinitionDocument.cs" />
-    <Compile Include="Model\Resources\RemoteViewClientExtensions.cs" />
     <Compile Include="Model\Resources\RemoteViewDefinitionRepository.cs" />
     <Compile Include="Model\Resources\ResultEvent.cs" />
     <Compile Include="Model\Resources\UriEncoding.cs" />
