@@ -61,10 +61,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 ManualResetEvent mre = new ManualResetEvent(false);
                 InMemoryViewComputationResultModel results = null;
-                var baseViewResultListener = new BaseViewResultListener((f, d) => { results = f; mre.Set(); });
-
-
-                remoteClient.SetResultListener(baseViewResultListener);
+                var listener = new EventViewResultListener();
+                listener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
+                                               {
+                                                   results = e.FullResult;
+                                                   mre.Set();
+                                               };
+                remoteClient.SetResultListener(listener);
                 remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);
 

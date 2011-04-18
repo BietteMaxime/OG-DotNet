@@ -17,17 +17,19 @@ namespace OGDotNet.Model.Resources
         public static IEnumerable<InMemoryViewComputationResultModel> GetResults(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess, CancellationToken token = default(CancellationToken))
         {
             //TODO handle errors
-            using (var resultQueue = new BlockingQueueWithCancellation<InMemoryViewComputationResultModel>())
+            using (var resultQueue = new BlockingQueueWithCancellation<InMemoryViewComputationResultModel>(token))
             {
-                var baseViewResultListener = new BaseViewResultListener((full, delta) => resultQueue.Enqueue(full));
-                client.SetResultListener(baseViewResultListener);
+                var resultListener = new EventViewResultListener();
+                resultListener.CycleCompleted += (sender, e) => resultQueue.Enqueue(e.FullResult);
+
+                client.SetResultListener(resultListener);
 
                 client.AttachToViewProcess(viewDefinitionName, executionOptions, newBatchProcess);
                 try
                 {
                     while (!token.IsCancellationRequested)
                     {
-                        yield return resultQueue.Dequeue(token);
+                        yield return resultQueue.Dequeue();
                     }
                 }
                 finally

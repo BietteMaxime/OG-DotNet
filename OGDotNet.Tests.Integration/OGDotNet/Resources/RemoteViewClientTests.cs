@@ -242,14 +242,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 ICompiledViewDefinition compiledViewDefinition = null;
                 InMemoryViewComputationResultModel viewComputationResultModel = null;
                 ManualResetEvent resultsReady = new ManualResetEvent(false);
-                remoteViewClient.SetResultListener(new BaseViewResultListener((full, delta) =>
-                                                                                  {
-                                                                                      viewComputationResultModel = full;
-                                                                                      resultsReady.Set();
-                                                                                  }, defn =>
-                                                                                         {
-                                                                                             compiledViewDefinition = defn;
-                                                                                         }));
+
+                var listener = new EventViewResultListener();
+                listener.ViewDefinitionCompiled += delegate(object sender, ViewDefinitionCompiledArgs e)
+                                                       {
+                                                           compiledViewDefinition = e.CompiledViewDefinition;
+                                                       };
+                listener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
+                                               {
+                                                   viewComputationResultModel = e.FullResult;
+                                                   resultsReady.Set();
+                                               };
+                remoteViewClient.SetResultListener(listener);
 
                 remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.Live);
 

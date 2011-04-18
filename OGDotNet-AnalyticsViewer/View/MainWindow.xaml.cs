@@ -13,7 +13,12 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using OGDotNet.AnalyticsViewer.ViewModel;
+using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.compilation;
+using OGDotNet.Mappedtypes.engine.View.Execution;
+using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Model.Resources;
+using OGDotNet.Utils;
 using OGDotNet.WPFUtils;
 using OGDotNet.WPFUtils.Windsor;
 
@@ -98,58 +103,97 @@ namespace OGDotNet.AnalyticsViewer.View
         {
             try
             {
-                Invoke(delegate { resultsTableView.DataContext = null; }, cancellationToken);
+                RefreshMyDataImpl(viewName, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "Failed to load view data");
+            }
+        }
 
-                cancellationToken.ThrowIfCancellationRequested();
-                var remoteViewResource = _remoteViewProcessor.GetView(viewName);
+        private void RefreshMyDataImpl(string viewName, CancellationToken cancellationToken)
+        {
+            Invoke(delegate { resultsTableView.DataContext = null; }, cancellationToken);
 
-                cancellationToken.ThrowIfCancellationRequested();
-                SetStatus("Initializing view...");
-                remoteViewResource.Init(cancellationToken);
+            var clientLock = new object();
 
-                cancellationToken.ThrowIfCancellationRequested();
-                var portfolio = remoteViewResource.Portfolio;
-
-                cancellationToken.ThrowIfCancellationRequested();
-                var viewDefinition = remoteViewResource.Definition;
-
-                var resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource);
-                Invoke(delegate { resultsTableView.DataContext = resultsTable; }, cancellationToken);
-                
-                int count = 0;
-
-                SetStatus("Creating client");
-                using (var client = remoteViewResource.CreateClient())
+            lock (clientLock)
+            {
+                var client = OGContext.ViewProcessor.CreateClient();
+                RoutedEventHandler pausedHandler = delegate
                 {
-                    //TODO get these off the UI thread but with order, easier with IObservables
-                    RoutedEventHandler pausedHandler = delegate { if (!cancellationToken.IsCancellationRequested) { client.Pause(); } };
-                    RoutedEventHandler unpausedHandler = delegate { if (!cancellationToken.IsCancellationRequested) { client.Start(); } };
-                    pauseToggle.Checked += pausedHandler;
-                    pauseToggle.Unchecked += unpausedHandler;
-                    try
+                    if (!cancellationToken.IsCancellationRequested)
                     {
-                        SetStatus("Getting first result");
-                        foreach (var results in client.GetResults(cancellationToken))
-                        {
-                            resultsTable.Update(results, cancellationToken);
-                            SetStatus(string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (results.ResultTimestamp.ToDateTime() - results.ValuationTime.ToDateTime()).TotalMilliseconds, ++count));
-                        }
+                        client.Pause();
                     }
-                    finally
+                };
+                RoutedEventHandler unpausedHandler = delegate
+                {
+                    if (!cancellationToken.IsCancellationRequested)
                     {
+                        client.Resume();
+                    }
+                };
+                //Must do this before we can throw any exceptions
+                ThreadPool.RegisterWaitForSingleObject(cancellationToken.WaitHandle, delegate
+                {
+                    lock (clientLock)
+                    {
+                        client.Dispose();
                         pauseToggle.Checked -= pausedHandler;
                         pauseToggle.Unchecked -= unpausedHandler;
                     }
-                }
+                }, null, int.MaxValue, true);
+
+                //Now we can start hooking things together
+                pauseToggle.Checked += pausedHandler;
+                pauseToggle.Unchecked += unpausedHandler;
+
+                ComputationResultsTables resultsTable = null;
+                int count = 0;
+
+                var eventViewResultListener = new EventViewResultListener();
+                eventViewResultListener.ViewDefinitionCompiled +=
+                    delegate(object sender, ViewDefinitionCompiledArgs args)
+                        {
+                            var portfolio = args.CompiledViewDefinition.Portfolio;
+                            var viewDefinition = args.CompiledViewDefinition.ViewDefinition;
+                            resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource);
+                            Invoke(delegate { resultsTableView.DataContext = resultsTable; }, cancellationToken);
+                        };
+                eventViewResultListener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
+                                                              {
+                                                                  resultsTable.Update(e.FullResult, cancellationToken);
+                                                                  SetStatus(GetMessage(e.FullResult, ref count));
+                                                              };
+
+                eventViewResultListener.ViewDefinitionCompilationFailed +=
+                    delegate(object sender, ViewDefinitionCompilationFailedArgs args)
+                    {
+                        Invoke(delegate
+                                   {
+                                       SetStatus(string.Format("Failed to execute {0} @ {1}", args.Exception, args.ValuationTime));
+                                       resultsTableView.DataContext = null;
+                                   }, cancellationToken);
+                    };
+                eventViewResultListener.CycleExecutionFailed +=
+                    delegate(object sender, CycleExecutionFailedArgs args)
+                    {
+                        Invoke(delegate
+                        {
+                            SetStatus(string.Format("Failed to compile {0}", args.Exception));
+                            resultsTableView.DataContext = null;
+                        }, cancellationToken);
+                    };
+
+                client.SetResultListener(eventViewResultListener);
+                client.AttachToViewProcess(viewName, ExecutionOptions.Live);
             }
-            catch (OperationCanceledException)
-            {
-                // TODO don't use exceptions here
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Failed to retrieve data");
-            }
+        }
+
+        private static string GetMessage(InMemoryViewComputationResultModel results, ref int count)
+        {
+            return string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (results.ResultTimestamp.ToDateTime() - results.ValuationTime.ToDateTime()).TotalMilliseconds, ++count);
         }
 
         private void SetStatus(string msg)

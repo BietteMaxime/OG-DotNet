@@ -20,6 +20,6 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
 
         void ProcessCompleted();
 
-        void PocessTerminated(bool executionInterrupted);
+        void ProcessTerminated(bool executionInterrupted);
     }
 }

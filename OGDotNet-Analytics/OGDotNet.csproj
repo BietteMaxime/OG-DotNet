@@ -78,8 +78,8 @@
     <Compile Include="Mappedtypes\engine\View\Execution\IViewCycleExecutionSequence.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\ViewCycleExecutionOptions.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\IViewExecutionOptions.cs" />
-    <Compile Include="Mappedtypes\engine\View\listener\BaseViewResultListener.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\CycleCompletedCall.cs" />
+    <Compile Include="Mappedtypes\engine\View\listener\EventViewResultListener.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\IViewResultListener.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\ViewDefinitionCompiledCall.cs" />
     <Compile Include="Mappedtypes\engine\View\permission\ViewPermissionException.cs" />
