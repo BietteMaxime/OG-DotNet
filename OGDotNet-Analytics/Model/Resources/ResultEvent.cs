@@ -29,7 +29,8 @@ namespace OGDotNet.Model.Resources
         {
             var cycleCompletedCall = _msg as CycleCompletedCall;
             var defnCompiled = _msg as ViewDefinitionCompiledCall;
-            
+            var completedCall = _msg as ProcessCompletedCall;
+
             if (cycleCompletedCall != null)
             {
                 resultListener.CycleCompleted(cycleCompletedCall.FullResult, null); //TODO 
@@ -37,6 +38,10 @@ namespace OGDotNet.Model.Resources
             else if (defnCompiled != null)
             {
                 resultListener.ViewDefinitionCompiled(defnCompiled.CompiledViewDefinition);
+            }
+            else if (completedCall != null)
+            {
+                resultListener.ProcessCompleted();
             }
             else
             {

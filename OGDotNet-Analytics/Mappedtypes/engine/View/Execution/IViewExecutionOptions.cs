@@ -9,5 +9,10 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
 {
     public interface IViewExecutionOptions
     {
+        IViewCycleExecutionSequence ExecutionSequence { get; }
+        bool RunAsFastAsPossible { get; }
+        bool LiveDataTriggerEnabled { get; }
+        int? MaxSuccessiveDeltaCycles { get; }
+        bool CompileOnly { get; }
     }
 }

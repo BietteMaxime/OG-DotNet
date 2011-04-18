@@ -18,8 +18,8 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
         public event EventHandler<ViewDefinitionCompilationFailedArgs> ViewDefinitionCompilationFailed;
         public event EventHandler<CycleCompletedArgs> CycleCompleted;
         public event EventHandler<CycleExecutionFailedArgs> CycleExecutionFailed;
-
-        //TODO ProcessCompleted, PocessTerminated
+        public event EventHandler ProcessCompleted;
+        public event EventHandler<ProcessTerminatedArgs> ProcessTerminated;
 
         void IViewResultListener.ViewDefinitionCompiled(ICompiledViewDefinition compiledViewDefinition)
         {
@@ -41,12 +41,14 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
             InvokeCycleExecutionFailed(new CycleExecutionFailedArgs(executionOptions, exception));
         }
 
-        public void ProcessCompleted()
-        {//TODO
+        void IViewResultListener.ProcessCompleted()
+        {
+            InvokeProcessCompleted(EventArgs.Empty);
         }
 
-        public void ProcessTerminated(bool executionInterrupted)
-        {//TODO
+        void IViewResultListener.ProcessTerminated(bool executionInterrupted)
+        {
+            InvokeProcessTerminated(new ProcessTerminatedArgs(executionInterrupted));
         }
 
         private void InvokeViewDefinitionCompiled(ViewDefinitionCompiledArgs e)
@@ -66,10 +68,37 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
             EventHandler<CycleCompletedArgs> handler = CycleCompleted;
             if (handler != null) handler(this, e);
         }
-        public void InvokeCycleExecutionFailed(CycleExecutionFailedArgs e)
+        private void InvokeCycleExecutionFailed(CycleExecutionFailedArgs e)
         {
             EventHandler<CycleExecutionFailedArgs> handler = CycleExecutionFailed;
             if (handler != null) handler(this, e);
+        }
+
+        private void InvokeProcessCompleted(EventArgs e)
+        {
+            EventHandler handler = ProcessCompleted;
+            if (handler != null) handler(this, e);
+        }
+
+        private void InvokeProcessTerminated(ProcessTerminatedArgs e)
+        {
+            EventHandler<ProcessTerminatedArgs> handler = ProcessTerminated;
+            if (handler != null) handler(this, e);
+        }
+    }
+
+    public class ProcessTerminatedArgs : EventArgs
+    {
+        private readonly bool _executionInterrupted;
+
+        public ProcessTerminatedArgs(bool executionInterrupted)
+        {
+            _executionInterrupted = executionInterrupted;
+        }
+
+        public bool ExecutionInterrupted
+        {
+            get { return _executionInterrupted; }
         }
     }
 

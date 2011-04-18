@@ -84,6 +84,7 @@
     <Compile Include="OGDotNet\Resources\RemoteMarketDataSnapshotMasterTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteSecurityMasterTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteSecuritySourceTests.cs" />
+    <Compile Include="OGDotNet\Resources\RemoteViewClientBatchTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewClientExtensions.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewClientTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewDefinitionRepositoryTests.cs" />

@@ -6,6 +6,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using Fudge;
+using Fudge.Serialization;
 
 namespace OGDotNet.Mappedtypes.engine.View.Execution
 {
@@ -28,6 +30,17 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
         public DateTimeOffset InputDataTime
         {
             get { return _inputDataTime; }
+        }
+
+        public static ViewCycleExecutionOptions FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            a.Add("valuation", _valuationTime);
+            a.Add("inputData", _inputDataTime);
         }
     }
 }

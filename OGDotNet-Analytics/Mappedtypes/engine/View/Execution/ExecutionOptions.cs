@@ -6,17 +6,45 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+
 namespace OGDotNet.Mappedtypes.engine.View.Execution
 {
     public class ExecutionOptions : IViewExecutionOptions
     {
-        public static ExecutionOptions Live
+        public static IViewExecutionOptions Live
         {
             get
             {
                 return new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
             }
         }
+
+        public static IViewExecutionOptions SingleCycle
+        {
+            get { return GetSingleCycle(DateTimeOffset.Now); }
+        }
+
+        public static IViewExecutionOptions GetSingleCycle(DateTimeOffset valuationTime)
+        {
+            return new ExecutionOptions(
+                ArbitraryViewCycleExecutionSequence.Of(valuationTime),
+                                    true,
+                                    false,
+                                    null,
+                                    false);
+        }
+
+        public static IViewExecutionOptions Batch(IViewCycleExecutionSequence cycleExecutionSequence)
+        {
+            return new ExecutionOptions(
+                cycleExecutionSequence,
+                true,
+                false,
+                null,
+                false);
+        }
+
         private readonly IViewCycleExecutionSequence _executionSequence;
         private readonly bool _runAsFastAsPossible;
         private readonly bool _liveDataTriggerEnabled;
