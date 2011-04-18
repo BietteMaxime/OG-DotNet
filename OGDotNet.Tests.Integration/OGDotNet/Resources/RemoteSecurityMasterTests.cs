@@ -18,16 +18,25 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanSearchWithRequest()
         {
-            var searchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All, new IdentifierSearch(Enumerable.Empty<Identifier>(), IdentifierSearchType.Any));
+            var searchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All);
             Assert.NotEmpty(searchResult.Documents);
 
             var securitytoFind = searchResult.Documents.First();
             var identifierBundle = securitytoFind.Security.Identifiers;
-
-            var singleSearchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All, new IdentifierSearch(identifierBundle.Identifiers, IdentifierSearchType.Any));
-            Assert.NotEmpty(singleSearchResult.Documents);
-            Assert.Single(singleSearchResult.Documents);
-            Assert.Equal(singleSearchResult.Documents.Single().Security.UniqueId, UniqueIdentifier.Parse(securitytoFind.UniqueId));
+            {
+                var identifierSearch = new IdentifierSearch(identifierBundle.Identifiers, IdentifierSearchType.All);
+                var singleSearchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All, identifierSearch);
+                Assert.NotEmpty(singleSearchResult.Documents);
+                Assert.Single(singleSearchResult.Documents);
+                Assert.Equal(singleSearchResult.Documents.Single().Security.UniqueId, UniqueIdentifier.Parse(securitytoFind.UniqueId));
+            }
+            {
+                var identifierSearch = new IdentifierSearch(identifierBundle.Identifiers.Concat(Enumerable.Repeat(Identifier.Of("XXX", "YYY"), 1)), IdentifierSearchType.Any);
+                var singleSearchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All, identifierSearch);
+                Assert.NotEmpty(singleSearchResult.Documents);
+                Assert.Single(singleSearchResult.Documents);
+                Assert.Equal(singleSearchResult.Documents.Single().Security.UniqueId, UniqueIdentifier.Parse(securitytoFind.UniqueId));
+            }
         }
     }
 }

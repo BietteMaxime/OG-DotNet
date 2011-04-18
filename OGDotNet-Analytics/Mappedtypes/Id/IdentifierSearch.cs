@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.Id
 {
@@ -40,7 +41,7 @@ namespace OGDotNet.Mappedtypes.Id
             {
                 a.Add("identifier", identifier);
             }
-            a.Add("searchType", _searchType.ToString());
+            a.Add("searchType", EnumBuilder<IdentifierSearchType>.GetJavaName(_searchType));
         }
     }
 }
