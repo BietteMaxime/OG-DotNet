@@ -7,10 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
-using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -20,7 +17,7 @@ namespace OGDotNet.Model.Resources
         private readonly string _clientId;
         private readonly RestTarget _rest;
 
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private readonly CancellationTokenSource _heartbeatCancellationTokenSource = new CancellationTokenSource();
 
         public RemoteClient(RestTarget userDataRest)
             : this(userDataRest, Environment.UserName, Guid.NewGuid().ToString())
@@ -32,7 +29,7 @@ namespace OGDotNet.Model.Resources
             _clientId = clientId;
             _rest = userDataRest.Resolve(username).Resolve("clients").Resolve(_clientId);
 
-            QueueHeartbeat(_cts.Token);
+            QueueHeartbeat(_heartbeatCancellationTokenSource.Token);
         }
 
         private void QueueHeartbeat(CancellationToken cancellationToken)
@@ -45,7 +42,7 @@ namespace OGDotNet.Model.Resources
             var token = (CancellationToken)context;
             if (token.IsCancellationRequested)
             {
-                _cts.Dispose();
+                _heartbeatCancellationTokenSource.Dispose();
             }
             else
             {
@@ -91,8 +88,8 @@ namespace OGDotNet.Model.Resources
 
         protected override void Dispose(bool disposing)
         {
-            _cts.Cancel();
-            //NOTE: I can't dispose of _cts here, because then calling WaitHandle on it would throw
+            _heartbeatCancellationTokenSource.Cancel();
+            //NOTE: I can't dispose of _heartbeatCancellationTokenSource here, because then calling WaitHandle on it would throw
         }
     }
 }
