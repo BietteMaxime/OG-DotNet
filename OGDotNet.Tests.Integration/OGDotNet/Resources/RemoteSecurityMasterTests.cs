@@ -15,7 +15,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteSecurityMasterTests : TestWithContextBase
     {
-        [Xunit.Extensions.Fact(Skip = "DOTNET-16")]
+        [Xunit.Extensions.Fact]
         public void CanSearchWithRequest()
         {
             var searchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All, new IdentifierSearch(Enumerable.Empty<Identifier>(), IdentifierSearchType.Any));

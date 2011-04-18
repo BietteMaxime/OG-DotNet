@@ -213,7 +213,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         static readonly Memoizer<string, InMemoryViewComputationResultModel> GetOneResultCache = new Memoizer<string, InMemoryViewComputationResultModel>(GetOneResult);
         private static InMemoryViewComputationResultModel GetOneResult(string viewDefinitionName)
         {
-
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 var options = ExecutionOptions.Live;

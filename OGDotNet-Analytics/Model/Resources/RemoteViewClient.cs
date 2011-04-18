@@ -34,7 +34,6 @@ namespace OGDotNet.Model.Resources
         private IViewResultListener _resultListener;
         private ClientResultStream<object> _listenerResultStream;
 
-
         public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate)
         {
             _fudgeContext = fudgeContext;
@@ -42,7 +41,6 @@ namespace OGDotNet.Model.Resources
             _rest = clientUri;
         }
         
-
         public void SetResultListener(IViewResultListener resultListener)
         {
             lock (_listenerLock)

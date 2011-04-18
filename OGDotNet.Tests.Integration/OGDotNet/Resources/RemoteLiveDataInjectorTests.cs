@@ -52,7 +52,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId));
 
-
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
@@ -72,7 +71,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);
 
 
-
                 mre.WaitOne();
                 var result = results.AllResults.Where(
                         r => valueRequirement.IsSatisfiedBy(r.ComputedValue.Specification)).First();
@@ -84,7 +82,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void RemoveChangesResults()
         {
             var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId));
-
 
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
