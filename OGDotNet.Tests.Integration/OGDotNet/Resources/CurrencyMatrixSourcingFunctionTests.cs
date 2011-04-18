@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
@@ -71,12 +72,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     using (var viewClient = Context.ViewProcessor.CreateClient())
                     {
-                        viewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.Live);
-                        //TODO use batch
-                        while (! viewClient.IsResultAvailable)
-                        {   
-                        }
-                        var viewComputationResultModel = viewClient.GetLatestResult();
+                        var viewComputationResultModel = viewClient.GetResults(viewDefinition.Name, ExecutionOptions.Live).First();
                         return (double)viewComputationResultModel["Default", req].Value;
                     }
                 }
