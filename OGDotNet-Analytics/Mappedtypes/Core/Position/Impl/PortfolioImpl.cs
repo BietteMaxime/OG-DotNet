@@ -21,17 +21,17 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             _name = name;
         }
 
-        public string Identifier
+        public override string Identifier
         {
             get { return _identifier; }
         }
 
-        public string Name
+        public override string Name
         {
             get { return _name; }
         }
 
-        public PortfolioNode Root
+        public override PortfolioNode Root
         {
             get { return _root; }
         }

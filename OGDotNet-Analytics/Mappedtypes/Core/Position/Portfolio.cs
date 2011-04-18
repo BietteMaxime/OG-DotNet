@@ -6,12 +6,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Fudge.Serialization;
+using OGDotNet.Builders;
+
 namespace OGDotNet.Mappedtypes.Core.Position
 {
-    public interface IPortfolio
+    [FudgeSurrogate(typeof(PortfolioBuilder))]
+    public abstract class IPortfolio
     {
-        string Identifier { get; }
-        string Name { get;  }
-        PortfolioNode Root { get;  }
+        public abstract string Identifier { get; }
+        public abstract string Name { get; }
+        public abstract PortfolioNode Root { get; }
     }
 }

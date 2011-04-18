@@ -7,13 +7,16 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.engine.View.Execution;
+using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -84,9 +87,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
-                remoteViewClient.AttachToViewProcess(viewDefinition.Name, options);
-
-                var resultsEnum = remoteViewClient.GetResults(cts.Token);
+                var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options, cts.Token);
 
                 using (var enumerator = resultsEnum.GetEnumerator())
                 {
@@ -127,11 +128,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
-                remoteViewClient.AttachToViewProcess(viewDefinition.Name, options);
-
+                
                 using (var cts = new CancellationTokenSource())
                 {
-                    var resultsEnum = remoteViewClient.GetResults(cts.Token);
+                    var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options, cts.Token);
 
                     using (var enumerator = resultsEnum.GetEnumerator())
                     {
@@ -237,20 +237,41 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void ViewResultsMatchDefinition(ViewDefinition viewDefinition)
         {
-            var countMaxExpectedValues = CountMaxExpectedValues(viewDefinition);
-
-            var viewComputationResultModel = GetOneResultCache.Get(viewDefinition.Name);
-
-            foreach (var viewResultEntry in viewComputationResultModel.AllResults)
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                Assert.NotNull(viewResultEntry.ComputedValue.Value);
-                AssertDefinitionContains(viewDefinition, viewResultEntry);
+                ICompiledViewDefinition compiledViewDefinition = null;
+                InMemoryViewComputationResultModel viewComputationResultModel = null;
+                ManualResetEvent resultsReady = new ManualResetEvent(false);
+                remoteViewClient.SetResultListener(new BaseViewResultListener((full, delta) =>
+                                                                                  {
+                                                                                      viewComputationResultModel = full;
+                                                                                      resultsReady.Set();
+                                                                                  }, defn =>
+                                                                                         {
+                                                                                             compiledViewDefinition = defn;
+                                                                                         }));
+
+                remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.Live);
+
+                if (!resultsReady.WaitOne(TimeSpan.FromSeconds(15)))
+                    throw new TimeoutException("Failed to get results for " + viewDefinition.Name + " client " + remoteViewClient.GetUniqueId());
+
+                Assert.NotNull(compiledViewDefinition);
+
+
+                foreach (var viewResultEntry in viewComputationResultModel.AllResults)
+                {
+                    Assert.NotNull(viewResultEntry.ComputedValue.Value);
+                    AssertDefinitionContains(viewDefinition, viewResultEntry);
+                }
+
+                var countActualValues = viewComputationResultModel.AllResults.Count();
+
+                var countMaxExpectedValues = CountMaxExpectedValues(compiledViewDefinition);
+
+                Console.Out.WriteLine("{0} {1} {2}", viewDefinition.Name, countActualValues, countMaxExpectedValues);
+                Assert.InRange(countActualValues, 1, countMaxExpectedValues);
             }
-
-            var countActualValues = viewComputationResultModel.AllResults.Count();
-
-            Console.Out.WriteLine("{0} {1} {2}", viewDefinition.Name, countActualValues, countMaxExpectedValues);
-            Assert.InRange(countActualValues, 1, countMaxExpectedValues);
         }
 
         [Theory]
@@ -296,13 +317,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private static int CountMaxExpectedValues(ViewDefinition definition)
+        private static int CountMaxExpectedValues(ICompiledViewDefinition compiledDefinition)
         {
-            var specifics = definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.SpecificRequirements.Count());
-            //int rows = CountRows(definition.PortfolioIdentifier.Portfolio);
-            //var values = rows * view.Definition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.PortfolioRequirementsBySecurityType.Single().Value.Count);
-            //return specifics + values;
-            throw new NotImplementedException("Need to get portfolio by ID");
+            var specifics = compiledDefinition.ViewDefinition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.SpecificRequirements.Count());
+            int rows = CountRows(compiledDefinition.Portfolio);
+            var values = rows * compiledDefinition.ViewDefinition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.PortfolioRequirementsBySecurityType.Single().Value.Count);
+            return specifics + values;
         }
 
         private static int CountRows(IPortfolio portfolio)

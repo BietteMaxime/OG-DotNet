@@ -27,7 +27,7 @@ namespace OGDotNet.Utils
             _semaphore.Release();
         }
 
-        public T TryDequeue(CancellationToken cancellationToken)
+        public T Dequeue(CancellationToken cancellationToken)
         {
             WaitHandle.WaitAny(new[] { _semaphore, cancellationToken.WaitHandle });
             cancellationToken.ThrowIfCancellationRequested();

@@ -62,6 +62,7 @@
     <Compile Include="Builders\EnumUtils.cs" />
     <Compile Include="Builders\IdentifierBuilder.cs" />
     <Compile Include="Builders\MapBuilder.cs" />
+    <Compile Include="Builders\PortfolioBuilder.cs" />
     <Compile Include="Builders\SerializerExtensions.cs" />
     <Compile Include="Mappedtypes\Core\Common\Currency.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\ValueSnapshot.cs" />
@@ -71,11 +72,15 @@
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
     <Compile Include="Mappedtypes\engine\depGraph\DependencyGraph\ResultOutputMode.cs" />
     <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
+    <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewDefinitionImpl.cs" />
+    <Compile Include="Mappedtypes\engine\View\compilation\ICompiledViewDefinition.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\ExecutionOptions.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\IViewCycleExecutionSequence.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\ViewCycleExecutionOptions.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\IViewExecutionOptions.cs" />
+    <Compile Include="Mappedtypes\engine\View\listener\BaseViewResultListener.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\CycleCompletedCall.cs" />
+    <Compile Include="Mappedtypes\engine\View\listener\IViewResultListener.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\ViewDefinitionCompiledCall.cs" />
     <Compile Include="Mappedtypes\engine\View\permission\ViewPermissionException.cs" />
     <Compile Include="Mappedtypes\engine\Value\ValueProperties.cs" />
@@ -137,7 +142,9 @@
     <Compile Include="Model\Resources\RemoteMarketDataSnapshotMaster.cs" />
     <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\YieldCurveDefinitionDocument.cs" />
+    <Compile Include="Model\Resources\RemoteViewClientExtensions.cs" />
     <Compile Include="Model\Resources\RemoteViewDefinitionRepository.cs" />
+    <Compile Include="Model\Resources\ResultEvent.cs" />
     <Compile Include="Model\Resources\UriEncoding.cs" />
     <Compile Include="Mappedtypes\Util\PublicAPI\ViewClientState.cs" />
     <Compile Include="Model\RestExceptionMapping.cs" />

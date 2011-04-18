@@ -18,6 +18,7 @@ using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
+using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
@@ -81,9 +82,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 using (var cancellationTokenSource = new CancellationTokenSource())
                 using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                 {
-                    remoteViewClient.AttachToViewProcess(vd.Name, ExecutionOptions.Live);
-
-                    var viewComputationResultModel = remoteViewClient.GetResults(cancellationTokenSource.Token).First();
+                    var viewComputationResultModel = remoteViewClient.GetResults(vd.Name, ExecutionOptions.Live, cancellationTokenSource.Token).First();
                     Assert.NotNull(viewComputationResultModel);
                     var count = viewComputationResultModel.AllResults.Where( spec => req.IsSatisfiedBy(spec.ComputedValue.Specification)).Count();
                     Assert.Equal(1, count);
@@ -108,8 +107,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                         using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                         {
-                            remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.Live);
-                            Assert.NotNull(remoteViewClient.GetResults(default(CancellationToken)).First());
+                            Assert.NotNull(remoteViewClient.GetResults(viewDefinition.Name, ExecutionOptions.Live, default(CancellationToken)).First());
                         }
                     }
                     finally

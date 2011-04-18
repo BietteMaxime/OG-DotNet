@@ -8,14 +8,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
+using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.financial.view.rest;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.util.PublicAPI;
-using OGDotNet.Mappedtypes.util.timeseries.fast;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -23,11 +24,16 @@ namespace OGDotNet.Model.Resources
     /// <summary>
     /// See DataViewClientResource on the java side
     /// </summary>
-    public class RemoteViewClient : DisposableBase  //TODO IObservable<ViewComputationResultModel>
+    public class RemoteViewClient : DisposableBase  //TODO IObservable
     {
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly MQTemplate _mqTemplate;
         private readonly RestTarget _rest;
+
+        private readonly object _listenerLock = new object();
+        private IViewResultListener _resultListener;
+        private ClientResultStream<object> _listenerResultStream;
+
 
         public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate)
         {
@@ -35,36 +41,58 @@ namespace OGDotNet.Model.Resources
             _mqTemplate = mqTemplate;
             _rest = clientUri;
         }
+        
 
-        public IEnumerable<InMemoryViewComputationResultModel> GetResults(CancellationToken token)
+        public void SetResultListener(IViewResultListener resultListener)
         {
-            if (token.IsCancellationRequested) yield break;
-            using (var deltaStream = StartResultStream())
-            {//NOTE: by starting the delta stream first I believe I am ok to use this latest result
-
-                while (!IsResultAvailable)
-                {//TODO this is unnecesary
-                    if (token.IsCancellationRequested) yield break;
-                }
-
-                if (token.IsCancellationRequested) yield break;
-                var results = GetLatestResult();
-                
-                while (!token.IsCancellationRequested)
+            lock (_listenerLock)
+            {
+                if (_resultListener != null)
                 {
-                    yield return results;
-
-                    InMemoryViewComputationResultModel delta;
-                    try
-                    {
-                        delta = deltaStream.GetNext(token);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        yield break;
-                    }
-                    results = results.ApplyDelta(delta);
+                    throw new InvalidOperationException("Result listener already set");
                 }
+                _resultListener = resultListener;
+                _listenerResultStream = StartResultStream();
+                _listenerResultStream.MessageReceived += ListenerResultReceived;
+            }
+        }
+
+        private void ListenerResultReceived(object sender, ResultEvent e)
+        {
+            lock (_listenerLock)
+            {
+                if (_resultListener == null)
+                {
+                    throw new InvalidOperationException("Listener not set");
+                }
+                e.ApplyTo(_resultListener);
+            }
+        }
+
+        public void RemoveResultListener()
+        {
+            lock (_listenerLock)
+            {
+                if (_resultListener == null)
+                {
+                    throw new InvalidOperationException("Result listener not currently set");
+                }
+                _resultListener = null;
+                _listenerResultStream.Dispose();
+                _listenerResultStream = null;
+                StopResultStream();
+            }
+        }
+
+        private void RemoveResultListenerIfSet()
+        {
+            lock (_listenerLock)
+            {
+                if (_resultListener == null)
+                {
+                    return;
+                }
+                RemoveResultListener();
             }
         }
 
@@ -83,11 +111,15 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("shutdown").Post();
         }
 
-        private ClientResultStream StartResultStream()
+        private ClientResultStream<object> StartResultStream()
         {
             var reponse = _rest.Resolve("startJmsResultStream").Post();
-            return new ClientResultStream(_fudgeContext, _mqTemplate, reponse.GetValue<string>("value"), StopResultStream);
+            return new ClientResultStream<object>(_fudgeContext, _mqTemplate, reponse.GetValue<string>("value"));
         }
+
+        /// <summary>
+        /// TODO call this automatically
+        /// </summary>
         private void StopResultStream()
         {
             _rest.Resolve("endJmsResultStream").Post();
@@ -169,6 +201,7 @@ namespace OGDotNet.Model.Resources
 
         protected override void Dispose(bool disposing)
         {
+            RemoveResultListenerIfSet();
             Shutdown();
         }
     }

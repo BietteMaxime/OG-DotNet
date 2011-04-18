@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using OGDotNet.Mappedtypes.engine.View.compilation;
 
 namespace OGDotNet.Mappedtypes.engine.View.listener
 {
     public class ViewDefinitionCompiledCall
     {
-        //TODO this
+        private readonly CompiledViewDefinitionImpl _compiledViewDefinition;
+
+        public ViewDefinitionCompiledCall(CompiledViewDefinitionImpl compiledViewDefinition)
+        {
+            _compiledViewDefinition = compiledViewDefinition;
+        }
+
+        public CompiledViewDefinitionImpl CompiledViewDefinition
+        {
+            get { return _compiledViewDefinition; }
+        }
     }
 }

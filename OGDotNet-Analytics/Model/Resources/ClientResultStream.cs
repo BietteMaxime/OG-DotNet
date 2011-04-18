@@ -8,18 +8,14 @@
 
 using System;
 using System.IO;
-using System.Threading;
 using Apache.NMS;
 using Fudge.Encodings;
-using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {
-    public class ClientResultStream : DisposableBase
+    public class ClientResultStream<T> : DisposableBase
     {
-        private readonly Action _stopAction;
         private readonly IConnection _connection;
         private readonly ISession _session;
         private readonly IDestination _destination;
@@ -27,12 +23,11 @@ namespace OGDotNet.Model.Resources
         private readonly MQTemplate _mqTemplate;
         private readonly OpenGammaFudgeContext _fudgeContext;
 
-        readonly BlockingQueueWithCancellation<IMessage> _messageQueue = new BlockingQueueWithCancellation<IMessage>();
+        public event EventHandler<ResultEvent> MessageReceived;
 
-        public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate, string topicName, Action stopAction)
+        public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate, string topicName)
         {
             _fudgeContext = fudgeContext;
-            _stopAction = stopAction;
 
             _mqTemplate = mqTemplate;
 
@@ -43,47 +38,24 @@ namespace OGDotNet.Model.Resources
 
             _consumer = _session.CreateConsumer(_destination);
 
-            _consumer.Listener += msg => _messageQueue.Enqueue(msg);
+            _consumer.Listener += msg => InvokeMessageReceived(new ResultEvent(Deserialize(msg)));
 
             _connection.Start();
         }
-
-        public InMemoryViewComputationResultModel GetNext(CancellationToken cancellationToken)
-        {
-            InMemoryViewComputationResultModel ret = null;
-            while (ret == null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                IMessage message = _messageQueue.TryDequeue(cancellationToken);
-
-                ret = Deserialize(message);
-            }
-            return ret;
-        }
-
-        private InMemoryViewComputationResultModel Deserialize(IMessage message)
+        private T Deserialize(IMessage message)
         {
             var bytesMessage = (IBytesMessage)message;
             using (var memoryStream = new MemoryStream(bytesMessage.Content))
             {
                 var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(_fudgeContext, memoryStream);
-                var ret = _fudgeContext.GetSerializer().Deserialize(fudgeEncodedStreamReader);
-
-                //TODO less hideous
-                if (ret is CycleCompletedCall)
-                {
-                    return ((CycleCompletedCall)ret).FullResult;
-                }
-                else if (ret is ViewDefinitionCompiledCall)
-                {
-                    return null;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                return _fudgeContext.GetSerializer().Deserialize<T>(fudgeEncodedStreamReader);
             }
+        }
+
+        private void InvokeMessageReceived(ResultEvent e)
+        {
+            EventHandler<ResultEvent> handler = MessageReceived;
+            if (handler != null) handler(this, e);
         }
 
         protected override void Dispose(bool disposing)
@@ -91,10 +63,6 @@ namespace OGDotNet.Model.Resources
             _consumer.Dispose();
             _session.Dispose();
             _connection.Dispose();
-
-            _messageQueue.Dispose();
-
-            _stopAction();
         }
     }
 }

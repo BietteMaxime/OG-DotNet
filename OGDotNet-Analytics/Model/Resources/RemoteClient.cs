@@ -7,7 +7,10 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
+using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources

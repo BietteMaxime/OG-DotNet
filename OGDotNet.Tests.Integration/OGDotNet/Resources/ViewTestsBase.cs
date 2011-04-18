@@ -38,6 +38,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 return true;
             if (definitionName.StartsWith("Cash Equity"))
                 return true;
+            if (definitionName.StartsWith("GlobeOp Bond View"))
+                return true;
             return false;
         }
 
