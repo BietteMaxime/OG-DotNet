@@ -21,7 +21,6 @@ using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
-using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context

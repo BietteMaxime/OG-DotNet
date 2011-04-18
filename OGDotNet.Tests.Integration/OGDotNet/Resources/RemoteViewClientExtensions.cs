@@ -1,10 +1,18 @@
-﻿using System.Collections.Concurrent;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="RemoteViewClientExtensions.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
+using OGDotNet.Model.Resources;
 
-namespace OGDotNet.Model.Resources
+namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public static class RemoteViewClientExtensions
     {
