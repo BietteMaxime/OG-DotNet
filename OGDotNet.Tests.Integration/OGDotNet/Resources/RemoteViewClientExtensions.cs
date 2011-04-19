@@ -5,6 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.engine.View;
@@ -33,9 +34,23 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 client.SetResultListener(resultListener);
 
                 client.AttachToViewProcess(viewDefinitionName, executionOptions, newBatchProcess);
+
+                TimeSpan timeout = TimeSpan.FromMinutes(1);
+
                 try
                 {
-                    yield return resultQueue.Take();
+                    while (true)
+                    {
+                        InMemoryViewComputationResultModel ret;
+                        if (resultQueue.TryTake(out ret, (int) timeout.TotalMilliseconds))
+                        {
+                            yield return ret;
+                        }
+                        else
+                        {
+                            throw new TimeoutException(string.Format("No results received for {0} after {1} state {2} is completed {3}", viewDefinitionName, timeout, client.GetState(), client.IsCompleted));
+                        }
+                    }
                 }
                 finally
                 {
