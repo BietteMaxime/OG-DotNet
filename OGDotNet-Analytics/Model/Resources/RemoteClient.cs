@@ -17,7 +17,7 @@ namespace OGDotNet.Model.Resources
         private readonly string _clientId;
         private readonly RestTarget _rest;
 
-        private readonly CancellationTokenSource _heartbeatCancellationTokenSource = new CancellationTokenSource();
+        private readonly HeartbeatSender _heartbeatSender;
 
         public RemoteClient(RestTarget userDataRest)
             : this(userDataRest, Environment.UserName, Guid.NewGuid().ToString())
@@ -29,39 +29,9 @@ namespace OGDotNet.Model.Resources
             _clientId = clientId;
             _rest = userDataRest.Resolve(username).Resolve("clients").Resolve(_clientId);
 
-            QueueHeartbeat(_heartbeatCancellationTokenSource.Token);
+            _heartbeatSender = new HeartbeatSender(TimeSpan.FromMinutes(5), _rest.Resolve("heartbeat"));
         }
-
-        private void QueueHeartbeat(CancellationToken cancellationToken)
-        {
-            ThreadPool.RegisterWaitForSingleObject(cancellationToken.WaitHandle, SendHeartBeats, cancellationToken, TimeSpan.FromMinutes(5), true);
-        }
-
-        private void SendHeartBeats(object context, bool timedOut)
-        {
-            var token = (CancellationToken)context;
-            if (token.IsCancellationRequested)
-            {
-                _heartbeatCancellationTokenSource.Dispose();
-            }
-            else
-            {
-                try
-                {
-                    SendHeartbeat();
-                }
-                finally
-                {
-                    QueueHeartbeat(token);
-                }
-            }
-        }
-
-        private void SendHeartbeat()
-        {
-            _rest.Resolve("heartbeat").Post();
-        }
-
+        
         public RemoteSecurityMaster SecurityMaster
         {
             get
@@ -88,8 +58,10 @@ namespace OGDotNet.Model.Resources
 
         protected override void Dispose(bool disposing)
         {
-            _heartbeatCancellationTokenSource.Cancel();
-            //NOTE: I can't dispose of _heartbeatCancellationTokenSource here, because then calling WaitHandle on it would throw
+            if (disposing)
+            {
+                _heartbeatSender.Dispose();
+            }
         }
     }
 }

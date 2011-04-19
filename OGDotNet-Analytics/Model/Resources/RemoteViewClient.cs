@@ -32,12 +32,14 @@ namespace OGDotNet.Model.Resources
         private readonly object _listenerLock = new object();
         private IViewResultListener _resultListener;
         private ClientResultStream<object> _listenerResultStream;
+        private HeartbeatSender _heartbeatSender;
 
         public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate)
         {
             _fudgeContext = fudgeContext;
             _mqTemplate = mqTemplate;
             _rest = clientUri;
+            _heartbeatSender = new HeartbeatSender(TimeSpan.FromSeconds(10), _rest.Resolve("heartbeat"));
         }
         
         public void SetResultListener(IViewResultListener resultListener)
@@ -202,6 +204,7 @@ namespace OGDotNet.Model.Resources
 
         protected override void Dispose(bool disposing)
         {
+            _heartbeatSender.Dispose();
             RemoveResultListenerInner(false);
             Shutdown();
         }
