@@ -40,7 +40,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 Assert.False(remoteViewClient.IsAttached);
-                remoteViewClient.AttachToViewProcess(vd.Name, new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false));
+                remoteViewClient.AttachToViewProcess(vd.Name, ExecutionOptions.RealTime);
                 Assert.True(remoteViewClient.IsAttached);
                 remoteViewClient.DetachFromViewProcess();
                 Assert.False(remoteViewClient.IsAttached);
@@ -83,10 +83,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
+                var options = ExecutionOptions.RealTime;
                 var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
 
-                Assert.True(resultsEnum.Take(5).All(r => r != null));
+                var results = resultsEnum.Take(5).ToList();
+                Assert.True(results.All(r => r != null));
             }
         }
 
@@ -122,7 +123,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
+                var options = ExecutionOptions.RealTime;
                 var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
 
                 using (var enumerator = resultsEnum.GetEnumerator())
