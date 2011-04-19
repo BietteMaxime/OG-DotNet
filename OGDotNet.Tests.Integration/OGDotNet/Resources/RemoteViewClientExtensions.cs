@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
@@ -24,12 +25,22 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         public static IEnumerable<InMemoryViewComputationResultModel> GetResults(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
         {
+            return GetCycles(client, viewDefinitionName, executionOptions, newBatchProcess).Select(e => e.FullResult);
+        }
+
+        public static IEnumerable<CycleCompletedArgs> GetCycles(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions)
+        {
+            return GetCycles(client, viewDefinitionName, executionOptions, false);
+        }
+
+        public static IEnumerable<CycleCompletedArgs> GetCycles(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
+        {
             //TODO handle errors
 
-            using (var resultQueue = new BlockingCollection<InMemoryViewComputationResultModel>(new ConcurrentQueue<InMemoryViewComputationResultModel>()))
+            using (var resultQueue = new BlockingCollection<CycleCompletedArgs>(new ConcurrentQueue<CycleCompletedArgs>()))
             {
                 var resultListener = new EventViewResultListener();
-                resultListener.CycleCompleted += (sender, e) => resultQueue.Add(e.FullResult);
+                resultListener.CycleCompleted += (sender, e) => resultQueue.Add(e);
 
                 client.SetResultListener(resultListener);
 
@@ -41,8 +52,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     while (true)
                     {
-                        InMemoryViewComputationResultModel ret;
-                        if (resultQueue.TryTake(out ret, (int) timeout.TotalMilliseconds))
+                        CycleCompletedArgs ret;
+                        if (resultQueue.TryTake(out ret, (int)timeout.TotalMilliseconds))
                         {
                             yield return ret;
                         }

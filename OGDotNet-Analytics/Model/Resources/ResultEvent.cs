@@ -33,7 +33,7 @@ namespace OGDotNet.Model.Resources
 
             if (cycleCompletedCall != null)
             {
-                resultListener.CycleCompleted(cycleCompletedCall.FullResult, null); //TODO 
+                resultListener.CycleCompleted(cycleCompletedCall.FullResult, cycleCompletedCall.DeltaResult);
             }
             else if (defnCompiled != null)
             {

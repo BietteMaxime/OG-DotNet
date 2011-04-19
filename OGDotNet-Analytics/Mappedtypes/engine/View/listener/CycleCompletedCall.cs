@@ -6,26 +6,27 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-
 namespace OGDotNet.Mappedtypes.engine.View.listener
 {
-    public class CycleCompletedCall
+    internal class CycleCompletedCall
     {
         private readonly InMemoryViewComputationResultModel _fullResult;
+        private readonly InMemoryViewComputationResultModel _deltaResult;
 
-        public CycleCompletedCall(InMemoryViewComputationResultModel fullResult)
+        public CycleCompletedCall(InMemoryViewComputationResultModel fullResult, InMemoryViewComputationResultModel deltaResult)
         {
-            if (fullResult == null)
-            {
-                throw new NotImplementedException();
-            }
             _fullResult = fullResult;
+            _deltaResult = deltaResult;
         }
 
         public InMemoryViewComputationResultModel FullResult
         {
             get { return _fullResult; }
+        }
+
+        public InMemoryViewComputationResultModel DeltaResult
+        {
+            get { return _deltaResult; }
         }
     }
 }

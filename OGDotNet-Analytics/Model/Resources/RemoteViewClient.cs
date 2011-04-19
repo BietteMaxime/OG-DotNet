@@ -7,8 +7,10 @@
 //-----------------------------------------------------------------------
 
 using System;
+using Fudge;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.client;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.financial.view.rest;
@@ -46,9 +48,10 @@ namespace OGDotNet.Model.Resources
                 {
                     throw new InvalidOperationException("Result listener already set");
                 }
-                _resultListener = resultListener;
+                // NOTE: exception throwing call first
                 _listenerResultStream = StartResultStream();
                 _listenerResultStream.MessageReceived += ListenerResultReceived;
+                _resultListener = resultListener;
             }
         }
 
@@ -121,6 +124,12 @@ namespace OGDotNet.Model.Resources
         public void SetUpdatePeriod(long periodMillis)
         {
             _rest.Resolve("updatePeriod").Post<object>(periodMillis, "updatePeriod");
+        }
+
+        public void SetViewResultMode(ViewResultMode mode)
+        {
+            var fudgeMsg = new FudgeMsg {{1, EnumBuilder<ViewResultMode>.GetJavaName(mode)}};
+            _rest.Resolve("resultMode").Put(fudgeMsg);
         }
 
         public bool IsAttached

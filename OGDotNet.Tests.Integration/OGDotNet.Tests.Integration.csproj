@@ -121,6 +121,10 @@
       <Project>{85A5C00D-70B7-4C8C-A342-1AE522A05BB7}</Project>
       <Name>OGDotNet.SecurityViewer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OGDotNet.Tests\OGDotNet.Tests.csproj">
+      <Project>{E0720E55-0A15-4D4A-AFFD-FA3C232F4589}</Project>
+      <Name>OGDotNet.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OGDotNet.WPFUtils\OGDotNet.WPFUtils.csproj">
       <Project>{D271BA68-546F-44CB-80DE-E7C4CDF70B57}</Project>
       <Name>OGDotNet.WPFUtils</Name>

@@ -14,7 +14,7 @@ using Xunit.Extensions;
 
 namespace OGDotNet.Tests.Xunit.Extensions
 {
-    class EnumValuesDataAttribute : DataAttribute
+    public class EnumValuesDataAttribute : DataAttribute
     {
         public override IEnumerable<object[]> GetData(MethodInfo methodUnderTest, Type[] parameterTypes)
         {

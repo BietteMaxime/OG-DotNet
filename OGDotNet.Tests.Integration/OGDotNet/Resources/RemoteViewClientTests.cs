@@ -7,17 +7,20 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.client;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
+using OGDotNet.Tests.Xunit.Extensions;
 using OGDotNet.Utils;
 using Xunit;
 
@@ -33,7 +36,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Xunit.Extensions.Theory]
+        [Theory]
         [TypedPropertyData("ViewDefinitions")]
         public void CanAttach(ViewDefinition vd)
         {
@@ -88,6 +91,47 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var results = resultsEnum.Take(5).ToList();
                 Assert.True(results.All(r => r != null));
+            }
+        }
+
+        [Theory]
+        [EnumValuesData]
+        public void CanSetViewResultMode(ViewResultMode mode)
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                remoteViewClient.SetViewResultMode(mode);
+
+                var options = ExecutionOptions.RealTime;
+                var resultsEnum = remoteViewClient.GetCycles("Equity Option Test View 1", options);
+
+                var results = resultsEnum.Take(3).ToList();
+                Matches(mode, results);
+            }
+        }
+
+        private static void Matches(ViewResultMode mode, IEnumerable<CycleCompletedArgs> results)
+        {
+            switch (mode)
+            {
+                case ViewResultMode.FullOnly:
+                    Assert.True(results.All(r => r.DeltaResult == null));
+                    Assert.True(results.All(r => r.FullResult != null));
+                    break;
+                case ViewResultMode.DeltaOnly:
+                    Assert.True(results.Skip(1).All(r => r.DeltaResult != null));
+                    Assert.True(results.All(r => r.FullResult == null));
+                    break;
+                case ViewResultMode.FullThenDelta:
+                    Matches(ViewResultMode.FullOnly, results.Take(1));
+                    Matches(ViewResultMode.DeltaOnly, results.Skip(1));
+                    break;
+                case ViewResultMode.Both:
+                    Assert.True(results.All(r => r.DeltaResult != null));
+                    Assert.True(results.All(r => r.FullResult != null));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("mode");
             }
         }
 
