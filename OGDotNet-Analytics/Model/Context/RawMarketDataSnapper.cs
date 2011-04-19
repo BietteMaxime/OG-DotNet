@@ -185,7 +185,7 @@ namespace OGDotNet.Model.Context
 
                         //TODO: This is a hack
                         remoteViewClient.AttachToViewProcess(tempViewDefinition.Name,
-                                                             ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(Enumerable.Repeat(valuationTime, overrides.Count + 2))));
+                                                             ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(Enumerable.Repeat(valuationTime, 5))));
 
                         ApplyOverrides(remoteViewClient, overrides);
                         cycleCompletedEvent.Reset();
