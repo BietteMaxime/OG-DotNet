@@ -27,7 +27,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Swap Test View",
                                                                       "Primitives Only",
                                                                       "OvernightBatchTestView",
-                                                                      "Equity Strategies View 1"
+                                                                      "Equity Strategies View 1",
+                                                                      "Multi-currency Equity Option Test View"
                                                                   };
 
         private static bool IsSlowTicking(string definitionName)
