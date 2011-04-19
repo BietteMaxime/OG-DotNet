@@ -54,16 +54,16 @@ namespace OGDotNet.Model.Resources
 
         private void ListenerResultReceived(object sender, ResultEvent e)
         {
-            IViewResultListener viewResultListener;
             lock (_listenerLock)
             {
-                viewResultListener = _resultListener;
+                IViewResultListener viewResultListener = _resultListener;
+
+                if (viewResultListener == null)
+                {
+                    return;
+                }
+                e.ApplyTo(viewResultListener); // Needs to be done in the lock to maintain order
             }
-            if (viewResultListener == null)
-            {
-                return;
-            }
-            e.ApplyTo(viewResultListener); // If this is done in the lock then dispose can deadlock
         }
 
         public void RemoveResultListener()
