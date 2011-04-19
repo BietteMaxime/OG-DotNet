@@ -86,30 +86,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var options = new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
                 var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
 
-                using (var enumerator = resultsEnum.GetEnumerator())
-                {
-                    enumerator.MoveNext();
-                    Assert.NotNull(enumerator.Current);
-
-                    for (int i = 0; i < 5; i++)
-                    {
-                        var requested = DateTimeOffset.Now;
-                        enumerator.MoveNext();
-                        Assert.NotNull(enumerator.Current);
-
-                        var valuation = enumerator.Current.ValuationTime.ToDateTimeOffset();
-                        var result = enumerator.Current.ResultTimestamp.ToDateTimeOffset();
-                        var now = DateTimeOffset.Now;
-
-                        //Make sure we're not being shown up too much by the server
-                        var timeToReceive = now - requested;
-                        var timeToCalculate = result - valuation;
-                        if (!Debugger.IsAttached)
-                        {
-                            Assert.InRange(timeToReceive, TimeSpan.Zero, TimeSpan.FromMilliseconds(timeToCalculate.TotalMilliseconds * 6.0)); // PLAT-1185 this is a bit slow
-                        }
-                    }
-                }
+                Assert.True(resultsEnum.Take(5).All(r => r != null));
             }
         }
 
