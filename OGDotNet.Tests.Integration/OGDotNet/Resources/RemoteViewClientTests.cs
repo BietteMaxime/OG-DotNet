@@ -92,6 +92,27 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         [Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanGetResultByPolling(ViewDefinition viewDefinition)
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.SingleCycle);
+
+                while (true)
+                {
+                    var latestResult = remoteViewClient.GetLatestResult();
+                    if (remoteViewClient.IsResultAvailable)
+                        break;
+                    Assert.Null(latestResult);
+
+                    Thread.Sleep(100);
+                }
+                Assert.NotNull(remoteViewClient.GetLatestResult());
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanPauseAndRestart(ViewDefinition viewDefinition)
         {
             Console.WriteLine(string.Format("Checking view {0}", viewDefinition.Name));
