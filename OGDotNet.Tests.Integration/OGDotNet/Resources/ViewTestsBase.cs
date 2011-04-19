@@ -28,7 +28,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Primitives Only",
                                                                       "OvernightBatchTestView",
                                                                       "Equity Strategies View 1",
-                                                                      "Multi-currency Equity Option Test View"
+                                                                      "Multi-currency Equity Option Test View",
+                                                                      "GlobeOp Bond View"
                                                                   };
 
         private static bool IsSlowTicking(string definitionName)
