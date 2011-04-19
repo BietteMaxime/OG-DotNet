@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteLiveDataInjectorTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -30,7 +30,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
+                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
                 remoteClient.LiveDataOverrideInjector.AddValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId)), 100.0);
             }
         }
@@ -41,7 +41,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
+                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
                 remoteClient.LiveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergId)));
             }
         }
@@ -66,7 +66,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                    mre.Set();
                                                };
                 remoteClient.SetResultListener(listener);
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
+                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);
 
                 mre.WaitOne();
@@ -96,7 +96,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     mre.Set();
                 };
                 remoteClient.SetResultListener(listener);
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.Live);
+                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);
                 liveDataOverrideInjector.RemoveValue(valueRequirement);
                 

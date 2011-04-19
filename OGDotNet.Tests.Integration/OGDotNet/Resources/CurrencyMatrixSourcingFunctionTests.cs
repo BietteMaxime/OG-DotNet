@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="CurrencyMatrixSourcingFunctionTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -72,7 +72,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     using (var viewClient = Context.ViewProcessor.CreateClient())
                     {
-                        var viewComputationResultModel = viewClient.GetResults(viewDefinition.Name, ExecutionOptions.Live).First();
+                        var viewComputationResultModel = viewClient.GetResults(viewDefinition.Name, ExecutionOptions.RealTime).First();
                         return (double)viewComputationResultModel["Default", req].Value;
                     }
                 }

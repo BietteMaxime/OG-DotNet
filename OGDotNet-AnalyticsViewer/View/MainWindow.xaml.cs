@@ -187,7 +187,7 @@ namespace OGDotNet.AnalyticsViewer.View
                     };
 
                 client.SetResultListener(eventViewResultListener);
-                client.AttachToViewProcess(viewName, ExecutionOptions.Live);
+                client.AttachToViewProcess(viewName, ExecutionOptions.RealTime);
             }
         }
 

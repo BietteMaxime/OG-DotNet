@@ -81,7 +81,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                 {
-                    var viewComputationResultModel = remoteViewClient.GetResults(vd.Name, ExecutionOptions.Live).First();
+                    var viewComputationResultModel = remoteViewClient.GetResults(vd.Name, ExecutionOptions.RealTime).First();
                     Assert.NotNull(viewComputationResultModel);
                     var count = viewComputationResultModel.AllResults.Where( spec => req.IsSatisfiedBy(spec.ComputedValue.Specification)).Count();
                     Assert.Equal(1, count);
@@ -106,7 +106,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                         using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                         {
-                            Assert.NotNull(remoteViewClient.GetResults(viewDefinition.Name, ExecutionOptions.Live).First());
+                            Assert.NotNull(remoteViewClient.GetResults(viewDefinition.Name, ExecutionOptions.RealTime).First());
                         }
                     }
                     finally

@@ -12,11 +12,11 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
 {
     public class ExecutionOptions : IViewExecutionOptions
     {
-        public static IViewExecutionOptions Live
+        public static IViewExecutionOptions RealTime
         {
             get
             {
-                return new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), true, true, null, false);
+                return new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), false, true, null, false);
             }
         }
 

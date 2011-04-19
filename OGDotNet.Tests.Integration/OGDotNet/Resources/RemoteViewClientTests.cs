@@ -214,7 +214,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                var options = ExecutionOptions.Live;
+                var options = ExecutionOptions.RealTime;
                 return remoteViewClient.GetResults(viewDefinitionName, options).First();
             }
         }
@@ -241,7 +241,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                };
                 remoteViewClient.SetResultListener(listener);
 
-                remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.Live);
+                remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.RealTime);
 
                 if (!resultsReady.WaitOne(TimeSpan.FromMinutes(2)))
                     throw new TimeoutException("Failed to get results for " + viewDefinition.Name + " client " + remoteViewClient.GetUniqueId());
