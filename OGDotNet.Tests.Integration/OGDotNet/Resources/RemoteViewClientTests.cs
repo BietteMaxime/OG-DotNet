@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
@@ -153,102 +152,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     Thread.Sleep(100);
                 }
                 Assert.NotNull(remoteViewClient.GetLatestResult());
-            }
-        }
-
-        [Theory]
-        [TypedPropertyData("FastTickingViewDefinitions")]
-        public void CanPauseAndRestart(ViewDefinition viewDefinition)
-        {
-            Console.WriteLine(string.Format("Checking view {0}", viewDefinition.Name));
-            const int forbiddenAfterPause = 3;
-
-            var timeout = TimeSpan.FromMilliseconds(20000);
-
-            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
-            {
-                var options = ExecutionOptions.RealTime;
-                var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
-
-                using (var enumerator = resultsEnum.GetEnumerator())
-                {
-                    bool endOfStream = false;
-                    Action act = delegate
-                                     {
-                                         if (enumerator.MoveNext())
-                                         {
-                                             Assert.NotNull(enumerator.Current);
-                                         }
-                                         else
-                                         {
-                                             endOfStream = true;
-                                         }
-                                     };
-
-                    IAsyncResult pendingResult = null;
-
-                    Assert.True(InvokeWithTimeout(act, timeout, ref pendingResult));
-                    Assert.False(endOfStream);
-                    remoteViewClient.Pause();
-                    {
-                        int got = 0;
-                        for (int i = 0; i < forbiddenAfterPause; i++)
-                        {
-                            if (InvokeWithTimeout(act, timeout, ref pendingResult))
-                            {
-                                got++;
-                                Assert.False(endOfStream);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        Assert.True(got < forbiddenAfterPause,
-                                    string.Format("I got {0} results for view {1} within {2} after pausing", got,
-                                                  viewDefinition.Name, timeout));
-                    }
-                    remoteViewClient.Resume();
-                    {
-                        int got = 0;
-                        for (int i = 0; i < forbiddenAfterPause; i++)
-                        {
-                            if (InvokeWithTimeout(act, timeout, ref pendingResult))
-                            {
-                                Assert.False(endOfStream);
-                                got++;
-                            }
-                        }
-                        Assert.True(got == forbiddenAfterPause,
-                                    string.Format("I got {0} results for view {1} within {2} after resuming", got,
-                                                  viewDefinition.Name, timeout));
-                    }
-
-                    Assert.True(InvokeWithTimeout(act, timeout, ref pendingResult));
-                    Assert.False(endOfStream);
-                }
-            }
-            Console.WriteLine(string.Format("Checked view {0}", viewDefinition.Name));
-        }
-
-        private static bool InvokeWithTimeout(Action act, TimeSpan timeout, ref IAsyncResult result)
-        {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            result = result ?? act.BeginInvoke(null, null);
-            var waitOne = result.AsyncWaitHandle.WaitOne(timeout);
-            stopwatch.Stop();
-            if (waitOne)
-            {
-                Console.Out.WriteLine("Invoked after {0}", stopwatch.Elapsed);
-                act.EndInvoke(result);
-                result = null;
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
 
