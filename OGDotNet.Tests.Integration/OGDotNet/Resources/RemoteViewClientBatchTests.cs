@@ -40,6 +40,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
+        public void CanRunSingleYesterdayCycleBatch()
+        {
+            IViewExecutionOptions req = ExecutionOptions.GetSingleCycle(DateTimeOffset.Now - TimeSpan.FromDays(1));
+            var runToCompletion = RunToCompletion(req);
+            Assert.Equal(1, runToCompletion.Item1.Count());
+            Assert.Equal(1, runToCompletion.Item2.Count());
+            AssertApproximatelyEqual(req.ExecutionSequence.Next.ValuationTime, runToCompletion.Item2.Single().FullResult.ValuationTime.ToDateTimeOffset());
+        }
+
+        [Xunit.Extensions.Fact]
         public void CanRunManyCycleBatch()
         {
             var valuationTimes = new[]

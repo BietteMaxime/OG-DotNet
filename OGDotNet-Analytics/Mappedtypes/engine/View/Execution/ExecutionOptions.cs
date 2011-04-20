@@ -27,12 +27,7 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
 
         public static IViewExecutionOptions GetSingleCycle(DateTimeOffset valuationTime)
         {
-            return new ExecutionOptions(
-                ArbitraryViewCycleExecutionSequence.Of(valuationTime),
-                                    true,
-                                    false,
-                                    null,
-                                    false);
+            return Batch(ArbitraryViewCycleExecutionSequence.Of(valuationTime));
         }
 
         public static IViewExecutionOptions Batch(IViewCycleExecutionSequence cycleExecutionSequence)
