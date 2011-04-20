@@ -98,9 +98,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 remoteViewClient.AttachToViewProcess(definition.Name, ExecutionOptions.RealTime);
 
                 var result = compilationResult.Take();
-                Assert.IsNotType(typeof (Exception), result);
-                
-                var viewDefin = (ICompiledViewDefinition) result;
+                Assert.IsNotType(typeof(Exception), result);
+
+                var viewDefin = (ICompiledViewDefinition)result;
                 Assert.NotNull(viewDefin);
                 Assert.NotEmpty(viewDefin.LiveDataRequirements);
                 Assert.NotEmpty(viewDefin.OutputValueNames);

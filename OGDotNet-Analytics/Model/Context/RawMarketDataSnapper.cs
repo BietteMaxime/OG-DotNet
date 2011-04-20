@@ -215,12 +215,11 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        private void Empty(ConcurrentQueue<CycleCompletedArgs> cycles)
+        private static void Empty(ConcurrentQueue<CycleCompletedArgs> cycles)
         {
             CycleCompletedArgs args;
             while (cycles.TryDequeue(out args))
             {
-                            
             }
         }
 
