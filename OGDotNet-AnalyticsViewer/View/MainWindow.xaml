@@ -21,7 +21,7 @@
 
         <View:ComputationResultsTableView Grid.Row="1" x:Name="resultsTableView"/>
         <StatusBar Grid.Row="2" Name="statusBar">
-            <TextBlock Name="statusText" />
+            <TextBlock Name="statusText"  VerticalAlignment="Center"/>
         </StatusBar>
     </Grid>
 

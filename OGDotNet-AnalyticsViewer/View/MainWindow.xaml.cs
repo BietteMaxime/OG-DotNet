@@ -7,19 +7,17 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using OGDotNet.AnalyticsViewer.ViewModel;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.client;
-using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Model.Resources;
-using OGDotNet.Utils;
 using OGDotNet.WPFUtils;
 using OGDotNet.WPFUtils.Windsor;
 
@@ -177,7 +175,7 @@ namespace OGDotNet.AnalyticsViewer.View
                     {
                         Invoke(delegate
                                    {
-                                       SetStatus(string.Format("Failed to compile {0} @ {1}", args.Exception, args.ValuationTime));
+                                       SetStatus(string.Format("Failed to compile {0} @ {1}", args.Exception, args.ValuationTime), true);
                                        resultsTableView.DataContext = null;
                                    }, cancellationToken);
                     };
@@ -186,7 +184,7 @@ namespace OGDotNet.AnalyticsViewer.View
                     {
                         Invoke(delegate
                         {
-                            SetStatus(string.Format("Failed to execute {0} @ {1}", args.Exception, args.ExecutionOptions.ValuationTime));                            
+                            SetStatus(string.Format("Failed to execute {0} @ {1}", args.Exception, args.ExecutionOptions.ValuationTime), true);                            
                         }, cancellationToken);
                     };
 
@@ -202,9 +200,22 @@ namespace OGDotNet.AnalyticsViewer.View
             return string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (results.ResultTimestamp.ToUniversalTime() - results.ValuationTime.ToUniversalTime()).TotalMilliseconds, ++count);
         }
 
-        private void SetStatus(string msg)
+        private void SetStatus(string msg, bool isError = false)
         {
-            Dispatcher.Invoke((Action)(() => { statusText.Text = msg; }));
+            Dispatcher.Invoke((Action)(() =>
+                                           {
+                                               statusText.Text = msg;
+                                               if (isError)
+                                               {
+                                                   statusBar.Background = statusBar.Background  == Brushes.Red ? Brushes.Yellow : Brushes.Red;
+                                                   statusBar.Height = 90;
+                                               }
+                                               else
+                                               {
+                                                   statusBar.Background = null;
+                                                   statusBar.Height = double.NaN;
+                                               }
+                                           }));
         }
 
         private void Window_Closed(object sender, EventArgs e)
