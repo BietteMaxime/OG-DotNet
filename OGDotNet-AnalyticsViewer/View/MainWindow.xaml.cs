@@ -159,7 +159,11 @@ namespace OGDotNet.AnalyticsViewer.View
                             var portfolio = args.CompiledViewDefinition.Portfolio;
                             var viewDefinition = args.CompiledViewDefinition.ViewDefinition;
                             resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource);
-                            Invoke(delegate { resultsTableView.DataContext = resultsTable; }, cancellationToken);
+                            Invoke(delegate
+                                       {
+                                           resultsTableView.DataContext = resultsTable;
+                                           SetStatus(string.Format("Waiting for first cycle..."));
+                                       }, cancellationToken);
                         };
                 eventViewResultListener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
                                                               {
@@ -186,6 +190,7 @@ namespace OGDotNet.AnalyticsViewer.View
                         }, cancellationToken);
                     };
 
+                SetStatus(string.Format("Waiting for compilation..."));
                 client.SetResultListener(eventViewResultListener);
                 client.AttachToViewProcess(viewName, ExecutionOptions.RealTime);
             }
