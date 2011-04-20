@@ -11,7 +11,6 @@ using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
-using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 
