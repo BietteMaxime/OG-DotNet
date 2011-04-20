@@ -19,7 +19,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
     {
         void ViewDefinitionCompiled(ICompiledViewDefinition compiledViewDefinition);
 
-        void ViewDefinitionCompilationFailed(DateTimeOffset valuationTime, Exception exception);
+        void ViewDefinitionCompilationFailed(DateTimeOffset valuationTime, JavaException exception);
 
         void CycleCompleted(InMemoryViewComputationResultModel fullResult, InMemoryViewComputationResultModel deltaResult);
 

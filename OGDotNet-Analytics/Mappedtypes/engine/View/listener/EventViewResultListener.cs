@@ -26,7 +26,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
             InvokeViewDefinitionCompiled(new ViewDefinitionCompiledArgs(compiledViewDefinition));
         }
 
-        void IViewResultListener.ViewDefinitionCompilationFailed(DateTimeOffset valuationTime, Exception exception)
+        void IViewResultListener.ViewDefinitionCompilationFailed(DateTimeOffset valuationTime, JavaException exception)
         {
             InvokeViewDefinitionCompilationFailed(new ViewDefinitionCompilationFailedArgs(valuationTime, exception));
         }
@@ -149,9 +149,9 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
     public class ViewDefinitionCompilationFailedArgs : EventArgs
     {
         private readonly DateTimeOffset _valuationTime;
-        private readonly Exception _exception;
+        private readonly JavaException _exception;
 
-        public ViewDefinitionCompilationFailedArgs(DateTimeOffset valuationTime, Exception exception)
+        public ViewDefinitionCompilationFailedArgs(DateTimeOffset valuationTime, JavaException exception)
         {
             _valuationTime = valuationTime;
             _exception = exception;
@@ -162,7 +162,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
             get { return _valuationTime; }
         }
 
-        public Exception Exception
+        public JavaException Exception
         {
             get { return _exception; }
         }
