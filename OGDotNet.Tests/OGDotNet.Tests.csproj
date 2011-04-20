@@ -38,6 +38,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Fudge, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore">
       <Private>True</Private>
     </Reference>
@@ -62,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyTests.cs" />
+    <Compile Include="OGDotNet\HeartbeatSenderTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Core\Common\CurrencyTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Core\marketdatasnapshot\MarketDataValueTypeTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Id\UniqueIdentifierTests.cs" />

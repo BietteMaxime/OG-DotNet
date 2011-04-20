@@ -12,7 +12,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {
-    internal class HeartbeatSender : DisposableBase
+    public class HeartbeatSender : DisposableBase
     {
         private readonly CancellationTokenSource _heartbeatCancellationTokenSource = new CancellationTokenSource();
         private readonly TimeSpan _period;
