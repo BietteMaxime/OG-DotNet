@@ -20,9 +20,10 @@ namespace OGDotNet.Model.Resources
 
         public HeartbeatSender(TimeSpan period, RestTarget heartbeatRest)
         {
-            QueueHeartbeat(_heartbeatCancellationTokenSource.Token);
             _period = period;
             _heartbeatRest = heartbeatRest;
+
+            QueueHeartbeat(_heartbeatCancellationTokenSource.Token);
         }
 
         private void QueueHeartbeat(CancellationToken cancellationToken)
