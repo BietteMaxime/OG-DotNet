@@ -23,7 +23,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
 
         void CycleCompleted(InMemoryViewComputationResultModel fullResult, InMemoryViewComputationResultModel deltaResult);
 
-        void CycleExecutionFailed(ViewCycleExecutionOptions executionOptions, Exception exception);
+        void CycleExecutionFailed(ViewCycleExecutionOptions executionOptions, JavaException exception);
 
         void ProcessCompleted();
 

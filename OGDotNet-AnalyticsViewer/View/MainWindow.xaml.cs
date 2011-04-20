@@ -177,7 +177,7 @@ namespace OGDotNet.AnalyticsViewer.View
                     {
                         Invoke(delegate
                                    {
-                                       SetStatus(string.Format("Failed to execute {0} @ {1}", args.Exception, args.ValuationTime));
+                                       SetStatus(string.Format("Failed to compile {0} @ {1}", args.Exception, args.ValuationTime));
                                        resultsTableView.DataContext = null;
                                    }, cancellationToken);
                     };
@@ -186,8 +186,7 @@ namespace OGDotNet.AnalyticsViewer.View
                     {
                         Invoke(delegate
                         {
-                            SetStatus(string.Format("Failed to compile {0}", args.Exception));
-                            resultsTableView.DataContext = null;
+                            SetStatus(string.Format("Failed to execute {0} @ {1}", args.Exception, args.ExecutionOptions.ValuationTime));                            
                         }, cancellationToken);
                     };
 

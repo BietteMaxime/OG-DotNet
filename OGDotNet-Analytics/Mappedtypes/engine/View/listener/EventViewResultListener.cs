@@ -36,7 +36,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
             InvokeCycleCompleted(new CycleCompletedArgs(fullResult, deltaResult));
         }
 
-        void IViewResultListener.CycleExecutionFailed(ViewCycleExecutionOptions executionOptions, Exception exception)
+        void IViewResultListener.CycleExecutionFailed(ViewCycleExecutionOptions executionOptions, JavaException exception)
         {
             InvokeCycleExecutionFailed(new CycleExecutionFailedArgs(executionOptions, exception));
         }
@@ -105,9 +105,9 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
     public class CycleExecutionFailedArgs : EventArgs
     {
         private readonly ViewCycleExecutionOptions _executionOptions;
-        private readonly Exception _exception;
+        private readonly JavaException _exception;
 
-        public CycleExecutionFailedArgs(ViewCycleExecutionOptions executionOptions, Exception exception)
+        public CycleExecutionFailedArgs(ViewCycleExecutionOptions executionOptions, JavaException exception)
         {
             _executionOptions = executionOptions;
             _exception = exception;
@@ -118,7 +118,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
             get { return _executionOptions; }
         }
 
-        public Exception Exception
+        public JavaException Exception
         {
             get { return _exception; }
         }

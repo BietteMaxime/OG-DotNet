@@ -34,7 +34,7 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
 
         public static ViewCycleExecutionOptions FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            throw new NotImplementedException();
+            return new ViewCycleExecutionOptions(ffc.GetValue<DateTimeOffset>("valuation"), ffc.GetValue<DateTimeOffset>("inputData"));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

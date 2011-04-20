@@ -31,6 +31,8 @@ namespace OGDotNet.Model.Resources
             var defnCompiled = _msg as ViewDefinitionCompiledCall;
             var compileFailedCall = _msg as ViewDefinitionCompilationFailedCall;
             var cycleCompletedCall = _msg as CycleCompletedCall;
+            var cycleFailedCall = _msg as CycleExecutionFailedCall;
+
             var completedCall = _msg as ProcessCompletedCall;
             
             if (defnCompiled != null)
@@ -44,6 +46,10 @@ namespace OGDotNet.Model.Resources
             else if (cycleCompletedCall != null)
             {
                 resultListener.CycleCompleted(cycleCompletedCall.FullResult, cycleCompletedCall.DeltaResult);
+            }
+            else if (cycleFailedCall != null)
+            {
+                resultListener.CycleExecutionFailed(cycleFailedCall.ExecutionOptions, cycleFailedCall.Exception);
             }
             else if (completedCall != null)
             {
