@@ -6,21 +6,23 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
+using System;
 using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.engine;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
-    public class PortfolioRow //TODO INotifyPropertyChanged
+    public class PortfolioRow : DynamicRow
     {
+
         private readonly string _positionName;
-        private readonly Dictionary<string, object> _columns;
+        private readonly ComputationTargetSpecification _computationTargetSpecification;
         private readonly Security _security;
 
-        public PortfolioRow(string positionName, Dictionary<string, object> columns, Security security)
+        public PortfolioRow(string positionName, Security security, ComputationTargetSpecification computationTargetSpecification)
         {
             _positionName = positionName;
-            _columns = columns;
+            _computationTargetSpecification = computationTargetSpecification;
             _security = security;
         }
 
@@ -32,22 +34,14 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             }
         }
 
-        public Dictionary<string, object> Columns
+        public ComputationTargetSpecification ComputationTargetSpecification
         {
-            get
-            {
-                return _columns;
-            }
+            get { return _computationTargetSpecification; }
         }
 
         public Security Security
         {
             get { return _security; }
-        }
-
-        public object this[string key]
-        {
-            get { return _columns[key]; }
         }
     }
 }

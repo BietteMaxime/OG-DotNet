@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using OGDotNet.AnalyticsViewer.ViewModel;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.client;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
@@ -167,8 +168,8 @@ namespace OGDotNet.AnalyticsViewer.View
                         };
                 eventViewResultListener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
                                                               {
-                                                                  resultsTable.Update(e.FullResult, cancellationToken);
-                                                                  SetStatus(GetMessage(e.FullResult, ref count));
+                                                                  resultsTable.Update(e);
+                                                                  SetStatus(GetMessage(e.FullResult ?? e.DeltaResult, ref count));
                                                               };
 
                 eventViewResultListener.ViewDefinitionCompilationFailed +=
@@ -191,6 +192,7 @@ namespace OGDotNet.AnalyticsViewer.View
                     };
 
                 SetStatus(string.Format("Waiting for compilation..."));
+                client.SetViewResultMode(ViewResultMode.FullThenDelta);
                 client.SetResultListener(eventViewResultListener);
                 client.AttachToViewProcess(viewName, ExecutionOptions.RealTime);
             }

@@ -6,16 +6,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.engine;
-using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 
@@ -33,7 +33,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private readonly Dictionary<UniqueIdentifier, PrimitiveRow> _primitiveRows = new Dictionary<UniqueIdentifier, PrimitiveRow>();
 
-        private List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
+        private readonly List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
 
         private IEnumerable<TreeNode> _portfolioNodes;
 
@@ -44,53 +44,22 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             _remoteSecuritySource = remoteSecuritySource;
             _portfolioColumns = GetPortfolioColumns(viewDefinition).ToList();
             _primitiveColumns = GetPrimitiveColumns(viewDefinition).ToList();
+
+            _primitiveRows = BuildPrimitiveRows();
+            _portfolioRows = BuildPortfolioRows().ToList();
         }
 
-        public void Update(InMemoryViewComputationResultModel results, CancellationToken cancellationToken)
+        public void Update(CycleCompletedArgs results)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            _portfolioRows = BuildPortfolioRows(results).ToList();
-            InvokePropertyChanged("PortfolioRows");
+            var delta = results.FullResult ?? results.DeltaResult;
 
-            cancellationToken.ThrowIfCancellationRequested();
-
-            bool rowsChanged = MergeUpdatePrimitiveRows(results);
-
-            if (rowsChanged)
-                InvokePropertyChanged("PrimitiveRows"); // TODO this could be an ObservableCollection for extra niceness
+            var indexedResults = delta.AllResults.ToLookup(v => v.ComputedValue.Specification.TargetSpecification.Uid);
+            
+            UpdatePortfolioRows(_portfolioRows, indexedResults);
+            UpdatePrimitiveRows(_primitiveRows.Values, indexedResults);
         }
-
-        private bool MergeUpdatePrimitiveRows(InMemoryViewComputationResultModel results)
-        {
-            bool rowsChanged = false;
-
-            var targets = _viewDefinition.CalculationConfigurationsByName.SelectMany(conf => conf.Value.SpecificRequirements).Select(s => s.TargetSpecification.Uid).Distinct();
-            foreach (var target in targets.Where(target => !_primitiveRows.ContainsKey(target)))
-            {
-                _primitiveRows.Add(target, new PrimitiveRow(target));
-                rowsChanged = true;
-            }
-
-            foreach (var row in _primitiveRows.Values)
-            {
-                var values = new Dictionary<string, object>();
-                foreach (var configuration in _viewDefinition.CalculationConfigurationsByName)
-                {
-                    foreach (var valueReq in configuration.Value.SpecificRequirements.Where(r => r.TargetSpecification.Type == ComputationTargetType.Primitive && r.TargetSpecification.Uid == row.TargetId))
-                    {
-                        object result;
-                        if (results.TryGetValue(configuration.Key, valueReq, out result))
-                        {
-                            values.Add(GetColumnHeading(configuration.Key, valueReq.ValueName), result);
-                        }
-                    }
-                }
-                row.Update(values);
-            }
-
-            return rowsChanged;
-        }
-
+        
+       
         public bool HavePortfolioRows { get { return PortfolioColumns.Count > 0; } }
         public bool HavePrimitiveRows { get { return PrimitiveColumns.Count > 0; } }
 
@@ -220,37 +189,50 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             }
         }
 
-        private IEnumerable<PortfolioRow> BuildPortfolioRows(InMemoryViewComputationResultModel results)
+        private IEnumerable<PortfolioRow> BuildPortfolioRows()
         {
             if (_portfolio == null)
                 yield break;
             foreach (var position in GetPortfolioNodes())
             {
-                var values = new Dictionary<string, object>();
-
-                foreach (var configuration in _viewDefinition.CalculationConfigurationsByName)
-                {
-                    foreach (var req in configuration.Value.PortfolioRequirementsBySecurityType)
-                    {
-                        foreach (var tuple in req.Value)
-                        {
-                            string header = string.Format("{0}/{1}", configuration.Key, tuple.Item1);
-
-                            object result;
-                            if (results.TryGetValue(configuration.Key, new ValueRequirement(tuple.Item1, position.ComputationTargetSpecification), out result))
-                            {
-                                values.Add(header, result);
-                            }
-                            else
-                            {
-                                values.Add(header, null);
-                            }
-                        }
-                    }
-                }
-
                 var treeName = string.Format("{0} {1}", new string('-', position.Depth), position.Name);
-                yield return new PortfolioRow(treeName, values, position.Security);
+                yield return new PortfolioRow(treeName, position.Security, position.ComputationTargetSpecification);
+            }
+        }
+
+        private Dictionary<UniqueIdentifier, PrimitiveRow> BuildPrimitiveRows()
+        {
+            var targets = _viewDefinition.CalculationConfigurationsByName.SelectMany(c => c.Value.SpecificRequirements.Select(r => r.TargetSpecification.Uid)).Distinct();
+            return targets.ToDictionary(t => t, t => new PrimitiveRow(t));
+        }
+
+
+        private static void UpdatePortfolioRows(IEnumerable<PortfolioRow> rows, ILookup<UniqueIdentifier, ViewResultEntry> indexedResults)
+        {
+            UpdateDynamicRows(rows, r => indexedResults[r.ComputationTargetSpecification.Uid].ToDictionary(
+                GetColumnHeader,
+                v=>v.ComputedValue.Value)
+                );
+        }
+
+        private static string GetColumnHeader(ViewResultEntry v)
+        {
+            return string.Format("{0}/{1}", v.CalculationConfiguration, v.ComputedValue.Specification.ValueName);
+        }
+
+        private static void UpdatePrimitiveRows(IEnumerable<PrimitiveRow> rows, ILookup<UniqueIdentifier, ViewResultEntry> indexedResults)
+        {
+            UpdateDynamicRows(rows, r => indexedResults[r.TargetId].ToDictionary(
+                GetColumnHeader,
+                v => v.ComputedValue.Value)
+                );
+        }
+
+        private static void UpdateDynamicRows<T>(IEnumerable<T> rows, Func<T, Dictionary<string, object>> updateSelector) where T : DynamicRow
+        {
+            foreach (var row in rows)
+            {
+                row.UpdateDynamicColumns(updateSelector(row));
             }
         }
     }
