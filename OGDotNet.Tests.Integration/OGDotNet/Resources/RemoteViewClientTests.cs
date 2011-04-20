@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -77,6 +78,38 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanStartAndGetAResult(ViewDefinition definition)
         {
             Assert.NotNull(GetOneResultCache.Get(definition.Name));
+        }
+
+        [Theory]
+        [TypedPropertyData("ViewDefinitions")]
+        public void CanGetCompilationResults(ViewDefinition definition)
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                var compilationResult = new BlockingCollection<object>();
+
+                var eventViewResultListener = new EventViewResultListener();
+                eventViewResultListener.ViewDefinitionCompiled +=
+                    (sender, e) => compilationResult.Add(e.CompiledViewDefinition);
+                eventViewResultListener.ViewDefinitionCompilationFailed +=
+                    (sender, e) => compilationResult.Add(e.Exception);
+
+                remoteViewClient.SetResultListener(eventViewResultListener);
+                remoteViewClient.AttachToViewProcess(definition.Name, ExecutionOptions.RealTime);
+
+                var result = compilationResult.Take();
+                Assert.IsNotType(typeof (Exception), result);
+                
+                var viewDefin = (ICompiledViewDefinition) result;
+                Assert.NotNull(viewDefin);
+                Assert.NotEmpty(viewDefin.LiveDataRequirements);
+                Assert.NotEmpty(viewDefin.OutputValueNames);
+                Assert.NotNull(viewDefin.Portfolio);
+                Assert.NotEmpty(viewDefin.SecurityTypes);
+                Assert.NotNull(viewDefin.ViewDefinition);
+
+                Assert.Equal(default(DateTimeOffset) == viewDefin.EarliestValidity, viewDefin.LatestValidity == default(DateTimeOffset));
+            }
         }
 
         [Theory]
