@@ -12,6 +12,7 @@ using System.Net;
 using System.Reflection;
 using Fudge;
 using OGDotNet.Mappedtypes;
+using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.engine.View.permission;
 
 namespace OGDotNet.Model
@@ -30,73 +31,43 @@ namespace OGDotNet.Model
             }
             catch (WebException e)
             {
-                if (e.Response != null)
+                JavaException exception;
+                if (TryGetJavaException(e, out exception))
                 {
-                    string[] types = e.Response.Headers.GetValues("X-OpenGamma-ExceptionType");
-                    if (types != null)
-                    {
-                        if (types.Length > 1)
-                            throw new ArgumentException("Too many exception types");
-                        string type = types[0];
-
-                        string[] messages = e.Response.Headers.GetValues("X-OpenGamma-ExceptionMessage");
-
-                        if (messages == null)
-                            throw BuildException(type);
-                        if (messages.Length > 1)
-                            throw new ArgumentException("Too many exception messages");
-
-                        string message = messages[0];
-                        throw BuildException(type, message);
-                    }
+                    throw exception.BuildException();
                 }
                 throw; // TODO should probably wrap in this in something generic and less Webby
             }
         }
 
-        private static readonly IDictionary<string, Type> DotNetTypesByJavaTypeName = new Dictionary<string, Type>
-                                                {
-                    {"java.lang.IllegalArgumentException", typeof(ArgumentException)},
-                    {"java.lang.NullPointerException", typeof(NullReferenceException)},
-                    {"java.lang.IllegalStateException", typeof(InvalidOperationException)},
-                    {"com.opengamma.engine.view.permission.ViewPermissionException", typeof(ViewPermissionException)},
-                    {"com.opengamma.OpenGammaRuntimeException", typeof(OpenGammaException)},
-                    {"org.fudgemsg.FudgeRuntimeException", typeof(FudgeRuntimeException)}
-                                                };
-
-        private static Exception BuildException(string javaType, string message = null)
+        private static bool TryGetJavaException(WebException e, out JavaException exception)
         {
-            Type exceptionType;
-            if (DotNetTypesByJavaTypeName.TryGetValue(javaType, out exceptionType))
+            if (e.Response != null)
             {
-                if (message == null)
+                string[] types = e.Response.Headers.GetValues("X-OpenGamma-ExceptionType");
+                if (types != null)
                 {
-                    ConstructorInfo constructorInfo = exceptionType.GetConstructor(new Type[] { });
-                    if (constructorInfo == null)
-                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
+                    if (types.Length > 1)
+                        throw new ArgumentException("Too many exception types");
+                    string type = types[0];
 
-                    return (Exception)constructorInfo.Invoke(new object[] { });
-                }
-                else
-                {
-                    ConstructorInfo constructorInfo = exceptionType.GetConstructor(new[] { typeof(string) });
+                    string[] messages = e.Response.Headers.GetValues("X-OpenGamma-ExceptionMessage");
 
-                    if (constructorInfo == null)
-                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", javaType, exceptionType), "javaType");
-                    if (constructorInfo.GetParameters()[0].Name != "message")
-                        throw new ArgumentException(string.Format("Exception type {0}->{1} expectes {2} not message", javaType, exceptionType, message), "javaType");
-                    return (Exception)constructorInfo.Invoke(new object[] { message });
+                    if (messages == null)
+                    {
+                        exception = new JavaException(type);
+                        return true;
+                    }
+                    if (messages.Length > 1)
+                        throw new ArgumentException("Too many exception messages");
+
+                    string message = messages[0];
+                    exception = new JavaException(type, message);
+                    return true;
                 }
             }
-            else
-            {
-                return BuildGenericException(javaType, message);
-            }
-        }
-
-        private static Exception BuildGenericException(string javaType, string message = null)
-        {
-            return new Exception(string.Format("{0}: {1} - {2}", javaType, message, "Unmappable java exception ocurred"));
+            exception = null;
+            return false;
         }
     }
 }
