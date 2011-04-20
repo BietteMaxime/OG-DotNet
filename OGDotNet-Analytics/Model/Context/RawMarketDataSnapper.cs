@@ -91,7 +91,7 @@ namespace OGDotNet.Model.Context
         {
             ManageableUnstructuredMarketDataSnapshot values = GetUnstructuredSnapshot(tempResults, spec);
 
-            return new ManageableYieldCurveSnapshot(values, tempResults.ValuationTime.ToDateTimeOffset());
+            return new ManageableYieldCurveSnapshot(values, tempResults.ValuationTime);
         }
 
         private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredSnapshot(InMemoryViewComputationResultModel tempResults, InterpolatedYieldCurveSpecificationWithSecurities yieldCurveSpec)

@@ -48,8 +48,8 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         {
             var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
 
-            var versionFromInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("versionFromInstant"));
-            var correctionFromInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("correctionFromInstant"));
+            var versionFromInstant = ffc.GetValue<DateTimeOffset>("versionFromInstant");
+            var correctionFromInstant = ffc.GetValue<DateTimeOffset>("correctionFromInstant");
 
             var vToInst = ffc.GetValue<FudgeDateTime>("versionToInstant");
             var versionToInstant = ToDateTimeOffsetWithDefault(vToInst);
@@ -60,23 +60,24 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
             return new MarketDataSnapshotDocument(uid, deserializer.FromField<ManageableMarketDataSnapshot>(ffc.GetByName("snapshot")), versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant);
         }
 
-        private static DateTimeOffset ToDateTimeOffsetWithDefault(FudgeDateTime dt)
-        {
-            return (dt == null ) ? default(DateTimeOffset)  : dt.ToDateTimeOffset();
-        }
-
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             if (_uniqueId != null) a.Add("uniqueId", _uniqueId.ToString());
             a.Add("snapshot", _snapshot);
 
-            AddField(a, VersionFromInstant, "versionFromInstant");
-            AddField(a, CorrectionFromInstant, "correctionFromInstant");
-            AddField(a, VersionToInstant, "versionToInstant");
-            AddField(a, CorrectionToInstant, "correctionToInstant");
+            a.Add("versionFromInstant", VersionFromInstant);
+            a.Add("correctionFromInstant", CorrectionFromInstant);
+            
+            AddDateTimeOffsetWithDefault(a, "versionToInstant", VersionToInstant);
+            AddDateTimeOffsetWithDefault(a, "correctionToInstant", CorrectionToInstant);
         }
 
-        private static void AddField(IAppendingFudgeFieldContainer a, DateTimeOffset value, string fieldName)
+        private static DateTimeOffset ToDateTimeOffsetWithDefault(FudgeDateTime dt)
+        {
+            return (dt == null) ? default(DateTimeOffset) : dt.ToDateTimeOffset();
+        }
+
+        private static void AddDateTimeOffsetWithDefault(IAppendingFudgeFieldContainer a, string fieldName, DateTimeOffset value)
         {
             if (value != default(DateTimeOffset))
             {

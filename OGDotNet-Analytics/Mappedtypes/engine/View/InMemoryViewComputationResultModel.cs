@@ -9,9 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Fudge.Serialization;
-using Fudge.Types;
-using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Utils;
@@ -21,11 +18,11 @@ namespace OGDotNet.Mappedtypes.engine.View
     public class InMemoryViewComputationResultModel : ViewComputationResultModel
     {
         private readonly string _viewName;
-        private readonly FudgeDateTime _inputDataTimestamp;
-        private readonly FudgeDateTime _resultTimestamp;
+        private readonly DateTimeOffset _inputDataTimestamp;
+        private readonly DateTimeOffset _resultTimestamp;
         private readonly IDictionary<string, ViewCalculationResultModel> _configurationMap;
 
-        public InMemoryViewComputationResultModel(string viewName, FudgeDateTime inputDataTimestamp, FudgeDateTime resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap)
+        public InMemoryViewComputationResultModel(string viewName, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap)
         {
             _viewName = viewName;
             _inputDataTimestamp = inputDataTimestamp;
@@ -33,8 +30,8 @@ namespace OGDotNet.Mappedtypes.engine.View
             _configurationMap = configurationMap;
         }
 
-        public FudgeDateTime ValuationTime { get { return _inputDataTimestamp; } }
-        public FudgeDateTime ResultTimestamp { get { return _resultTimestamp; } }
+        public DateTimeOffset ValuationTime { get { return _inputDataTimestamp; } }
+        public DateTimeOffset ResultTimestamp { get { return _resultTimestamp; } }
         public string ViewName { get { return _viewName; } }
 
         public ComputedValue this[string calculationConfiguration, ValueRequirement valueRequirement]

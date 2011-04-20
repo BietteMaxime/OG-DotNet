@@ -25,8 +25,8 @@ namespace OGDotNet.Builders
         public override InMemoryViewComputationResultModel DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             var viewName = msg.GetValue<string>("viewName");
-            var inputDataTimestamp = msg.GetValue<FudgeDateTime>("valuationTS");
-            var resultTimestamp = msg.GetValue<FudgeDateTime>("resultTS");
+            var inputDataTimestamp = msg.GetValue<DateTimeOffset>("valuationTS");
+            var resultTimestamp = msg.GetValue<DateTimeOffset>("resultTS");
             var configurationMap = new Dictionary<string, ViewCalculationResultModel>();
             var keys = new Queue<string>();
             var values = new Queue<ViewCalculationResultModel>();

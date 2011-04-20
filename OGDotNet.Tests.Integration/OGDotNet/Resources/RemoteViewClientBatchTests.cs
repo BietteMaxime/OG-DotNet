@@ -36,7 +36,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var runToCompletion = RunToCompletion(req);
             Assert.Equal(1, runToCompletion.Item1.Count());
             Assert.Equal(1, runToCompletion.Item2.Count());
-            AssertApproximatelyEqual(req.ExecutionSequence.Next.ValuationTime, runToCompletion.Item2.Single().FullResult.ValuationTime.ToDateTimeOffset());
+            AssertApproximatelyEqual(req.ExecutionSequence.Next.ValuationTime, runToCompletion.Item2.Single().FullResult.ValuationTime);
         }
 
         [Xunit.Extensions.Fact]
@@ -46,7 +46,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var runToCompletion = RunToCompletion(req);
             Assert.Equal(1, runToCompletion.Item1.Count());
             Assert.Equal(1, runToCompletion.Item2.Count());
-            AssertApproximatelyEqual(req.ExecutionSequence.Next.ValuationTime, runToCompletion.Item2.Single().FullResult.ValuationTime.ToDateTimeOffset());
+            AssertApproximatelyEqual(req.ExecutionSequence.Next.ValuationTime, runToCompletion.Item2.Single().FullResult.ValuationTime);
         }
 
         [Xunit.Extensions.Fact]
@@ -65,7 +65,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             foreach (var t in runToCompletion.Item2.Zip(valuationTimes, Tuple.Create))
             {
                 DateTimeOffset expected = t.Item2;
-                DateTimeOffset actual = t.Item1.FullResult.ValuationTime.ToDateTimeOffset();
+                DateTimeOffset actual = t.Item1.FullResult.ValuationTime;
 
                 AssertApproximatelyEqual(actual, expected);
             }
