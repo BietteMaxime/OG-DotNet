@@ -59,7 +59,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             UpdatePrimitiveRows(_primitiveRows.Values, indexedResults);
         }
         
-       
         public bool HavePortfolioRows { get { return PortfolioColumns.Count > 0; } }
         public bool HavePrimitiveRows { get { return PrimitiveColumns.Count > 0; } }
 
@@ -206,12 +205,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             return targets.ToDictionary(t => t, t => new PrimitiveRow(t));
         }
 
-
         private static void UpdatePortfolioRows(IEnumerable<PortfolioRow> rows, ILookup<UniqueIdentifier, ViewResultEntry> indexedResults)
         {
             UpdateDynamicRows(rows, r => indexedResults[r.ComputationTargetSpecification.Uid].ToDictionary(
                 GetColumnHeader,
-                v=>v.ComputedValue.Value)
+                v => v.ComputedValue.Value)
                 );
         }
 

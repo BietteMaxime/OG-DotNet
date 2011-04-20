@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.engine;
 
@@ -14,7 +13,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 {
     public class PortfolioRow : DynamicRow
     {
-
         private readonly string _positionName;
         private readonly ComputationTargetSpecification _computationTargetSpecification;
         private readonly Security _security;
