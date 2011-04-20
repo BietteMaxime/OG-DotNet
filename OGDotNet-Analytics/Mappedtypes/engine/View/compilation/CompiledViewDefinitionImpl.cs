@@ -7,10 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OGDotNet.Mappedtypes.Core.Position;
-using OGDotNet.Mappedtypes.Core.Position.Impl;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
@@ -22,12 +19,16 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
         private readonly ViewDefinition _viewDefinition;
         private readonly IPortfolio _portfolio;
         private readonly Dictionary<ValueRequirement, ValueSpecification> _liveDataRequirements;
-        private readonly IList<string> _outputValueNames;
-        private readonly IList<string> _securityTypes;
+        private readonly string[] _outputValueNames;
+        private readonly string[] _securityTypes;
+        private readonly DateTimeOffset _latestValidity;
+        private readonly DateTimeOffset _earliestValidity;
 
-        public CompiledViewDefinitionImpl(ViewDefinition viewDefinition, IPortfolio portfolio, Dictionary<ValueRequirement, ValueSpecification> liveDataRequirements, IList<string> outputValueNames, IList<string> securityTypes)
+        public CompiledViewDefinitionImpl(ViewDefinition viewDefinition, IPortfolio portfolio, Dictionary<ValueRequirement, ValueSpecification> liveDataRequirements, string[] outputValueNames, string[] securityTypes, DateTimeOffset latestValidity, DateTimeOffset earliestValidity)
         {
             _viewDefinition = viewDefinition;
+            _earliestValidity = earliestValidity;
+            _latestValidity = latestValidity;
             _portfolio = portfolio;
             _liveDataRequirements = liveDataRequirements;
             _outputValueNames = outputValueNames;
@@ -49,14 +50,24 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
             get { return _liveDataRequirements; }
         }
 
-        public IList<string> OutputValueNames
+        public string[] OutputValueNames
         {
             get { return _outputValueNames; }
         }
 
-        public IList<string> SecurityTypes
+        public string[] SecurityTypes
         {
             get { return _securityTypes; }
+        }
+
+        public DateTimeOffset EarliestValidity
+        {
+            get { return _earliestValidity; }
+        }
+
+        public DateTimeOffset LatestValidity
+        {
+            get { return _latestValidity; }
         }
     }
 }

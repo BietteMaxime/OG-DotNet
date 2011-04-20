@@ -6,9 +6,9 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Core.Position;
-using OGDotNet.Mappedtypes.Core.Position.Impl;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
@@ -23,12 +23,14 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
 
         Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements { get; }
 
-        IList<string> OutputValueNames { get; }
+        string[] OutputValueNames { get; }
 
         //TODO IEnumerable<ComputationTarget> ComputationTargets
 
-        IList<string> SecurityTypes { get; }
+        string[] SecurityTypes { get; }
 
         //TODO ValidFrom, ValidTo
+        DateTimeOffset EarliestValidity { get; }
+        DateTimeOffset LatestValidity { get; }
     }
 }
