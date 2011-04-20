@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
 using Castle.Core;
 using Castle.Core.Logging;
 using Fudge;
@@ -40,7 +39,7 @@ namespace OGDotNet.Model
             _logger.Debug("Forced references to {0} types", ForcedReferences.Length);
         }
 
-        private void AddSecondaryTypes(FudgeTypeDictionary typeDictionary)
+        private static void AddSecondaryTypes(FudgeTypeDictionary typeDictionary)
         {
             typeDictionary.AddType(new SecondaryFieldType<Currency, string>(StringFieldType.Instance, Currency.Create, c => c.ISOCode));
         }
