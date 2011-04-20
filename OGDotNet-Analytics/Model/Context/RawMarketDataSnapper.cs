@@ -167,7 +167,6 @@ namespace OGDotNet.Model.Context
                 try
                 {
                     using (var completedEvent = new ManualResetEvent(false))
-                    using (var cycleCompletedEvent = new ManualResetEvent(false))
                     using (var remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient())
                     {
                         var cycles = new ConcurrentQueue<CycleCompletedArgs>();
@@ -175,23 +174,37 @@ namespace OGDotNet.Model.Context
 
                         var listener = new EventViewResultListener();
                         listener.ViewDefinitionCompiled += (sender, e) => compiles.Enqueue(e);
-                        listener.CycleCompleted += (sender, e) =>
-                                                       {
-                                                           cycles.Enqueue(e);
-                                                           cycleCompletedEvent.Set();
-                                                       };
+                        listener.CycleCompleted += (sender, e) => cycles.Enqueue(e);
+
+                        listener.ViewDefinitionCompilationFailed += (sender, e) => completedEvent.Set();
+                        listener.CycleExecutionFailed += (sender, e) => completedEvent.Set();
                         listener.ProcessCompleted += (sender, e) => completedEvent.Set();
+
                         remoteViewClient.SetResultListener(listener);
 
                         //TODO: This is a hack
-                        remoteViewClient.AttachToViewProcess(tempViewDefinition.Name,
-                                                             ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(Enumerable.Repeat(valuationTime, 5))));
+                        // we can't apply overrides until we're attached
+                        // so attach to a view that's kinda like live
+                        // but we need to wait for it to finish (so that we can be sure the compilation matches the result)
+                        var options = new ExecutionOptions(
+                                                ArbitraryViewCycleExecutionSequence.Of(Enumerable.Repeat(valuationTime, 3)),
+                                                false, // <-- this is important
+                                                true,
+                                                null,
+                                                false);
+
+                        remoteViewClient.AttachToViewProcess(tempViewDefinition.Name, options);
 
                         ApplyOverrides(remoteViewClient, overrides);
-                        cycleCompletedEvent.Reset();
-                        cycleCompletedEvent.WaitOne();
-                        cycleCompletedEvent.Reset();
-                        cycleCompletedEvent.WaitOne();
+
+                        Empty(cycles);
+                        
+                        completedEvent.WaitOne();
+
+                        if (cycles.Count <= 2)
+                        {
+                            throw new ArgumentException("The hack failed, I can't guarantee that the overrides were applied");
+                        }
                         return Tuple.Create(compiles.Last().CompiledViewDefinition, cycles.Last().FullResult);
                     }
                 }
@@ -199,6 +212,15 @@ namespace OGDotNet.Model.Context
                 {
                     remoteClient.ViewDefinitionRepository.RemoveViewDefinition(tempViewDefinition.Name);
                 }
+            }
+        }
+
+        private void Empty(ConcurrentQueue<CycleCompletedArgs> cycles)
+        {
+            CycleCompletedArgs args;
+            while (cycles.TryDequeue(out args))
+            {
+                            
             }
         }
 
