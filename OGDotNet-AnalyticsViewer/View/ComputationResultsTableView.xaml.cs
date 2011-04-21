@@ -8,7 +8,6 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using OGDotNet.AnalyticsViewer.View.CellTemplates;
@@ -23,8 +22,6 @@ namespace OGDotNet.AnalyticsViewer.View
     /// </summary>
     public partial class ComputationResultsTableView
     {
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
         public ComputationResultsTableView()
         {
             InitializeComponent();
@@ -32,9 +29,6 @@ namespace OGDotNet.AnalyticsViewer.View
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource = new CancellationTokenSource();
-
             var portfolioView = (GridView)portfolioTable.View;
             var primitivesView = (GridView)primitivesTable.View;
 
