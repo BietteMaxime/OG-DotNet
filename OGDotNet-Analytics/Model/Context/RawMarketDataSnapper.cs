@@ -187,7 +187,7 @@ namespace OGDotNet.Model.Context
                         // so attach to a view that's kinda like live
                         // but we need to wait for it to finish (so that we can be sure the compilation matches the result)
                         var options = new ExecutionOptions(
-                                                ArbitraryViewCycleExecutionSequence.Of(Enumerable.Repeat(valuationTime, 3)),
+                                                ArbitraryViewCycleExecutionSequence.Of(Enumerable.Repeat(valuationTime, overrides.Any() ? 3 : 1)),
                                                 false, // <-- this is important
                                                 true,
                                                 null,
@@ -195,15 +195,22 @@ namespace OGDotNet.Model.Context
 
                         remoteViewClient.AttachToViewProcess(tempViewDefinition.Name, options);
 
-                        ApplyOverrides(remoteViewClient, overrides);
-
-                        Empty(cycles);
-                        
-                        completedEvent.WaitOne();
-
-                        if (cycles.Count <= 2)
+                        if (overrides.Any())
                         {
-                            throw new ArgumentException("The hack failed, I can't guarantee that the overrides were applied");
+                            ApplyOverrides(remoteViewClient, overrides);
+
+                            Empty(cycles);
+
+                            completedEvent.WaitOne();
+
+                            if (cycles.Count <= 2)
+                            {
+                                throw new ArgumentException("The hack failed, I can't guarantee that the overrides were applied");
+                            }
+                        }
+                        else
+                        {
+                            completedEvent.WaitOne();
                         }
                         return Tuple.Create(compiles.Last().CompiledViewDefinition, cycles.Last().FullResult);
                     }
@@ -234,7 +241,7 @@ namespace OGDotNet.Model.Context
 
         private static IEnumerable<ValueRequirement> GetYieldCurveSpecReqs(InMemoryViewComputationResultModel tempResults)
         {
-            return tempResults.AllResults.Where(r => r.ComputedValue.Specification.ValueName == YieldCurveValueReqName).Select(r => r.ComputedValue.Specification).Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Properties));
+            return tempResults.AllResults.Where(r => r.ComputedValue.Specification.ValueName == YieldCurveValueReqName).Select(r => r.ComputedValue.Specification).Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Properties)).ToList();
         }
 
         private static ViewDefinition GetTempViewDefinition(ViewDefinition viewDefinition, ResultModelDefinition resultModelDefinition, IEnumerable<ValueRequirement> extraReqs = null)
