@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Security;
@@ -21,17 +20,15 @@ using OGDotNet.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
-    public class ComputationResultsTables : INotifyPropertyChanged
+    public class ComputationResultsTables
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private readonly ViewDefinition _viewDefinition;
         private readonly IPortfolio _portfolio;
         private readonly ISecuritySource _remoteSecuritySource;
         private readonly List<string> _portfolioColumns;
         private readonly List<string> _primitiveColumns;
 
-        private readonly Dictionary<UniqueIdentifier, PrimitiveRow> _primitiveRows = new Dictionary<UniqueIdentifier, PrimitiveRow>();
+        private readonly List<PrimitiveRow> _primitiveRows;
 
         private readonly List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
 
@@ -45,7 +42,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             _portfolioColumns = GetPortfolioColumns(viewDefinition).ToList();
             _primitiveColumns = GetPrimitiveColumns(viewDefinition).ToList();
 
-            _primitiveRows = BuildPrimitiveRows();
+            _primitiveRows = BuildPrimitiveRows().ToList();
             _portfolioRows = BuildPortfolioRows().ToList();
         }
 
@@ -56,7 +53,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             var indexedResults = delta.AllResults.ToLookup(v => v.ComputedValue.Specification.TargetSpecification.Uid);
             
             UpdatePortfolioRows(_portfolioRows, indexedResults);
-            UpdatePrimitiveRows(_primitiveRows.Values, indexedResults);
+            UpdatePrimitiveRows(_primitiveRows, indexedResults);
         }
         
         public bool HavePortfolioRows { get { return PortfolioColumns.Count > 0; } }
@@ -79,18 +76,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         public List<PrimitiveRow> PrimitiveRows
         {
-            get { return _primitiveRows.Values.OrderBy(r => r.TargetName).ToList(); }
-        }
-
-        private void InvokePropertyChanged(string propertyName)
-        {
-            InvokePropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void InvokePropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, e);
+            get { return _primitiveRows; }
         }
 
         private static IEnumerable<string> GetPrimitiveColumns(ViewDefinition viewDefinition)
@@ -199,10 +185,10 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             }
         }
 
-        private Dictionary<UniqueIdentifier, PrimitiveRow> BuildPrimitiveRows()
+        private IEnumerable<PrimitiveRow> BuildPrimitiveRows()
         {
             var targets = _viewDefinition.CalculationConfigurationsByName.SelectMany(c => c.Value.SpecificRequirements.Select(r => r.TargetSpecification.Uid)).Distinct();
-            return targets.ToDictionary(t => t, t => new PrimitiveRow(t));
+            return targets.Select(t => new PrimitiveRow(t)).OrderBy(r => r.TargetName);
         }
 
         private static void UpdatePortfolioRows(IEnumerable<PortfolioRow> rows, ILookup<UniqueIdentifier, ViewResultEntry> indexedResults)
