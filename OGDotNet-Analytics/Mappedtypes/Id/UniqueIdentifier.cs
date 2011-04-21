@@ -17,6 +17,7 @@ namespace OGDotNet.Mappedtypes.Id
     public class UniqueIdentifier : IComparable<UniqueIdentifier>, IEquatable<UniqueIdentifier>, IComparable
     {
         private const string Separator = "~";
+        static readonly string[] SeparatorArray = new[] { Separator };
 
         private const string SchemeFudgeFieldName = "Scheme";
         private const string ValueFudgeFieldName = "Value";
@@ -39,7 +40,7 @@ namespace OGDotNet.Mappedtypes.Id
         public static UniqueIdentifier Parse(string uidStr)
         {
             ArgumentChecker.NotEmpty(uidStr, "uidStr");
-            string[] split = uidStr.Split(new[] { Separator }, StringSplitOptions.None);
+            string[] split = uidStr.Split(SeparatorArray, StringSplitOptions.None);
             switch (split.Length)
             {
                 case 2:
