@@ -22,14 +22,24 @@ namespace OGDotNet.Builders
 
         public override ComputationTargetSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            ComputationTargetType type = EnumBuilder<ComputationTargetType>.Parse(msg.GetValue<string>("computationTargetType"));
+            ComputationTargetType? type = null;
             UniqueIdentifier uid = null;
-            var ctiField = msg.GetByName("computationTargetIdentifier");
-            if (ctiField != null)
+
+            foreach (var field in msg)
             {
-                uid = UniqueIdentifier.Parse(msg.GetValue<string>("computationTargetIdentifier"));
+                switch (field.Name)
+                {
+                    case "computationTargetType":
+                        type = EnumBuilder<ComputationTargetType>.Parse((string) field.Value);
+                        break;
+                    case "computationTargetIdentifier":
+                        uid = UniqueIdentifier.Parse((string)field.Value);
+                        break;
+                    default:
+                        break;
+                }
             }
-            return new ComputationTargetSpecification(type, uid);
+            return new ComputationTargetSpecification(type.Value, uid);
         }
 
         public static void AddMessageFields(IFudgeSerializer fudgeSerializer, IAppendingFudgeFieldContainer msg, ComputationTargetSpecification @object)
