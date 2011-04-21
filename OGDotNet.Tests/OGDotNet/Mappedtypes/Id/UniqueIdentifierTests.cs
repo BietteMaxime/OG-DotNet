@@ -65,5 +65,14 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
                 Assert.Equal(uniqueIdentifier, UniqueIdentifier.Of(uniqueIdentifier.Scheme, uniqueIdentifier.Value, uniqueIdentifier.Version));
             }
         }
+
+        [Fact]
+        public void ParseWorks()
+        {
+            foreach (var uniqueIdentifier in ExpectedOrder)
+            {
+                Assert.Equal(uniqueIdentifier, UniqueIdentifier.Parse(uniqueIdentifier.ToString()));
+            }
+        }
     }
 }
