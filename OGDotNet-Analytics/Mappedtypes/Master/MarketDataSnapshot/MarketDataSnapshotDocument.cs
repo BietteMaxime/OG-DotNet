@@ -48,14 +48,12 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         {
             var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
 
-            var versionFromInstant = ffc.GetValue<DateTimeOffset>("versionFromInstant");
-            var correctionFromInstant = ffc.GetValue<DateTimeOffset>("correctionFromInstant");
+            var versionFromInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("versionFromInstant"));
+            var correctionFromInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("correctionFromInstant"));
 
-            var vToInst = ffc.GetValue<FudgeDateTime>("versionToInstant");
-            var versionToInstant = ToDateTimeOffsetWithDefault(vToInst);
+            var versionToInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("versionToInstant"));
 
-            var cToInst = ffc.GetValue<FudgeDateTime>("correctionToInstant");
-            var correctionToInstant = ToDateTimeOffsetWithDefault(cToInst);
+            var correctionToInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("correctionToInstant"));
 
             return new MarketDataSnapshotDocument(uid, deserializer.FromField<ManageableMarketDataSnapshot>(ffc.GetByName("snapshot")), versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant);
         }
@@ -65,8 +63,8 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
             if (_uniqueId != null) a.Add("uniqueId", _uniqueId.ToString());
             a.Add("snapshot", _snapshot);
 
-            a.Add("versionFromInstant", VersionFromInstant);
-            a.Add("correctionFromInstant", CorrectionFromInstant);
+            AddDateTimeOffsetWithDefault(a, "versionFromInstant", VersionFromInstant);
+            AddDateTimeOffsetWithDefault(a, "correctionFromInstant", CorrectionFromInstant);
             
             AddDateTimeOffsetWithDefault(a, "versionToInstant", VersionToInstant);
             AddDateTimeOffsetWithDefault(a, "correctionToInstant", CorrectionToInstant);
