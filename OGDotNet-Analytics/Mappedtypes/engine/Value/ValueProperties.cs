@@ -153,7 +153,6 @@ namespace OGDotNet.Mappedtypes.engine.value
 
         public static ValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var properties = new Dictionary<string, HashSet<string>>();
             var withoutMessage = ffc.GetMessage("without");
             if (withoutMessage != null)
             {
@@ -168,7 +167,11 @@ namespace OGDotNet.Mappedtypes.engine.value
                 return EmptyValueProperties.Instance;
             }
 
-            foreach (var field in withMessage)
+            IList<IFudgeField> fields = withMessage.GetAllFields();
+            
+            var properties = new Dictionary<string, HashSet<string>>(fields.Count);
+
+            foreach (var field in fields)
             {
                 var name = field.Name;
 
@@ -185,13 +188,19 @@ namespace OGDotNet.Mappedtypes.engine.value
                 else
                 {
                     var propMessage = (IFudgeFieldContainer)field.Value;
-                    if (propMessage.Count() == 1 && propMessage.Single().Type == IndicatorFieldType.Instance)
+                    
+                    IList<IFudgeField> fudgeFields = propMessage.GetAllFields();
+                    if (fudgeFields.Count == 1 && fudgeFields[0].Type == IndicatorFieldType.Instance)
                     {
                         properties.Add(name, null);
                     }
                     else
                     {
-                        var hashSet = new HashSet<string>(propMessage.Select(f => f.Value).Cast<string>());
+                        var hashSet = new HashSet<string>();
+                        foreach (var fudgeField in fudgeFields)
+                        {
+                            hashSet.Add((string) fudgeField.Value);
+                        }
                         properties.Add(name, hashSet);
                     }
                 }
