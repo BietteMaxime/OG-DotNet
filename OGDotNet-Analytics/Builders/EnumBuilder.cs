@@ -8,12 +8,18 @@
 
 using System;
 using System.Text.RegularExpressions;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
 {
     static class EnumBuilder<T> where T : struct
     {
+        private static readonly Memoizer<string, T> ParseTable = new Memoizer<string, T>(ParseImpl);
         internal static T Parse(string str)
+        {
+            return ParseTable.Get(str);
+        }
+        private static T ParseImpl(string str)
         {
             T type;
             if (!Enum.TryParse(str.Replace("_", string.Empty), true, out type))
