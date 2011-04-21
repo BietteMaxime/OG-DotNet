@@ -14,45 +14,26 @@ namespace OGDotNet.Model.Resources
 {
     public class HeartbeatSender : DisposableBase
     {
-        private object _disposingLock = new object();
-        private readonly CancellationTokenSource _heartbeatCancellationTokenSource = new CancellationTokenSource();
+        private readonly ManualResetEvent _disposeEvent = new ManualResetEvent(false);
         private readonly TimeSpan _period;
         private readonly RestTarget _heartbeatRest;
+        private readonly RegisteredWaitHandle _registeredWaitHandle;
 
         public HeartbeatSender(TimeSpan period, RestTarget heartbeatRest)
         {
             _period = period;
             _heartbeatRest = heartbeatRest;
 
-            QueueHeartbeat(_heartbeatCancellationTokenSource.Token);
-        }
-
-        private void QueueHeartbeat(CancellationToken cancellationToken)
-        {
-            ThreadPool.RegisterWaitForSingleObject(cancellationToken.WaitHandle, SendHeartBeats, cancellationToken, _period, true);
+            _registeredWaitHandle = ThreadPool.RegisterWaitForSingleObject(_disposeEvent, SendHeartBeats, null, _period, false);
         }
 
         private void SendHeartBeats(object context, bool timedOut)
         {
-            var token = (CancellationToken)context;
-            if (token.IsCancellationRequested)
+            if (!timedOut)
             {
-                lock (_disposingLock)
-                {
-                    _heartbeatCancellationTokenSource.Dispose();
-                }
+                throw new ArgumentException("Handle should never be set");
             }
-            else
-            {
-                try
-                {
-                    SendHeartbeat();
-                }
-                finally
-                {
-                    QueueHeartbeat(token);
-                }
-            }
+            SendHeartbeat();
         }
 
         private void SendHeartbeat()
@@ -62,11 +43,8 @@ namespace OGDotNet.Model.Resources
 
         protected override void Dispose(bool disposing)
         {
-            lock (_disposingLock)
-            {
-                _heartbeatCancellationTokenSource.Cancel();
-            }
-            //NOTE: I can't dispose of _heartbeatCancellationTokenSource here, because then calling WaitHandle on it would throw
+            _registeredWaitHandle.Unregister(_disposeEvent);
+            _disposeEvent.Dispose();
         }
     }
 }
