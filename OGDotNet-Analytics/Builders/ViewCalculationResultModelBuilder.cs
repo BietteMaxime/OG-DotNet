@@ -25,16 +25,33 @@ namespace OGDotNet.Builders
         public override ViewCalculationResultModel DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             var map = new Dictionary<ComputationTargetSpecification, IDictionary<string, ComputedValue>>();
+
             foreach (var field in msg)
             {
                 var subMsg = (IFudgeFieldContainer) field.Value;
-                
-                var valueSpecification = deserializer.FromField<ValueSpecification>(subMsg.GetByName("specification"));
-                object innerValue = GetValue(deserializer, subMsg, valueSpecification);
+
+                ValueSpecification valueSpecification = null;
+                object innerValue = null;
+
+                foreach (var subField in subMsg)
+                {
+                    switch (subField.Name)
+                    {
+                        case "specification":
+                            valueSpecification = deserializer.FromField<ValueSpecification>(subField);
+                            break;
+                        case "value":
+                            innerValue = GetValue(deserializer, subField, valueSpecification);
+                            break;
+                        default:
+                            break;
+                    }
+                }
 
                 var value = new ComputedValue(valueSpecification, innerValue);
                 
                 ComputationTargetSpecification target = value.Specification.TargetSpecification;
+                
                 if (!map.ContainsKey(target)) {
                     map.Add(target, new Dictionary<string, ComputedValue>());
                 }
@@ -43,22 +60,20 @@ namespace OGDotNet.Builders
             return new ViewCalculationResultModel(map);
         }
 
-        private static object GetValue(IFudgeDeserializer deserializer, IFudgeFieldContainer subMsg, ValueSpecification valueSpecification)
+        private static object GetValue(IFudgeDeserializer deserializer, IFudgeField valueField, ValueSpecification valueSpecification)
         {
-            var valueMsg = subMsg.GetByName("value");
-
-            if (valueMsg.Type != FudgeMsgFieldType.Instance)
+            if (valueField.Type != FudgeMsgFieldType.Instance)
             {
-                return valueMsg.Value;
+                return valueField.Value;
             }
 
             if (valueSpecification.ValueName == "YieldCurveJacobian")
             {
-                var fromField = deserializer.FromField<List<double[]>>(valueMsg);
+                var fromField = deserializer.FromField<List<double[]>>(valueField);
                 return fromField; //TODO I hope this gets a better type one day?
             }
 
-            return deserializer.FromField(valueMsg, null);
+            return deserializer.FromField(valueField, null);
         }
     }
 }
