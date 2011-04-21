@@ -64,6 +64,7 @@
     <Compile Include="Builders\MapBuilder.cs" />
     <Compile Include="Builders\PortfolioBuilder.cs" />
     <Compile Include="Builders\SerializerExtensions.cs" />
+    <Compile Include="Builders\ValueSpecificationBuilder.cs" />
     <Compile Include="Mappedtypes\Core\Common\Currency.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\ValueSnapshot.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\YieldCurveKey.cs" />
