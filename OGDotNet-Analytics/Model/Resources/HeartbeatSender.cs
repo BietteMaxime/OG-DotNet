@@ -14,6 +14,7 @@ namespace OGDotNet.Model.Resources
 {
     public class HeartbeatSender : DisposableBase
     {
+        private object _disposingLock = new object();
         private readonly CancellationTokenSource _heartbeatCancellationTokenSource = new CancellationTokenSource();
         private readonly TimeSpan _period;
         private readonly RestTarget _heartbeatRest;
@@ -36,7 +37,10 @@ namespace OGDotNet.Model.Resources
             var token = (CancellationToken)context;
             if (token.IsCancellationRequested)
             {
-                _heartbeatCancellationTokenSource.Dispose();
+                lock (_disposingLock)
+                {
+                    _heartbeatCancellationTokenSource.Dispose();
+                }
             }
             else
             {
@@ -58,7 +62,10 @@ namespace OGDotNet.Model.Resources
 
         protected override void Dispose(bool disposing)
         {
-            _heartbeatCancellationTokenSource.Cancel();
+            lock (_disposingLock)
+            {
+                _heartbeatCancellationTokenSource.Cancel();
+            }
             //NOTE: I can't dispose of _heartbeatCancellationTokenSource here, because then calling WaitHandle on it would throw
         }
     }
