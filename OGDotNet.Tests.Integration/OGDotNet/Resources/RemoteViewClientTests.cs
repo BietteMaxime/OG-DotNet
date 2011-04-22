@@ -159,7 +159,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     Matches(ViewResultMode.DeltaOnly, results.Skip(1));
                     break;
                 case ViewResultMode.Both:
-                    Assert.True(results.All(r => r.DeltaResult != null));
+                    Assert.True(results.Skip(1).All(r => r.DeltaResult != null));
                     Assert.True(results.All(r => r.FullResult != null));
                     break;
                 default:
