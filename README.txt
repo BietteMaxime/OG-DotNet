@@ -1,10 +1,5 @@
 The reference implementation of a C# client for the OpenGamma api http://www.opengamma.com/
 
-Dependencies:
-You will need the Fudge-CSharp library in order to build OGDotNet
-	https://github.com/FudgeMsg/Fudge-CSharp
-If you add the bin directory of Fudge-CSharp to the ReferencePaths of OGDotNet then your build should succeed
-
 Projects:
 OGDotNet - The reference implementation of a C# client for the OpenGamma api http://www.opengamma.com/
 OGDotNet.AnalyticsViewer - A simple results client using OGDotNet
