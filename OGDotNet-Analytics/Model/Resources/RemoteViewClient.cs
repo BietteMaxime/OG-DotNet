@@ -28,11 +28,11 @@ namespace OGDotNet.Model.Resources
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly MQTemplate _mqTemplate;
         private readonly RestTarget _rest;
+        private readonly HeartbeatSender _heartbeatSender;
 
         private readonly object _listenerLock = new object();
         private IViewResultListener _resultListener;
         private ClientResultStream<object> _listenerResultStream;
-        private readonly HeartbeatSender _heartbeatSender;
 
         public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate)
         {
