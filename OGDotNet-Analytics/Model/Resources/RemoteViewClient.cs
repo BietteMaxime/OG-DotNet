@@ -32,7 +32,7 @@ namespace OGDotNet.Model.Resources
         private readonly object _listenerLock = new object();
         private IViewResultListener _resultListener;
         private ClientResultStream<object> _listenerResultStream;
-        private HeartbeatSender _heartbeatSender;
+        private readonly HeartbeatSender _heartbeatSender;
 
         public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate)
         {
