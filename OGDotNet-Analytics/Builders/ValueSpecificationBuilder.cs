@@ -24,7 +24,6 @@ namespace OGDotNet.Builders
             string valueName = null;
             ValueProperties properties = null;
 
-
             foreach (var fudgeField in msg.GetAllFields())
             {
                 switch (fudgeField.Name)
