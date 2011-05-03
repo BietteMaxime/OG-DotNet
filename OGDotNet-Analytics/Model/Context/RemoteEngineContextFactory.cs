@@ -75,7 +75,7 @@ namespace OGDotNet.Model.Context
                 }
 
                 var uris = new List<string>();
-                foreach (var field in ((IFudgeFieldContainer)userDataField.Value))
+                foreach (var field in (IFudgeFieldContainer)userDataField.Value)
                 {
                     switch (field.Name)
                     {
