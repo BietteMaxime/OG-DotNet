@@ -126,6 +126,11 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
         {
             get { return _executionInterrupted; }
         }
+
+        public override string ToString()
+        {
+            return string.Format("[ProcessTerminatedArgs: Interrupted {0}]", ExecutionInterrupted);
+        }
     }
 
     public class CycleExecutionFailedArgs : EventArgs
@@ -147,6 +152,11 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
         public JavaException Exception
         {
             get { return _exception; }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[CycleExecutionFailedArgs: {0}]", Exception);
         }
     }
 
@@ -191,6 +201,11 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
         public JavaException Exception
         {
             get { return _exception; }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[ViewDefinitionCompilationFailedArgs: {0}  valued @ {1}]", Exception, ValuationTime);
         }
     }
 

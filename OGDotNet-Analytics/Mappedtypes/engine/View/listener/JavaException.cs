@@ -42,7 +42,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
 
         public override string ToString()
         {
-            return String.Format("[{0}: {1}]", Type, Message);
+            return String.Format("[JavaException {0}: {1}]", Type, Message);
         }
 
         private static readonly IDictionary<string, Type> DotNetTypesByJavaTypeName = new Dictionary<string, Type>
