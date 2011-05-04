@@ -35,12 +35,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         public static IEnumerable<CycleCompletedArgs> GetCycles(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
         {
-            //TODO handle errors
-
             using (var resultQueue = new BlockingCollection<CycleCompletedArgs>(new ConcurrentQueue<CycleCompletedArgs>()))
+            using (var otherQueue = new BlockingCollection<object>(new ConcurrentQueue<object>()))
             {
                 var resultListener = new EventViewResultListener();
                 resultListener.CycleCompleted += (sender, e) => resultQueue.Add(e);
+
+                resultListener.CycleExecutionFailed += (s, e) => otherQueue.Add(e);
+                resultListener.ProcessCompleted += (s, e) => otherQueue.Add(e);
+                resultListener.ProcessTerminated += (s, e) => otherQueue.Add(e);
+                resultListener.ViewDefinitionCompilationFailed += (s, e) => otherQueue.Add(e);
+                resultListener.ViewDefinitionCompiled += (s, e) => otherQueue.Add(e);
 
                 client.SetResultListener(resultListener);
 
@@ -59,7 +64,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         }
                         else
                         {
-                            throw new TimeoutException(string.Format("No results received for {0} after {1} state {2} is completed {3}", viewDefinitionName, timeout, client.GetState(), client.IsCompleted));
+                            throw new TimeoutException(string.Format("No results received for {0} after {1}\n{2}\n state {3} is completed {4}", viewDefinitionName, timeout, 
+                                string.Join(",", otherQueue.Select(o=>o.ToString())),
+                                client.GetState(), client.IsCompleted));
                         }
                     }
                 }
