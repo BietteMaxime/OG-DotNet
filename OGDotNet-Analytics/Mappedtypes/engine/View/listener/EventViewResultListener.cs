@@ -21,22 +21,27 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
         /// The event analogue of <see cref="IViewResultListener.ViewDefinitionCompiled"/>
         /// </summary>
         public event EventHandler<ViewDefinitionCompiledArgs> ViewDefinitionCompiled;
+
         /// <summary>
         /// The event analogue of <see cref="IViewResultListener.ViewDefinitionCompilationFailed"/>
         /// </summary>
         public event EventHandler<ViewDefinitionCompilationFailedArgs> ViewDefinitionCompilationFailed;
+
         /// <summary>
         /// The event analogue of <see cref="IViewResultListener.CycleCompleted"/>
         /// </summary>
         public event EventHandler<CycleCompletedArgs> CycleCompleted;
+
         /// <summary>
         /// The event analogue of <see cref="IViewResultListener.CycleExecutionFailed"/>
         /// </summary>
         public event EventHandler<CycleExecutionFailedArgs> CycleExecutionFailed;
+
         /// <summary>
         /// The event analogue of <see cref="IViewResultListener.ProcessCompleted"/>
         /// </summary>
         public event EventHandler ProcessCompleted;
+
         /// <summary>
         /// The event analogue of <see cref="IViewResultListener.ProcessTerminated"/>
         /// </summary>
