@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Threading;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
