@@ -27,15 +27,5 @@ namespace OGDotNet.Model
         {
             return _factory.CreateConnection();
         }
-
-        public void Do(Action<ISession> action)
-        {
-            using (var connection = CreateConnection())
-            using (var session = connection.CreateSession())
-            {
-                connection.Start();
-                action(session);
-            }
-        }
     }
 }
