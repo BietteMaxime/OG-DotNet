@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Model.Context;
@@ -16,17 +17,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class TestWithContextBase : IUseFixture<TestViewFactory>
     {
-        private static RemoteEngineContext _context;
+        private static readonly Lazy<RemoteEngineContext> ContextLazy = new Lazy<RemoteEngineContext>(GetContext);
         protected static RemoteEngineContext Context
         { 
-            get
-            {
-                _context = _context ?? GetContext();
-                return _context;
-            }
+            get { return ContextLazy.Value; }
         }
 
-        protected static RemoteEngineContext GetContext()
+        private static RemoteEngineContext GetContext()
         {
             return RemoteEngineContextTests.GetContext();
         }
