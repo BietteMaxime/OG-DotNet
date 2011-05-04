@@ -12,13 +12,34 @@ using OGDotNet.Mappedtypes.engine.View.Execution;
 
 namespace OGDotNet.Mappedtypes.engine.View.listener
 {
+    /// <summary>
+    /// This class converts <see cref="IViewResultListener"/> into an event based model
+    /// </summary>
     public class EventViewResultListener : IViewResultListener
     {
+        /// <summary>
+        /// The event analogue of <see cref="IViewResultListener.ViewDefinitionCompiled"/>
+        /// </summary>
         public event EventHandler<ViewDefinitionCompiledArgs> ViewDefinitionCompiled;
+        /// <summary>
+        /// The event analogue of <see cref="IViewResultListener.ViewDefinitionCompilationFailed"/>
+        /// </summary>
         public event EventHandler<ViewDefinitionCompilationFailedArgs> ViewDefinitionCompilationFailed;
+        /// <summary>
+        /// The event analogue of <see cref="IViewResultListener.CycleCompleted"/>
+        /// </summary>
         public event EventHandler<CycleCompletedArgs> CycleCompleted;
+        /// <summary>
+        /// The event analogue of <see cref="IViewResultListener.CycleExecutionFailed"/>
+        /// </summary>
         public event EventHandler<CycleExecutionFailedArgs> CycleExecutionFailed;
+        /// <summary>
+        /// The event analogue of <see cref="IViewResultListener.ProcessCompleted"/>
+        /// </summary>
         public event EventHandler ProcessCompleted;
+        /// <summary>
+        /// The event analogue of <see cref="IViewResultListener.ProcessTerminated"/>
+        /// </summary>
         public event EventHandler<ProcessTerminatedArgs> ProcessTerminated;
 
         void IViewResultListener.ViewDefinitionCompiled(ICompiledViewDefinition compiledViewDefinition)
