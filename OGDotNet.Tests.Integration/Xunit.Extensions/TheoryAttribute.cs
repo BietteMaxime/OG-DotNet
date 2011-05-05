@@ -27,7 +27,8 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             }
 
             IEnumerable<CustomizingCommand> serialCommands = testCommands.Select(cmd => new CustomizingCommand(cmd));
-            return (!Debugger.IsAttached && Parallel) ? ParallelCommandGroup.WrapGroup(serialCommands) : serialCommands;
+            var repeatedCommands = Enumerable.Repeat(serialCommands, Repeat).SelectMany(s => s);
+            return (!Debugger.IsAttached && Parallel) ? ParallelCommandGroup.WrapGroup(repeatedCommands) : repeatedCommands;
         }
 
         private bool _parallel = true;
@@ -35,6 +36,13 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
         {
             get { return _parallel; }
             set { _parallel = value; }
+        }
+
+        private int _repeat = 1;
+        public int Repeat
+        {
+            get { return _repeat; }
+            set { _repeat = value; }
         }
 
         private class ParameterGenerationTimedOutCommand : TestCommand
