@@ -50,7 +50,7 @@ namespace OGDotNet.AnalyticsViewer.View
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.ToString(), "Failed to connect to server");
+                    MessageBox.Show(string.Format("Failed to connect to remote server:\n\t{0}\nHave you updated app.config?",e.Message), "Failed to connect to server");
                 }
                 
                 Close();
