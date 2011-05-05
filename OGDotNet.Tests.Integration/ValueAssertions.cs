@@ -8,10 +8,14 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
@@ -24,20 +28,49 @@ namespace OGDotNet.Tests.Integration
 {
     static class ValueAssertions
     {
-        public static readonly Memoizer<Type, MethodInfo> MethodCache = new Memoizer<Type, MethodInfo>(GetAppropriateMethod);
+        static readonly IEnumerable<MethodInfo> CandidateMethods = typeof(ValueAssertions).GetMethods().Where(m => m.ReturnType == typeof(void) && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType != typeof(object));
+
+        private static readonly Memoizer<Type, MethodInfo> MethodCache = new Memoizer<Type, MethodInfo>(GetAppropriateMethod);
         private static MethodInfo GetAppropriateMethod(Type t)
         {
-            var enumerable = typeof(ValueAssertions)
-                .GetMethods()
-                .Where(m => m.ReturnType == typeof(void)
-                    && m.GetParameters().Length == 1
-                    && m.GetParameters()[0].ParameterType != typeof(object)
-                    && m.GetParameters()[0].ParameterType.IsAssignableFrom(t)
-                    )
+            
+            /*var methodInfo = fudgeSerializer.GetType().GetMethods().Where(
+                m => m.Name == "Deserialize"
+                    && m.GetParameters().Count() == 1 && m.GetParameters().Single().ParameterType.IsAssignableFrom(fudgeEncodedStreamReader.GetType())
+                    && m.ContainsGenericParameters
+                ).Select(m => m.MakeGenericMethod(new[] { mappedtype })).Single();
+
+            return methodInfo.Invoke(fudgeSerializer, new object[] { fudgeEncodedStreamReader });*/
+
+            var enumerable = CandidateMethods.Where(m =>
+                    m.GetParameters()[0].ParameterType.IsAssignableFrom(t)
+                    ||
+                    (m.GetParameters()[0].ParameterType.IsGenericType && t.IsGenericType && m.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == t.GetGenericTypeDefinition()))
                 .OrderByDescending(m => Preference(m.GetParameters()[0].ParameterType))
                 .ToList();
-            Assert.True(enumerable.Count > 0, string.Format("Don't know how to check value of type {0}", t));
-            return enumerable.First();
+
+            Assert.True(enumerable.Any(), string.Format("Don't know how to check value of type {0}", t));
+            var appropriateMethod = enumerable.First();
+            if (appropriateMethod.IsGenericMethod)
+            {
+                return appropriateMethod.MakeGenericMethod(t.GetGenericArguments());
+            }
+            else
+            {
+                return appropriateMethod;
+            }
+        }
+
+
+        public static void AssertSensibleValue<T1, T2>(Tuple<T1, T2> tuple)
+        {
+            AssertSensibleValue(tuple.Item1);
+            AssertSensibleValue(tuple.Item2);
+        }
+        public static void AssertSensibleValue<TKey, TValue>(KeyValuePair<TKey, TValue> tuple)
+        {
+            AssertSensibleValue(tuple.Key);
+            AssertSensibleValue(tuple.Value);
         }
 
         private static object Preference(Type parameterType)
@@ -55,7 +88,8 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(object value)
         {
             Assert.NotNull(value);
-            MethodCache.Get(value.GetType()).Invoke(null, new[] { value });
+            var type = value.GetType();
+            MethodCache.Get(type).Invoke(null, new[] {value});
         }
 
         public static void AssertSensibleValue(IEnumerable values)
@@ -151,6 +185,44 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(value);
             Assert.NotEmpty(value.ValueName);
+        }
+
+        public static void AssertSensibleValue(ValueSpecification spec)
+        {
+            Assert.NotNull(spec);
+            Assert.NotEmpty(spec.ValueName);
+        }
+
+        public static void AssertSensibleValue(ICompiledViewDefinition viewDefin)
+        {
+            Assert.NotNull(viewDefin);
+
+            Assert.NotEmpty(viewDefin.LiveDataRequirements);
+            AssertSensibleValue(viewDefin.LiveDataRequirements);
+
+            Assert.NotEmpty(viewDefin.OutputValueNames);
+            AssertSensibleValue(viewDefin.OutputValueNames);
+
+            Assert.NotNull(viewDefin.Portfolio);
+
+            Assert.NotEmpty(viewDefin.SecurityTypes);
+            AssertSensibleValue(viewDefin.SecurityTypes);
+
+            Assert.NotNull(viewDefin.ViewDefinition);
+            AssertSensibleValue(viewDefin.ViewDefinition.CalculationConfigurationsByName);
+
+            Assert.Equal(default(DateTimeOffset) == viewDefin.EarliestValidity, viewDefin.LatestValidity == default(DateTimeOffset));
+        }
+
+        public static void AssertSensibleValue(ViewCalculationConfiguration calculationConfiguration)
+        {
+            AssertSensibleValue(calculationConfiguration.SpecificRequirements);
+            AssertSensibleValue(calculationConfiguration.PortfolioRequirementsBySecurityType);
+        }
+
+        public static void AssertSensibleValue(ValueProperties props)
+        {
+            Assert.NotNull(props);
         }
     }
 }

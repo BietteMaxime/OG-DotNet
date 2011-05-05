@@ -101,14 +101,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.IsNotType(typeof(Exception), result);
 
                 var viewDefin = (ICompiledViewDefinition)result;
-                Assert.NotNull(viewDefin);
-                Assert.NotEmpty(viewDefin.LiveDataRequirements);
-                Assert.NotEmpty(viewDefin.OutputValueNames);
-                Assert.NotNull(viewDefin.Portfolio);
-                Assert.NotEmpty(viewDefin.SecurityTypes);
-                Assert.NotNull(viewDefin.ViewDefinition);
-
-                Assert.Equal(default(DateTimeOffset) == viewDefin.EarliestValidity, viewDefin.LatestValidity == default(DateTimeOffset));
+                ValueAssertions.AssertSensibleValue(viewDefin);
             }
         }
 
