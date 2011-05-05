@@ -33,24 +33,15 @@ namespace OGDotNet.Tests.Integration
         private static readonly Memoizer<Type, MethodInfo> MethodCache = new Memoizer<Type, MethodInfo>(GetAppropriateMethod);
         private static MethodInfo GetAppropriateMethod(Type t)
         {
-            
-            /*var methodInfo = fudgeSerializer.GetType().GetMethods().Where(
-                m => m.Name == "Deserialize"
-                    && m.GetParameters().Count() == 1 && m.GetParameters().Single().ParameterType.IsAssignableFrom(fudgeEncodedStreamReader.GetType())
-                    && m.ContainsGenericParameters
-                ).Select(m => m.MakeGenericMethod(new[] { mappedtype })).Single();
-
-            return methodInfo.Invoke(fudgeSerializer, new object[] { fudgeEncodedStreamReader });*/
-
-            var enumerable = CandidateMethods.Where(m =>
+            var matchingMethods = CandidateMethods.Where(m =>
                     m.GetParameters()[0].ParameterType.IsAssignableFrom(t)
                     ||
                     (m.GetParameters()[0].ParameterType.IsGenericType && t.IsGenericType && m.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == t.GetGenericTypeDefinition()))
                 .OrderByDescending(m => Preference(m.GetParameters()[0].ParameterType))
                 .ToList();
 
-            Assert.True(enumerable.Any(), string.Format("Don't know how to check value of type {0}", t));
-            var appropriateMethod = enumerable.First();
+            Assert.True(matchingMethods.Any(), string.Format("Don't know how to check value of type {0}", t));
+            var appropriateMethod = matchingMethods.First();
             if (appropriateMethod.IsGenericMethod)
             {
                 return appropriateMethod.MakeGenericMethod(t.GetGenericArguments());
@@ -59,18 +50,6 @@ namespace OGDotNet.Tests.Integration
             {
                 return appropriateMethod;
             }
-        }
-
-
-        public static void AssertSensibleValue<T1, T2>(Tuple<T1, T2> tuple)
-        {
-            AssertSensibleValue(tuple.Item1);
-            AssertSensibleValue(tuple.Item2);
-        }
-        public static void AssertSensibleValue<TKey, TValue>(KeyValuePair<TKey, TValue> tuple)
-        {
-            AssertSensibleValue(tuple.Key);
-            AssertSensibleValue(tuple.Value);
         }
 
         private static object Preference(Type parameterType)
@@ -90,6 +69,18 @@ namespace OGDotNet.Tests.Integration
             Assert.NotNull(value);
             var type = value.GetType();
             MethodCache.Get(type).Invoke(null, new[] {value});
+        }
+
+
+        public static void AssertSensibleValue<T1, T2>(Tuple<T1, T2> tuple)
+        {
+            AssertSensibleValue(tuple.Item1);
+            AssertSensibleValue(tuple.Item2);
+        }
+        public static void AssertSensibleValue<TKey, TValue>(KeyValuePair<TKey, TValue> tuple)
+        {
+            AssertSensibleValue(tuple.Key);
+            AssertSensibleValue(tuple.Value);
         }
 
         public static void AssertSensibleValue(IEnumerable values)
