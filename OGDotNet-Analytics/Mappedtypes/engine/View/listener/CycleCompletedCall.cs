@@ -6,6 +6,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+
 namespace OGDotNet.Mappedtypes.engine.View.listener
 {
     internal class CycleCompletedCall
@@ -15,6 +17,10 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
 
         public CycleCompletedCall(InMemoryViewComputationResultModel fullResult, InMemoryViewComputationResultModel deltaResult)
         {
+            if (fullResult == null && deltaResult == null)
+            {
+                throw new ArgumentNullException("fullResult","Both results were null");
+            }
             _fullResult = fullResult;
             _deltaResult = deltaResult;
         }
