@@ -6,11 +6,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 
@@ -18,6 +21,20 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class MarketDataSnapshotManagerTests : ViewTestsBase
     {
+
+        [Xunit.Extensions.Fact]
+        public void CanCreateAndRunFromView()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName))
+            {
+                proc.Snapshot.Name = TestUtils.GetUniqueName();
+                Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
+                var options = ExecutionOptions.Snapshot(proc.Snapshot.UniqueId);
+                RemoteViewClientBatchTests.RunToCompletion(options);
+            }
+        }
+
         [Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanCreateFromView(ViewDefinition viewDefinition)
