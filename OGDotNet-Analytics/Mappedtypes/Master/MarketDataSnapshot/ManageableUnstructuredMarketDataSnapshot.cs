@@ -15,6 +15,7 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Model;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
 using OGDotNet.Utils;
@@ -161,20 +162,38 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         public static ManageableUnstructuredMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new ManageableUnstructuredMarketDataSnapshot(
-                MapBuilder.FromFudgeMsg<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(ffc, deserializer, "values",
-                deserializer.FromField<MarketDataValueSpecification>,
-                vm => MapBuilder.FromFudgeMsg((IFudgeFieldContainer)vm.Value, deserializer, km => (string)km.Value, deserializer.FromField<ValueSnapshot>)
-                )
-                );
+            var dictionary = new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>();
+            var enumerable = ffc.GetAllByOrdinal(1).Select(deserializer.FromField<Entry>);
+            foreach (var entry in enumerable)
+            {
+                IDictionary<string, ValueSnapshot> innerDict;
+                if (! dictionary.TryGetValue(entry.ValueSpec, out innerDict))
+                {
+                    innerDict = new Dictionary<string, ValueSnapshot>();
+                    dictionary[entry.ValueSpec] = innerDict;
+                }
+                innerDict.Add(entry.ValueName, entry.Value);
+            }
+            return new ManageableUnstructuredMarketDataSnapshot(dictionary);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             Type type = typeof(ManageableUnstructuredMarketDataSnapshot);
             s.WriteTypeHeader(a, type);
-            FudgeMsg valuesMessage = MapBuilder.ToFudgeMsg(s, Values);
-            a.Add("values", valuesMessage);
+            foreach (var value in Values)
+            {
+                foreach (var valueSnapshot in value.Value)
+                {
+                    var openGammaFudgeContext = (OpenGammaFudgeContext) s.Context;
+                    var newMessage = s.Context.NewMessage();
+                    newMessage.Add("valueSpec", openGammaFudgeContext.GetSerializer().SerializeToMsg(value.Key));
+                    newMessage.Add("valueName", valueSnapshot.Key);
+                    newMessage.Add("value", openGammaFudgeContext.GetSerializer().SerializeToMsg(valueSnapshot.Value));
+                    a.Add(1, newMessage);
+                }
+                
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -187,6 +206,35 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, e);
+        }
+
+        public class Entry
+        {
+            private readonly MarketDataValueSpecification valueSpec;
+            private readonly string valueName;
+            private readonly ValueSnapshot value;
+
+            public Entry(MarketDataValueSpecification valueSpec, string valueName, ValueSnapshot value)
+            {
+                this.valueSpec = valueSpec;
+                this.valueName = valueName;
+                this.value = value;
+            }
+
+            public MarketDataValueSpecification ValueSpec
+            {
+                get { return valueSpec; }
+            }
+
+            public string ValueName
+            {
+                get { return valueName; }
+            }
+
+            public ValueSnapshot Value
+            {
+                get { return value; }
+            }
         }
     }
 }
