@@ -7,11 +7,9 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.IO;
 using System.Threading;
 using Apache.NMS;
 using Fudge;
-using Fudge.Encodings;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
