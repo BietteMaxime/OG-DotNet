@@ -7,13 +7,8 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Reflection;
-using Fudge;
-using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.engine.View.listener;
-using OGDotNet.Mappedtypes.engine.View.permission;
 
 namespace OGDotNet.Model
 {
