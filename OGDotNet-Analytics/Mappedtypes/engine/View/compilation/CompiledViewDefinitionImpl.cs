@@ -7,6 +7,9 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Fudge;
+using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
@@ -18,21 +21,17 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
     {
         private readonly ViewDefinition _viewDefinition;
         private readonly IPortfolio _portfolio;
-        private readonly Dictionary<ValueRequirement, ValueSpecification> _liveDataRequirements;
-        private readonly string[] _outputValueNames;
-        private readonly string[] _securityTypes;
+        private readonly Dictionary<String, ICompiledViewCalculationConfiguration> _compiledCalculationConfigurations;
         private readonly DateTimeOffset _latestValidity;
         private readonly DateTimeOffset _earliestValidity;
 
-        public CompiledViewDefinitionImpl(ViewDefinition viewDefinition, IPortfolio portfolio, Dictionary<ValueRequirement, ValueSpecification> liveDataRequirements, string[] outputValueNames, string[] securityTypes, DateTimeOffset latestValidity, DateTimeOffset earliestValidity)
+        public CompiledViewDefinitionImpl(ViewDefinition viewDefinition, IPortfolio portfolio, DateTimeOffset latestValidity, DateTimeOffset earliestValidity, Dictionary<string, ICompiledViewCalculationConfiguration> compiledCalculationConfigurations)
         {
             _viewDefinition = viewDefinition;
+            _compiledCalculationConfigurations = compiledCalculationConfigurations;
             _earliestValidity = earliestValidity;
             _latestValidity = latestValidity;
             _portfolio = portfolio;
-            _liveDataRequirements = liveDataRequirements;
-            _outputValueNames = outputValueNames;
-            _securityTypes = securityTypes;
         }
 
         public ViewDefinition ViewDefinition
@@ -47,19 +46,9 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
 
         public Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements
         {
-            get { return _liveDataRequirements; }
+            get { return _compiledCalculationConfigurations.Values.Select(c=>c.LiveDataRequirements).SelectMany(d =>d).ToDictionary(k=>k.Key, k=>k.Value); }
         }
-
-        public string[] OutputValueNames
-        {
-            get { return _outputValueNames; }
-        }
-
-        public string[] SecurityTypes
-        {
-            get { return _securityTypes; }
-        }
-
+        
         public DateTimeOffset EarliestValidity
         {
             get { return _earliestValidity; }
@@ -68,6 +57,22 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
         public DateTimeOffset LatestValidity
         {
             get { return _latestValidity; }
+        }
+
+        public static CompiledViewDefinitionImpl FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            ViewDefinition defn = deserializer.FromField<ViewDefinition>(ffc.GetByName("viewDefintion"));
+            IPortfolio portfolio = deserializer.FromField<IPortfolio>(ffc.GetByName("portfolio"));
+            DateTimeOffset latestValidity = ffc.GetValue<DateTimeOffset>("latestValidity");
+            DateTimeOffset earliestValidity = ffc.GetValue<DateTimeOffset>("earliestValidity");
+
+            var configs = ffc.GetAllByName("compiledCalculationConfigurations").Select(deserializer.FromField<CompiledViewCalculationConfigurationImpl>).ToDictionary(c => c.Name, c=>(ICompiledViewCalculationConfiguration) c);
+            return new CompiledViewDefinitionImpl(defn, portfolio, latestValidity, earliestValidity, configs);
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            throw new NotImplementedException();
         }
     }
 }

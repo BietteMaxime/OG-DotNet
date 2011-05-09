@@ -23,12 +23,6 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
 
         Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements { get; }
 
-        string[] OutputValueNames { get; }
-
-        //TODO IEnumerable<ComputationTarget> ComputationTargets
-
-        string[] SecurityTypes { get; }
-
         //TODO ValidFrom, ValidTo
         DateTimeOffset EarliestValidity { get; }
         DateTimeOffset LatestValidity { get; }
