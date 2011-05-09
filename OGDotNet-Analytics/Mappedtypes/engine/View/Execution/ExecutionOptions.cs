@@ -7,6 +7,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
+using Fudge;
+using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine.View.Execution
 {
@@ -40,19 +44,27 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
                 false);
         }
 
+        public static IViewExecutionOptions Snapshot(UniqueIdentifier snapshotIdentifier)
+        {
+            return new ExecutionOptions(ArbitraryViewCycleExecutionSequence.Of(DateTimeOffset.Now), true, false, null, false, snapshotIdentifier);
+        }
+
         private readonly IViewCycleExecutionSequence _executionSequence;
         private readonly bool _runAsFastAsPossible;
         private readonly bool _liveDataTriggerEnabled;
         private readonly int? _maxSuccessiveDeltaCycles;
         private readonly bool _compileOnly;
+        private readonly UniqueIdentifier _marketDataSnapshotIdentifier;
 
-        public ExecutionOptions(IViewCycleExecutionSequence executionSequence, bool runAsFastAsPossible, bool liveDataTriggerEnabled, int? maxSuccessiveDeltaCycles, bool compileOnly)
+
+        public ExecutionOptions(IViewCycleExecutionSequence executionSequence, bool runAsFastAsPossible, bool liveDataTriggerEnabled, int? maxSuccessiveDeltaCycles, bool compileOnly, UniqueIdentifier marketDataSnapshotIdentifier = null)
         {
             _executionSequence = executionSequence;
             _runAsFastAsPossible = runAsFastAsPossible;
             _liveDataTriggerEnabled = liveDataTriggerEnabled;
             _maxSuccessiveDeltaCycles = maxSuccessiveDeltaCycles;
             _compileOnly = compileOnly;
+            _marketDataSnapshotIdentifier = marketDataSnapshotIdentifier;
         }
 
         public IViewCycleExecutionSequence ExecutionSequence
@@ -78,6 +90,33 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
         public bool CompileOnly
         {
             get { return _compileOnly; }
+        }
+
+        public UniqueIdentifier MarketDataSnapshotIdentifier
+        {
+            get { return _marketDataSnapshotIdentifier; }
+        }
+
+
+        public static ExecutionOptions FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            s.WriteInline(a, "executionSequence", ExecutionSequence);
+            a.Add("runAsFastAsPossible", RunAsFastAsPossible);
+            a.Add("liveDataTriggerEnabled", LiveDataTriggerEnabled);
+            if (MaxSuccessiveDeltaCycles != null)
+            {
+                a.Add("maxSuccessiveDeltaCycles", MaxSuccessiveDeltaCycles);
+            }
+            a.Add("compileOnly", CompileOnly);
+            if( MarketDataSnapshotIdentifier != null)
+            {
+                a.Add("snapshotId", MarketDataSnapshotIdentifier.ToString());
+            }
         }
     }
 }

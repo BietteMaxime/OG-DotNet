@@ -19,12 +19,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteViewClientBatchTests : TestWithContextBase
     {
-        private const string ViewName = "Equity Option Test View 1";
+        public const string ViewName = "Equity Option Test View 1";
 
         [Xunit.Extensions.Fact]
         public void CanRunZeroCycleBatch()
         {
-            var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of()));
+            var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(new DateTimeOffset[]{})));
             Assert.Empty(runToCompletion.Item1);
             Assert.Empty(runToCompletion.Item2);
         }
@@ -76,7 +76,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.InRange( actual.ToUniversalTime() - expected.ToUniversalTime(), TimeSpan.FromSeconds(-1), TimeSpan.FromSeconds(1));
         }
 
-        private static Tuple<IEnumerable<ViewDefinitionCompiledArgs>, IEnumerable<CycleCompletedArgs>> RunToCompletion(IViewExecutionOptions options)
+        public static Tuple<IEnumerable<ViewDefinitionCompiledArgs>, IEnumerable<CycleCompletedArgs>> RunToCompletion(IViewExecutionOptions options)
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
