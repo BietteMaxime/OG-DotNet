@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Model;
 
 namespace OGDotNet.Mappedtypes.engine.View.Execution
@@ -60,6 +61,7 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
+            s.WriteTypeHeader(a, GetType());
             var fudgeMsg = new FudgeMsg(s.Context);
 
             foreach (var viewCycleExecutionOptionse in _executionSequence)
