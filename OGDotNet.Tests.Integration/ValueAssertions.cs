@@ -191,18 +191,14 @@ namespace OGDotNet.Tests.Integration
             Assert.NotEmpty(viewDefin.LiveDataRequirements);
             AssertSensibleValue(viewDefin.LiveDataRequirements);
 
-            Assert.NotEmpty(viewDefin.OutputValueNames);
-            AssertSensibleValue(viewDefin.OutputValueNames);
-
             Assert.NotNull(viewDefin.Portfolio);
-
-            Assert.NotEmpty(viewDefin.SecurityTypes);
-            AssertSensibleValue(viewDefin.SecurityTypes);
 
             Assert.NotNull(viewDefin.ViewDefinition);
             AssertSensibleValue(viewDefin.ViewDefinition.CalculationConfigurationsByName);
 
             Assert.Equal(default(DateTimeOffset) == viewDefin.EarliestValidity, viewDefin.LatestValidity == default(DateTimeOffset));
+
+
         }
 
         public static void AssertSensibleValue(ViewCalculationConfiguration calculationConfiguration)
