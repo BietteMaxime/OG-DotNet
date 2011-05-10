@@ -46,6 +46,7 @@ namespace OGDotNet.Model.Context
 
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly ViewDefinition _definition;
+        private Tuple<DateTimeOffset, DateTimeOffset, IEnumerable<ValueRequirement>> _yieldCurveSpecReqsCache;
 
         public RawMarketDataSnapper(RemoteEngineContext remoteEngineContext, ViewDefinition definition)
         {
@@ -143,7 +144,7 @@ namespace OGDotNet.Model.Context
         }
 
         private ViewDefinition GetAllDataViewDefn(CancellationToken ct, DateTimeOffset valuationTime)
-        {//TODO this is sloooow and can be cached
+        {
             ct.ThrowIfCancellationRequested();
             var yieldCurveSpecReqs = GetYieldCurveSpecReqs(_definition, valuationTime);
 
@@ -160,11 +161,25 @@ namespace OGDotNet.Model.Context
         }
 
         private IEnumerable<ValueRequirement> GetYieldCurveSpecReqs(ViewDefinition viewDefinition, DateTimeOffset valuationTime)
-        {//TODO this is sloooow
+        {
+            var cached = _yieldCurveSpecReqsCache;
+            if (cached != null)
+            {
+                if((cached.Item1 == default(DateTimeOffset) || cached.Item1<valuationTime) &&
+                    (cached.Item2 == default(DateTimeOffset) || cached.Item2>valuationTime)
+                    )
+                {
+                    return cached.Item3;
+                }
+            }
+
+            //TODO this is sloooow
             var tempViewDefinition = GetTempViewDefinition(viewDefinition, new ResultModelDefinition(ResultOutputMode.All));
             var tempResults = RunOneCycle(tempViewDefinition, valuationTime);
 
-            return GetYieldCurveSpecReqs(tempResults.Item2);
+            var yieldCurveSpecReqs = GetYieldCurveSpecReqs(tempResults.Item2);
+            _yieldCurveSpecReqsCache = Tuple.Create(tempResults.Item1.EarliestValidity, tempResults.Item1.LatestValidity, yieldCurveSpecReqs);
+            return yieldCurveSpecReqs;
         }
 
         private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> RunOneCycle(ViewDefinition tempViewDefinition, UniqueIdentifier snapshotIdentifier)
