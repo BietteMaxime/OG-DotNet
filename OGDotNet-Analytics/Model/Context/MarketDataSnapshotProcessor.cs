@@ -16,11 +16,14 @@ using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
+using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context
@@ -36,23 +39,25 @@ namespace OGDotNet.Model.Context
     {
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RawMarketDataSnapper _rawMarketDataSnapper;
+        private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster; //TODO should be the user master
 
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, DateTimeOffset valuationTime, CancellationToken ct)
         {
             var rawMarketDataSnapper = new RawMarketDataSnapper(context, definition);
             var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(valuationTime, ct);
-            return new MarketDataSnapshotProcessor(snapshot, rawMarketDataSnapper);
+            return new MarketDataSnapshotProcessor(snapshot, rawMarketDataSnapper, context.MarketDataSnapshotMaster);
         }
 
         internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot) 
-            : this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(snapshot.BasisViewName)))
+            : this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(snapshot.BasisViewName)), remoteEngineContext.MarketDataSnapshotMaster)
         {
         }
 
-        private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RawMarketDataSnapper rawMarketDataSnapper)
+        private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RawMarketDataSnapper rawMarketDataSnapper, RemoteMarketDataSnapshotMaster marketDataSnapshotMaster)
         {
             _snapshot = snapshot;
             _rawMarketDataSnapper = rawMarketDataSnapper;
+            _marketDataSnapshotMaster = marketDataSnapshotMaster;
         }
 
         public ManageableMarketDataSnapshot Snapshot
@@ -104,102 +109,41 @@ namespace OGDotNet.Model.Context
             return _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now, ct);
         }
 
-        #region BuildOverridenView
-        //TODO this shouldn't require so much hackery
-
-        public enum ViewOption
-        {
-            AllSnapshotValues,
-            OverridesAndLiveValues
-        }
-
-        private class ValueReqComparer : IEqualityComparer<ValueRequirement>
-        {
-            public static readonly ValueReqComparer Instance = new ValueReqComparer();
-            public bool Equals(ValueRequirement x, ValueRequirement y)
-            {
-                return x.ValueName == y.ValueName && x.TargetSpecification.Equals(y.TargetSpecification);
-            }
-
-            public int GetHashCode(ValueRequirement obj)
-            {
-                return obj.TargetSpecification.GetHashCode();
-            }
-        }
-
-        private static Dictionary<ValueRequirement, double> GetOverrides(ViewOption option, ILookup<ValueRequirement, ValueSnapshot> values)
-        {
-            switch (option)
-            {
-                case ViewOption.AllSnapshotValues:
-                    return values.ToDictionary(g => g.Key, ChoseBestOverrideValue);
-                case ViewOption.OverridesAndLiveValues:
-                    var dictionary = new Dictionary<ValueRequirement, double>();
-                    foreach (var group in values)
-                    {
-                        double value;
-                        if (TryGetOverrideValue(group, out value))
-                        {
-                            dictionary.Add(group.Key, value);
-                        }
-                    }
-                    return dictionary;
-                default:
-                    throw new ArgumentOutOfRangeException("option");
-            }
-        }
-
-        private static bool TryGetOverrideValue(IEnumerable<ValueSnapshot> snapshots, out double value)
-        {
-            //Lots of errors here possible if there are overrides  I can't express
-            if (snapshots.Any(v => v.OverrideValue.HasValue))
-            {
-                value = snapshots.Single(v => v.OverrideValue.HasValue).OverrideValue.Value;
-                return true;
-            }
-            value = double.NaN;
-            return false;
-        }
-        private static double ChoseBestOverrideValue(IEnumerable<ValueSnapshot> snapshots)
-        {
-            //Lots of errors here possible if there are overrides  I can't express
-            double value;
-            if (TryGetOverrideValue(snapshots, out value))
-            {
-                return value;
-            }
-            else
-            {
-                return snapshots.Select(s => s.MarketValue).Distinct().Single();
-            }
-        }
-
-        #endregion
         #region YieldCurveView
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
-        {//TODO this is slooow and we only need to do this much work if there's awkward overrides 
+        {
+            var results = Evaluate(ct);
+
             var ret = new Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>>();
             foreach (var manageableYieldCurveSnapshot in _snapshot.YieldCurves)
             {
                 ct.ThrowIfCancellationRequested();
-                ret.Add(manageableYieldCurveSnapshot.Key, GetYieldCurve(manageableYieldCurveSnapshot, ct));
+                ret.Add(manageableYieldCurveSnapshot.Key, GetYieldCurve(manageableYieldCurveSnapshot, results.Item2));
             }
             return ret;
         }
 
-        public Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, CancellationToken ct = default(CancellationToken))
+        public Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> Evaluate(CancellationToken ct = default(CancellationToken))
         {
-            var overrides = yieldCurveSnapshot.Value.Values.Values.
-                    SelectMany(kvp => kvp.Value.Select(v => GetOverrideTuple(kvp, v))
-                ).ToDictionary(t => t.Item1, t => t.Item2);
+            var manageableMarketDataSnapshot = _snapshot.Clone();
+            manageableMarketDataSnapshot.Name = typeof(MarketDataSnapshotProcessor).Name + " Temp";
+            manageableMarketDataSnapshot.UniqueId = null;
+            var snapshot = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, manageableMarketDataSnapshot));
+            try
+            {
+                return  _rawMarketDataSnapper.GetAllResults(DateTimeOffset.Now, snapshot.UniqueId, ct);
+            }
+            finally
+            {
+                _marketDataSnapshotMaster.Remove(snapshot.UniqueId);
+            }
+        }
 
-            var results = _rawMarketDataSnapper.GetAllResults(yieldCurveSnapshot.Value.ValuationTime, overrides, ct);
-
-            ct.ThrowIfCancellationRequested();
-
+        private static Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, InMemoryViewComputationResultModel results, CancellationToken ct = default(CancellationToken))
+        {
             var curveResults =
-                results.Item2.AllResults
+                results.AllResults
                 .Where(r => Matches(r, yieldCurveSnapshot.Key))
                 .ToLookup(c => c.ComputedValue.Specification.ValueName, c => c.ComputedValue.Value)
                 .ToDictionary(g => g.Key, g => g.First()); // We can get duplicate results in different configurations

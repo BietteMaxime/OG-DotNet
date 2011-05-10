@@ -236,5 +236,10 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                 get { return value; }
             }
         }
+
+        public ManageableUnstructuredMarketDataSnapshot Clone()
+        {
+            return new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(Values));
+        }
     }
 }

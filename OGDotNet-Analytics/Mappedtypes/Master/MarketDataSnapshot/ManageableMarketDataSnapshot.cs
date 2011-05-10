@@ -122,6 +122,12 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                );
         }
 
+        public ManageableMarketDataSnapshot Clone()
+        {
+            return new ManageableMarketDataSnapshot(BasisViewName, GlobalValues.Clone(), YieldCurves.ToDictionary(kvp=>kvp.Key, kvp=>kvp.Value.Clone()), UniqueId);
+                 
+        }
+
         public static ManageableMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc,
                                                                 IFudgeDeserializer deserializer)
         {
@@ -131,7 +137,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             var manageableMarketDataSnapshot = new ManageableMarketDataSnapshot(
                 ffc.GetString("basisViewName"),
                 deserializer.FromField<ManageableUnstructuredMarketDataSnapshot>(ffc.GetByName("globalValues")),
-                MapBuilder.FromFudgeMsg<YieldCurveKey, ManageableYieldCurveSnapshot>(ffc, deserializer, "yieldCurves"),
+                MapBuilder.FromFudgeMsg<YieldCurveKey, ManageableYieldCurveSnapshot>(ffc.GetMessage("yieldCurves"), deserializer),
                 uid
 
                 ) { Name = ffc.GetString("name") };

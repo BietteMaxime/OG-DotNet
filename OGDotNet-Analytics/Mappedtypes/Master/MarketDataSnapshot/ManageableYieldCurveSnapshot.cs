@@ -77,5 +77,10 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, e);
         }
+
+        public ManageableYieldCurveSnapshot Clone()
+        {
+            return new ManageableYieldCurveSnapshot(Values.Clone(), ValuationTime);
+        }
     }
 }
