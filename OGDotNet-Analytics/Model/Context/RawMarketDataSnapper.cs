@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph;
@@ -207,13 +208,22 @@ namespace OGDotNet.Model.Context
                     {
                         var cycles = new ConcurrentQueue<CycleCompletedArgs>();
                         var compiles = new ConcurrentQueue<ViewDefinitionCompiledArgs>();
+                        var errors = new ConcurrentQueue<object>();
 
                         var listener = new EventViewResultListener();
                         listener.ViewDefinitionCompiled += (sender, e) => compiles.Enqueue(e);
                         listener.CycleCompleted += (sender, e) => cycles.Enqueue(e);
 
-                        listener.ViewDefinitionCompilationFailed += (sender, e) => completedEvent.Set();
-                        listener.CycleExecutionFailed += (sender, e) => completedEvent.Set();
+                        listener.ViewDefinitionCompilationFailed += (sender, e) =>
+                                                                        {
+                                                                            completedEvent.Set();
+                                                                            errors.Enqueue(e);
+                                                                        };
+                        listener.CycleExecutionFailed += (sender, e) => 
+                                                                        {
+                                                                            completedEvent.Set();
+                                                                            errors.Enqueue(e);
+                                                                        };
                         listener.ProcessCompleted += (sender, e) => completedEvent.Set();
 
                         remoteViewClient.SetResultListener(listener);
@@ -221,7 +231,12 @@ namespace OGDotNet.Model.Context
                         remoteViewClient.AttachToViewProcess(tempViewDefinition.Name, options);
 
                         completedEvent.WaitOne();
-                        //TODO better error reporting
+                        if (errors.Any())
+                        {
+                            var openGammaException = new OpenGammaException("Error occured when executing view");
+                            openGammaException.Data["ExecErrors"] = errors.ToList();
+                            throw openGammaException;
+                        }
                         return Tuple.Create(compiles.Single().CompiledViewDefinition, cycles.Single().FullResult);
                     }
                 }
