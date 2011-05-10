@@ -21,8 +21,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanGetYieldCurveValues(ViewDefinition viewDefinition)
         {
-            if (viewDefinition.Name != "Equity Option Test View 1")
-                return;
             var snapshotManager = Context.MarketDataSnapshotManager;
 
             using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
