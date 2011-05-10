@@ -64,8 +64,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         }
                         else
                         {
-                            throw new TimeoutException(string.Format("No results received for {0} after {1}\n{2}\n state {3} is completed {4}", viewDefinitionName, timeout, 
-                                string.Join(",", otherQueue.Select(o=>o.ToString())),
+                            throw new TimeoutException(string.Format("No results received for {0} after {1}\n{2}\n state {3} is completed {4}", viewDefinitionName, timeout,
+                                string.Join(",", otherQueue.Select(o => o.ToString())),
                                 client.GetState(), client.IsCompleted));
                         }
                     }

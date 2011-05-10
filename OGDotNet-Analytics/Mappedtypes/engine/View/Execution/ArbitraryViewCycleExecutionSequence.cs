@@ -30,7 +30,6 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
             return new ArbitraryViewCycleExecutionSequence(executionSequence);
         }
 
-
         public static ArbitraryViewCycleExecutionSequence Of(params ViewCycleExecutionOptions[] options)
         {
             return new ArbitraryViewCycleExecutionSequence(options);

@@ -1,4 +1,11 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="SnapshotDataBundle.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
@@ -12,7 +19,7 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
     {
         private readonly Dictionary<Identifier, double> _dataPoints;
 
-        public SnapshotDataBundle(Dictionary<Identifier, double>   dataPoints)
+        public SnapshotDataBundle(Dictionary<Identifier, double> dataPoints)
         {
             ArgumentChecker.NotNull(dataPoints, "dataPoints");
             _dataPoints = dataPoints;
@@ -25,7 +32,7 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 
         public static SnapshotDataBundle FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var map = MapBuilder.FromFudgeMsg(ffc.GetMessage("dataPoints"), f=>Identifier.Parse((string) f.Value), f=>(double) f.Value);
+            var map = MapBuilder.FromFudgeMsg(ffc.GetMessage("dataPoints"), f => Identifier.Parse((string)f.Value), f => (double)f.Value);
             return new SnapshotDataBundle(map);
         }
 

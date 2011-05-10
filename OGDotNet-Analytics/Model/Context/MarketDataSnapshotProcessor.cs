@@ -132,7 +132,7 @@ namespace OGDotNet.Model.Context
             var snapshot = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, manageableMarketDataSnapshot));
             try
             {
-                return  _rawMarketDataSnapper.GetAllResults(DateTimeOffset.Now, snapshot.UniqueId, ct);
+                return _rawMarketDataSnapper.GetAllResults(DateTimeOffset.Now, snapshot.UniqueId, ct);
             }
             finally
             {

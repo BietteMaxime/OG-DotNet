@@ -151,7 +151,6 @@ namespace OGDotNet.Model.Context
             return GetTempViewDefinition(_definition, new ResultModelDefinition(ResultOutputMode.All), yieldCurveSpecReqs);
         }
 
-
         private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> GetAllResults(DateTimeOffset valuationTime, CancellationToken ct)
         {
             ViewDefinition allDataViewDefn = GetAllDataViewDefn(ct, valuationTime);
@@ -205,7 +204,6 @@ namespace OGDotNet.Model.Context
                         remoteViewClient.SetResultListener(listener);
 
                         remoteViewClient.AttachToViewProcess(tempViewDefinition.Name, options);
-
 
                         completedEvent.WaitOne();
                         //TODO better error reporting

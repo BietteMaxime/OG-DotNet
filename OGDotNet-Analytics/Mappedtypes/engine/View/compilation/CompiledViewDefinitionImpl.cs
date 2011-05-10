@@ -21,7 +21,7 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
     {
         private readonly ViewDefinition _viewDefinition;
         private readonly IPortfolio _portfolio;
-        private readonly Dictionary<String, ICompiledViewCalculationConfiguration> _compiledCalculationConfigurations;
+        private readonly Dictionary<string, ICompiledViewCalculationConfiguration> _compiledCalculationConfigurations;
         private readonly DateTimeOffset _latestValidity;
         private readonly DateTimeOffset _earliestValidity;
 
@@ -46,7 +46,7 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
 
         public Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements
         {
-            get { return _compiledCalculationConfigurations.Values.Select(c=>c.LiveDataRequirements).SelectMany(d =>d).ToDictionary(k=>k.Key, k=>k.Value); }
+            get { return _compiledCalculationConfigurations.Values.Select(c => c.LiveDataRequirements).SelectMany(d => d).ToDictionary(k => k.Key, k => k.Value); }
         }
         
         public DateTimeOffset EarliestValidity
@@ -66,7 +66,7 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
             DateTimeOffset latestValidity = ffc.GetValue<DateTimeOffset>("latestValidity");
             DateTimeOffset earliestValidity = ffc.GetValue<DateTimeOffset>("earliestValidity");
 
-            var configs = ffc.GetAllByName("compiledCalculationConfigurations").Select(deserializer.FromField<CompiledViewCalculationConfigurationImpl>).ToDictionary(c => c.Name, c=>(ICompiledViewCalculationConfiguration) c);
+            var configs = ffc.GetAllByName("compiledCalculationConfigurations").Select(deserializer.FromField<CompiledViewCalculationConfigurationImpl>).ToDictionary(c => c.Name, c => (ICompiledViewCalculationConfiguration)c);
             return new CompiledViewDefinitionImpl(defn, portfolio, latestValidity, earliestValidity, configs);
         }
 

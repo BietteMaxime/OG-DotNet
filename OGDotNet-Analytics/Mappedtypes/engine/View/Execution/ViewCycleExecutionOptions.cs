@@ -32,7 +32,6 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
             get { return _inputDataTime; }
         }
 
-
         public static ViewCycleExecutionOptions FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new ViewCycleExecutionOptions(ffc.GetValue<DateTimeOffset>("valuation"), ffc.GetValue<DateTimeOffset>("inputData"));

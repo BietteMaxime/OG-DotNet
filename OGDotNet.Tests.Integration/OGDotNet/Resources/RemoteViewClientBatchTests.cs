@@ -24,7 +24,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanRunZeroCycleBatch()
         {
-            var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(new DateTimeOffset[]{})));
+            var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(new DateTimeOffset[] { })));
             Assert.Empty(runToCompletion.Item1);
             Assert.Empty(runToCompletion.Item2);
         }

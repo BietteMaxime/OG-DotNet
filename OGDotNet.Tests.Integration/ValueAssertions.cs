@@ -71,7 +71,6 @@ namespace OGDotNet.Tests.Integration
             MethodCache.Get(type).Invoke(null, new[] {value});
         }
 
-
         public static void AssertSensibleValue<T1, T2>(Tuple<T1, T2> tuple)
         {
             AssertSensibleValue(tuple.Item1);
@@ -197,8 +196,6 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(viewDefin.ViewDefinition.CalculationConfigurationsByName);
 
             Assert.Equal(default(DateTimeOffset) == viewDefin.EarliestValidity, viewDefin.LatestValidity == default(DateTimeOffset));
-
-
         }
 
         public static void AssertSensibleValue(ViewCalculationConfiguration calculationConfiguration)

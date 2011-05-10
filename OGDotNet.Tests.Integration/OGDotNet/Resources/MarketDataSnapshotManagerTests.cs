@@ -21,7 +21,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class MarketDataSnapshotManagerTests : ViewTestsBase
     {
-
         [Xunit.Extensions.Fact]
         public void CanCreateAndRunFromView()
         {

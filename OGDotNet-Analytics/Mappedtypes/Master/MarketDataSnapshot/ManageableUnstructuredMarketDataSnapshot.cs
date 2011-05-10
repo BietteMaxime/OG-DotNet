@@ -192,7 +192,6 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                     newMessage.Add("value", openGammaFudgeContext.GetSerializer().SerializeToMsg(valueSnapshot.Value));
                     a.Add(1, newMessage);
                 }
-                
             }
         }
 

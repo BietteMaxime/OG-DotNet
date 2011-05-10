@@ -124,8 +124,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         public ManageableMarketDataSnapshot Clone()
         {
-            return new ManageableMarketDataSnapshot(BasisViewName, GlobalValues.Clone(), YieldCurves.ToDictionary(kvp=>kvp.Key, kvp=>kvp.Value.Clone()), UniqueId);
-                 
+            return new ManageableMarketDataSnapshot(BasisViewName, GlobalValues.Clone(), YieldCurves.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Clone()), UniqueId);
         }
 
         public static ManageableMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc,

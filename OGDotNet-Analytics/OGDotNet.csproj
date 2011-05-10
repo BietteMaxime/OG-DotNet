@@ -75,6 +75,7 @@
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
     <Compile Include="Mappedtypes\engine\depGraph\DependencyGraph\ResultOutputMode.cs" />
     <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
+    <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewCalculationConfigurationImpl.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\ICompiledViewCalculationConfiguration.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\CycleExecutionFailedCall.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\JavaException.cs" />

@@ -19,7 +19,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
         {
             if (fullResult == null && deltaResult == null)
             {
-                throw new ArgumentNullException("fullResult","Both results were null");
+                throw new ArgumentNullException("fullResult", "Both results were null");
             }
             _fullResult = fullResult;
             _deltaResult = deltaResult;

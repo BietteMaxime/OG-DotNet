@@ -56,7 +56,6 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
         private readonly bool _compileOnly;
         private readonly UniqueIdentifier _marketDataSnapshotIdentifier;
 
-
         public ExecutionOptions(IViewCycleExecutionSequence executionSequence, bool runAsFastAsPossible, bool liveDataTriggerEnabled, int? maxSuccessiveDeltaCycles, bool compileOnly, UniqueIdentifier marketDataSnapshotIdentifier = null)
         {
             _executionSequence = executionSequence;
@@ -97,7 +96,6 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
             get { return _marketDataSnapshotIdentifier; }
         }
 
-
         public static ExecutionOptions FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             throw new NotImplementedException();
@@ -113,7 +111,7 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
                 a.Add("maxSuccessiveDeltaCycles", MaxSuccessiveDeltaCycles);
             }
             a.Add("compileOnly", CompileOnly);
-            if( MarketDataSnapshotIdentifier != null)
+            if (MarketDataSnapshotIdentifier != null)
             {
                 a.Add("snapshotId", MarketDataSnapshotIdentifier.ToString());
             }
