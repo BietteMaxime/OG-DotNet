@@ -95,7 +95,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     (sender, e) => compilationResult.Add(e.Exception);
 
                 remoteViewClient.SetResultListener(eventViewResultListener);
-                remoteViewClient.AttachToViewProcess(definition.Name, ExecutionOptions.RealTime);
+                remoteViewClient.AttachToViewProcess(definition.Name, ExecutionOptions.GetCompileOnly());
 
                 var result = compilationResult.Take();
                 Assert.IsNotType(typeof(Exception), result);

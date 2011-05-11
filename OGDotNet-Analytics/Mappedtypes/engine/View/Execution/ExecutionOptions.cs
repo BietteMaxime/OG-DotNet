@@ -44,6 +44,21 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
                 false);
         }
 
+        public static IViewExecutionOptions GetCompileOnly()
+        {
+            return GetCompileOnly(ArbitraryViewCycleExecutionSequence.Of(DateTimeOffset.Now));
+        }
+
+        public static IViewExecutionOptions GetCompileOnly(IViewCycleExecutionSequence cycleExecutionSequence)
+        {
+            return new ExecutionOptions(
+                cycleExecutionSequence,
+                true,
+                false,
+                null,
+                true);
+        }
+
         public static IViewExecutionOptions Snapshot(UniqueIdentifier snapshotIdentifier)
         {
             return new ExecutionOptions(ArbitraryViewCycleExecutionSequence.Of(DateTimeOffset.Now), true, false, null, false, snapshotIdentifier);
