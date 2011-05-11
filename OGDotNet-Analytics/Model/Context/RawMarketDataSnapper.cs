@@ -104,11 +104,17 @@ namespace OGDotNet.Model.Context
 
         private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredData(InMemoryViewComputationResultModel tempResults, IEnumerable<ValueRequirement> requiredDataSet)
         {
-            var dict = GetMatchingData(requiredDataSet, tempResults)
-                .ToLookup(r => new MarketDataValueSpecification(GetMarketType(r.Specification.TargetSpecification.Type), r.Specification.TargetSpecification.Uid))
-                .ToDictionary(r => r.Key, r => (IDictionary<string, ValueSnapshot>)r.ToDictionary(e => e.Specification.ValueName, e => new ValueSnapshot((double)e.Value)));
+            var data = GetMatchingData(requiredDataSet, tempResults);
+            var dataByTarget = data.ToLookup(r => new MarketDataValueSpecification(GetMarketType(r.Specification.TargetSpecification.Type), r.Specification.TargetSpecification.Uid));
+            var dict = dataByTarget.ToDictionary(GroupByValueName);
 
             return new ManageableUnstructuredMarketDataSnapshot(dict);
+        }
+
+        private static IDictionary<string, ValueSnapshot> GroupByValueName(IEnumerable<ComputedValue> r)
+        {
+            return r.ToLookup(e => e.Specification.ValueName)
+                .ToDictionary(k=> new ValueSnapshot(k.Cast<double>().Distinct().Single()));
         }
 
         private static IEnumerable<ComputedValue> GetMatchingData(IEnumerable<ValueRequirement> requiredDataSet, InMemoryViewComputationResultModel tempResults)

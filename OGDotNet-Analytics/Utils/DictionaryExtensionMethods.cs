@@ -14,6 +14,13 @@ namespace OGDotNet.Utils
 {
     static class DictionaryExtensionMethods
     {
+        
+
+        internal static IDictionary<TKey, TValue2> ToDictionary<TKey, TValue, TValue2>(this ILookup<TKey, TValue> lookup, Func<IEnumerable<TValue>, TValue2> elementSelector)
+        {
+            return lookup.ToDictionary(k => k.Key, elementSelector);
+        }
+
         internal static IDictionary<TKey, TValue> Merge<TKey, TValue>(this IDictionary<TKey, TValue> dicta, IDictionary<TKey, TValue> dictb)
         {
             return Merge(dicta, dictb, (a, b) => b);
