@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -51,7 +52,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 var remoteEngineContext = Context;
                 var definitionNames = remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
-                return InterestingView == null ? definitionNames.Where(IsNotBanned) : Enumerable.Repeat(InterestingView, 1);
+                var ret = InterestingView == null ? definitionNames.Where(IsNotBanned) : Enumerable.Repeat(InterestingView, 1);
+                if (ret.Any(e=>e == null))
+                {
+                    throw new ArgumentException();
+                }
+                return ret;
             }
         }
 
