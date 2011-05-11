@@ -6,8 +6,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Windows.Controls;
 using System.Windows.Input;
+using OGDotNet.AnalyticsViewer.View.Charts;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.math.curve;
 
@@ -45,6 +47,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
             detailsPopup.IsOpen = false;
+        }
+
+        private void curveControl_NearestPointChanged(object sender, CurveControl.NearestPointEventArgs e)
+        {
+            itemsView.SelectedIndex = e.PointIndex;
         }
     }
 }

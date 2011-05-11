@@ -9,9 +9,9 @@
             <RowDefinition Height="*"/>
         
         </Grid.RowDefinitions>
-        <Charts:CurveControl x:Name="curveControl" DataContext="{Binding Path=Curve}"/>
+        <Charts:CurveControl x:Name="curveControl" DataContext="{Binding Path=Curve}" NearestPointChanged="curveControl_NearestPointChanged" />
         <Popup Name="detailsPopup">
-            <ListView ItemsSource="{Binding}" Height="Auto" Width="Auto">
+            <ListView ItemsSource="{Binding}" Height="Auto" Width="Auto" Name="itemsView">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="Auto" Header="t (years)" DisplayMemberBinding="{Binding Path=Item1}"/>

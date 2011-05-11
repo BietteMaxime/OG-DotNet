@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using OGDotNet.Mappedtypes.math.curve;
 
 namespace OGDotNet.AnalyticsViewer.View.Charts
@@ -19,6 +20,25 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
     /// </summary>
     public partial class CurveControl : UserControl
     {
+        public class NearestPointEventArgs : EventArgs
+        {
+            private readonly int _pointIndex;
+
+            public NearestPointEventArgs(int pointIndex)
+            {
+                _pointIndex = pointIndex;
+            }
+
+            public int PointIndex
+            {
+                get { return _pointIndex; }
+            }
+        }
+
+        public event EventHandler<NearestPointEventArgs> PointClicked;
+        public event EventHandler<NearestPointEventArgs> NearestPointChanged;
+
+
         public CurveControl()
         {
             InitializeComponent();
@@ -116,5 +136,40 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
 
             myLine.Points.Clear();
         }
+
+
+        private void canvas_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            NearestPointEventArgs nearestPointEventArgs = GetNearestPoint(e);
+            InvokePointClicked(nearestPointEventArgs);
+        }
+
+        private void canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            NearestPointEventArgs nearestPointEventArgs = GetNearestPoint(e);
+            InvokeNearestPointChanged(nearestPointEventArgs);
+        }
+
+        private NearestPointEventArgs GetNearestPoint(MouseEventArgs e)
+        {
+            var mouse = e.GetPosition(myLine);
+            var item1 = myLine.Points.Select((p, i) => Tuple.Create(i, Point.Subtract(p, mouse).LengthSquared)).OrderBy(t => t.Item2).First().Item1;
+            return new NearestPointEventArgs(item1);
+        }
+
+        private void InvokePointClicked(NearestPointEventArgs e)
+        {
+            EventHandler<NearestPointEventArgs> handler = PointClicked;
+            if (handler != null) handler(this, e);
+        }
+
+        public void InvokeNearestPointChanged(NearestPointEventArgs e)
+        {
+            EventHandler<NearestPointEventArgs> handler = NearestPointChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        
+
     }
 }
