@@ -35,7 +35,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Theory]
-        [TypedPropertyData("FastTickingViewDefinitions")]
+        [TypedPropertyData("ViewDefinitions")]
         public void CanCreateFromView(ViewDefinition viewDefinition)
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
@@ -79,7 +79,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Theory]
-        [TypedPropertyData("FastTickingViewDefinitions")]
+        [TypedPropertyData("ViewDefinitions")]
         public void CanUpdateFromView(ViewDefinition viewDefinition)
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
