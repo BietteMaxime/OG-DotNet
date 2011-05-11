@@ -17,6 +17,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class ViewTestsBase : TestWithContextBase
     {
+        private static string InterestingView = null; // Useful for debugging
+
         private static readonly HashSet<string> BannedViews = new HashSet<string>
                                                                   {
                                                                       // Slow
@@ -28,13 +30,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Primitives Only",
                                                                       "OvernightBatchTestView",
                                                                       "Equity Strategies View 1",
-                                                                      "Multi-currency Equity Option Test View",
                                                                       "GlobeOp Bond View",
                                                                       "European Corporate Bond View"
                                                                   };
 
         private static bool IsSlowTicking(string definitionName)
         {
+            if (definitionName == InterestingView)
+                return false;
             if (definitionName == "Primitives Only")
                 return true;
             if (definitionName == "Bond Future Test View")
@@ -51,7 +54,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             get
             {
                 var remoteEngineContext = Context;
-                return remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetDefinitionNames().Where(IsNotBanned);
+                var definitionNames = remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
+                return InterestingView == null ? definitionNames.Where(IsNotBanned) : Enumerable.Repeat(InterestingView, 1);
             }
         }
 
@@ -60,7 +64,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             get
             {
                 var remoteEngineContext = Context;
-                return DefinitionNames.Where(IsNotBanned).Select(n => remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(n));
+                return DefinitionNames.Select(n => remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(n));
             }
         }
 
