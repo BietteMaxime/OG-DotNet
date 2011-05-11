@@ -12,6 +12,7 @@ using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
@@ -48,12 +49,12 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         {
             var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
 
-            var versionFromInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("versionFromInstant"));
-            var correctionFromInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("correctionFromInstant"));
+            var versionFromInstant = ffc.GetValue<FudgeDateTime>("versionFromInstant").ToDateTimeOffsetWithDefault();
+            var correctionFromInstant = ffc.GetValue<FudgeDateTime>("correctionFromInstant").ToDateTimeOffsetWithDefault();
 
-            var versionToInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("versionToInstant"));
+            var versionToInstant = ffc.GetValue<FudgeDateTime>("versionToInstant").ToDateTimeOffsetWithDefault();
 
-            var correctionToInstant = ToDateTimeOffsetWithDefault(ffc.GetValue<FudgeDateTime>("correctionToInstant"));
+            var correctionToInstant = ffc.GetValue<FudgeDateTime>("correctionToInstant").ToDateTimeOffsetWithDefault();
 
             return new MarketDataSnapshotDocument(uid, deserializer.FromField<ManageableMarketDataSnapshot>(ffc.GetByName("snapshot")), versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant);
         }
@@ -68,11 +69,6 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
             
             AddDateTimeOffsetWithDefault(a, "versionToInstant", VersionToInstant);
             AddDateTimeOffsetWithDefault(a, "correctionToInstant", CorrectionToInstant);
-        }
-
-        private static DateTimeOffset ToDateTimeOffsetWithDefault(FudgeDateTime dt)
-        {
-            return (dt == null) ? default(DateTimeOffset) : dt.ToDateTimeOffset();
         }
 
         private static void AddDateTimeOffsetWithDefault(IAppendingFudgeFieldContainer a, string fieldName, DateTimeOffset value)
