@@ -18,7 +18,6 @@ using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
-using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
