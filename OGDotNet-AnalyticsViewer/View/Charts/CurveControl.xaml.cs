@@ -147,7 +147,17 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
             NearestPointEventArgs nearestPointEventArgs = GetNearestPoint(e);
+            pointMarker.Visibility = Visibility.Visible;
+            var point = myLine.Points[nearestPointEventArgs.PointIndex];
+            Canvas.SetTop(pointMarker, point.Y - pointMarker.Height/2);
+            Canvas.SetLeft(pointMarker, point.X - pointMarker.Width/2);
             InvokeNearestPointChanged(nearestPointEventArgs);
+        }
+
+
+        private void canvas_MouseLeave(object sender, MouseEventArgs e)
+        {
+            pointMarker.Visibility = Visibility.Hidden;
         }
 
         private NearestPointEventArgs GetNearestPoint(MouseEventArgs e)
@@ -168,6 +178,7 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
             EventHandler<NearestPointEventArgs> handler = NearestPointChanged;
             if (handler != null) handler(this, e);
         }
+
 
         
 

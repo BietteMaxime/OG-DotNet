@@ -10,10 +10,11 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Canvas Name="canvas" Background="White" MinWidth="235" MinHeight="55" Visibility="Hidden" MouseLeftButtonUp="canvas_MouseDown" MouseMove="canvas_MouseMove">
+        <Canvas Name="canvas" Background="White" MinWidth="235" MinHeight="55" Visibility="Hidden" MouseLeftButtonUp="canvas_MouseDown" MouseMove="canvas_MouseMove" MouseLeave="canvas_MouseLeave">
             <Line Grid.Column="0" Name="xAxis" Stroke="Gray" StrokeThickness="1" X1="20" Y1="10" StrokeDashArray="10 4"/>
             <Line Grid.Column="0" Name="yAxis" Stroke="Gray" StrokeThickness="1"  X1="10" Y1="20"  StrokeDashArray="10 4"/>
             <Polyline Grid.Column="0" Grid.Row="0" Name="myLine" Stroke="Black" StrokeThickness="1"  Points="0,0 10,20  20,0" />
+            <Ellipse Name="pointMarker"  Stroke="Green" Visibility="Hidden" Width="7" Height="7"/>
         </Canvas>
         <StackPanel Grid.Row="1"  Orientation="Horizontal" HorizontalAlignment="Center" Name="nameGroup">
             <TextBlock Text="{Binding Path=Name}"/>
