@@ -234,7 +234,7 @@ namespace OGDotNet.Model.Context
                         completedEvent.WaitOne();
                         if (errors.Any())
                         {
-                            var openGammaException = new OpenGammaException("Error occured when executing view");
+                            var openGammaException = new OpenGammaException(string.Format("Error occured when executing view {0}", string.Join(", ", errors)));
                             openGammaException.Data["ExecErrors"] = errors.ToList();
                             throw openGammaException;
                         }
