@@ -12,6 +12,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.engine.value
 {
@@ -21,15 +22,16 @@ namespace OGDotNet.Mappedtypes.engine.value
         public abstract ISet<string> Properties { get; }
         public abstract bool IsEmpty { get; }
         public abstract IEnumerable<string> this[string curve] { get; }
+        public abstract bool IsSatisfiedBy(ValueProperties properties);
 
         public static ValueProperties Create()
         {
             return EmptyValueProperties.Instance;
         }
 
-        public static ValueProperties Create(Dictionary<string, HashSet<string>> propertyValues)
+        public static ValueProperties Create(Dictionary<string, HashSet<string>> propertyValues, HashSet<string> optionalProperties)
         {
-            return new FiniteValueProperties(propertyValues);
+            return new FiniteValueProperties(propertyValues, optionalProperties);
         }
 
         private class EmptyValueProperties : ValueProperties
@@ -53,6 +55,11 @@ namespace OGDotNet.Mappedtypes.engine.value
                 get { return Enumerable.Empty<string>(); }
             }
 
+            public override bool IsSatisfiedBy(ValueProperties properties)
+            {
+                return true;
+            }
+
             public static new EmptyValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
@@ -61,11 +68,14 @@ namespace OGDotNet.Mappedtypes.engine.value
 
         private class FiniteValueProperties : ValueProperties
         {
-            internal readonly Dictionary<string, HashSet<string>> PropertyValues;
+            public readonly Dictionary<string, HashSet<string>> PropertyValues;
+            private readonly HashSet<string> _optional;
 
-            internal FiniteValueProperties(Dictionary<string, HashSet<string>> propertyValues)
+            internal FiniteValueProperties(Dictionary<string, HashSet<string>> propertyValues, HashSet<string> optional)
             {
+                ArgumentChecker.NotEmpty(propertyValues, "propertyValues");
                 PropertyValues = propertyValues;
+                _optional = optional;
             }
 
             public override ISet<string> Properties
@@ -86,6 +96,50 @@ namespace OGDotNet.Mappedtypes.engine.value
                     PropertyValues.TryGetValue(curve, out ret);
                     return ret;
                 }
+            }
+
+            public override bool IsSatisfiedBy(ValueProperties properties)
+            {
+                if (InfiniteValueProperties.Instance.IsSatisfiedBy(properties))
+                {
+                    return true;
+                }
+                if (properties is EmptyValueProperties)
+                {
+                    return false;
+                }
+                if (properties is NearlyInfiniteValueProperties)
+                {
+                    var niProps = (NearlyInfiniteValueProperties ) properties;
+                    return  !niProps.Without.Any(p => PropertyValues.ContainsKey(p) && ! _optional.Contains(p));
+                }
+                if (properties is FiniteValueProperties)
+                {
+                    var finProps = (FiniteValueProperties) properties;
+                    foreach (var propertyValue in PropertyValues)
+                    {
+                        if (_optional.Contains(propertyValue.Key))
+                        {
+                            continue;
+                        }
+                        HashSet<string> other;
+                        if (!finProps.PropertyValues.TryGetValue(propertyValue.Key, out other))
+                        {
+                            return false;
+                        }
+                        if (!other.Any() || !propertyValue.Value.Any())
+                        {
+                            //wildcards
+                            continue;
+                        }
+                        if (! propertyValue.Value.IsSubsetOf(other))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                throw new ArgumentException();
             }
 
             public static new FiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -113,6 +167,11 @@ namespace OGDotNet.Mappedtypes.engine.value
             public override IEnumerable<string> this[string curve]
             {
                 get { return Enumerable.Empty<string>(); }
+            }
+
+            public override bool IsSatisfiedBy(ValueProperties properties)
+            {
+                return properties == Instance;
             }
 
             public static new InfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -145,6 +204,13 @@ namespace OGDotNet.Mappedtypes.engine.value
                 get { return Without.Contains(curve) ? null : Enumerable.Empty<string>(); }
             }
 
+            public override bool IsSatisfiedBy(ValueProperties properties)
+            {
+                return InfiniteValueProperties.Instance.IsSatisfiedBy(properties) ||
+                       (properties is NearlyInfiniteValueProperties &&
+                       ((NearlyInfiniteValueProperties) properties).Without.IsSubsetOf(Without));
+            }
+
             public static new NearlyInfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
@@ -170,6 +236,8 @@ namespace OGDotNet.Mappedtypes.engine.value
             IList<IFudgeField> fields = withMessage.GetAllFields();
             
             var properties = new Dictionary<string, HashSet<string>>(fields.Count);
+            var optional = new HashSet<string>();
+
 
             foreach (var field in fields)
             {
@@ -192,7 +260,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                     IList<IFudgeField> fudgeFields = propMessage.GetAllFields();
                     if (fudgeFields.Count == 1 && fudgeFields[0].Type == IndicatorFieldType.Instance)
                     {
-                        properties.Add(name, null);
+                        optional.Add(name);
                     }
                     else
                     {
@@ -206,7 +274,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                 }
             }
 
-            return new FiniteValueProperties(properties);
+            return new FiniteValueProperties(properties, optional);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
@@ -268,13 +336,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             }
 
             a.Add("with", withMessage);
-        }
-
-        public bool IsSatisfiedBy(ValueProperties properties)
-        {
-            if (IsEmpty)
-                return true;
-            throw new NotImplementedException();
         }
     }
 }
