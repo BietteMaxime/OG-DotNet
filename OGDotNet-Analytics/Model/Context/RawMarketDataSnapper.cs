@@ -47,7 +47,7 @@ namespace OGDotNet.Model.Context
 
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly ViewDefinition _definition;
-        private Tuple<DateTimeOffset, DateTimeOffset, IEnumerable<ValueRequirement>> _yieldCurveSpecReqsCache;
+        private Tuple<ICompiledViewDefinition, IEnumerable<ValueRequirement>> _yieldCurveSpecReqsCache;
 
         public RawMarketDataSnapper(RemoteEngineContext remoteEngineContext, ViewDefinition definition)
         {
@@ -164,14 +164,9 @@ namespace OGDotNet.Model.Context
         private IEnumerable<ValueRequirement> GetYieldCurveSpecReqs(ViewDefinition viewDefinition, DateTimeOffset valuationTime)
         {
             var cached = _yieldCurveSpecReqsCache;
-            if (cached != null)
+            if (cached != null && cached.Item1.IsValidFor(valuationTime))
             {
-                if((cached.Item1 == default(DateTimeOffset) || cached.Item1<valuationTime) &&
-                    (cached.Item2 == default(DateTimeOffset) || cached.Item2>valuationTime)
-                    )
-                {
-                    return cached.Item3;
-                }
+                return cached.Item2;
             }
 
             //TODO this is sloooow
@@ -179,7 +174,7 @@ namespace OGDotNet.Model.Context
             var tempResults = RunOneCycle(tempViewDefinition, valuationTime);
 
             var yieldCurveSpecReqs = GetYieldCurveSpecReqs(tempResults.Item2);
-            _yieldCurveSpecReqsCache = Tuple.Create(tempResults.Item1.EarliestValidity, tempResults.Item1.LatestValidity, yieldCurveSpecReqs);
+            _yieldCurveSpecReqsCache = Tuple.Create(tempResults.Item1, yieldCurveSpecReqs);
             return yieldCurveSpecReqs;
         }
 

@@ -10,10 +10,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using Fudge.Types;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.engine.View.compilation
 {
@@ -61,10 +63,11 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
 
         public static CompiledViewDefinitionImpl FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            ViewDefinition defn = deserializer.FromField<ViewDefinition>(ffc.GetByName("viewDefintion"));
+            ViewDefinition defn = deserializer.FromField<ViewDefinition>(ffc.GetByName("viewDefinition"));
             IPortfolio portfolio = deserializer.FromField<IPortfolio>(ffc.GetByName("portfolio"));
-            DateTimeOffset latestValidity = ffc.GetValue<DateTimeOffset>("latestValidity");
-            DateTimeOffset earliestValidity = ffc.GetValue<DateTimeOffset>("earliestValidity");
+            
+            DateTimeOffset latestValidity = ffc.GetValue<FudgeDateTime>("latestValidity").ToDateTimeOffsetWithDefault();
+            DateTimeOffset earliestValidity = ffc.GetValue<FudgeDateTime>("earliestValidity").ToDateTimeOffsetWithDefault();
 
             var configs = ffc.GetAllByName("compiledCalculationConfigurations").Select(deserializer.FromField<CompiledViewCalculationConfigurationImpl>).ToDictionary(c => c.Name, c => (ICompiledViewCalculationConfiguration)c);
             return new CompiledViewDefinitionImpl(defn, portfolio, latestValidity, earliestValidity, configs);

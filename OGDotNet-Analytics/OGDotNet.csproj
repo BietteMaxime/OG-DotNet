@@ -76,6 +76,7 @@
     <Compile Include="Mappedtypes\engine\depGraph\DependencyGraph\ResultOutputMode.cs" />
     <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewCalculationConfigurationImpl.cs" />
+    <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewDefinitionExtensions.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\ICompiledViewCalculationConfiguration.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\CycleExecutionFailedCall.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\JavaException.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Model\RestTarget.cs" />
     <Compile Include="Mappedtypes\Master\Security\SecurityDocument.cs" />
     <Compile Include="Mappedtypes\Master\Security\SecuritySearchRequest.cs" />
+    <Compile Include="Utils\FudgeDateTimeExtensions.cs" />
     <Compile Include="Utils\Memoizer.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Mappedtypes\Id\UniqueIdentifier.cs" />
