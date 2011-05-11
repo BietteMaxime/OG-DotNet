@@ -186,7 +186,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                var options = ExecutionOptions.RealTime;
+                var options = ExecutionOptions.SingleCycle;
                 return remoteViewClient.GetResults(viewDefinitionName, options).First();
             }
         }
