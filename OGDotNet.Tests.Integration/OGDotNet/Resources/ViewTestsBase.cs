@@ -6,18 +6,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using OGDotNet.Mappedtypes.engine.view;
-using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class ViewTestsBase : TestWithContextBase
     {
-        private static string InterestingView = null; // Useful for debugging
+        private static readonly string InterestingView = null; // Useful for debugging
 
         private static readonly HashSet<string> BannedViews = new HashSet<string>
                                                                   {
@@ -26,10 +24,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                                                                       // Broken
                                                                       "TestDefinition",
-                                                                      "Swap Test View",
                                                                       "Primitives Only",
                                                                       "OvernightBatchTestView",
-                                                                      "Equity Strategies View 1",
                                                                       "GlobeOp Bond View",
                                                                       "European Corporate Bond View"
                                                                   };
