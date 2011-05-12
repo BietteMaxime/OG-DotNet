@@ -114,7 +114,7 @@ namespace OGDotNet.Model.Context
         private static IDictionary<string, ValueSnapshot> GroupByValueName(IEnumerable<ComputedValue> r)
         {
             return r.ToLookup(e => e.Specification.ValueName)
-                .ToDictionary(g => g.Key, g => new ValueSnapshot(g.Select(cv=>cv.Value).Cast<double>().Distinct().Single()));
+                .ToDictionary(g => g.Key, g => new ValueSnapshot(g.Select(cv => cv.Value).Cast<double>().Distinct().Single()));
         }
 
         private static IEnumerable<ComputedValue> GetMatchingData(IEnumerable<ValueRequirement> requiredDataSet, InMemoryViewComputationResultModel tempResults)

@@ -53,7 +53,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var remoteEngineContext = Context;
                 var definitionNames = remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
                 var ret = InterestingView == null ? definitionNames.Where(IsNotBanned) : Enumerable.Repeat(InterestingView, 1);
-                if (ret.Any(e=>e == null))
+                if (ret.Any(e => e == null))
                 {
                     throw new ArgumentException();
                 }

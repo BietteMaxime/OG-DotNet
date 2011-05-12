@@ -238,7 +238,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             var properties = new Dictionary<string, HashSet<string>>(fields.Count);
             var optional = new HashSet<string>();
 
-
             foreach (var field in fields)
             {
                 var name = field.Name;

@@ -38,7 +38,6 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
         public event EventHandler<NearestPointEventArgs> PointClicked;
         public event EventHandler<NearestPointEventArgs> NearestPointChanged;
 
-
         public CurveControl()
         {
             InitializeComponent();
@@ -137,7 +136,6 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
             myLine.Points.Clear();
         }
 
-
         private void canvas_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             NearestPointEventArgs nearestPointEventArgs = GetNearestPoint(e);
@@ -149,11 +147,10 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
             NearestPointEventArgs nearestPointEventArgs = GetNearestPoint(e);
             pointMarker.Visibility = Visibility.Visible;
             var point = myLine.Points[nearestPointEventArgs.PointIndex];
-            Canvas.SetTop(pointMarker, point.Y - pointMarker.Height/2);
-            Canvas.SetLeft(pointMarker, point.X - pointMarker.Width/2);
+            Canvas.SetTop(pointMarker, point.Y - pointMarker.Height / 2);
+            Canvas.SetLeft(pointMarker, point.X - pointMarker.Width / 2);
             InvokeNearestPointChanged(nearestPointEventArgs);
         }
-
 
         private void canvas_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -178,9 +175,5 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
             EventHandler<NearestPointEventArgs> handler = NearestPointChanged;
             if (handler != null) handler(this, e);
         }
-
-
-        
-
     }
 }

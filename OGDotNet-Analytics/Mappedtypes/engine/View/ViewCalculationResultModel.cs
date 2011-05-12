@@ -36,13 +36,9 @@ namespace OGDotNet.Mappedtypes.engine.View
             }
         }
 
-        
         /// <summary>
         /// NOTE:  If multiple values were produced for a given value name, an arbitrary choice is made for which to include in the map.  
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="values"></param>
-        /// <returns></returns>
         public bool TryGetValues(ComputationTargetSpecification target, out IDictionary<string, ComputedValue> values)
         {
             return _map.TryGetValue(target, out values);
@@ -51,10 +47,6 @@ namespace OGDotNet.Mappedtypes.engine.View
         /// <summary>
         /// /// NOTE:  If multiple values were produced for a given value name, an arbitrary choice is made for which to include in the map.  
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="valueName"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
         public bool TryGetValue(ComputationTargetSpecification target, string valueName, out ComputedValue value)
         {
             IDictionary<string, ComputedValue> valueDict;

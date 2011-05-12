@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Fudge;
@@ -57,11 +58,8 @@ namespace OGDotNet.Builders
                         var map = new Dictionary<ComputationTargetSpecification, IDictionary<string, ComputedValue>>();
                         var mapAll = new Dictionary<ComputationTargetSpecification, ISet<ComputedValue>>();
 
-                        var fudgeFields = ((IFudgeFieldContainer) field.Value).GetAllFields();
-                        for (int i = 0; i < fudgeFields.Count;i++ )
+                        foreach (var f in (IFudgeFieldContainer) field.Value)
                         {
-                            var f = fudgeFields[i];
-
                             var v = deserializer.FromField<ComputedValue>(f);
 
                             ComputationTargetSpecification target = v.Specification.TargetSpecification;
@@ -71,11 +69,11 @@ namespace OGDotNet.Builders
                                 map.Add(target, new Dictionary<string, ComputedValue>());
                                 mapAll.Add(target, new HashSet<ComputedValue>());
                             }
-                            map[target][v.Specification.ValueName] = v;//NOTE: we make an arbitrary choice here
+                            map[target][v.Specification.ValueName] = v; //NOTE: we make an arbitrary choice here
                             mapAll[target].Add(v);
                         }
 
-                        var value =  new ViewCalculationResultModel(map, mapAll);
+                        var value = new ViewCalculationResultModel(map, mapAll);
 
                         if (!keys.Any())
                         {
@@ -90,7 +88,6 @@ namespace OGDotNet.Builders
                         throw new ArgumentException();
                 }
             }
-
 
             return new InMemoryViewComputationResultModel(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap);
         }
