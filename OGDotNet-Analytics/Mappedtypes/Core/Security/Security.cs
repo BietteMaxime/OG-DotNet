@@ -13,7 +13,7 @@ namespace OGDotNet.Mappedtypes.Core.Security
     /// <summary>
     /// TODO DOTNET-5: kill these with the .proto replacement
     /// </summary>
-    public class Security
+    public class Security : IUniqueIdentifiable
     {
         private readonly string _name;
         private readonly string _securityType;

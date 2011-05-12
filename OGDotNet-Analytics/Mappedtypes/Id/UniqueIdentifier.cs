@@ -14,7 +14,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Id
 {
-    public class UniqueIdentifier : IComparable<UniqueIdentifier>, IEquatable<UniqueIdentifier>, IComparable
+    public class UniqueIdentifier : IComparable<UniqueIdentifier>, IEquatable<UniqueIdentifier>, IComparable, IUniqueIdentifiable
     {
         private const string Separator = "~";
         static readonly string[] SeparatorArray = new[] { Separator };

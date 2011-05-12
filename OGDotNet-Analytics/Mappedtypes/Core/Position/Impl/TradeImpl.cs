@@ -17,10 +17,12 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
     class TradeImpl : Trade
     {
+        private readonly UniqueIdentifier _uniqueId;
         private readonly UniqueIdentifier _parentPositionId;
 
-        public TradeImpl(UniqueIdentifier parentPositionId)
+        public TradeImpl(UniqueIdentifier uniqueId, UniqueIdentifier parentPositionId)
         {
+            _uniqueId = uniqueId;
             _parentPositionId = parentPositionId;
         }
 
@@ -29,9 +31,14 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             get { return _parentPositionId; }
         }
 
+        public override UniqueIdentifier UniqueId
+        {
+            get { return _uniqueId; }
+        }
+
         public static TradeImpl FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new TradeImpl(UniqueIdentifier.Parse(ffc.GetString("parentPositionId")));
+            return new TradeImpl(UniqueIdentifier.Parse(ffc.GetString("uniqueId")), UniqueIdentifier.Parse(ffc.GetString("parentPositionId")));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

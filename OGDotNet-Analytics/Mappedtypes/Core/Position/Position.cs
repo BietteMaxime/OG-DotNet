@@ -14,7 +14,7 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position
 {
-    public class Position
+    public class Position : IUniqueIdentifiable
     {
         private readonly IdentifierBundle _securityKey;
         private readonly UniqueIdentifier _identifier;
@@ -50,6 +50,11 @@ namespace OGDotNet.Mappedtypes.Core.Position
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             throw new NotImplementedException();
+        }
+
+        public UniqueIdentifier UniqueId
+        {
+            get { return Identifier; }
         }
     }
 }

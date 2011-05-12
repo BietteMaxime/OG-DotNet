@@ -118,6 +118,7 @@
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixValue.cs" />
     <Compile Include="Mappedtypes\financial\Security\bond\BondSecurity.cs" />
     <Compile Include="Mappedtypes\financial\view\rest\AttachToViewProcessRequest.cs" />
+    <Compile Include="Mappedtypes\Id\IUniqueIdentifiable.cs" />
     <Compile Include="Mappedtypes\math\curve\CurveExtensionMethods.cs" />
     <Compile Include="Mappedtypes\math\surface\ConstantDoublesSurface.cs" />
     <Compile Include="Mappedtypes\financial\model\volatility\surface\VolatilitySurface.cs" />

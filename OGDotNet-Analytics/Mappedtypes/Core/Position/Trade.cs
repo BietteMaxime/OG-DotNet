@@ -13,9 +13,10 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position
 {
-    public abstract class Trade
+    public abstract class Trade : IUniqueIdentifiable
     {
         //TODO: the rest of this interface
         public abstract UniqueIdentifier ParentPositionId { get; }
+        public abstract UniqueIdentifier UniqueId { get; }
     }
 }

@@ -6,18 +6,23 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
+using Fudge;
+using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Core.Position.Impl;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position
 {
-    public class PortfolioNode
+    public class PortfolioNode : IUniqueIdentifiable
     {
-        private readonly string _identifier;
+        private readonly UniqueIdentifier _identifier;
         private readonly string _name;
         private readonly IList<PortfolioNode> _subNodes;
         private readonly IList<Position> _positions;
 
-        public PortfolioNode(string identifier, string name, IList<PortfolioNode> subNodes, IList<Position> positions)
+        public PortfolioNode(UniqueIdentifier identifier, string name, IList<PortfolioNode> subNodes, IList<Position> positions)
         {
             _identifier = identifier;
             _name = name;
@@ -27,7 +32,7 @@ namespace OGDotNet.Mappedtypes.Core.Position
 
         public string Identifier
         {
-            get { return _identifier; }
+            get { return _identifier.ToString(); }
         }
 
         public string Name
@@ -43,6 +48,21 @@ namespace OGDotNet.Mappedtypes.Core.Position
         public IList<Position> Positions
         {
             get { return _positions; }
+        }
+
+        public UniqueIdentifier UniqueId
+        {
+            get { return _identifier; }
+        }
+
+        public static PortfolioNode FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            return PortfolioNodeImpl.FromFudgeMsg(ffc, deserializer);
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -35,6 +35,15 @@ namespace OGDotNet.Mappedtypes.engine
             get { return _value; }
         }
 
+        public UniqueIdentifier UniqueId
+        {
+            get
+            {
+                var uniqueIdentifiable = (Value as IUniqueIdentifiable);
+                return uniqueIdentifiable == null ? null : uniqueIdentifiable.UniqueId;
+            }
+        }
+
         public static ComputationTarget FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var computationTargetType = EnumBuilder<ComputationTargetType>.Parse(ffc.GetMessage("type").GetString(1));
