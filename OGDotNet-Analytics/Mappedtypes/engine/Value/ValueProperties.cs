@@ -16,13 +16,14 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.engine.value
 {
-    public abstract class ValueProperties
+    public abstract class ValueProperties : IEquatable<ValueProperties>
     {
         //TODO the rest of this interface
         public abstract ISet<string> Properties { get; }
         public abstract bool IsEmpty { get; }
         public abstract IEnumerable<string> this[string curve] { get; }
         public abstract bool IsSatisfiedBy(ValueProperties properties);
+        public abstract ISet<string> GetValues(string propertyName);
 
         public static ValueProperties Create()
         {
@@ -60,6 +61,11 @@ namespace OGDotNet.Mappedtypes.engine.value
                 return true;
             }
 
+            public override ISet<string> GetValues(string propertyName)
+            {
+                return null;
+            }
+
             public static new EmptyValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
@@ -70,12 +76,14 @@ namespace OGDotNet.Mappedtypes.engine.value
         {
             public readonly Dictionary<string, HashSet<string>> PropertyValues;
             private readonly HashSet<string> _optional;
+            private readonly Lazy<int> _hashCode;
 
             internal FiniteValueProperties(Dictionary<string, HashSet<string>> propertyValues, HashSet<string> optional)
             {
                 ArgumentChecker.NotEmpty(propertyValues, "propertyValues");
                 PropertyValues = propertyValues;
                 _optional = optional;
+                _hashCode = new Lazy<int>(GetHashCodeImpl);
             }
 
             public override ISet<string> Properties
@@ -142,6 +150,32 @@ namespace OGDotNet.Mappedtypes.engine.value
                 throw new ArgumentException();
             }
 
+            public override ISet<string> GetValues(string propertyName)
+            {
+                HashSet<string> ret;
+                PropertyValues.TryGetValue(propertyName, out ret);
+                return ret;
+            }
+
+            public override int GetHashCode()
+            {
+                return _hashCode.Value;
+            }
+
+            private int GetHashCodeImpl()
+            {
+                unchecked
+                {
+                    return PropertyValues.Keys.OrderBy(s=>s).Aggregate(0, (i,s)=>i*397 ^ s.GetHashCode());
+                }
+            }
+
+            public override string ToString()
+            {
+                return string.Format("[ValueProperties: {0}]",
+                                     string.Join(" ",PropertyValues.Select(k => string.Format("{0}->{1}", k.Key, string.Join(",", k.Value)))));
+            }
+
             public static new FiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
@@ -172,6 +206,11 @@ namespace OGDotNet.Mappedtypes.engine.value
             public override bool IsSatisfiedBy(ValueProperties properties)
             {
                 return properties == Instance;
+            }
+
+            public override ISet<string> GetValues(string propertyName)
+            {
+                return new HashSet<string>();
             }
 
             public static new InfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -209,6 +248,11 @@ namespace OGDotNet.Mappedtypes.engine.value
                 return InfiniteValueProperties.Instance.IsSatisfiedBy(properties) ||
                        (properties is NearlyInfiniteValueProperties &&
                        ((NearlyInfiniteValueProperties) properties).Without.IsSubsetOf(Without));
+            }
+
+            public override ISet<string> GetValues(string propertyName)
+            {
+                return Without.Contains(propertyName) ? null : new HashSet<string>();
             }
 
             public static new NearlyInfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -336,5 +380,12 @@ namespace OGDotNet.Mappedtypes.engine.value
 
             a.Add("with", withMessage);
         }
+
+        public bool Equals(ValueProperties other)
+        {
+            return other != null && other.IsSatisfiedBy(this) && IsSatisfiedBy(other);
+        }
+
+
     }
 }
