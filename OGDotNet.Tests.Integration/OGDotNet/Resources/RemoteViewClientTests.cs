@@ -235,6 +235,39 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        /// <summary>
+        /// NOTE: PLAT-1248 makes this less useful than it might be
+        /// </summary>
+        [Xunit.Extensions.Fact]
+        public void CanReAttach()
+        {
+            var timeout = TimeSpan.FromSeconds(10);
+
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                var compilationResult = new BlockingCollection<ICompiledViewDefinition>();
+                var compilationError = new BlockingCollection<JavaException>();
+
+                var eventViewResultListener = new EventViewResultListener();
+                eventViewResultListener.ViewDefinitionCompiled +=
+                    (sender, e) => compilationResult.Add(e.CompiledViewDefinition);
+                eventViewResultListener.ViewDefinitionCompilationFailed +=
+                    (sender, e) => compilationError.Add(e.Exception);
+
+                remoteViewClient.SetResultListener(eventViewResultListener);
+                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", ExecutionOptions.RealTime);
+
+                ICompiledViewDefinition result;
+
+                Assert.True(compilationResult.TryTake(out result, timeout));
+                Assert.Equal("Equity Option Test View 1", result.ViewDefinition.Name);
+                remoteViewClient.DetachFromViewProcess();
+                remoteViewClient.AttachToViewProcess("Equity Option Test View 2", ExecutionOptions.RealTime);
+                Assert.True(compilationResult.TryTake(out result, timeout));
+                Assert.Equal("Equity Option Test View 2", result.ViewDefinition.Name);
+            }
+        }
+
         [Theory]
         [TypedPropertyData("ViewDefinitions")]
         public void ViewResultsHaveSaneValues(ViewDefinition definition)
