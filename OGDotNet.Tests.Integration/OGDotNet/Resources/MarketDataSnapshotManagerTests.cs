@@ -7,11 +7,13 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View.Execution;
+using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -29,9 +31,20 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 proc.Snapshot.Name = TestUtils.GetUniqueName();
                 Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
-                var options = ExecutionOptions.Snapshot(proc.Snapshot.UniqueId);
-                RemoteViewClientBatchTests.RunToCompletion(options);
+
+                var options = ExecutionOptions.SingleCycle;
+                var withoutSnapshot = RemoteViewClientBatchTests.RunToCompletion(options);
+
+                options = ExecutionOptions.Snapshot(proc.Snapshot.UniqueId);
+                var withSnapshot = RemoteViewClientBatchTests.RunToCompletion(options);
+
+                Assert.Equal(CountResults(withoutSnapshot), CountResults(withSnapshot));
             }
+        }
+
+        private static int CountResults(Tuple<IEnumerable<ViewDefinitionCompiledArgs>, IEnumerable<CycleCompletedArgs>> withSnapshot)
+        {
+            return withSnapshot.Item2.Select(r=>r.FullResult.AllResults.Count()).Sum();
         }
 
         [Theory]
