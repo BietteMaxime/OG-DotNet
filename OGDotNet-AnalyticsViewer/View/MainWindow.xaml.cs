@@ -156,9 +156,7 @@ namespace OGDotNet.AnalyticsViewer.View
                 eventViewResultListener.ViewDefinitionCompiled +=
                     delegate(object sender, ViewDefinitionCompiledArgs args)
                         {
-                            var portfolio = args.CompiledViewDefinition.Portfolio;
-                            var viewDefinition = args.CompiledViewDefinition.ViewDefinition;
-                            resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource, args.CompiledViewDefinition);
+                            resultsTable = new ComputationResultsTables(_remoteSecuritySource, args.CompiledViewDefinition);
                             Invoke(delegate
                                        {
                                            resultsTableView.DataContext = resultsTable;

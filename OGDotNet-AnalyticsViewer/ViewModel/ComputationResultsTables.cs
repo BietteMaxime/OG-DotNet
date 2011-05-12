@@ -38,14 +38,14 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private IEnumerable<TreeNode> _portfolioNodes;
 
-        public ComputationResultsTables(ViewDefinition viewDefinition, IPortfolio portfolio, ISecuritySource remoteSecuritySource, ICompiledViewDefinition compiledViewDefinition)
+        public ComputationResultsTables(ISecuritySource remoteSecuritySource, ICompiledViewDefinition compiledViewDefinition)
         {
-            _viewDefinition = viewDefinition;
-            _portfolio = portfolio;
+            _viewDefinition = compiledViewDefinition.ViewDefinition;
+            _portfolio = compiledViewDefinition.Portfolio;
             _remoteSecuritySource = remoteSecuritySource;
             _compiledViewDefinition = compiledViewDefinition;
-            _portfolioColumns = GetPortfolioColumns(viewDefinition, _compiledViewDefinition).ToList();
-            _primitiveColumns = GetPrimitiveColumns(viewDefinition, _compiledViewDefinition).ToList();
+            _portfolioColumns = GetPortfolioColumns(_viewDefinition, _compiledViewDefinition).ToList();
+            _primitiveColumns = GetPrimitiveColumns(_viewDefinition, _compiledViewDefinition).ToList();
 
             _primitiveRows = BuildPrimitiveRows().ToList();
             _portfolioRows = BuildPortfolioRows().ToList();
