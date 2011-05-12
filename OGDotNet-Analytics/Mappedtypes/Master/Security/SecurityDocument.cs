@@ -6,16 +6,21 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using Fudge;
+using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Id;
+
 namespace OGDotNet.Mappedtypes.Master.Security
 {
     public class SecurityDocument
     {
-        private readonly string _uniqueId;
+        private readonly UniqueIdentifier _uniqueId;
         private readonly ManageableSecurity _security;
-        public string UniqueId { get { return _uniqueId; } }
+        public UniqueIdentifier UniqueId { get { return _uniqueId; } }
         public ManageableSecurity Security { get { return _security; } }//TODO DOTNET-5: type this with proto replacement
 
-        public SecurityDocument(string uniqueId, ManageableSecurity security)
+        public SecurityDocument(UniqueIdentifier uniqueId, ManageableSecurity security)
         {
             _uniqueId = uniqueId;
             _security = security;
@@ -24,6 +29,16 @@ namespace OGDotNet.Mappedtypes.Master.Security
         public override string ToString()
         {
             return Security.ToString();
+        }
+
+        public static SecurityDocument FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            return new SecurityDocument(UniqueIdentifier.Parse(ffc.GetString("uniqueId")), deserializer.FromField<ManageableSecurity>(ffc.GetByName("security")));
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            throw new NotImplementedException();
         }
     }
 }
