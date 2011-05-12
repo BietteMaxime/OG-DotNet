@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
-using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
@@ -84,21 +83,6 @@ namespace OGDotNet.Mappedtypes.engine.View
         public IDictionary<string, ViewCalculationResultModel> CalculationResultsByConfiguration
         {
             get { return _configurationMap; }
-        }
-
-        public InMemoryViewComputationResultModel ApplyDelta(InMemoryViewComputationResultModel delta)
-        {
-            if (!string.IsNullOrEmpty(delta._viewName) && delta._viewName != _viewName)
-                throw new ArgumentException("View name changed unexpectedly");
-
-            var viewCalculationResultModels = _configurationMap.Merge(delta._configurationMap, (a, b) => a.ApplyDelta(b));
-
-            return new InMemoryViewComputationResultModel(
-                _viewName,
-                delta._inputDataTimestamp,
-                delta._resultTimestamp,
-                viewCalculationResultModels
-                );
         }
     }
 }
