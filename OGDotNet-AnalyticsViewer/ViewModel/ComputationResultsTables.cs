@@ -241,6 +241,5 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             EventHandler handler = ResultReceived;
             if (handler != null) handler(this, e);
         }
-
     }
 }
