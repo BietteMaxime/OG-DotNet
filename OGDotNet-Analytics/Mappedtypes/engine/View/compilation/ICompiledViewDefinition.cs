@@ -23,8 +23,8 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
 
         Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements { get; }
 
-        //TODO ValidFrom, ValidTo
         DateTimeOffset EarliestValidity { get; }
         DateTimeOffset LatestValidity { get; }
+        Dictionary<string, ICompiledViewCalculationConfiguration> CompiledCalculationConfigurations { get; }
     }
 }

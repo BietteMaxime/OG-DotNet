@@ -50,7 +50,12 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
         {
             get { return _compiledCalculationConfigurations.Values.Select(c => c.LiveDataRequirements).SelectMany(d => d).ToDictionary(k => k.Key, k => k.Value); }
         }
-        
+
+        public Dictionary<string, ICompiledViewCalculationConfiguration> CompiledCalculationConfigurations
+        {
+            get { return _compiledCalculationConfigurations; }
+        }
+
         public DateTimeOffset EarliestValidity
         {
             get { return _earliestValidity; }

@@ -5,10 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
-using Fudge;
-using Fudge.Serialization;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
 
@@ -18,6 +15,7 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
     {
         string Name { get; }
         Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements { get; }
-        //TODO: targets, terminals...
+        HashSet<ComputationTarget> ComputationTargets { get; }
+        HashSet<ValueSpecification> TerminalOutputSpecifications { get; }
     }
 }
