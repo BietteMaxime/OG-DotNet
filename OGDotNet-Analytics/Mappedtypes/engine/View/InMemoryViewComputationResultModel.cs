@@ -11,19 +11,22 @@ using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
     public class InMemoryViewComputationResultModel : ViewComputationResultModel
     {
-        private readonly string _viewName;
+        private readonly UniqueIdentifier _viewProcessId;
+        private readonly UniqueIdentifier _viewCycleId;
         private readonly DateTimeOffset _inputDataTimestamp;
         private readonly DateTimeOffset _resultTimestamp;
         private readonly IDictionary<string, ViewCalculationResultModel> _configurationMap;
 
-        public InMemoryViewComputationResultModel(string viewName, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap)
+        public InMemoryViewComputationResultModel(UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap)
         {
-            _viewName = viewName;
+            _viewProcessId = viewProcessId;
+            _viewCycleId = viewCycleId;
             _inputDataTimestamp = inputDataTimestamp;
             _resultTimestamp = resultTimestamp;
             _configurationMap = configurationMap;
@@ -31,7 +34,16 @@ namespace OGDotNet.Mappedtypes.engine.View
 
         public DateTimeOffset ValuationTime { get { return _inputDataTimestamp; } }
         public DateTimeOffset ResultTimestamp { get { return _resultTimestamp; } }
-        public string ViewName { get { return _viewName; } }
+
+        public override UniqueIdentifier ViewProcessId
+        {
+            get { return _viewProcessId; }
+        }
+
+        public override UniqueIdentifier ViewCycleId
+        {
+            get { return _viewCycleId; }
+        }
 
         public ComputedValue this[string calculationConfiguration, ValueRequirement valueRequirement]
         {

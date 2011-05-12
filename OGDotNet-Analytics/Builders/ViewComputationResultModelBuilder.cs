@@ -13,6 +13,7 @@ using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Builders
 {
@@ -24,7 +25,8 @@ namespace OGDotNet.Builders
 
         public override InMemoryViewComputationResultModel DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            var viewName = msg.GetValue<string>("viewName");
+            UniqueIdentifier viewProcessId = UniqueIdentifier.Parse(msg.GetString("viewProcessId"));
+            UniqueIdentifier viewCycleId = UniqueIdentifier.Parse(msg.GetString("viewCycleId"));
             var inputDataTimestamp = msg.GetValue<DateTimeOffset>("valuationTS");
             var resultTimestamp = msg.GetValue<DateTimeOffset>("resultTS");
             var configurationMap = new Dictionary<string, ViewCalculationResultModel>();
@@ -65,7 +67,8 @@ namespace OGDotNet.Builders
                 }
             }
 
-            return new InMemoryViewComputationResultModel(viewName, inputDataTimestamp, resultTimestamp, configurationMap);
+
+            return new InMemoryViewComputationResultModel(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap);
         }
     }
 }

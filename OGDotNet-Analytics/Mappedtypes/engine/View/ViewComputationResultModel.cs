@@ -7,11 +7,15 @@
 //-----------------------------------------------------------------------
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
     [FudgeSurrogate(typeof(ViewComputationResultModelBuilder))]
-    public class ViewComputationResultModel
+    public abstract class ViewComputationResultModel
     {
+        public abstract UniqueIdentifier ViewProcessId { get; }
+
+        public abstract UniqueIdentifier ViewCycleId { get; }
     }
 }
