@@ -8,14 +8,15 @@
 
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position
 {
     [FudgeSurrogate(typeof(PortfolioBuilder))]
-    public abstract class IPortfolio
+    public abstract class IPortfolio : IUniqueIdentifiable
     {
-        public abstract string Identifier { get; }
         public abstract string Name { get; }
         public abstract PortfolioNode Root { get; }
+        public abstract UniqueIdentifier UniqueId { get; }
     }
 }

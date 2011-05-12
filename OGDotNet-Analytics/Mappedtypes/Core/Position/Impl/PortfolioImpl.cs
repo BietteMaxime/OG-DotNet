@@ -6,24 +6,24 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using Fudge;
+using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Id;
+
 namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
     internal class PortfolioImpl : IPortfolio
     {
         private readonly PortfolioNode _root;
-        private readonly string _identifier;
+        private readonly UniqueIdentifier _identifier;
         private readonly string _name;
 
-        public PortfolioImpl(PortfolioNode root, string identifier, string name)
+        public PortfolioImpl(PortfolioNode root, UniqueIdentifier identifier, string name)
         {
             _root = root;
             _identifier = identifier;
             _name = name;
-        }
-
-        public override string Identifier
-        {
-            get { return _identifier; }
         }
 
         public override string Name
@@ -34,6 +34,11 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
         public override PortfolioNode Root
         {
             get { return _root; }
+        }
+
+        public override UniqueIdentifier UniqueId
+        {
+            get { return _identifier; }
         }
     }
 }

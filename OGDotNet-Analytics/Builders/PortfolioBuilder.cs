@@ -7,13 +7,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Position.Impl;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Builders
 {
@@ -25,7 +23,7 @@ namespace OGDotNet.Builders
 
         public override IPortfolio DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            return new PortfolioImpl(deserializer.FromField<PortfolioNode>(msg.GetByName("root")), msg.GetString("identifier"), msg.GetString("name"));
+            return new PortfolioImpl(deserializer.FromField<PortfolioNode>(msg.GetByName("root")), UniqueIdentifier.Parse(msg.GetString("identifier")), msg.GetString("name"));
         }
     }
 }
