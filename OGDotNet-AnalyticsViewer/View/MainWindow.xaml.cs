@@ -58,7 +58,7 @@ namespace OGDotNet.AnalyticsViewer.View
                 return;
             }
 
-            Title = string.Format("OGDotNet ({0})", OGContext.RootUri);
+            Title = string.Format("OpenGamma Analytics ({0})", OGContext.RootUri);
 
             _remoteViewProcessor = OGContext.ViewProcessor;
             var viewNames = _remoteViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
