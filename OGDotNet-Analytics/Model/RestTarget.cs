@@ -117,7 +117,7 @@ namespace OGDotNet.Model
             }
         }
 
-        private FudgeMsg PostFudge(FudgeMsg reqMsg)
+        public FudgeMsg PostFudge(FudgeMsg reqMsg)
         {
             return FudgeRequestImpl("POST", reqMsg);
         }

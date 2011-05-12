@@ -114,8 +114,17 @@ namespace OGDotNet.Model.Resources
 
         private ClientResultStream<object> StartResultStream()
         {
-            var reponse = _rest.Resolve("startJmsResultStream").Post();
-            return new ClientResultStream<object>(_fudgeContext, _mqTemplate, reponse.GetValue<string>("value"));
+            var clientResultStream = new ClientResultStream<object>(_fudgeContext, _mqTemplate);
+            try
+            {
+                _rest.Resolve("startJmsResultStream").PostFudge(new FudgeMsg {{"destination", clientResultStream.QueueName}});
+                return clientResultStream;    
+            }
+            catch
+            {
+                clientResultStream.Dispose();
+                throw;
+            }
         }
 
         private void StopResultStream()

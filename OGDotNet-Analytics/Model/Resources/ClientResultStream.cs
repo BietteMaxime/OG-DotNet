@@ -18,7 +18,7 @@ namespace OGDotNet.Model.Resources
     {
         private readonly IConnection _connection;
         private readonly ISession _session;
-        private readonly IDestination _destination;
+        private readonly ITemporaryQueue _destination;
         private readonly IMessageConsumer _consumer;
         private readonly MQTemplate _mqTemplate;
         private readonly OpenGammaFudgeContext _fudgeContext;
@@ -26,7 +26,7 @@ namespace OGDotNet.Model.Resources
         public event EventHandler<ResultEvent> MessageReceived;
 
         private long _lastSequenceNumber = -1;
-        public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate, string topicName)
+        public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate)
         {
             _fudgeContext = fudgeContext;
 
@@ -35,7 +35,7 @@ namespace OGDotNet.Model.Resources
             _connection = _mqTemplate.CreateConnection();
             _session = _connection.CreateSession();
 
-            _destination = _session.GetDestination("topic://" + topicName);
+            _destination = _session.CreateTemporaryQueue();
 
             _consumer = _session.CreateConsumer(_destination);
 
@@ -43,6 +43,12 @@ namespace OGDotNet.Model.Resources
 
             _connection.Start();
         }
+
+        public string QueueName
+        {
+            get { return _destination.QueueName; }
+        }
+
         private T Deserialize(IMessage message)
         {
             var bytesMessage = (IBytesMessage)message;
