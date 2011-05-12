@@ -166,14 +166,14 @@ namespace OGDotNet.Mappedtypes.engine.value
             {
                 unchecked
                 {
-                    return PropertyValues.Keys.OrderBy(s=>s).Aggregate(0, (i,s)=>i*397 ^ s.GetHashCode());
+                    return PropertyValues.Keys.OrderBy(s => s).Aggregate(0, (i, s) => i * 397 ^ s.GetHashCode());
                 }
             }
 
             public override string ToString()
             {
                 return string.Format("[ValueProperties: {0}]",
-                                     string.Join(" ",PropertyValues.Select(k => string.Format("{0}->{1}", k.Key, string.Join(",", k.Value)))));
+                                     string.Join(" ", PropertyValues.Select(k => string.Format("{0}->{1}", k.Key, string.Join(",", k.Value)))));
             }
 
             public static new FiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -385,7 +385,5 @@ namespace OGDotNet.Mappedtypes.engine.value
         {
             return other != null && other.IsSatisfiedBy(this) && IsSatisfiedBy(other);
         }
-
-
     }
 }

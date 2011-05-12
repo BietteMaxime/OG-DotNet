@@ -19,7 +19,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly ConcurrentDictionary<Tuple<string,string>, ConcurrentDictionary<ValueProperties, object>> _dynamicColumns = new ConcurrentDictionary<Tuple<string, string>, ConcurrentDictionary<ValueProperties, object>>();
+        private readonly ConcurrentDictionary<Tuple<string, string>, ConcurrentDictionary<ValueProperties, object>> _dynamicColumns = new ConcurrentDictionary<Tuple<string, string>, ConcurrentDictionary<ValueProperties, object>>();
 
         public object this[ColumnHeader key]
         {
@@ -30,7 +30,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 {
                     return null;
                 }
-                var keyValuePairs = ret.Where(r=>key.RequiredConstraints.IsSatisfiedBy(r.Key)).ToList();
+                var keyValuePairs = ret.Where(r => key.RequiredConstraints.IsSatisfiedBy(r.Key)).ToList();
                 switch (keyValuePairs.Count())
                 {
                     case 0:

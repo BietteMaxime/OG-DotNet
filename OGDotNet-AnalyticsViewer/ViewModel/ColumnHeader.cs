@@ -55,7 +55,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             get { return _valueName; }
         }
 
-        private static String GetPropertiesString(ValueProperties constraints)
+        private static string GetPropertiesString(ValueProperties constraints)
         {
             if (constraints.IsEmpty)
             {
@@ -79,7 +79,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                     sb.Append("; \n");
                 }
                 sb.Append(propertyName).Append("=");
-                ISet<String> propertyValues = constraints.GetValues(propertyName);
+                ISet<string> propertyValues = constraints.GetValues(propertyName);
                 if (propertyValues.Count() == 0)
                 {
                     sb.Append("[empty]");
@@ -109,8 +109,8 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (ColumnHeader)) return false;
-            return Equals((ColumnHeader) obj);
+            if (obj.GetType() != typeof(ColumnHeader)) return false;
+            return Equals((ColumnHeader)obj);
         }
 
         public override int GetHashCode()
@@ -118,8 +118,8 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             unchecked
             {
                 int result = _configuration.GetHashCode();
-                result = (result*397) ^ _valueName.GetHashCode();
-                result = (result*397) ^ _requiredConstraints.GetHashCode();
+                result = (result * 397) ^ _valueName.GetHashCode();
+                result = (result * 397) ^ _requiredConstraints.GetHashCode();
                 return result;
             }
         }

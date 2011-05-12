@@ -9,11 +9,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.engine;
-using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.compilation;
@@ -23,117 +21,6 @@ using OGDotNet.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
-    public class ColumnHeader : IEquatable<ColumnHeader>
-    {
-        private readonly string _configuration;
-        private readonly string _valueName;
-        private readonly ValueProperties _requiredConstraints;
-
-        public ColumnHeader(string configuration, string valueName, ValueProperties requiredConstraints)
-        {
-            _configuration = configuration;
-            _valueName = valueName;
-
-            _requiredConstraints = requiredConstraints;
-        }
-
-        public override string ToString()
-        {
-            return Text;
-        }
-
-        public string Text
-        {
-            get { return _configuration == "Default" ? _valueName : String.Format("{0}/{1}", _configuration, _valueName); }
-        }
-        public string ToolTip
-        {
-            get { return GetPropertiesString(_requiredConstraints); }
-        }
-        public ValueProperties RequiredConstraints
-        {
-            get { return _requiredConstraints; }
-        }
-
-        public string Configuration
-        {
-            get { return _configuration; }
-        }
-
-        public string ValueName
-        {
-            get { return _valueName; }
-        }
-
-        private static String GetPropertiesString(ValueProperties constraints)
-        {
-            if (constraints.IsEmpty)
-            {
-                return "No constraints";
-            }
-
-            var sb = new StringBuilder();
-            bool firstProperty = true;
-            foreach (string propertyName in constraints.Properties)
-            {
-                if (propertyName == "Function")
-                {
-                    continue;
-                }
-                if (firstProperty)
-                {
-                    firstProperty = false;
-                }
-                else
-                {
-                    sb.Append("; \n");
-                }
-                sb.Append(propertyName).Append("=");
-                ISet<String> propertyValues = constraints.GetValues(propertyName);
-                if (propertyValues.Count() == 0)
-                {
-                    sb.Append("[empty]");
-                }
-                else if (propertyValues.Count() == 1)
-                {
-                    sb.Append(propertyValues.Single());
-                }
-                else
-                {
-                    sb.Append("(");
-                    sb.Append(string.Join(", ", propertyValues));
-                    sb.Append(")");
-                }
-            }
-            return sb.ToString();
-        }
-
-        public bool Equals(ColumnHeader other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(other._configuration, _configuration) && Equals(other._valueName, _valueName) && Equals(other._requiredConstraints, _requiredConstraints);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (ColumnHeader)) return false;
-            return Equals((ColumnHeader) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int result = _configuration.GetHashCode();
-                result = (result*397) ^ _valueName.GetHashCode();
-                result = (result*397) ^ _requiredConstraints.GetHashCode();
-                return result;
-            }
-        }
-    }
     public class ComputationResultsTables
     {
         private readonly ViewDefinition _viewDefinition;
@@ -200,11 +87,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             var columns = new HashSet<ColumnHeader>();
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
-                var terminalOutputSpecifications = compiledViewDefinition.CompiledCalculationConfigurations[configuration.Key].TerminalOutputSpecifications.ToLookup(k=>Tuple.Create(k.ValueName, k.TargetSpecification));
+                var terminalOutputSpecifications = compiledViewDefinition.CompiledCalculationConfigurations[configuration.Key].TerminalOutputSpecifications.ToLookup(k => Tuple.Create(k.ValueName, k.TargetSpecification));
 
                 foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.TargetSpecification.Type == ComputationTargetType.Primitive))
                 {
-                    var outputSpec = terminalOutputSpecifications[Tuple.Create(req.ValueName, req.TargetSpecification)].Where(s=>req.IsSatisfiedBy(s));
+                    var outputSpec = terminalOutputSpecifications[Tuple.Create(req.ValueName, req.TargetSpecification)].Where(s => req.IsSatisfiedBy(s));
                     if (outputSpec.Any())
                     {
                         columns.Add(new ColumnHeader(configuration.Key, req.ValueName, req.Constraints));
@@ -234,7 +121,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             }
             return columns;
         }
-
 
         private IEnumerable<TreeNode> GetPortfolioNodes()
         {

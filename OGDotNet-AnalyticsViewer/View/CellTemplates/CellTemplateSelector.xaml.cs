@@ -32,12 +32,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private static readonly Dictionary<Type, Type> TemplateTypes = new Dictionary<Type, Type>
                                                                            {
                                                                                {typeof(YieldCurve), typeof(YieldCurveCell)},
+                                                                               {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)},
+                                                                               {typeof(ColumnHeader), typeof(HeaderCell)},
+
                                                                                //TODO turn these into a predicate
                                                                                {typeof(DoubleLabelledMatrix1D), typeof(LabelledMatrix1DCell)},
                                                                                {typeof(LocalDateLabelledMatrix1D), typeof(LabelledMatrix1DCell)},
-
-                                                                               {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)},
-                                                                               {typeof(ColumnHeader), typeof(HeaderCell)},
                                                                            };
 
         private static readonly Memoizer<ColumnHeader, Type, DataTemplate> TemplateMemoizer = new Memoizer<ColumnHeader, Type, DataTemplate>(BuildIndexedTemplate);

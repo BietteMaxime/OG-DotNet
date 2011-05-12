@@ -39,7 +39,7 @@ namespace OGDotNet.Mappedtypes.engine
         {
             get
             {
-                var uniqueIdentifiable = (Value as IUniqueIdentifiable);
+                var uniqueIdentifiable = Value as IUniqueIdentifiable;
                 return uniqueIdentifiable == null ? null : uniqueIdentifiable.UniqueId;
             }
         }

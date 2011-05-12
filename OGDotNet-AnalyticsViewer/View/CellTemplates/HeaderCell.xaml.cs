@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿//-----------------------------------------------------------------------
+// <copyright file="HeaderCell.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {

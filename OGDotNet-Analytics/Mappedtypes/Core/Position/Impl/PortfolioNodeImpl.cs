@@ -27,7 +27,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
                 deserializer.FromField<IList<Position>>(ffc.GetByName("positions")));
         }
 
-        public new  void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        public new void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             throw new NotImplementedException();
         }
