@@ -21,7 +21,7 @@ namespace OGDotNet.Mappedtypes.engine.value
         //TODO the rest of this interface
         public abstract ISet<string> Properties { get; }
         public abstract bool IsEmpty { get; }
-        public abstract IEnumerable<string> this[string curve] { get; }
+        public IEnumerable<string> this[string propertyName] { get { return GetValues(propertyName); } }
         public abstract bool IsSatisfiedBy(ValueProperties properties);
         public abstract ISet<string> GetValues(string propertyName);
 
@@ -49,11 +49,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             public override bool IsEmpty
             {
                 get { return true; }
-            }
-
-            public override IEnumerable<string> this[string curve]
-            {
-                get { return Enumerable.Empty<string>(); }
             }
 
             public override bool IsSatisfiedBy(ValueProperties properties)
@@ -94,16 +89,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             public override bool IsEmpty
             {
                 get { return !PropertyValues.Any(); }
-            }
-
-            public override IEnumerable<string> this[string curve]
-            {
-                get
-                {
-                    HashSet<string> ret;
-                    PropertyValues.TryGetValue(curve, out ret);
-                    return ret;
-                }
             }
 
             public override bool IsSatisfiedBy(ValueProperties properties)
@@ -198,10 +183,6 @@ namespace OGDotNet.Mappedtypes.engine.value
                 get { return false; }
             }
 
-            public override IEnumerable<string> this[string curve]
-            {
-                get { return Enumerable.Empty<string>(); }
-            }
 
             public override bool IsSatisfiedBy(ValueProperties properties)
             {
@@ -236,11 +217,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             public override bool IsEmpty
             {
                 get { return false; }
-            }
-
-            public override IEnumerable<string> this[string curve]
-            {
-                get { return Without.Contains(curve) ? null : Enumerable.Empty<string>(); }
             }
 
             public override bool IsSatisfiedBy(ValueProperties properties)
