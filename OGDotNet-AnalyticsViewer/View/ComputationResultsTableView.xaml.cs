@@ -35,15 +35,44 @@ namespace OGDotNet.AnalyticsViewer.View
             TrimColumns(portfolioView.Columns, 1);
             TrimColumns(primitivesView.Columns, 1);
 
-            if ((DataContext as ComputationResultsTables) != null)
+            if (e.OldValue is ComputationResultsTables)
+            {
+                ((ComputationResultsTables) e.OldValue).ResultReceived -= resultsTables_ResultReceived;
+            }
+            if (DataContext is ComputationResultsTables)
             {
                 var resultsTables = (ComputationResultsTables)DataContext;
+                resultsTables.ResultReceived += resultsTables_ResultReceived;
                 var primitiveColumns = resultsTables.PrimitiveColumns;
                 var portfolioColumns = resultsTables.PortfolioColumns;
 
                 portfolioView.Columns.AddRange(portfolioColumns.Select(BuildColumn));
                 primitivesView.Columns.AddRange(primitiveColumns.Select(BuildColumn));
             }
+        }
+
+        private void resultsTables_ResultReceived(object sender, EventArgs e)
+        {
+            Dispatcher.Invoke((Action) delegate
+                                           {
+                                               if (DataContext is ComputationResultsTables)
+                                               {
+                                                   var resultsTables = (ComputationResultsTables)DataContext;
+                                                   resultsTables.ResultReceived -= resultsTables_ResultReceived;
+                                               }
+
+                                               //Auto resize this columns just this once
+                                               var portfolioView = (GridView)portfolioTable.View;
+                                               var primitivesView = (GridView)primitivesTable.View;
+                                               foreach (var column in portfolioView.Columns.Concat(primitivesView.Columns))
+                                               {
+                                                   if (double.IsNaN(column.Width))
+                                                   {
+                                                       column.Width = column.ActualWidth;
+                                                       column.Width = double.NaN;
+                                                   }
+                                               }
+                                           });
         }
 
         private static GridViewColumn BuildColumn(ColumnHeader column)

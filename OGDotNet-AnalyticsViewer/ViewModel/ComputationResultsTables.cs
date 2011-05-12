@@ -23,6 +23,8 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 {
     public class ComputationResultsTables
     {
+        public event EventHandler ResultReceived;
+
         private readonly ViewDefinition _viewDefinition;
         private readonly IPortfolio _portfolio;
         private readonly ISecuritySource _remoteSecuritySource;
@@ -57,6 +59,8 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             
             UpdatePortfolioRows(_portfolioRows, indexedResults);
             UpdatePrimitiveRows(_primitiveRows, indexedResults);
+
+            InvokeResultReceived(EventArgs.Empty);
         }
         
         public bool HavePortfolioRows { get { return PortfolioColumns.Count > 0; } }
@@ -231,5 +235,12 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 row.UpdateDynamicColumns(updateSelector(row));
             }
         }
+
+        public void InvokeResultReceived(EventArgs e)
+        {
+            EventHandler handler = ResultReceived;
+            if (handler != null) handler(this, e);
+        }
+
     }
 }
