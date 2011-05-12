@@ -30,11 +30,6 @@ namespace OGDotNet.Mappedtypes.Core.Position
             _positions = positions;
         }
 
-        public string Identifier
-        {
-            get { return _identifier.ToString(); }
-        }
-
         public string Name
         {
             get { return _name; }

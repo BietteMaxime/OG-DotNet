@@ -135,7 +135,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private IEnumerable<TreeNode> GetPortfolioNodesInner(PortfolioNode node, int depth)
         {
-            yield return new TreeNode(UniqueIdentifier.Parse(node.Identifier), node.Name, ComputationTargetType.PortfolioNode, null, depth);
+            yield return new TreeNode(node.UniqueId, node.Name, ComputationTargetType.PortfolioNode, null, depth);
             foreach (var position in node.Positions)
             {
                 var security = _remoteSecuritySource.GetSecurity(position.SecurityKey);
