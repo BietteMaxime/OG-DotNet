@@ -70,7 +70,12 @@
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\SnapshotDataBundle.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\ValueSnapshot.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\YieldCurveKey.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Impl\PortfolioNodeImpl.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Impl\PositionImpl.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Impl\TradeImpl.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Trade.cs" />
     <Compile Include="Mappedtypes\Core\Security\Security.cs" />
+    <Compile Include="Mappedtypes\engine\ComputationTarget.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
     <Compile Include="Mappedtypes\engine\depGraph\DependencyGraph\ResultOutputMode.cs" />
@@ -184,7 +189,6 @@
     <Compile Include="Mappedtypes\engine\View\ViewResultEntry.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewTargetResultModelImpl.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewCalculationResultModel.cs" />
-    <Compile Include="Builders\ViewCalculationResultModelBuilder.cs" />
     <Compile Include="Mappedtypes\engine\Value\ValueSpecification.cs" />
     <Compile Include="Mappedtypes\engine\View\InMemoryViewComputationResultModel.cs" />
     <Compile Include="Model\Resources\RemoteClient.cs" />

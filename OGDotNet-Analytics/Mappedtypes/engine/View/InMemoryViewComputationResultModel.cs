@@ -80,11 +80,15 @@ namespace OGDotNet.Mappedtypes.engine.View
                 return false;
             }
 
-            if (!model.TryGetValue(valueRequirement.TargetSpecification, valueRequirement.ValueName, out result))
+            ISet<ComputedValue> values;
+            if (!model.TryGetAllValues(valueRequirement.TargetSpecification, out values))
             {
                 return false;
             }
-            return true;
+
+            var computedValues = values.Where(v => valueRequirement.IsSatisfiedBy(v.Specification));
+            result = computedValues.FirstOrDefault();
+            return result != null;
         }
 
         public IEnumerable<ViewResultEntry> AllResults

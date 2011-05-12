@@ -11,7 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using Fudge.Types;
+using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
 
@@ -25,8 +26,12 @@ namespace OGDotNet.Builders
 
         public override InMemoryViewComputationResultModel DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            UniqueIdentifier viewProcessId = UniqueIdentifier.Parse(msg.GetString("viewProcessId"));
-            UniqueIdentifier viewCycleId = UniqueIdentifier.Parse(msg.GetString("viewCycleId"));
+            //TODO: these are supposed to be reliably non null
+            var viewProcIdStr = msg.GetString("viewProcessId");
+            UniqueIdentifier viewProcessId = string.IsNullOrEmpty(viewProcIdStr) ? null : UniqueIdentifier.Parse(viewProcIdStr);
+            var viewCycleIdStr = msg.GetString("viewCycleId");
+            UniqueIdentifier viewCycleId = string.IsNullOrEmpty(viewCycleIdStr) ? null : UniqueIdentifier.Parse(msg.GetString("viewCycleId"));
+
             var inputDataTimestamp = msg.GetValue<DateTimeOffset>("valuationTS");
             var resultTimestamp = msg.GetValue<DateTimeOffset>("resultTS");
             var configurationMap = new Dictionary<string, ViewCalculationResultModel>();
@@ -49,10 +54,29 @@ namespace OGDotNet.Builders
                         }
                         break;
                     case 2:
-                        //We need to use the maintain OpenGammaFudgeContext because the optimization is important here
-                        // but we can't accidentaly register this twice with our serializer
-                        ViewCalculationResultModelBuilder viewCalculationResultModelBuilder = new ViewCalculationResultModelBuilder(deserializer.Context, typeof(ViewCalculationResultModel));
-                        var value = viewCalculationResultModelBuilder.DeserializeImpl((FudgeMsg)field.Value, deserializer);
+                        var map = new Dictionary<ComputationTargetSpecification, IDictionary<string, ComputedValue>>();
+                        var mapAll = new Dictionary<ComputationTargetSpecification, ISet<ComputedValue>>();
+
+                        var fudgeFields = ((IFudgeFieldContainer) field.Value).GetAllFields();
+                        for (int i = 0; i < fudgeFields.Count;i++ )
+                        {
+                            var f = fudgeFields[i];
+
+                            var v = deserializer.FromField<ComputedValue>(f);
+
+                            ComputationTargetSpecification target = v.Specification.TargetSpecification;
+
+                            if (!map.ContainsKey(target))
+                            {
+                                map.Add(target, new Dictionary<string, ComputedValue>());
+                                mapAll.Add(target, new HashSet<ComputedValue>());
+                            }
+                            map[target][v.Specification.ValueName] = v;//NOTE: we make an arbitrary choice here
+                            mapAll[target].Add(v);
+                        }
+
+                        var value =  new ViewCalculationResultModel(map, mapAll);
+
                         if (!keys.Any())
                         {
                             values.Enqueue(value);
