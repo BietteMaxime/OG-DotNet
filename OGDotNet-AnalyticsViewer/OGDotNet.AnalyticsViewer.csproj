@@ -66,6 +66,9 @@
     </ApplicationDefinition>
     <Compile Include="ViewModel\DynamicRow.cs" />
     <Compile Include="View\CellTemplates\CellTemplateSelector.xaml.cs" />
+    <Compile Include="View\CellTemplates\HeaderCell.xaml.cs">
+      <DependentUpon>HeaderCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CellTemplates\LabelledMatrix1DCell.xaml.cs">
       <DependentUpon>LabelledMatrix1DCell.xaml</DependentUpon>
     </Compile>
@@ -94,6 +97,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\CellTemplates\HeaderCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CellTemplates\LabelledMatrix1DCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

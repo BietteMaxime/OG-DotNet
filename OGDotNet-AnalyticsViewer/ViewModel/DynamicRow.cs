@@ -5,10 +5,13 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Data;
+using OGDotNet.Mappedtypes.engine.value;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
@@ -16,20 +19,27 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly ConcurrentDictionary<string, object> _dynamicColumns = new ConcurrentDictionary<string, object>();
+        private readonly ConcurrentDictionary<Tuple<string,string>, ConcurrentDictionary<ValueProperties, object>> _dynamicColumns = new ConcurrentDictionary<Tuple<string, string>, ConcurrentDictionary<ValueProperties, object>>();
 
-        public object this[string key]
+        public object this[ColumnHeader key]
         {
             get
             {
-                object value;
-                if (_dynamicColumns.TryGetValue(key, out value))
-                {
-                    return value;
-                }
-                else
+                ConcurrentDictionary<ValueProperties, object> ret;
+                if (!_dynamicColumns.TryGetValue(GetKey(key), out ret))
                 {
                     return null;
+                }
+                var keyValuePairs = ret.Where(r=>key.RequiredConstraints.IsSatisfiedBy(r.Key)).ToList();
+                switch (keyValuePairs.Count())
+                {
+                    case 0:
+                        return null;
+                    case 1:
+                        return keyValuePairs[0].Value;
+                    default:
+                        //TODO: we should probably work out which value to use, but in theory either is fine
+                        return keyValuePairs[0].Value;
                 }
             }
         }
@@ -45,13 +55,16 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             if (handler != null) handler(this, e);
         }
 
-        public void UpdateDynamicColumns(Dictionary<string, object> values)
+        public void UpdateDynamicColumns(Dictionary<ColumnHeader, object> values)
         {
             foreach (var value in values)
             {
-                _dynamicColumns[value.Key] = value.Value;
+                Tuple<string, string> key = GetKey(value.Key);
+                var concurrentDictionary = _dynamicColumns.GetOrAdd(key, new ConcurrentDictionary<ValueProperties, object>());
+
+                concurrentDictionary[value.Key.RequiredConstraints] = value.Value;
             }
-            
+
             switch (values.Count)
             {
                 case 0:
@@ -61,6 +74,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                     InvokePropertyChanged(Binding.IndexerName);
                     break;
             }
+        }
+
+        private static Tuple<string, string> GetKey(ColumnHeader columnHeader)
+        {
+            return Tuple.Create(columnHeader.Configuration, columnHeader.ValueName);
         }
     }
 }

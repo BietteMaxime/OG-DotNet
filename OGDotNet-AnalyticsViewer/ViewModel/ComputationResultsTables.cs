@@ -9,24 +9,139 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
+    public class ColumnHeader : IEquatable<ColumnHeader>
+    {
+        private readonly string _configuration;
+        private readonly string _valueName;
+        private readonly ValueProperties _requiredConstraints;
+
+        public ColumnHeader(string configuration, string valueName, ValueProperties requiredConstraints)
+        {
+            _configuration = configuration;
+            _valueName = valueName;
+
+            _requiredConstraints = requiredConstraints;
+        }
+
+        public override string ToString()
+        {
+            return Text;
+        }
+
+        public string Text
+        {
+            get { return _configuration == "Default" ? _valueName : String.Format("{0}/{1}", _configuration, _valueName); }
+        }
+        public string ToolTip
+        {
+            get { return GetPropertiesString(_requiredConstraints); }
+        }
+        public ValueProperties RequiredConstraints
+        {
+            get { return _requiredConstraints; }
+        }
+
+        public string Configuration
+        {
+            get { return _configuration; }
+        }
+
+        public string ValueName
+        {
+            get { return _valueName; }
+        }
+
+        private static String GetPropertiesString(ValueProperties constraints)
+        {
+            if (constraints.IsEmpty)
+            {
+                return "No constraints";
+            }
+
+            var sb = new StringBuilder();
+            bool firstProperty = true;
+            foreach (string propertyName in constraints.Properties)
+            {
+                if (propertyName == "Function")
+                {
+                    continue;
+                }
+                if (firstProperty)
+                {
+                    firstProperty = false;
+                }
+                else
+                {
+                    sb.Append("; \n");
+                }
+                sb.Append(propertyName).Append("=");
+                ISet<String> propertyValues = constraints.GetValues(propertyName);
+                if (propertyValues.Count() == 0)
+                {
+                    sb.Append("[empty]");
+                }
+                else if (propertyValues.Count() == 1)
+                {
+                    sb.Append(propertyValues.Single());
+                }
+                else
+                {
+                    sb.Append("(");
+                    sb.Append(string.Join(", ", propertyValues));
+                    sb.Append(")");
+                }
+            }
+            return sb.ToString();
+        }
+
+        public bool Equals(ColumnHeader other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other._configuration, _configuration) && Equals(other._valueName, _valueName) && Equals(other._requiredConstraints, _requiredConstraints);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof (ColumnHeader)) return false;
+            return Equals((ColumnHeader) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int result = _configuration.GetHashCode();
+                result = (result*397) ^ _valueName.GetHashCode();
+                result = (result*397) ^ _requiredConstraints.GetHashCode();
+                return result;
+            }
+        }
+    }
     public class ComputationResultsTables
     {
         private readonly ViewDefinition _viewDefinition;
         private readonly IPortfolio _portfolio;
         private readonly ISecuritySource _remoteSecuritySource;
-        private readonly List<string> _portfolioColumns;
-        private readonly List<string> _primitiveColumns;
+        private readonly ICompiledViewDefinition _compiledViewDefinition;
+        private readonly List<ColumnHeader> _portfolioColumns;
+        private readonly List<ColumnHeader> _primitiveColumns;
 
         private readonly List<PrimitiveRow> _primitiveRows;
 
@@ -34,13 +149,14 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private IEnumerable<TreeNode> _portfolioNodes;
 
-        public ComputationResultsTables(ViewDefinition viewDefinition, IPortfolio portfolio, ISecuritySource remoteSecuritySource)
+        public ComputationResultsTables(ViewDefinition viewDefinition, IPortfolio portfolio, ISecuritySource remoteSecuritySource, ICompiledViewDefinition compiledViewDefinition)
         {
             _viewDefinition = viewDefinition;
             _portfolio = portfolio;
             _remoteSecuritySource = remoteSecuritySource;
-            _portfolioColumns = GetPortfolioColumns(viewDefinition).ToList();
-            _primitiveColumns = GetPrimitiveColumns(viewDefinition).ToList();
+            _compiledViewDefinition = compiledViewDefinition;
+            _portfolioColumns = GetPortfolioColumns(viewDefinition, _compiledViewDefinition).ToList();
+            _primitiveColumns = GetPrimitiveColumns(viewDefinition, _compiledViewDefinition).ToList();
 
             _primitiveRows = BuildPrimitiveRows().ToList();
             _portfolioRows = BuildPortfolioRows().ToList();
@@ -59,12 +175,12 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         public bool HavePortfolioRows { get { return PortfolioColumns.Count > 0; } }
         public bool HavePrimitiveRows { get { return PrimitiveColumns.Count > 0; } }
 
-        public List<string> PortfolioColumns
+        public List<ColumnHeader> PortfolioColumns
         {
             get { return _portfolioColumns; }
         }
 
-        public List<string> PrimitiveColumns
+        public List<ColumnHeader> PrimitiveColumns
         {
             get { return _primitiveColumns; }
         }
@@ -79,37 +195,46 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             get { return _primitiveRows; }
         }
 
-        private static IEnumerable<string> GetPrimitiveColumns(ViewDefinition viewDefinition)
+        private static IEnumerable<ColumnHeader> GetPrimitiveColumns(ViewDefinition viewDefinition, ICompiledViewDefinition compiledViewDefinition)
         {
-            var valueNames = new HashSet<string>();
+            var columns = new HashSet<ColumnHeader>();
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
+                var terminalOutputSpecifications = compiledViewDefinition.CompiledCalculationConfigurations[configuration.Key].TerminalOutputSpecifications.ToLookup(k=>Tuple.Create(k.ValueName, k.TargetSpecification));
+
                 foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.TargetSpecification.Type == ComputationTargetType.Primitive))
                 {
-                    valueNames.Add(GetColumnHeading(configuration.Key, req.ValueName));
+                    var outputSpec = terminalOutputSpecifications[Tuple.Create(req.ValueName, req.TargetSpecification)].Where(s=>req.IsSatisfiedBy(s));
+                    if (outputSpec.Any())
+                    {
+                        columns.Add(new ColumnHeader(configuration.Key, req.ValueName, req.Constraints));
+                    }
                 }
             }
-            return valueNames;
+            return columns;
         }
 
-        private static IEnumerable<string> GetPortfolioColumns(ViewDefinition viewDefinition)
+        private static IEnumerable<ColumnHeader> GetPortfolioColumns(ViewDefinition viewDefinition, ICompiledViewDefinition compiledViewDefinition)
         {
+            var columns = new HashSet<ColumnHeader>();
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
+                var terminalOutputSpecifications = compiledViewDefinition.CompiledCalculationConfigurations[configuration.Key].TerminalOutputSpecifications.ToLookup(k => Tuple.Create(k.ValueName));
+
                 foreach (var secType in configuration.Value.PortfolioRequirementsBySecurityType)
                 {
                     foreach (var req in secType.Value)
                     {
-                        yield return GetColumnHeading(configuration.Key, req.Item1);
+                        if (terminalOutputSpecifications.Contains(Tuple.Create(req.Item1)))
+                        {
+                            columns.Add(new ColumnHeader(configuration.Key, req.Item1, req.Item2));
+                        }
                     }
                 }
             }
+            return columns;
         }
 
-        private static string GetColumnHeading(string configuration, string valueName)
-        {
-            return string.Format("{0}/{1}", configuration, valueName);
-        }
 
         private IEnumerable<TreeNode> GetPortfolioNodes()
         {
@@ -187,8 +312,9 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private IEnumerable<PrimitiveRow> BuildPrimitiveRows()
         {
-            var targets = _viewDefinition.CalculationConfigurationsByName.SelectMany(c => c.Value.SpecificRequirements.Select(r => r.TargetSpecification.Uid)).Distinct();
-            return targets.Select(t => new PrimitiveRow(t)).OrderBy(r => r.TargetName);
+            var providedTargets = _compiledViewDefinition.CompiledCalculationConfigurations.SelectMany(c => c.Value.ComputationTargets.Select(t => t.UniqueId)).Distinct();
+            var requestedTargets = _viewDefinition.CalculationConfigurationsByName.SelectMany(c => c.Value.SpecificRequirements.Select(r => r.TargetSpecification.Uid)).Distinct();
+            return providedTargets.Intersect(requestedTargets).Select(t => new PrimitiveRow(t)).OrderBy(r => r.TargetName);
         }
 
         private static void UpdatePortfolioRows(IEnumerable<PortfolioRow> rows, ILookup<UniqueIdentifier, ViewResultEntry> indexedResults)
@@ -199,9 +325,9 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 );
         }
 
-        private static string GetColumnHeader(ViewResultEntry v)
+        private static ColumnHeader GetColumnHeader(ViewResultEntry v)
         {
-            return string.Format("{0}/{1}", v.CalculationConfiguration, v.ComputedValue.Specification.ValueName);
+            return new ColumnHeader(v.CalculationConfiguration, v.ComputedValue.Specification.ValueName, v.ComputedValue.Specification.Properties);
         }
 
         private static void UpdatePrimitiveRows(IEnumerable<PrimitiveRow> rows, ILookup<UniqueIdentifier, ViewResultEntry> indexedResults)
@@ -212,7 +338,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 );
         }
 
-        private static void UpdateDynamicRows<T>(IEnumerable<T> rows, Func<T, Dictionary<string, object>> updateSelector) where T : DynamicRow
+        private static void UpdateDynamicRows<T>(IEnumerable<T> rows, Func<T, Dictionary<ColumnHeader, object>> updateSelector) where T : DynamicRow
         {
             foreach (var row in rows)
             {

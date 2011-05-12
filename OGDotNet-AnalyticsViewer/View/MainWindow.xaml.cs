@@ -158,7 +158,7 @@ namespace OGDotNet.AnalyticsViewer.View
                         {
                             var portfolio = args.CompiledViewDefinition.Portfolio;
                             var viewDefinition = args.CompiledViewDefinition.ViewDefinition;
-                            resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource);
+                            resultsTable = new ComputationResultsTables(viewDefinition, portfolio, _remoteSecuritySource, args.CompiledViewDefinition);
                             Invoke(delegate
                                        {
                                            resultsTableView.DataContext = resultsTable;

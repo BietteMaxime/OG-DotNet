@@ -46,12 +46,13 @@ namespace OGDotNet.AnalyticsViewer.View
             }
         }
 
-        private static GridViewColumn BuildColumn(string column)
+        private static GridViewColumn BuildColumn(ColumnHeader column)
         {
             var gridViewColumn = new GridViewColumn
                                     {
                                         Width = Double.NaN,
-                                        Header = column
+                                        Header = column,
+                                        HeaderTemplate = CellTemplateSelector.BuildTemplate(column, typeof(ColumnHeader))
                                     };
             gridViewColumn.CellTemplateSelector = new CellTemplateSelector(column, gridViewColumn);
             return gridViewColumn;

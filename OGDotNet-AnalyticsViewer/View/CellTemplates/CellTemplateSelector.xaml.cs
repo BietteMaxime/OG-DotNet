@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using OGDotNet.AnalyticsViewer.ViewModel;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
@@ -25,7 +26,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
     /// </summary>
     internal class CellTemplateSelector : DataTemplateSelector
     {
-        private readonly string _column;
+        private readonly ColumnHeader _column;
         private readonly GridViewColumn _gridViewColumn;
 
         private static readonly Dictionary<Type, Type> TemplateTypes = new Dictionary<Type, Type>
@@ -34,20 +35,22 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                                                //TODO turn these into a predicate
                                                                                {typeof(DoubleLabelledMatrix1D), typeof(LabelledMatrix1DCell)},
                                                                                {typeof(LocalDateLabelledMatrix1D), typeof(LabelledMatrix1DCell)},
-                                                                               {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)}
+
+                                                                               {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)},
+                                                                               {typeof(ColumnHeader), typeof(HeaderCell)},
                                                                            };
 
-        private static readonly Memoizer<string, Type, DataTemplate> TemplateMemoizer = new Memoizer<string, Type, DataTemplate>(BuildTemplate);
+        private static readonly Memoizer<ColumnHeader, Type, DataTemplate> TemplateMemoizer = new Memoizer<ColumnHeader, Type, DataTemplate>(BuildIndexedTemplate);
 
-        private static readonly Memoizer<Type, Func<object, string, object>> IndexerMemoizer = new Memoizer<Type, Func<object, string, object>>(BuildIndexer);
+        private static readonly Memoizer<Type, Func<object, ColumnHeader, object>> IndexerMemoizer = new Memoizer<Type, Func<object, ColumnHeader, object>>(BuildIndexer);
 
-        public CellTemplateSelector(string column, GridViewColumn gridViewColumn)
+        public CellTemplateSelector(ColumnHeader column, GridViewColumn gridViewColumn)
         {
             _column = column;
             _gridViewColumn = gridViewColumn;
         }
 
-        private static Func<object, string, object> BuildIndexer(Type t)
+        private static Func<object, ColumnHeader, object> BuildIndexer(Type t)
         {
             var indexerProperty = t.GetProperties().Where(p => p.GetIndexParameters().Length > 0).First();
             var getMethod = indexerProperty.GetGetMethod();
@@ -96,13 +99,17 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             _gridViewColumn.CellTemplate = template;
         }
 
-        private static DataTemplate BuildTemplate(string column, Type type)
+        private static DataTemplate BuildIndexedTemplate(object indexer, Type cellType)
+        {
+            return BuildTemplate(BindingUtils.GetIndexerBinding(indexer), cellType);
+        }
+        public static DataTemplate BuildTemplate(object context, Type cellType)
         {
             Type templateType;
-            if (TemplateTypes.TryGetValue(type, out templateType))
+            if (TemplateTypes.TryGetValue(cellType, out templateType))
             {
                 var comboFactory = new FrameworkElementFactory(templateType);
-                comboFactory.SetValue(FrameworkElement.DataContextProperty, BindingUtils.GetIndexerBinding(column));
+                comboFactory.SetValue(FrameworkElement.DataContextProperty, context);
 
                 var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
 
@@ -111,7 +118,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             else
             {
                 var comboFactory = new FrameworkElementFactory(typeof(TextBlock));
-                comboFactory.SetValue(TextBlock.TextProperty, BindingUtils.GetIndexerBinding(column));
+                comboFactory.SetValue(TextBlock.TextProperty, context);
                 var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
                 return itemsTemplate;
             }
