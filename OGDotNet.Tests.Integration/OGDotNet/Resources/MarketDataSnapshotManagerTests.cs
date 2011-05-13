@@ -68,8 +68,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     }
                 }
 
-                Assert.InRange(manageableMarketDataSnapshot.YieldCurves.Count, ExpectedYieldCurves(viewDefinition),
-                               int.MaxValue);
+                if (viewDefinition.Name != "GlobeOp Bond View Implied")
+                {
+                    Assert.InRange(manageableMarketDataSnapshot.YieldCurves.Count, ExpectedYieldCurves(viewDefinition), int.MaxValue);
+                }
                 if (viewDefinition.Name == "Equity Option Test View 1")
                 {
                     Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
