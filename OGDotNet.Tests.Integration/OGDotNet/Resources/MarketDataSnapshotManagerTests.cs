@@ -27,7 +27,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanCreateAndRunFromView()
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
-            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName))
+            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName)) //LAPANA-50 : this test should cover all viewdefns
             {
                 proc.Snapshot.Name = TestUtils.GetUniqueName();
                 Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
