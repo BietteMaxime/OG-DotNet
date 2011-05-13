@@ -187,6 +187,11 @@ namespace OGDotNet.AnalyticsViewer.View
                         }, cancellationToken);
                     };
 
+                eventViewResultListener.ProcessTerminated +=
+                    delegate {
+                        Invoke(() => SetStatus(string.Format("Process terminated @ {0}", DateTimeOffset.Now), true), cancellationToken);
+                    };
+
                 SetStatus(string.Format("Waiting for compilation..."));
                 client.SetViewResultMode(ViewResultMode.FullThenDelta);
                 client.SetResultListener(eventViewResultListener);
