@@ -75,6 +75,7 @@
     <Compile Include="Mappedtypes\Core\Position\Impl\TradeImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\Trade.cs" />
     <Compile Include="Mappedtypes\Core\Security\Security.cs" />
+    <Compile Include="Mappedtypes\DataNotFoundException.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTarget.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
@@ -117,6 +118,8 @@
     <Compile Include="Mappedtypes\financial\analytics\LocalDateLabelledMatrix1D.cs" />
     <Compile Include="Builders\CurrencyMatrixBuilder.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrixValue.cs" />
+    <Compile Include="Mappedtypes\financial\livedata\rest\AddValueRequest.cs" />
+    <Compile Include="Mappedtypes\financial\livedata\rest\RemoveValueRequest.cs" />
     <Compile Include="Mappedtypes\financial\Security\bond\BondSecurity.cs" />
     <Compile Include="Mappedtypes\financial\view\rest\AttachToViewProcessRequest.cs" />
     <Compile Include="Mappedtypes\Id\IUniqueIdentifiable.cs" />

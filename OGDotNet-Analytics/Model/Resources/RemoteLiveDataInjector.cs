@@ -6,10 +6,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Fudge;
-using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.financial.livedata.rest;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -26,24 +24,25 @@ namespace OGDotNet.Model.Resources
         public void AddValue(ValueRequirement valueRequirement, double value)
         {
             ArgumentChecker.NotNull(valueRequirement, "valueRequirement");
+            var addValueRequest = new AddValueRequest { Value = value, ValueRequirement = valueRequirement };
+            AddValue(addValueRequest);
+        }
 
-            FudgeMsg msg = new FudgeMsg(new Field("value", value));
-            GetValueReqTarget(valueRequirement).Put(msg);
+        private void AddValue(AddValueRequest addValueRequest)
+        {
+            _rest.Resolve("add").Post(addValueRequest);
         }
 
         public void RemoveValue(ValueRequirement valueRequirement)
         {
             ArgumentChecker.NotNull(valueRequirement, "valueRequirement");
-            var valueReqTarget = GetValueReqTarget(valueRequirement);
-            valueReqTarget.Delete();
+            var removeValueRequest = new RemoveValueRequest { ValueRequirement = valueRequirement };
+            RemoveValue(removeValueRequest);
         }
 
-        private RestTarget GetValueReqTarget(ValueRequirement valueRequirement)
+        private void RemoveValue(RemoveValueRequest removeValueRequest)
         {
-            return _rest.Resolve(
-                valueRequirement.ValueName,
-                EnumBuilder<ComputationTargetType>.GetJavaName(valueRequirement.TargetSpecification.Type),
-                valueRequirement.TargetSpecification.Uid.ToString());
+            _rest.Resolve("remove").Post(removeValueRequest);
         }
     }
 }
