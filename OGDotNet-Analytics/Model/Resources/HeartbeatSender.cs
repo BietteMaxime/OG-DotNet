@@ -7,7 +7,9 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Net;
 using System.Threading;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -33,7 +35,17 @@ namespace OGDotNet.Model.Resources
             {
                 throw new ArgumentException("Handle should never be set");
             }
-            SendHeartbeat();
+            try
+            {
+                SendHeartbeat();
+            }
+            catch(WebException)
+            {
+                    
+            }
+            catch (DataNotFoundException)
+            {
+            }
         }
 
         private void SendHeartbeat()

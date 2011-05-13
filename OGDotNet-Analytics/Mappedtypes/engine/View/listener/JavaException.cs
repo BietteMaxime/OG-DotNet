@@ -52,6 +52,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
                                                                                               {"java.lang.IllegalStateException", typeof(InvalidOperationException)},
                                                                                               {"com.opengamma.engine.view.permission.ViewPermissionException", typeof(ViewPermissionException)},
                                                                                               {"com.opengamma.OpenGammaRuntimeException", typeof(OpenGammaException)},
+                                                                                              {"com.opengamma.DataNotFoundException", typeof(DataNotFoundException)},
                                                                                               {"org.fudgemsg.FudgeRuntimeException", typeof(FudgeRuntimeException)}
                                                                                           };
 
