@@ -46,7 +46,11 @@ namespace OGDotNet.Model.Resources
 
         public string QueueName
         {
-            get { return _destination.QueueName; }
+            get
+            {
+                CheckDisposed();
+                return _destination.QueueName;
+            }
         }
 
         private T Deserialize(IMessage message)

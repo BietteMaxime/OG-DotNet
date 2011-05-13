@@ -58,6 +58,7 @@ namespace OGDotNet.Model.Context
         #region create snapshot
         public ManageableMarketDataSnapshot CreateSnapshotFromView(DateTimeOffset valuationTime, CancellationToken ct)
         {
+            CheckDisposed();
             ct.ThrowIfCancellationRequested();
 
             ct.ThrowIfCancellationRequested();
@@ -144,6 +145,8 @@ namespace OGDotNet.Model.Context
 
         public Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> GetAllResults(DateTimeOffset valuationTime, UniqueIdentifier snapshotIdentifier, CancellationToken ct = default(CancellationToken))
         {
+            CheckDisposed();
+
             ViewDefinition allDataViewDefn = GetAllDataViewDefn(ct, valuationTime);
 
             ct.ThrowIfCancellationRequested();

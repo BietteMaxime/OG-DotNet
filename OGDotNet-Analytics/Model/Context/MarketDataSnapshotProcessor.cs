@@ -62,7 +62,11 @@ namespace OGDotNet.Model.Context
 
         public ManageableMarketDataSnapshot Snapshot
         {
-            get { return _snapshot; }
+            get
+            {
+                CheckDisposed(); 
+                return _snapshot;
+            }
         }
 
         public UpdateAction PrepareUpdate(CancellationToken ct = default(CancellationToken))
@@ -77,6 +81,8 @@ namespace OGDotNet.Model.Context
 
         public UpdateAction PrepareYieldCurveUpdate(YieldCurveKey yieldCurveKey, CancellationToken ct = default(CancellationToken))
         {
+            CheckDisposed();
+
             if (!_snapshot.YieldCurves.ContainsKey(yieldCurveKey))
             {//TODO should I be able to add a yield curve like this?
                 throw new ArgumentException(string.Format("Nonexistant yield curve {0}", yieldCurveKey));
@@ -95,6 +101,7 @@ namespace OGDotNet.Model.Context
 
         private UpdateAction PrepareUpdate<T>(Func<ManageableMarketDataSnapshot, T> scopeSelector, CancellationToken ct = default(CancellationToken)) where T : IUpdatableFrom<T>
         {
+            CheckDisposed();
             ManageableMarketDataSnapshot newSnapshot = GetNewSnapshotForUpdate(ct);
             return PrepareUpdate(scopeSelector, newSnapshot);
         }
@@ -113,6 +120,8 @@ namespace OGDotNet.Model.Context
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
         {
+            CheckDisposed();
+
             var results = Evaluate(ct);
 
             var ret = new Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>>();
