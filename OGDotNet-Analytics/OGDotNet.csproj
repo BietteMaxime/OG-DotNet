@@ -85,6 +85,7 @@
     <Compile Include="Mappedtypes\engine\View\compilation\ICompiledViewCalculationConfiguration.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\CycleExecutionFailedCall.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\JavaException.cs" />
+    <Compile Include="Mappedtypes\engine\View\listener\ProcessTerminatedCall.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\ViewDefinitionCompilationFailedCall.cs" />
     <Compile Include="Mappedtypes\engine\View\client\ViewResultMode.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewDefinitionImpl.cs" />

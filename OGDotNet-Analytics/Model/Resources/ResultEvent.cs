@@ -34,6 +34,7 @@ namespace OGDotNet.Model.Resources
             var cycleFailedCall = _msg as CycleExecutionFailedCall;
 
             var completedCall = _msg as ProcessCompletedCall;
+            var terminatedCall = _msg as ProcessTerminatedCall;
             
             if (defnCompiled != null)
             {
@@ -54,6 +55,10 @@ namespace OGDotNet.Model.Resources
             else if (completedCall != null)
             {
                 resultListener.ProcessCompleted();
+            }
+            else if (terminatedCall != null)
+            {
+                resultListener.ProcessTerminated(terminatedCall.ExecutionInterrupted);
             }
             else
             {
