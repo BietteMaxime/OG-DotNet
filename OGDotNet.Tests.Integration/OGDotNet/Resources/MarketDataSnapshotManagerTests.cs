@@ -88,9 +88,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static int ExpectedYieldCurves(ViewDefinition viewDefinition)
         {
+            var yieldCurvesPerConfiguration = viewDefinition.CalculationConfigurationsByName.Select(
+                c => c.Value.SpecificRequirements.Where(r => r.ValueName.Contains("YieldCurve")).Count());
             return
-                viewDefinition.CalculationConfigurationsByName.Select(
-                    c => c.Value.SpecificRequirements.Where(r => r.ValueName.Contains("YieldCurve")).Count()).Distinct().Single();
+                yieldCurvesPerConfiguration.Distinct().Max();
         }
 
         [Theory]
