@@ -15,7 +15,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
     public class UpdateAction
     {
-        private readonly IEnumerable<Warning> _warnings;
+        private readonly List<Warning> _warnings;
         private readonly List<Action> _updateActions;
         private static readonly UpdateAction Empty = new UpdateAction(Enumerable.Empty<Action>(), Enumerable.Empty<Warning>());
 
@@ -36,7 +36,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private UpdateAction(IEnumerable<Action> updateActions, IEnumerable<Warning> warnings)
         {
-            _warnings = warnings;
+            _warnings = warnings.ToList();
             _updateActions = updateActions.ToList();
         }
 
