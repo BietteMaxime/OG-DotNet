@@ -187,7 +187,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             string curveName = TestUtils.GetUniqueName();
 
-            var yieldCurveDefinition = new YieldCurveDefinition(Currency.Create("USD"), curveName, "Linear") { Region = new Identifier("SOMEWHERE", "Europe") };
+            var yieldCurveDefinition = new YieldCurveDefinition(Currency.USD, curveName, "Linear") { Region = new Identifier("SOMEWHERE", "Europe") };
             yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.CASH });
             yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.TwoYears, InstrumentType = StripInstrumentType.FUTURE, NthFutureFromTenor = 23 });
             return new YieldCurveDefinitionDocument

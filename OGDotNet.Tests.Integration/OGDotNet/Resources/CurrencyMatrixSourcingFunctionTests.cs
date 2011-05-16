@@ -29,7 +29,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanGetIdentity()
         {
             CurrencyMatrixSourcingFunction currencyMatrixSourcingFunction = GetFunction();
-            var conversionRate = currencyMatrixSourcingFunction.GetConversionRate(GetValue, Currency.Create("USD"), Currency.Create("USD"));
+            var conversionRate = currencyMatrixSourcingFunction.GetConversionRate(GetValue, Currency.USD, Currency.USD);
             Assert.Equal(1.0, conversionRate);
         }
 
@@ -37,8 +37,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanGetNonIdentity()
         {
             CurrencyMatrixSourcingFunction currencyMatrixSourcingFunction = GetFunction();
-            var source = Currency.Create("USD");
-            var target = Currency.Create("GBP");
+            var source = Currency.USD;
+            var target = Currency.GBP;
 
             var conversionRate = currencyMatrixSourcingFunction.GetConversionRate(GetValue, source, target);
             Assert.NotEqual(1.0, conversionRate);

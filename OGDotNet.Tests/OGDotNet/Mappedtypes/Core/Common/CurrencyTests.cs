@@ -28,6 +28,13 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
         }
 
         [Fact]
+        public void CantGetStandardCurrenciesCurrency()
+        {
+            Assert.Equal(Currency.USD, Currency.Create("USD"));
+            Assert.Equal(Currency.EUR, Currency.Create("EUR"));
+        }
+
+        [Fact]
         public void CurrenciesAreEqual()
         {
             var a = Currency.Create("USD");

@@ -170,7 +170,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     manageableUnstructuredMarketDataSnapshot,
                     new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>
                         {
-                            {new YieldCurveKey(Currency.Create("USD"), "Default"), new ManageableYieldCurveSnapshot(manageableUnstructuredMarketDataSnapshot, DateTimeOffset.Now)}
+                            {new YieldCurveKey(Currency.USD, "Default"), new ManageableYieldCurveSnapshot(manageableUnstructuredMarketDataSnapshot, DateTimeOffset.Now)}
                         }
                     ) { Name = name });
         }

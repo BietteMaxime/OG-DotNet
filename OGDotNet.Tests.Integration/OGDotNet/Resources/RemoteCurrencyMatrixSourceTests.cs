@@ -39,10 +39,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var currencyMatrix = source.GetCurrencyMatrix("BloombergLiveData");
             Assert.NotNull(currencyMatrix);
 
-            Assert.True(currencyMatrix.SourceCurrencies.Contains(Currency.Create("USD")));
-            Assert.True(currencyMatrix.SourceCurrencies.Contains(Currency.Create("GBP")));
-            Assert.True(currencyMatrix.TargetCurrencies.Contains(Currency.Create("USD")));
-            Assert.True(currencyMatrix.TargetCurrencies.Contains(Currency.Create("GBP")));
+            Assert.True(currencyMatrix.SourceCurrencies.Contains(Currency.USD));
+            Assert.True(currencyMatrix.SourceCurrencies.Contains(Currency.GBP));
+            Assert.True(currencyMatrix.TargetCurrencies.Contains(Currency.USD));
+            Assert.True(currencyMatrix.TargetCurrencies.Contains(Currency.GBP));
 
             var valueTypes = new HashSet<Type>();
             var matchedTargets = new HashSet<Currency>();
@@ -62,7 +62,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     valueTypes.Add(fwd.GetType());
                 }
 
-                Assert.Contains(Currency.Create("USD"), foundTargets);
+                Assert.Contains(Currency.USD, foundTargets);
                 Assert.Contains(sourceCurrency, foundTargets);
                 var identityConversion = currencyMatrix.GetConversion(sourceCurrency, sourceCurrency);
                 Assert.True(identityConversion is CurrencyMatrixValue.CurrencyMatrixFixed);

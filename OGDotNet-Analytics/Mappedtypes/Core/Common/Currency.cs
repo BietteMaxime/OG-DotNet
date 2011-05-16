@@ -18,6 +18,91 @@ namespace OGDotNet.Mappedtypes.Core.Common
         private const string IdentificationDomain = "CurrencyISO";
         private static readonly Memoizer<string, Currency> InstanceMap = new Memoizer<string, Currency>(GetInstanceImpl);
 
+        // a selection of commonly traded, stable currencies
+
+        // ReSharper disable InconsistentNaming
+
+        /// <summary>
+        /// The currency 'USD' - United States Dollar.
+        /// </summary>
+        public static readonly Currency USD = Create("USD");
+        /// <summary>
+        /// The currency 'EUR' - Euro.
+        /// </summary>
+        public static readonly Currency EUR = Create("EUR");
+        /// <summary>
+        /// The currency 'JPY' - Japanese Yen.
+        /// </summary>
+        public static readonly Currency JPY = Create("JPY");
+        /// <summary>
+        /// The currency 'GBP' - British pound.
+        /// </summary>
+        public static readonly Currency GBP = Create("GBP");
+        /// <summary>
+        /// The currency 'EUR' - Swiss Franc.
+        /// </summary>
+        public static readonly Currency CHF = Create("CHF");
+        /// <summary>
+        /// The currency 'AUD' - Australian Dollar.
+        /// </summary>
+        public static readonly Currency AUD = Create("AUD");
+        /// <summary>
+        /// The currency 'CAD' - Canadian Dollar.
+        /// </summary>
+        public static readonly Currency CAD = Create("CAD");
+
+        /// <summary>
+        /// The currency 'DKK' - Dutch Krone
+        /// </summary>
+        public static readonly Currency DKK = Create("DKK");
+
+        /// <summary>
+        /// The currency 'DEM' - Deutsche Mark
+        /// </summary>
+        public static readonly Currency DEM = Create("DEM");
+
+        /// <summary>
+        /// The currency 'CZK' - Czeck Krona
+        /// </summary>
+        public static readonly Currency CZK = Create("CZK");
+
+        /// <summary>
+        /// The currency 'SEK' - Swedish Krona
+        /// </summary>
+        public static readonly Currency SEK = Create("SEK");
+
+        /// <summary>
+        /// The currency 'SKK' - Slovak Korona
+        /// </summary>
+        public static readonly Currency SKK = Create("SKK");
+
+        /// <summary>
+        /// The currency 'ITL' - Italian Lira
+        /// </summary>
+        public static readonly Currency ITL = Create("ITL");
+
+        /// <summary>
+        /// The currency 'HUF' = Hugarian Forint
+        /// </summary>
+        public static readonly Currency HUF = Create("HUF");
+
+        /// <summary>
+        /// The currency 'HKD' - Hong Kong Dollar
+        /// </summary>
+        public static readonly Currency HKD = Create("HKD");
+
+        /// <summary>
+        /// The currency 'FRF' - French Franc
+        /// </summary>
+        public static readonly Currency FRF = Create("FRF");
+
+        /// <summary>
+        /// The currency 'NOK' - Norwegian Krone 
+        /// </summary>
+        public static readonly Currency NOK = Create("NOK");
+
+        // ReSharper restore InconsistentNaming
+
         private static Currency GetInstanceImpl(string isoCode)
         {
             ArgumentChecker.NotEmpty(isoCode, "ISO Code");
