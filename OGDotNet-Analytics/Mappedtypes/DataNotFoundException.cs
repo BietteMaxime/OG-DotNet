@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-
 namespace OGDotNet.Mappedtypes
 {
     public class DataNotFoundException : OpenGammaException

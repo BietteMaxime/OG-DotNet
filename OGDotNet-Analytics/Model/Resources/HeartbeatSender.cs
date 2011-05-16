@@ -39,9 +39,8 @@ namespace OGDotNet.Model.Resources
             {
                 SendHeartbeat();
             }
-            catch(WebException)
+            catch (WebException)
             {
-                    
             }
             catch (DataNotFoundException)
             {

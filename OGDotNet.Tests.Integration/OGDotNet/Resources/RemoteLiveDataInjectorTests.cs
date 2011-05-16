@@ -47,7 +47,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-
         [Fact]
         public void CanRemoveValueByReq()
         {

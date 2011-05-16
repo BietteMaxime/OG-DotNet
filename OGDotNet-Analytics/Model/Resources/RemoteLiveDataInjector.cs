@@ -36,7 +36,6 @@ namespace OGDotNet.Model.Resources
             AddValue(new AddValueRequest { Identifier = identifier, ValueName = valueName, Value = value});
         }
 
-
         private void AddValue(AddValueRequest addValueRequest)
         {
             _rest.Resolve("add").Post(addValueRequest);

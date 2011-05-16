@@ -26,26 +26,32 @@ namespace OGDotNet.Mappedtypes.Core.Common
         /// The currency 'USD' - United States Dollar.
         /// </summary>
         public static readonly Currency USD = Create("USD");
+
         /// <summary>
         /// The currency 'EUR' - Euro.
         /// </summary>
         public static readonly Currency EUR = Create("EUR");
+
         /// <summary>
         /// The currency 'JPY' - Japanese Yen.
         /// </summary>
         public static readonly Currency JPY = Create("JPY");
+
         /// <summary>
         /// The currency 'GBP' - British pound.
         /// </summary>
         public static readonly Currency GBP = Create("GBP");
+
         /// <summary>
         /// The currency 'EUR' - Swiss Franc.
         /// </summary>
         public static readonly Currency CHF = Create("CHF");
+
         /// <summary>
         /// The currency 'AUD' - Australian Dollar.
         /// </summary>
         public static readonly Currency AUD = Create("AUD");
+
         /// <summary>
         /// The currency 'CAD' - Canadian Dollar.
         /// </summary>

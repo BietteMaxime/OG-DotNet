@@ -26,8 +26,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanCreateAndRunFromView()
         {
+            //LAPANA-50 : this test should cover all viewdefns
             var snapshotManager = Context.MarketDataSnapshotManager;
-            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName)) //LAPANA-50 : this test should cover all viewdefns
+            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName)) 
             {
                 proc.Snapshot.Name = TestUtils.GetUniqueName();
                 Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
@@ -44,7 +45,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static int CountResults(Tuple<IEnumerable<ViewDefinitionCompiledArgs>, IEnumerable<CycleCompletedArgs>> withSnapshot)
         {
-            return withSnapshot.Item2.Select(r=>r.FullResult.AllResults.Count()).Sum();
+            return withSnapshot.Item2.Select(r => r.FullResult.AllResults.Count()).Sum();
         }
 
         [Theory]

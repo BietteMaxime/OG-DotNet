@@ -183,7 +183,6 @@ namespace OGDotNet.Mappedtypes.engine.value
                 get { return false; }
             }
 
-
             public override bool IsSatisfiedBy(ValueProperties properties)
             {
                 return properties == Instance;
