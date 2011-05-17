@@ -67,12 +67,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var viewCalculationConfiguration = new ViewCalculationConfiguration("Default", new List<ValueRequirement> { req }, new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>());
                 viewDefinition.CalculationConfigurationsByName.Add("Default", viewCalculationConfiguration);
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
-
                 try
                 {
                     using (var viewClient = Context.ViewProcessor.CreateClient())
                     {
-                        var viewComputationResultModel = viewClient.GetResults(viewDefinition.Name, ExecutionOptions.RealTime).First();
+                        var viewComputationResultModel = viewClient.GetResults(viewDefinition.Name, ExecutionOptions.SingleCycle).First();
                         return (double)viewComputationResultModel["Default", req].Value;
                     }
                 }
