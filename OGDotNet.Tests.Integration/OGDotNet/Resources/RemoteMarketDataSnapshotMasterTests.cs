@@ -16,6 +16,7 @@ using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 
@@ -76,10 +77,26 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
-        public void CanAddAndGet()
+        public void CanAddAndGetGlobal()
         {
             var snapshotMaster = Context.MarketDataSnapshotMaster;
 
+            CanAddAndGet(snapshotMaster);
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanAddAndGetUser()
+        {
+            using (var remoteClient = Context.CreateUserClient())
+            {
+                var snapshotMaster = remoteClient.MarketDataSnapshotMaster;
+                CanAddAndGet(snapshotMaster);
+            }
+            
+        }
+
+        private static void CanAddAndGet(RemoteMarketDataSnapshotMaster snapshotMaster)
+        {
             var name = TestUtils.GetUniqueName();
 
             var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));

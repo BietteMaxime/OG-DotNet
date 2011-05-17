@@ -39,6 +39,14 @@ namespace OGDotNet.Model.Resources
             }
         }
 
+        public RemoteMarketDataSnapshotMaster MarketDataSnapshotMaster
+        {
+            get
+            {
+                return new RemoteMarketDataSnapshotMaster(_rest.Resolve("snapshots"));
+            }
+        }
+
         public InterpolatedYieldCurveDefinitionMaster InterpolatedYieldCurveDefinitionMaster
         {
             get
