@@ -133,7 +133,7 @@ namespace OGDotNet.Model.Context
             return ret;
         }
 
-        public Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> Evaluate(CancellationToken ct = default(CancellationToken))
+        private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> Evaluate(CancellationToken ct = default(CancellationToken))
         {
             var manageableMarketDataSnapshot = _snapshot.Clone();
             manageableMarketDataSnapshot.Name = typeof(MarketDataSnapshotProcessor).Name + " Temp";
