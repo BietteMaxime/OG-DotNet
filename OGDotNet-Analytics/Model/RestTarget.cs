@@ -209,7 +209,6 @@ namespace OGDotNet.Model
             }
         }
 
-
         public string EncodeBean(object bean)
         {
             using (var stream = new MemoryStream())
@@ -264,6 +263,5 @@ namespace OGDotNet.Model
         {
             return _fudgeContext.GetSerializer().Deserialize<TRet>(retMsg);
         }
-
     }
 }

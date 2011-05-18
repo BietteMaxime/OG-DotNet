@@ -16,12 +16,10 @@ namespace OGDotNet.Model.Resources
     internal class RemoteViewCycle : IViewCycle
     {
         private readonly RestTarget _location;
-        private readonly OpenGammaFudgeContext _fudgeContext;
 
-        public RemoteViewCycle(RestTarget location, OpenGammaFudgeContext fudgeContext)
+        public RemoteViewCycle(RestTarget location)
         {
             _location = location;
-            _fudgeContext = fudgeContext;
         }
 
         public UniqueIdentifier UniqueId

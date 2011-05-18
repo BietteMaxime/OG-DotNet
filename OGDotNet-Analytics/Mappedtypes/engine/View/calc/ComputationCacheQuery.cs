@@ -23,7 +23,6 @@ namespace OGDotNet.Mappedtypes.engine.View.calc
 
         public ComputationCacheQuery(string calculationConfigurationName, params ValueSpecification[] valueSpecifications) : this (calculationConfigurationName, valueSpecifications.ToList())
         {
-            
         }
         public ComputationCacheQuery(string calculationConfigurationName, IEnumerable<ValueSpecification> valueSpecifications)
         {
@@ -54,7 +53,6 @@ namespace OGDotNet.Mappedtypes.engine.View.calc
             foreach (var valueSpecification in _valueSpecifications)
             {
                 fudgeMsg.Add(null, null, s2.SerializeToMsg(valueSpecification));
-
             }
             a.Add("valueSpecifications", fudgeMsg);
         }

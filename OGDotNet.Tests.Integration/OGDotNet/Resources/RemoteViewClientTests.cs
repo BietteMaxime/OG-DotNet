@@ -307,11 +307,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     Assert.NotNull(engineResourceReference.Value.UniqueId);
                     var resultModel = engineResourceReference.Value.GetResultModel();
                     Assert.NotNull(resultModel);
-                    
-                    Assert.Throws<ArgumentException>(()=> engineResourceReference.Value.QueryComputationCaches(new ComputationCacheQuery("Default")));
+
+                    Assert.Throws<ArgumentException>(() => engineResourceReference.Value.QueryComputationCaches(new ComputationCacheQuery("Default")));
 
                     var computedValue = ((InMemoryViewComputationResultModel) resultModel).AllResults.First().ComputedValue;
-                    var valueSpec =computedValue.Specification;
+                    var valueSpec = computedValue.Specification;
 
                     var nonEmptyResponse = engineResourceReference.Value.QueryComputationCaches(new ComputationCacheQuery("Default", valueSpec));
 
@@ -322,7 +322,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     Assert.Equal(1, results.Count());
                     Assert.Equal(computedValue.Specification, results.Single().First);
                     Assert.Equal(computedValue.Value, results.Single().Second);
-
                 }
             }
         }

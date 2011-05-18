@@ -92,7 +92,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var snapshotMaster = remoteClient.MarketDataSnapshotMaster;
                 CanAddAndGet(snapshotMaster);
             }
-            
         }
 
         private static void CanAddAndGet(RemoteMarketDataSnapshotMaster snapshotMaster)

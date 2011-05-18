@@ -27,7 +27,6 @@ namespace OGDotNet.Builders
             var fudgeMsg = new FudgeMsg();
             serializer.WriteInline(fudgeMsg, "properties", obj.Properties);
             msg.Add("valueName", obj.ValueName);
-            
         }
 
         public override ValueSpecification DeserializeImpl(Fudge.IFudgeFieldContainer msg, Fudge.Serialization.IFudgeDeserializer deserializer)

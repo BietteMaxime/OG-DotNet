@@ -14,13 +14,11 @@ namespace OGDotNet.Model.Resources
     internal class RemoteViewCycleReference : DisposableBase, IEngineResourceReference<IViewCycle>
     {
         private readonly RestTarget _location;
-        private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly HeartbeatSender _heartbeatSender;
 
-        public RemoteViewCycleReference(RestTarget location, OpenGammaFudgeContext fudgeContext)
+        public RemoteViewCycleReference(RestTarget location)
         {
             _location = location;
-            _fudgeContext = fudgeContext;
             _heartbeatSender = new HeartbeatSender(TimeSpan.FromSeconds(5), _location);
         }
 

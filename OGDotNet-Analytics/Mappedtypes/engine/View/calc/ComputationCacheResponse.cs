@@ -14,7 +14,7 @@ namespace OGDotNet.Mappedtypes.engine.View.calc
 {
     public class ComputationCacheResponse
     {
-        private readonly IList<Pair<ValueSpecification, Object>> _results;
+        private readonly IList<Pair<ValueSpecification, object>> _results;
 
         public ComputationCacheResponse(IList<Pair<ValueSpecification, object>> results)
         {
