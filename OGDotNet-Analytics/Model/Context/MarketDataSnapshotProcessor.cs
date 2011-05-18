@@ -8,18 +8,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.engine;
-using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
-using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
-using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
@@ -116,80 +109,22 @@ namespace OGDotNet.Model.Context
             return _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now, ct);
         }
 
-        #region YieldCurveView
-
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
         {
             CheckDisposed();
-
-            var results = Evaluate(ct);
-
-            var ret = new Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>>();
-            foreach (var manageableYieldCurveSnapshot in _snapshot.YieldCurves)
-            {
-                ct.ThrowIfCancellationRequested();
-                ret.Add(manageableYieldCurveSnapshot.Key, GetYieldCurve(manageableYieldCurveSnapshot, results.Item2));
-            }
-            return ret;
-        }
-
-        private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> Evaluate(CancellationToken ct = default(CancellationToken))
-        {
             var manageableMarketDataSnapshot = _snapshot.Clone();
             manageableMarketDataSnapshot.Name = typeof(MarketDataSnapshotProcessor).Name + " Temp";
             manageableMarketDataSnapshot.UniqueId = null;
             var snapshot = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, manageableMarketDataSnapshot));
             try
             {
-                return _rawMarketDataSnapper.GetAllResults(DateTimeOffset.Now, snapshot.UniqueId, ct);
+                return _rawMarketDataSnapper.GetYieldCurves(snapshot.UniqueId, ct);
             }
             finally
             {
                 _marketDataSnapshotMaster.Remove(snapshot.UniqueId);
             }
         }
-
-        private static Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetYieldCurve(KeyValuePair<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurveSnapshot, InMemoryViewComputationResultModel results, CancellationToken ct = default(CancellationToken))
-        {
-            var curveResults =
-                results.AllResults
-                .Where(r => Matches(r, yieldCurveSnapshot.Key))
-                .ToLookup(c => c.ComputedValue.Specification.ValueName, c => c.ComputedValue.Value)
-                .ToDictionary(g => g.Key, g => g.First()); // We can get duplicate results in different configurations
-
-            var curve = (YieldCurve)curveResults[RawMarketDataSnapper.YieldCurveValueReqName];
-            var spec = (InterpolatedYieldCurveSpecificationWithSecurities)curveResults[RawMarketDataSnapper.YieldCurveSpecValueReqName];
-
-            return Tuple.Create(curve, spec);
-        }
-
-        private static bool Matches(ViewResultEntry r, YieldCurveKey key)
-        {
-            if (!r.ComputedValue.Specification.TargetSpecification.Uid.Equals(key.Currency.Identifier))
-                return false;
-
-            var curve = r.ComputedValue.Specification.Properties["Curve"];
-            return curve != null && curve.SequenceEqual(new[] { key.Name });
-        }
-
-        private static Tuple<ValueRequirement, double> GetOverrideTuple(KeyValuePair<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> kvp, KeyValuePair<string, ValueSnapshot> snap)
-        {
-            return new Tuple<ValueRequirement, double>(
-                GetOverrideReq(kvp.Key, snap),
-                snap.Value.OverrideValue ?? snap.Value.MarketValue
-                );
-        }
-
-        private static ValueRequirement GetOverrideReq(MarketDataValueSpecification target, KeyValuePair<string, ValueSnapshot> snap)
-        {
-            return new ValueRequirement(snap.Key, new ComputationTargetSpecification(ConvertToComputationTargetType(target), target.UniqueId));
-        }
-
-        private static ComputationTargetType ConvertToComputationTargetType(MarketDataValueSpecification target)
-        {
-            return EnumUtils<MarketDataValueType, ComputationTargetType>.ConvertTo(target.Type);
-        }
-        #endregion
 
         protected override void Dispose(bool disposing)
         {

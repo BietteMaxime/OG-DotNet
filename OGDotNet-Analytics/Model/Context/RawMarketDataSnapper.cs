@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,20 +14,19 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
-using OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph;
-using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Mappedtypes.engine.View.compilation;
+using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
-using OGDotNet.Mappedtypes.financial.view;
+using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Utils;
+using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Model.Context
 {
@@ -47,7 +45,6 @@ namespace OGDotNet.Model.Context
 
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly ViewDefinition _definition;
-        private Tuple<ICompiledViewDefinition, IEnumerable<ValueRequirement>> _yieldCurveSpecReqsCache;
 
         public RawMarketDataSnapper(RemoteEngineContext remoteEngineContext, ViewDefinition definition)
         {
@@ -59,53 +56,34 @@ namespace OGDotNet.Model.Context
         public ManageableMarketDataSnapshot CreateSnapshotFromView(DateTimeOffset valuationTime, CancellationToken ct)
         {
             CheckDisposed();
-            ct.ThrowIfCancellationRequested();
-
-            ct.ThrowIfCancellationRequested();
-            var t = GetAllResults(valuationTime, ct);
-            InMemoryViewComputationResultModel allResults = t.Item2;
-            var compiledViewDefinition = t.Item1;
-
-            ct.ThrowIfCancellationRequested();
-            var requiredLiveData = compiledViewDefinition.LiveDataRequirements;
             
-            ct.ThrowIfCancellationRequested();
-            return new ManageableMarketDataSnapshot(_definition.Name, GetUnstructuredData(allResults, requiredLiveData.Keys), GetYieldCurves(allResults));
+            return WithSingleCycle(delegate(InMemoryViewComputationResultModel results, IViewCycle viewCycle)
+                    {
+                        var globalValues = GetGlobalValues(results);
+                        var yieldCurves = GetYieldCurves(results, viewCycle).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot(yieldCurve.Value.Item2, globalValues, results.ValuationTime));
+
+                        return new ManageableMarketDataSnapshot(_definition.Name, globalValues, yieldCurves);
+                    }, ExecutionOptions.GetSingleCycle(valuationTime), ct);
         }
 
-        private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(InMemoryViewComputationResultModel tempResults)
+        private static YieldCurveKey GetYieldCurveKey(ValueSpecification y)
         {
-            var resultsByKey = tempResults.AllResults.Where(r => r.ComputedValue.Specification.ValueName == YieldCurveSpecValueReqName)
-                .Select(r => (InterpolatedYieldCurveSpecificationWithSecurities)r.ComputedValue.Value)
-                .ToLookup(GetYieldCurveKey, s => s);
-
-            var resultByKey = resultsByKey.ToDictionary(g => g.Key, g => g.First());
-
-            return resultByKey.ToDictionary(g => g.Key, g => GetYieldCurveSnapshot(g.Value, tempResults));
+            return new YieldCurveKey(Currency.Create(y.TargetSpecification.Uid), y.Properties["Curve"].Single());
         }
 
-        private static YieldCurveKey GetYieldCurveKey(InterpolatedYieldCurveSpecificationWithSecurities spec)
+        private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecificationWithSecurities spec, ManageableUnstructuredMarketDataSnapshot tempResults, DateTimeOffset valuationTime)
         {
-            return new YieldCurveKey(spec.Currency, spec.Name);
+            var specifications = spec.Strips.Select(s => new MarketDataValueSpecification(MarketDataValueType.Primitive,UniqueIdentifier.Of(s.SecurityIdentifier)));
+            var dict = specifications.ToDictionary<MarketDataValueSpecification, MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(s => s, 
+                s => new Dictionary<string, ValueSnapshot> {{MarketValueReqName, tempResults.Values[s][MarketValueReqName]}});
+
+            var values = new ManageableUnstructuredMarketDataSnapshot(dict);
+            return new ManageableYieldCurveSnapshot(values, valuationTime);
         }
 
-        private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecificationWithSecurities spec, InMemoryViewComputationResultModel tempResults)
+        private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(InMemoryViewComputationResultModel tempResults)
         {
-            ManageableUnstructuredMarketDataSnapshot values = GetUnstructuredSnapshot(tempResults, spec);
-
-            return new ManageableYieldCurveSnapshot(values, tempResults.ValuationTime);
-        }
-
-        private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredSnapshot(InMemoryViewComputationResultModel tempResults, InterpolatedYieldCurveSpecificationWithSecurities yieldCurveSpec)
-        {
-            //TODO do yield curves only take primitive market values?
-            IEnumerable<ValueRequirement> reqs = yieldCurveSpec.Strips.Select(s => new ValueRequirement(MarketValueReqName, new ComputationTargetSpecification(ComputationTargetType.Primitive, UniqueIdentifier.Of(s.SecurityIdentifier))));
-            return GetUnstructuredData(tempResults, reqs);
-        }
-
-        private static ManageableUnstructuredMarketDataSnapshot GetUnstructuredData(InMemoryViewComputationResultModel tempResults, IEnumerable<ValueRequirement> requiredDataSet)
-        {
-            var data = GetMatchingData(requiredDataSet, tempResults);
+            var data = tempResults.LiveData;
             var dataByTarget = data.ToLookup(r => new MarketDataValueSpecification(GetMarketType(r.Specification.TargetSpecification.Type), r.Specification.TargetSpecification.Uid));
             var dict = dataByTarget.ToDictionary(g => g.Key, GroupByValueName);
 
@@ -118,179 +96,87 @@ namespace OGDotNet.Model.Context
                 .ToDictionary(g => g.Key, g => new ValueSnapshot(g.Select(cv => cv.Value).Cast<double>().Distinct().Single()));
         }
 
-        private static IEnumerable<ComputedValue> GetMatchingData(IEnumerable<ValueRequirement> requiredDataSet, InMemoryViewComputationResultModel tempResults)
-        {
-            foreach (var valueRequirement in requiredDataSet)
-            {
-                foreach (var config in tempResults.CalculationResultsByConfiguration.Keys)
-                {
-                    ComputedValue ret;
-                    if (tempResults.TryGetComputedValue(config, valueRequirement, out ret))
-                    { // TODO what should I do if I can't get a value
-                        yield return ret;
-                        break;
-                    }
-                }
-                //TODO what should I do if I can't get a value
-            }
-        }
-
         private static MarketDataValueType GetMarketType(ComputationTargetType type)
         {
             return EnumUtils<ComputationTargetType, MarketDataValueType>.ConvertTo(type);
         }
         #endregion
 
-        #region view defn building
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(UniqueIdentifier snapshotIdentifier, CancellationToken ct)
+        {
+            return WithSingleCycle(GetYieldCurves, ExecutionOptions.Snapshot(snapshotIdentifier, DateTimeOffset.Now), ct);
+        }
 
-        public Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> GetAllResults(DateTimeOffset valuationTime, UniqueIdentifier snapshotIdentifier, CancellationToken ct = default(CancellationToken))
+        private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(InMemoryViewComputationResultModel results, IViewCycle viewCycle)
+        {
+            var yieldCurveSpecReqs = GetYieldCurveSpecReqs(results, YieldCurveSpecValueReqName, YieldCurveValueReqName);
+            var yieldCurves = new Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>>();
+
+            foreach (var yieldCurveSpecReq in yieldCurveSpecReqs)
+            {
+                var requiredSpecs = yieldCurveSpecReq.Value.Where(r => !yieldCurves.ContainsKey(GetYieldCurveKey(r)));
+                if (!requiredSpecs.Any())
+                {
+                    continue;
+                }
+                var computationCacheResponse = viewCycle.QueryComputationCaches(new ComputationCacheQuery(yieldCurveSpecReq.Key, requiredSpecs));
+
+                if (computationCacheResponse.Results.Count != requiredSpecs.Count())
+                {
+                    throw new ArgumentException("Failed to get all results");
+                }
+
+                var yieldCurveInfo = computationCacheResponse.Results.ToLookup(r => GetYieldCurveKey(r.First));
+                foreach (var result in yieldCurveInfo)
+                {
+                    var value = (YieldCurve) result.Where(r => r.First.ValueName == YieldCurveValueReqName).Single().Second;
+                    var spec = (InterpolatedYieldCurveSpecificationWithSecurities) result.Where(r => r.First.ValueName == YieldCurveSpecValueReqName).Single().Second;
+                    yieldCurves.Add(result.Key, Tuple.Create(value, spec));
+                }
+            }
+
+            return yieldCurves;
+        }
+
+        private T WithSingleCycle<T>(Func<InMemoryViewComputationResultModel, IViewCycle, T> func, IViewExecutionOptions executionOptions, CancellationToken ct)
         {
             CheckDisposed();
 
-            ViewDefinition allDataViewDefn = GetAllDataViewDefn(ct, valuationTime);
-
-            ct.ThrowIfCancellationRequested();
-            return RunOneCycle(allDataViewDefn, snapshotIdentifier);
-        }
-
-        private ViewDefinition GetAllDataViewDefn(CancellationToken ct, DateTimeOffset valuationTime)
-        {
-            ct.ThrowIfCancellationRequested();
-            var yieldCurveSpecReqs = GetYieldCurveSpecReqs(_definition, valuationTime);
-
-            ct.ThrowIfCancellationRequested();
-            return GetTempViewDefinition(_definition, new ResultModelDefinition(ResultOutputMode.All), yieldCurveSpecReqs);
-        }
-
-        private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> GetAllResults(DateTimeOffset valuationTime, CancellationToken ct)
-        {
-            ViewDefinition allDataViewDefn = GetAllDataViewDefn(ct, valuationTime);
-
-            ct.ThrowIfCancellationRequested();
-            return RunOneCycle(allDataViewDefn, valuationTime);
-        }
-
-        private IEnumerable<ValueRequirement> GetYieldCurveSpecReqs(ViewDefinition viewDefinition, DateTimeOffset valuationTime)
-        {
-            var cached = _yieldCurveSpecReqsCache;
-            if (cached != null && cached.Item1.IsValidFor(valuationTime))
+            using (var completed = new ManualResetEventSlim(false))
+            using (var remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient())
             {
-                return cached.Item2;
-            }
+                InMemoryViewComputationResultModel results = null;
+                var eventViewResultListener = new EventViewResultListener();
+                eventViewResultListener.ProcessCompleted += delegate { completed.Set(); };
+                eventViewResultListener.CycleCompleted +=
+                    delegate(object sender, CycleCompletedArgs e) { results = e.FullResult; };
+                remoteViewClient.SetResultListener(eventViewResultListener);
 
-            //TODO this is sloooow
-            var tempViewDefinition = GetTempViewDefinition(viewDefinition, new ResultModelDefinition(ResultOutputMode.All));
-            var tempResults = RunOneCycle(tempViewDefinition, valuationTime);
+                remoteViewClient.SetViewCycleAccessSupported(true);
+                remoteViewClient.AttachToViewProcess(_definition.Name, executionOptions);
 
-            var yieldCurveSpecReqs = GetYieldCurveSpecReqs(tempResults.Item2);
-            _yieldCurveSpecReqsCache = Tuple.Create(tempResults.Item1, yieldCurveSpecReqs);
-            return yieldCurveSpecReqs;
-        }
-
-        private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> RunOneCycle(ViewDefinition tempViewDefinition, UniqueIdentifier snapshotIdentifier)
-        {
-            var options = ExecutionOptions.Snapshot(snapshotIdentifier);
-            return RunOneCycle(tempViewDefinition, options);
-        }
-
-        private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> RunOneCycle(ViewDefinition tempViewDefinition, DateTimeOffset valuationTime)
-        {
-            var options = ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(valuationTime));
-            var results = RunOneCycle(tempViewDefinition, options);
-            return results;
-        }
-
-        private Tuple<ICompiledViewDefinition, InMemoryViewComputationResultModel> RunOneCycle(ViewDefinition tempViewDefinition, IViewExecutionOptions options)
-        {
-            using (var remoteClient = _remoteEngineContext.CreateUserClient())
-            {
-                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(tempViewDefinition));
-                try
+                completed.Wait(ct);
+                if (results == null)
                 {
-                    using (var completedEvent = new ManualResetEvent(false))
-                    using (var remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient())
-                    {
-                        var cycles = new ConcurrentQueue<CycleCompletedArgs>();
-                        var compiles = new ConcurrentQueue<ViewDefinitionCompiledArgs>();
-                        var errors = new ConcurrentQueue<object>();
-
-                        var listener = new EventViewResultListener();
-                        listener.ViewDefinitionCompiled += (sender, e) => compiles.Enqueue(e);
-                        listener.CycleCompleted += (sender, e) => cycles.Enqueue(e);
-
-                        listener.ViewDefinitionCompilationFailed += (sender, e) =>
-                                                                        {
-                                                                            completedEvent.Set();
-                                                                            errors.Enqueue(e);
-                                                                        };
-                        listener.CycleExecutionFailed += (sender, e) => 
-                                                                        {
-                                                                            completedEvent.Set();
-                                                                            errors.Enqueue(e);
-                                                                        };
-                        listener.ProcessCompleted += (sender, e) => completedEvent.Set();
-
-                        remoteViewClient.SetResultListener(listener);
-
-                        remoteViewClient.AttachToViewProcess(tempViewDefinition.Name, options);
-
-                        completedEvent.WaitOne();
-                        if (errors.Any())
-                        {
-                            var openGammaException = new OpenGammaException(string.Format("Error occured when executing view {0}", string.Join(", ", errors)));
-                            openGammaException.Data["ExecErrors"] = errors.ToList();
-                            throw openGammaException;
-                        }
-                        return Tuple.Create(compiles.Single().CompiledViewDefinition, cycles.Single().FullResult);
-                    }
+                    throw new OpenGammaException("Failed to get results");
                 }
-                finally
+
+                using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
                 {
-                    remoteClient.ViewDefinitionRepository.RemoveViewDefinition(tempViewDefinition.Name);
+                    var viewCycle = engineResourceReference.Value;
+                    return func(results, viewCycle);
                 }
             }
         }
 
-        private static IEnumerable<ValueRequirement> GetYieldCurveSpecReqs(InMemoryViewComputationResultModel tempResults)
+        private static Dictionary<string, IEnumerable<ValueSpecification>> GetYieldCurveSpecReqs(InMemoryViewComputationResultModel tempResults, params string[] yieldCurveValues)
         {
-            return tempResults.AllResults.Where(r => r.ComputedValue.Specification.ValueName == YieldCurveValueReqName).Select(r => r.ComputedValue.Specification).Select(r => new ValueRequirement(YieldCurveSpecValueReqName, r.TargetSpecification, r.Properties)).ToList();
+            //TODO: LAPANA-50 should be done from the dep graph
+            return tempResults.CalculationResultsByConfiguration.ToDictionary(config=>config.Key, config =>
+            config.Value.AllResults.Where(r => r.Specification.ValueName == YieldCurveValueReqName).Select(r => r.Specification)
+            .SelectMany(r => yieldCurveValues.Select(name => new ValueSpecification(name, r.TargetSpecification, r.Properties))))
+            ;
         }
-
-        private static ViewDefinition GetTempViewDefinition(ViewDefinition viewDefinition, ResultModelDefinition resultModelDefinition, IEnumerable<ValueRequirement> extraReqs = null)
-        {
-            extraReqs = extraReqs ?? Enumerable.Empty<ValueRequirement>();
-
-            var tempViewName = string.Format("{0}.{1}.{2}", typeof(MarketDataSnapshotManager).Name, viewDefinition.Name, Guid.NewGuid());
-
-            return new ViewDefinition(tempViewName, resultModelDefinition,
-                                      viewDefinition.PortfolioIdentifier,
-                                      viewDefinition.User,
-                                      viewDefinition.DefaultCurrency,
-                                      viewDefinition.MinDeltaCalcPeriod,
-                                      viewDefinition.MaxDeltaCalcPeriod,
-                                      viewDefinition.MinFullCalcPeriod,
-                                      viewDefinition.MaxFullCalcPeriod,
-                                      AddReqs(viewDefinition.CalculationConfigurationsByName, extraReqs)
-                );
-        }
-
-        private static Dictionary<string, ViewCalculationConfiguration> AddReqs(Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName, IEnumerable<ValueRequirement> extraReqs)
-        {
-            return calculationConfigurationsByName.ToDictionary(kvp => kvp.Key,
-                                                                kvp => AddReqs(kvp.Value, extraReqs)
-                );
-        }
-
-        private static ViewCalculationConfiguration AddReqs(ViewCalculationConfiguration calculationConfigurationsByName, IEnumerable<ValueRequirement> extraReqs)
-        {
-            var specificRequirements = calculationConfigurationsByName.SpecificRequirements.Concat(extraReqs).ToList();
-            return new ViewCalculationConfiguration(calculationConfigurationsByName.Name,
-                                                    specificRequirements,
-                                                    calculationConfigurationsByName.PortfolioRequirementsBySecurityType,
-                                                    calculationConfigurationsByName.DefaultProperties);
-        }
-
-        #endregion
 
         protected override void Dispose(bool disposing)
         {
