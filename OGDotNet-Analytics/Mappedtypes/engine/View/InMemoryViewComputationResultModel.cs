@@ -22,18 +22,25 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly DateTimeOffset _inputDataTimestamp;
         private readonly DateTimeOffset _resultTimestamp;
         private readonly IDictionary<string, ViewCalculationResultModel> _configurationMap;
+        private readonly List<ComputedValue> _liveData;
 
-        public InMemoryViewComputationResultModel(UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap)
+        public InMemoryViewComputationResultModel(UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, List<ComputedValue> liveData)
         {
             _viewProcessId = viewProcessId;
             _viewCycleId = viewCycleId;
             _inputDataTimestamp = inputDataTimestamp;
             _resultTimestamp = resultTimestamp;
             _configurationMap = configurationMap;
+            _liveData = liveData;
         }
 
         public DateTimeOffset ValuationTime { get { return _inputDataTimestamp; } }
         public DateTimeOffset ResultTimestamp { get { return _resultTimestamp; } }
+
+        public IEnumerable<ComputedValue> LiveData
+        {
+            get { return _liveData; }
+        }
 
         public override UniqueIdentifier ViewProcessId
         {

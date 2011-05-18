@@ -89,7 +89,8 @@ namespace OGDotNet.Builders
                 }
             }
 
-            return new InMemoryViewComputationResultModel(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap);
+            var liveData = msg.GetMessage("liveData").GetAllByOrdinal(1).Select(deserializer.FromField<ComputedValue>).ToList();
+            return new InMemoryViewComputationResultModel(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap, liveData);
         }
     }
 }
