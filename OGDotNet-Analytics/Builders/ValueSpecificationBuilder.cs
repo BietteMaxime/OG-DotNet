@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using Fudge;
+using Fudge.Serialization;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
@@ -17,6 +18,16 @@ namespace OGDotNet.Builders
     {
         public ValueSpecificationBuilder(FudgeContext context, Type type) : base(context, type)
         {
+        }
+
+        protected override void SerializeImpl(ValueSpecification obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
+        {
+            new ComputationTargetSpecificationBuilder(serializer.Context, typeof(ComputationTargetSpecification)).Serialize(obj.TargetSpecification, msg, serializer);
+
+            var fudgeMsg = new FudgeMsg();
+            serializer.WriteInline(fudgeMsg, "properties", obj.Properties);
+            msg.Add("valueName", obj.ValueName);
+            
         }
 
         public override ValueSpecification DeserializeImpl(Fudge.IFudgeFieldContainer msg, Fudge.Serialization.IFudgeDeserializer deserializer)

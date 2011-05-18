@@ -10,6 +10,7 @@ using System;
 using Fudge;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.client;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
@@ -192,6 +193,28 @@ namespace OGDotNet.Model.Resources
                 return 1 == (sbyte)reponse.GetByName("value").Value;
             }
         }
+
+        public bool GetViewCycleAccessSupported()
+        {
+            var reponse = _rest.Resolve("viewCycleAccessSupported").GetFudge();
+            return 1 == (sbyte)reponse.GetByName("value").Value;
+        }
+        public void SetViewCycleAccessSupported(bool isViewCycleAccessSupported)
+        {
+            var msg = _fudgeContext.NewMessage(
+                new Field("isViewCycleAccessSupported", isViewCycleAccessSupported)
+            );
+            _rest.Resolve("viewCycleAccessSupported").PostFudge(msg);
+        }
+
+        public IEngineResourceReference<IViewCycle> CreateLatestCycleReference()
+        {
+            var rest = _rest.Resolve("createLatestCycleReference");
+            var location = rest.Create(null);
+            return location == null ? null : new RemoteViewCycleReference(location);
+        }
+
+        //TODO EngineResourceReference<? extends IViewCycle> createCycleReference(UniqueIdentifier cycleId);
 
         public InMemoryViewComputationResultModel GetLatestResult()
         {

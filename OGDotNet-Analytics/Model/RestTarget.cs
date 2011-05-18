@@ -13,6 +13,7 @@ using System.Net;
 using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.engine.View.calc;
 
 namespace OGDotNet.Model
 {
@@ -60,16 +61,20 @@ namespace OGDotNet.Model
         public RestTarget Create(object reqObj)
         {
             FudgeSerializer fudgeSerializer = _fudgeContext.GetSerializer();
-            var reqMsg = fudgeSerializer.SerializeToMsg(reqObj);
+            var reqMsg = reqObj == null ? null : fudgeSerializer.SerializeToMsg(reqObj);
 
             using (HttpWebResponse response = RequestImpl("POST", reqMsg))
             {
-                if (response.StatusCode != HttpStatusCode.Created)
+                switch (response.StatusCode)
                 {
-                    throw new ArgumentException(string.Format("Response was not created {0}", response.StatusCode));
+                    case HttpStatusCode.Created:
+                    case HttpStatusCode.OK:
+                        return new RestTarget(_fudgeContext, new Uri(response.Headers["Location"]));
+                    case HttpStatusCode.NoContent:
+                        return null;
+                    default:
+                        throw new ArgumentException(string.Format("Response was not understood {0}", response.StatusCode));
                 }
-
-                return new RestTarget(_fudgeContext, new Uri(response.Headers["Location"]));
             }
         }
 
@@ -204,6 +209,18 @@ namespace OGDotNet.Model
             }
         }
 
+
+        public string EncodeBean(object bean)
+        {
+            using (var stream = new MemoryStream())
+            {
+                var reqMsg = _fudgeContext.GetSerializer().SerializeToMsg(bean);
+                _fudgeContext.Serialize(reqMsg, stream);
+                var buffer = stream.GetBuffer();
+                return Convert.ToBase64String(buffer, 0, (int) stream.Length, Base64FormattingOptions.None);
+            }
+        }
+
         private HttpWebResponse RequestImpl(string method = "GET", FudgeMsg reqMsg = null)
         {
             return RestExceptionMapping.GetWithExceptionMapping(delegate
@@ -247,5 +264,6 @@ namespace OGDotNet.Model
         {
             return _fudgeContext.GetSerializer().Deserialize<TRet>(retMsg);
         }
+
     }
 }

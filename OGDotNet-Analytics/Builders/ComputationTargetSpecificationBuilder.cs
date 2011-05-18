@@ -20,6 +20,12 @@ namespace OGDotNet.Builders
         {
         }
 
+        protected override void SerializeImpl(ComputationTargetSpecification obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
+        {
+            msg.Add("computationTargetType", EnumBuilder<ComputationTargetType>.GetJavaName(obj.Type));
+            msg.Add("computationTargetIdentifier", obj.Uid.ToString());
+        }
+
         public override ComputationTargetSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             ComputationTargetType? type = null;

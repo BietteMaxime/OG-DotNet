@@ -9,11 +9,16 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
+using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.client;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.engine.View.Execution;
@@ -23,6 +28,7 @@ using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
 using OGDotNet.Utils;
 using Xunit;
+using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -265,6 +271,59 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 remoteViewClient.AttachToViewProcess("Equity Option Test View 2", ExecutionOptions.RealTime);
                 Assert.True(compilationResult.TryTake(out result, timeout));
                 Assert.Equal("Equity Option Test View 2", result.ViewDefinition.Name);
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetCycleSupport()
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                remoteViewClient.SetViewCycleAccessSupported(false);
+                Assert.Equal(false, remoteViewClient.GetViewCycleAccessSupported());
+                remoteViewClient.SetViewCycleAccessSupported(true);
+                Assert.Equal(true, remoteViewClient.GetViewCycleAccessSupported());
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetCycle()
+        {
+            using (var executedMre = new ManualResetEventSlim(false))
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                var listener = new EventViewResultListener();
+                listener.ProcessCompleted += delegate { executedMre.Set(); };
+                
+                remoteViewClient.SetResultListener(listener);
+                remoteViewClient.SetViewCycleAccessSupported(true);
+                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", ExecutionOptions.SingleCycle);
+                Assert.Null(remoteViewClient.CreateLatestCycleReference());
+
+                executedMre.Wait(TimeSpan.FromMinutes(1));
+
+                using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
+                {
+                    Assert.NotNull(engineResourceReference.Value.UniqueId);
+                    var resultModel = engineResourceReference.Value.GetResultModel();
+                    Assert.NotNull(resultModel);
+                    
+                    Assert.Throws<ArgumentException>(()=> engineResourceReference.Value.QueryComputationCaches(new ComputationCacheQuery("Default")));
+
+                    var computedValue = ((InMemoryViewComputationResultModel) resultModel).AllResults.First().ComputedValue;
+                    var valueSpec =computedValue.Specification;
+
+                    var nonEmptyResponse = engineResourceReference.Value.QueryComputationCaches(new ComputationCacheQuery("Default", valueSpec));
+
+                    Assert.NotNull(nonEmptyResponse);
+
+                    var results = nonEmptyResponse.Results;
+                    Assert.NotEmpty(results);
+                    Assert.Equal(1, results.Count());
+                    Assert.Equal(computedValue.Specification, results.Single().First);
+                    Assert.Equal(computedValue.Value, results.Single().Second);
+
+                }
             }
         }
 
