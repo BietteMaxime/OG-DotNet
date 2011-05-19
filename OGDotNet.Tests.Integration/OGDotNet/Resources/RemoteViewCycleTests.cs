@@ -18,7 +18,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteViewCycleTests : ViewTestsBase
     {
-        
         [Xunit.Extensions.Fact]
         public void CanGetCycle()
         {
