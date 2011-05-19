@@ -96,6 +96,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             });
         }
 
+        [Xunit.Extensions.Fact]
+        public void CycleStaysAlive()
+        {
+            WithViewCycle(
+            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
+            {
+                Thread.Sleep(10000);
+                Assert.Equal(ViewCycleState.Executed, cycle.GetState());
+            });
+        }
+
         private static void WithViewCycle(Action<ViewDefinitionCompiledArgs, IViewCycle, RemoteViewClient> action)
         {
             using (var executedMre = new ManualResetEventSlim(false))
