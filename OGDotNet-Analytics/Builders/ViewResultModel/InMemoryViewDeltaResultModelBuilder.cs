@@ -25,7 +25,17 @@ namespace OGDotNet.Builders.ViewResultModel
 
         protected override InMemoryViewDeltaResultModel BuildObject(IFudgeFieldContainer msg, IFudgeDeserializer deserializer, Dictionary<string, ViewCalculationResultModel> configurationMap, UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp)
         {
-            var previousResultTimestamp = msg.GetValue<FudgeDateTime>("previousTS").ToDateTimeOffsetWithDefault();
+            var tsField = msg.GetByName("previousTS");
+            DateTimeOffset previousResultTimestamp;
+            if (tsField.Type == IndicatorFieldType.Instance)
+            {
+                previousResultTimestamp = default(DateTimeOffset);
+            }
+            else
+            {
+                previousResultTimestamp = ((FudgeDateTime)tsField.Value).ToDateTimeOffsetWithDefault();
+            }
+            
             return new InMemoryViewDeltaResultModel(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap, previousResultTimestamp);
         }
     }
