@@ -8,6 +8,7 @@
 using System;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
+using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 
@@ -28,6 +29,11 @@ namespace OGDotNet.Model.Resources
             {
                 return _location.Resolve("id").Get<UniqueIdentifier>();
             }
+        }
+
+        public ICompiledViewDefinitionWithGraphs GetCompiledViewDefinition()
+        {
+            return new RemoteCompiledViewDefinitionWithGraphs(_location.Resolve("compiledViewDefinition"));
         }
 
         public ViewComputationResultModel GetResultModel()

@@ -18,7 +18,7 @@ namespace OGDotNet.Builders
 
         protected BuilderBase(FudgeContext context, Type type)
         {
-            if (! type.IsAssignableFrom(typeof(T)))
+            if (!(type.IsAssignableFrom(typeof(T)) || typeof(T).IsAssignableFrom(type)))
             {
                 throw new ArgumentException("Type paramter doesn't match generic parameter", "type");
             }

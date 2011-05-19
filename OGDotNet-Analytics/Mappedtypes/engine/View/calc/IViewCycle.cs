@@ -13,7 +13,7 @@ namespace OGDotNet.Mappedtypes.engine.View.calc
 {
     public interface IViewCycle : IUniqueIdentifiable
     {
-        // TODO ICompiledViewDefinition GetCompiledViewDefinition();
+        ICompiledViewDefinitionWithGraphs GetCompiledViewDefinition();
         ViewComputationResultModel GetResultModel();
         ComputationCacheResponse QueryComputationCaches(ComputationCacheQuery computationCacheQuery);
     }

@@ -90,6 +90,7 @@
     <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewCalculationConfigurationImpl.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewDefinitionExtensions.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\ICompiledViewCalculationConfiguration.cs" />
+    <Compile Include="Mappedtypes\engine\View\compilation\ICompiledViewDefinitionWithGraphs.cs" />
     <Compile Include="Mappedtypes\engine\View\InMemoryViewDeltaResultModel.cs" />
     <Compile Include="Mappedtypes\engine\View\InMemoryViewResultModelBase.cs" />
     <Compile Include="Mappedtypes\engine\View\IViewResultModel.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Mappedtypes\financial\Security\bond\BondSecurity.cs" />
     <Compile Include="Mappedtypes\financial\view\rest\AttachToViewProcessRequest.cs" />
     <Compile Include="Mappedtypes\Id\IUniqueIdentifiable.cs" />
+    <Compile Include="Mappedtypes\javax\time\Instant.cs" />
     <Compile Include="Mappedtypes\math\curve\CurveExtensionMethods.cs" />
     <Compile Include="Mappedtypes\math\surface\ConstantDoublesSurface.cs" />
     <Compile Include="Mappedtypes\financial\model\volatility\surface\VolatilitySurface.cs" />
@@ -168,6 +170,7 @@
     <Compile Include="Model\Context\MarketDataSnapshot\Warnings\Warning.cs" />
     <Compile Include="Model\Resources\HeartbeatSender.cs" />
     <Compile Include="Model\Resources\IFinancialSecuritySource.cs" />
+    <Compile Include="Model\Resources\RemoteCompiledViewDefinitionWithGraphs.cs" />
     <Compile Include="Model\Resources\RemoteCurrencyMatrixSource.cs" />
     <Compile Include="Model\Resources\RemoteHistoricalDataSource.cs" />
     <Compile Include="Model\Resources\RemoteInterpolatedYieldCurveSpecificationBuilder.cs" />

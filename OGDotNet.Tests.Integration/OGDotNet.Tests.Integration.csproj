@@ -87,6 +87,7 @@
     <Compile Include="OGDotNet\Resources\RemoteViewClientBatchTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewClientExtensions.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewClientTests.cs" />
+    <Compile Include="OGDotNet\Resources\RemoteViewCycleTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewDefinitionRepositoryTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteViewProcessorTests.cs" />
     <Compile Include="OGDotNet\Resources\TestViewFactory.cs" />
