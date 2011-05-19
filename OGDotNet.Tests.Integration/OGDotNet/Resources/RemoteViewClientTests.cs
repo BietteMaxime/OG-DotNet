@@ -212,13 +212,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
-        [TypedPropertyData("FastTickingViewDefinitions")]
-        public void CanGetResultByPolling(ViewDefinition viewDefinition)
+        [Xunit.Extensions.Fact]
+        public void CanGetResultByPolling()
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.SingleCycle);
+                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", ExecutionOptions.SingleCycle);
 
                 while (true)
                 {

@@ -95,12 +95,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 yieldCurvesPerConfiguration.Distinct().Max();
         }
 
-        [Theory]
-        [TypedPropertyData("ViewDefinitions")]
-        public void CanUpdateFromView(ViewDefinition viewDefinition)
+        [Xunit.Extensions.Fact]
+        public void CanUpdateFromView()
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
-            using (var proc = snapshotManager.CreateFromViewDefinition(viewDefinition))
+            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName))
             {
                 var updated = proc.Snapshot;
 
