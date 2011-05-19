@@ -11,85 +11,92 @@ using System.Threading;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
+using OGDotNet.Model.Resources;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteViewCycleTests : ViewTestsBase
     {
+        
         [Xunit.Extensions.Fact]
         public void CanGetCycle()
         {
-            using (var executedMre = new ManualResetEventSlim(false))
-            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
-            {
-                var listener = new EventViewResultListener();
-                listener.ProcessCompleted += delegate { executedMre.Set(); };
+            WithViewCycle(
+           delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
+           {
+               Assert.NotNull(cycle.UniqueId);
+               var resultModel = cycle.GetResultModel();
+               Assert.NotNull(resultModel);
 
-                remoteViewClient.SetResultListener(listener);
-                remoteViewClient.SetViewCycleAccessSupported(true);
-                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", ExecutionOptions.SingleCycle);
-                Assert.Null(remoteViewClient.CreateLatestCycleReference());
+               var computedValue = resultModel.AllResults.First().ComputedValue;
+               var valueSpec = computedValue.Specification;
 
-                executedMre.Wait(TimeSpan.FromMinutes(1));
+               var nonEmptyResponse = cycle.QueryComputationCaches(new ComputationCacheQuery("Default", valueSpec));
 
-                using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
-                {
-                    var cycle = engineResourceReference.Value;
+               Assert.NotNull(nonEmptyResponse);
 
-                    Assert.NotNull(cycle.UniqueId);
-                    var resultModel = cycle.GetResultModel();
-                    Assert.NotNull(resultModel);
+               var results = nonEmptyResponse.Results;
+               Assert.NotEmpty(results);
+               Assert.Equal(1, results.Count());
+               Assert.Equal(computedValue.Specification, results.Single().First);
+               Assert.Equal(computedValue.Value, results.Single().Second);
 
-                    Assert.Throws<ArgumentException>(() => cycle.QueryComputationCaches(new ComputationCacheQuery("Default")));
-
-                    var computedValue = resultModel.AllResults.First().ComputedValue;
-                    var valueSpec = computedValue.Specification;
-
-                    var nonEmptyResponse = cycle.QueryComputationCaches(new ComputationCacheQuery("Default", valueSpec));
-
-                    Assert.NotNull(nonEmptyResponse);
-
-                    var results = nonEmptyResponse.Results;
-                    Assert.NotEmpty(results);
-                    Assert.Equal(1, results.Count());
-                    Assert.Equal(computedValue.Specification, results.Single().First);
-                    Assert.Equal(computedValue.Value, results.Single().Second);
-
-                    Assert.NotNull(cycle.GetViewProcessId());
-                    Assert.Equal(ViewCycleState.Executed, cycle.GetState());
-                    var duration = cycle.GetDurationNanos();
-                    Assert.InRange(duration, 10, long.MaxValue);
-                }
-            }
+               Assert.NotNull(cycle.GetViewProcessId());
+               Assert.Equal(ViewCycleState.Executed, cycle.GetState());
+               var duration = cycle.GetDurationNanos();
+               Assert.InRange(duration, 10, long.MaxValue);
+           });
         }
+
+        [Xunit.Extensions.Fact]
+        public void CantDoStupidCacheQuery()
+        {
+            WithViewCycle(
+            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
+            {
+                Assert.Throws<ArgumentException>(() => cycle.QueryComputationCaches(new ComputationCacheQuery("Default")));
+            });
+        }
+
 
         [Xunit.Extensions.Fact]
         public void CanGetCycleById()
         {
-            using (var executedMre = new ManualResetEventSlim(false))
-            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            WithViewCycle(
+            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
             {
-                var listener = new EventViewResultListener();
-                listener.ProcessCompleted += delegate { executedMre.Set(); };
-
-                remoteViewClient.SetResultListener(listener);
-                remoteViewClient.SetViewCycleAccessSupported(true);
-                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", ExecutionOptions.SingleCycle);
-                Assert.Null(remoteViewClient.CreateLatestCycleReference());
-
-                executedMre.Wait(TimeSpan.FromMinutes(1));
-
-                using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
+                using (
+                    var refById = client.CreateCycleReference(cycle.UniqueId))
                 {
-                    var refById = remoteViewClient.CreateCycleReference(engineResourceReference.Value.UniqueId);
-                    Assert.Equal(refById.Value.UniqueId, engineResourceReference.Value.UniqueId);
+                    Assert.Equal(refById.Value.UniqueId, cycle.UniqueId);
                 }
-            }
+            });
         }
 
         [Xunit.Extensions.Fact]
         public void CanGetViewDefintion()
+        {
+            WithViewCycle(
+            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
+            {
+                var compiledViewDefinition = cycle.GetCompiledViewDefinition();
+                Assert.NotNull(compiledViewDefinition.ViewDefinition);
+                Assert.NotEmpty(compiledViewDefinition.CompiledCalculationConfigurations);
+                Assert.Equal(compiled.CompiledViewDefinition.CompiledCalculationConfigurations.Keys, compiledViewDefinition.CompiledCalculationConfigurations.Keys);
+
+                Assert.Equal(compiled.CompiledViewDefinition.EarliestValidity, compiledViewDefinition.EarliestValidity);
+                Assert.Equal(compiled.CompiledViewDefinition.LatestValidity, compiledViewDefinition.LatestValidity);
+
+                Assert.NotEmpty(compiledViewDefinition.LiveDataRequirements);
+                Assert.Equal(compiled.CompiledViewDefinition.LiveDataRequirements.Count, compiledViewDefinition.LiveDataRequirements.Count);
+
+                Assert.NotNull(compiledViewDefinition.Portfolio);
+                Assert.Equal(compiled.CompiledViewDefinition.Portfolio.UniqueId, compiledViewDefinition.Portfolio.UniqueId);
+            });
+        }
+
+        private static void WithViewCycle(Action<ViewDefinitionCompiledArgs, IViewCycle, RemoteViewClient> action)
         {
             using (var executedMre = new ManualResetEventSlim(false))
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
@@ -110,19 +117,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
                 {
-                    var compiledViewDefinition = engineResourceReference.Value.GetCompiledViewDefinition();
-                    Assert.NotNull(compiledViewDefinition.ViewDefinition);
-                    Assert.NotEmpty(compiledViewDefinition.CompiledCalculationConfigurations);
-                    Assert.Equal(compiled.CompiledViewDefinition.CompiledCalculationConfigurations.Keys, compiledViewDefinition.CompiledCalculationConfigurations.Keys);
-                    
-                    Assert.Equal(compiled.CompiledViewDefinition.EarliestValidity, compiledViewDefinition.EarliestValidity);
-                    Assert.Equal(compiled.CompiledViewDefinition.LatestValidity, compiledViewDefinition.LatestValidity);
-
-                    Assert.NotEmpty(compiledViewDefinition.LiveDataRequirements);
-                    Assert.Equal(compiled.CompiledViewDefinition.LiveDataRequirements.Count, compiledViewDefinition.LiveDataRequirements.Count);
-
-                    Assert.NotNull(compiledViewDefinition.Portfolio);
-                    Assert.Equal(compiled.CompiledViewDefinition.Portfolio.UniqueId, compiledViewDefinition.Portfolio.UniqueId);
+                    action(compiled, engineResourceReference.Value, remoteViewClient);
                 }
             }
         }
