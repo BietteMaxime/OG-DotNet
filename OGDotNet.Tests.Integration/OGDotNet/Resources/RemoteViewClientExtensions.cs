@@ -18,12 +18,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public static class RemoteViewClientExtensions
     {
-        public static IEnumerable<InMemoryViewComputationResultModel> GetResults(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions)
+        public static IEnumerable<ViewComputationResultModel> GetResults(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions)
         {
             return client.GetResults(viewDefinitionName, executionOptions, false);
         }
 
-        public static IEnumerable<InMemoryViewComputationResultModel> GetResults(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
+        public static IEnumerable<ViewComputationResultModel> GetResults(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
         {
             return GetCycles(client, viewDefinitionName, executionOptions, newBatchProcess).Select(e => e.FullResult);
         }

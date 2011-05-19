@@ -62,6 +62,8 @@
     <Compile Include="Builders\EnumBuilder.cs" />
     <Compile Include="Builders\EnumUtils.cs" />
     <Compile Include="Builders\IdentifierBuilder.cs" />
+    <Compile Include="Builders\ViewResultModel\InMemoryViewDeltaResultModelBuilder.cs" />
+    <Compile Include="Builders\ViewResultModel\InMemoryViewResultModelBuilderBase.cs" />
     <Compile Include="Builders\MapBuilder.cs" />
     <Compile Include="Builders\PortfolioBuilder.cs" />
     <Compile Include="Builders\SerializerExtensions.cs" />
@@ -88,6 +90,9 @@
     <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewCalculationConfigurationImpl.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewDefinitionExtensions.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\ICompiledViewCalculationConfiguration.cs" />
+    <Compile Include="Mappedtypes\engine\View\InMemoryViewDeltaResultModel.cs" />
+    <Compile Include="Mappedtypes\engine\View\InMemoryViewResultModelBase.cs" />
+    <Compile Include="Mappedtypes\engine\View\IViewResultModel.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\CycleExecutionFailedCall.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\JavaException.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\ProcessTerminatedCall.cs" />
@@ -112,6 +117,7 @@
     <Compile Include="Mappedtypes\engine\Value\ValueRequirement.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewCalculationConfiguration.cs" />
     <Compile Include="Builders\LabelledMatrix1DBuilder.cs" />
+    <Compile Include="Mappedtypes\engine\View\ViewDeltaResultModel.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStrip.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStripWithIdentifier.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStripWithSecurity.cs" />
@@ -197,7 +203,7 @@
     <Compile Include="Model\Resources\RemoteSecuritySource.cs" />
     <Compile Include="Model\Resources\RemoteViewProcessor.cs" />
     <Compile Include="Model\Resources\RemoteViewClient.cs" />
-    <Compile Include="Builders\ViewComputationResultModelBuilder.cs" />
+    <Compile Include="Builders\ViewResultModel\ViewComputationResultModelBuilder.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewResultEntry.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewTargetResultModelImpl.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewCalculationResultModel.cs" />

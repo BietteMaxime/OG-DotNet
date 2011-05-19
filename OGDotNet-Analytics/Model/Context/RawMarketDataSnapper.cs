@@ -56,8 +56,8 @@ namespace OGDotNet.Model.Context
         public ManageableMarketDataSnapshot CreateSnapshotFromView(DateTimeOffset valuationTime, CancellationToken ct)
         {
             CheckDisposed();
-            
-            return WithSingleCycle(delegate(InMemoryViewComputationResultModel results, IViewCycle viewCycle)
+
+            return WithSingleCycle(delegate(ViewComputationResultModel results, IViewCycle viewCycle)
                     {
                         var globalValues = GetGlobalValues(results);
                         var yieldCurves = GetYieldCurves(results, viewCycle).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot(yieldCurve.Value.Item2, globalValues, results.ValuationTime));
@@ -73,17 +73,17 @@ namespace OGDotNet.Model.Context
 
         private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(InterpolatedYieldCurveSpecificationWithSecurities spec, ManageableUnstructuredMarketDataSnapshot tempResults, DateTimeOffset valuationTime)
         {
-            var specifications = spec.Strips.Select(s => new MarketDataValueSpecification(MarketDataValueType.Primitive,UniqueIdentifier.Of(s.SecurityIdentifier)));
-            var dict = specifications.ToDictionary<MarketDataValueSpecification, MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(s => s, 
-                s => new Dictionary<string, ValueSnapshot> {{MarketValueReqName, tempResults.Values[s][MarketValueReqName]}});
+            var specifications = spec.Strips.Select(s => new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of(s.SecurityIdentifier)));
+            var dict = specifications.ToDictionary(s => s,
+                s => (IDictionary<string, ValueSnapshot>)new Dictionary<string, ValueSnapshot> { { MarketValueReqName, tempResults.Values[s][MarketValueReqName] } });
 
             var values = new ManageableUnstructuredMarketDataSnapshot(dict);
             return new ManageableYieldCurveSnapshot(values, valuationTime);
         }
 
-        private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(InMemoryViewComputationResultModel tempResults)
+        private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(ViewComputationResultModel tempResults)
         {
-            var data = tempResults.LiveData;
+            var data = tempResults.AllLiveData;
             var dataByTarget = data.ToLookup(r => new MarketDataValueSpecification(GetMarketType(r.Specification.TargetSpecification.Type), r.Specification.TargetSpecification.Uid));
             var dict = dataByTarget.ToDictionary(g => g.Key, GroupByValueName);
 
@@ -107,7 +107,7 @@ namespace OGDotNet.Model.Context
             return WithSingleCycle(GetYieldCurves, ExecutionOptions.Snapshot(snapshotIdentifier, DateTimeOffset.Now), ct);
         }
 
-        private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(InMemoryViewComputationResultModel results, IViewCycle viewCycle)
+        private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(ViewComputationResultModel results, IViewCycle viewCycle)
         {
             var yieldCurveSpecReqs = GetYieldCurveSpecReqs(results, YieldCurveSpecValueReqName, YieldCurveValueReqName);
             var yieldCurves = new Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>>();
@@ -138,14 +138,14 @@ namespace OGDotNet.Model.Context
             return yieldCurves;
         }
 
-        private T WithSingleCycle<T>(Func<InMemoryViewComputationResultModel, IViewCycle, T> func, IViewExecutionOptions executionOptions, CancellationToken ct)
+        private T WithSingleCycle<T>(Func<ViewComputationResultModel, IViewCycle, T> func, IViewExecutionOptions executionOptions, CancellationToken ct)
         {
             CheckDisposed();
 
             using (var completed = new ManualResetEventSlim(false))
             using (var remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient())
             {
-                InMemoryViewComputationResultModel results = null;
+                ViewComputationResultModel results = null;
                 var eventViewResultListener = new EventViewResultListener();
                 eventViewResultListener.ProcessCompleted += delegate { completed.Set(); };
                 eventViewResultListener.CycleCompleted +=
@@ -169,13 +169,12 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        private static Dictionary<string, IEnumerable<ValueSpecification>> GetYieldCurveSpecReqs(InMemoryViewComputationResultModel tempResults, params string[] yieldCurveValues)
+        private static Dictionary<string, IEnumerable<ValueSpecification>> GetYieldCurveSpecReqs(ViewComputationResultModel tempResults, params string[] yieldCurveValues)
         {
             //TODO: LAPANA-50 should be done from the dep graph
-            return tempResults.CalculationResultsByConfiguration.ToDictionary(config=>config.Key, config =>
+            return tempResults.CalculationResultsByConfiguration.ToDictionary(config => config.Key, config =>
             config.Value.AllResults.Where(r => r.Specification.ValueName == YieldCurveValueReqName).Select(r => r.Specification)
-            .SelectMany(r => yieldCurveValues.Select(name => new ValueSpecification(name, r.TargetSpecification, r.Properties))))
-            ;
+            .SelectMany(r => yieldCurveValues.Select(name => new ValueSpecification(name, r.TargetSpecification, r.Properties))));
         }
 
         protected override void Dispose(bool disposing)

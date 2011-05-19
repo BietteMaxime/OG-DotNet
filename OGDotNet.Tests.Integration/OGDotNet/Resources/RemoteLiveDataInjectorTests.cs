@@ -81,7 +81,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 const double newValue = 1234.5678;
 
                 ManualResetEvent mre = new ManualResetEvent(false);
-                InMemoryViewComputationResultModel results = null;
+                ViewComputationResultModel results = null;
                 var listener = new EventViewResultListener();
                 listener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
                                                {
@@ -111,7 +111,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 const double newValue = 1234.5678;
 
                 ManualResetEvent mre = new ManualResetEvent(false);
-                InMemoryViewComputationResultModel results = null;
+                ViewComputationResultModel results = null;
                 var listener = new EventViewResultListener();
                 listener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
                 {

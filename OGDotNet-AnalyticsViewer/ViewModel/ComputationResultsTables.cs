@@ -53,7 +53,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         public void Update(CycleCompletedArgs results)
         {
-            var delta = results.FullResult ?? results.DeltaResult;
+            var delta = results.FullResult ?? (IViewResultModel) results.DeltaResult;
 
             var indexedResults = delta.AllResults.ToLookup(v => v.ComputedValue.Specification.TargetSpecification.Uid);
             

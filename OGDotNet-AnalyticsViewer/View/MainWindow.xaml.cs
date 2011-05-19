@@ -166,7 +166,7 @@ namespace OGDotNet.AnalyticsViewer.View
                 eventViewResultListener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
                                                               {
                                                                   resultsTable.Update(e);
-                                                                  SetStatus(GetMessage(e.FullResult ?? e.DeltaResult, ref count));
+                                                                  SetStatus(GetMessage(e.FullResult ?? (IViewResultModel)e.DeltaResult, ref count));
                                                               };
 
                 eventViewResultListener.ViewDefinitionCompilationFailed +=
@@ -199,7 +199,7 @@ namespace OGDotNet.AnalyticsViewer.View
             }
         }
 
-        private static string GetMessage(InMemoryViewComputationResultModel results, ref int count)
+        private static string GetMessage(IViewResultModel results, ref int count)
         {
             return string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (results.ResultTimestamp.ToUniversalTime() - results.ValuationTime.ToUniversalTime()).TotalMilliseconds, ++count);
         }

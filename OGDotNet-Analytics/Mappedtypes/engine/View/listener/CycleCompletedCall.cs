@@ -12,10 +12,10 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
 {
     internal class CycleCompletedCall
     {
-        private readonly InMemoryViewComputationResultModel _fullResult;
-        private readonly InMemoryViewComputationResultModel _deltaResult;
+        private readonly ViewComputationResultModel _fullResult;
+        private readonly ViewDeltaResultModel _deltaResult;
 
-        public CycleCompletedCall(InMemoryViewComputationResultModel fullResult, InMemoryViewComputationResultModel deltaResult)
+        public CycleCompletedCall(ViewComputationResultModel fullResult, ViewDeltaResultModel deltaResult)
         {
             if (fullResult == null && deltaResult == null)
             {
@@ -25,12 +25,12 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
             _deltaResult = deltaResult;
         }
 
-        public InMemoryViewComputationResultModel FullResult
+        public ViewComputationResultModel FullResult
         {
             get { return _fullResult; }
         }
 
-        public InMemoryViewComputationResultModel DeltaResult
+        public ViewDeltaResultModel DeltaResult
         {
             get { return _deltaResult; }
         }

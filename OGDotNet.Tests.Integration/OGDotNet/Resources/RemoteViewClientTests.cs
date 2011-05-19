@@ -159,6 +159,28 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 default:
                     throw new ArgumentOutOfRangeException("mode");
             }
+
+            CheckDeltas(results, mode);
+        }
+
+        private static void CheckDeltas(IEnumerable<CycleCompletedArgs> results, ViewResultMode mode)
+        {
+            var deltas = results.Select(r => r.DeltaResult);
+            switch (mode)
+            {
+                case ViewResultMode.Both:
+                case ViewResultMode.DeltaOnly:
+                    //Assert.Equal(default(DateTimeOffset), deltas.First().PreviousResultTimestamp);
+                    Assert.True(deltas.Skip(1).All(d => d.PreviousResultTimestamp != default(DateTimeOffset)));
+                    break;
+                case ViewResultMode.FullThenDelta:
+                    Assert.True(deltas.Skip(1).All(d => d.PreviousResultTimestamp != default(DateTimeOffset)));
+                    break;
+                case ViewResultMode.FullOnly:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("mode");
+            }
         }
 
         [Theory]
@@ -182,8 +204,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        static readonly Memoizer<string, InMemoryViewComputationResultModel> GetOneResultCache = new Memoizer<string, InMemoryViewComputationResultModel>(GetOneResult);
-        private static InMemoryViewComputationResultModel GetOneResult(string viewDefinitionName)
+        static readonly Memoizer<string, ViewComputationResultModel> GetOneResultCache = new Memoizer<string, ViewComputationResultModel>(GetOneResult);
+        private static ViewComputationResultModel GetOneResult(string viewDefinitionName)
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
@@ -199,7 +221,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 ICompiledViewDefinition compiledViewDefinition = null;
-                InMemoryViewComputationResultModel viewComputationResultModel = null;
+                ViewComputationResultModel viewComputationResultModel = null;
                 ManualResetEvent resultsReady = new ManualResetEvent(false);
 
                 var listener = new EventViewResultListener();
@@ -305,7 +327,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                     Assert.Throws<ArgumentException>(() => engineResourceReference.Value.QueryComputationCaches(new ComputationCacheQuery("Default")));
 
-                    var computedValue = ((InMemoryViewComputationResultModel) resultModel).AllResults.First().ComputedValue;
+                    var computedValue = resultModel.AllResults.First().ComputedValue;
                     var valueSpec = computedValue.Specification;
 
                     var nonEmptyResponse = engineResourceReference.Value.QueryComputationCaches(new ComputationCacheQuery("Default", valueSpec));

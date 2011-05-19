@@ -1,13 +1,11 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ViewComputationResultModelBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="InMemoryViewResultModelBuilderBase.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Fudge;
@@ -17,15 +15,15 @@ using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Builders
+namespace OGDotNet.Builders.ViewResultModel
 {
-    internal class ViewComputationResultModelBuilder : BuilderBase<InMemoryViewComputationResultModel>
+    internal abstract class InMemoryViewResultModelBuilderBase<T> : BuilderBase<T>
     {
-        public ViewComputationResultModelBuilder(FudgeContext context, Type type) : base(context, type)
+        protected InMemoryViewResultModelBuilderBase(FudgeContext context, Type type) : base(context, type)
         {
         }
 
-        public override InMemoryViewComputationResultModel DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
+        public override T DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             //TODO: these are supposed to be reliably non null
             var viewProcIdStr = msg.GetString("viewProcessId");
@@ -39,7 +37,7 @@ namespace OGDotNet.Builders
             var keys = new Queue<string>();
             var values = new Queue<ViewCalculationResultModel>();
 
-            foreach (var field in (IFudgeFieldContainer) msg.GetByName("results").Value)
+            foreach (var field in (IFudgeFieldContainer)msg.GetByName("results").Value)
             {
                 switch (field.Ordinal)
                 {
@@ -58,7 +56,7 @@ namespace OGDotNet.Builders
                         var map = new Dictionary<ComputationTargetSpecification, IDictionary<string, ComputedValue>>();
                         var mapAll = new Dictionary<ComputationTargetSpecification, ISet<ComputedValue>>();
 
-                        foreach (var f in (IFudgeFieldContainer) field.Value)
+                        foreach (var f in (IFudgeFieldContainer)field.Value)
                         {
                             var v = deserializer.FromField<ComputedValue>(f);
 
@@ -89,9 +87,9 @@ namespace OGDotNet.Builders
                 }
             }
 
-            var liveDataMsg = msg.GetMessage("liveData");
-            List<ComputedValue> liveData = liveDataMsg == null ? null : liveDataMsg.GetAllByOrdinal(1).Select(deserializer.FromField<ComputedValue>).ToList();
-            return new InMemoryViewComputationResultModel(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap, liveData);
+            return BuildObject(msg, deserializer, configurationMap, viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp);
         }
+
+        protected abstract T BuildObject(IFudgeFieldContainer msg, IFudgeDeserializer deserializer, Dictionary<string, ViewCalculationResultModel> configurationMap, UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp);
     }
 }

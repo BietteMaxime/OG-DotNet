@@ -57,7 +57,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
             InvokeViewDefinitionCompilationFailed(new ViewDefinitionCompilationFailedArgs(valuationTime, exception));
         }
 
-        void IViewResultListener.CycleCompleted(InMemoryViewComputationResultModel fullResult, InMemoryViewComputationResultModel deltaResult)
+        void IViewResultListener.CycleCompleted(ViewComputationResultModel fullResult, ViewDeltaResultModel deltaResult)
         {
             InvokeCycleCompleted(new CycleCompletedArgs(fullResult, deltaResult));
         }
@@ -162,21 +162,21 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
 
     public class CycleCompletedArgs : EventArgs
     {
-        private readonly InMemoryViewComputationResultModel _fullResult;
-        private readonly InMemoryViewComputationResultModel _deltaResult;
+        private readonly ViewComputationResultModel _fullResult;
+        private readonly ViewDeltaResultModel _deltaResult;
 
-        public CycleCompletedArgs(InMemoryViewComputationResultModel fullResult, InMemoryViewComputationResultModel deltaResult)
+        public CycleCompletedArgs(ViewComputationResultModel fullResult, ViewDeltaResultModel deltaResult)
         {
             _fullResult = fullResult;
             _deltaResult = deltaResult;
         }
 
-        public InMemoryViewComputationResultModel FullResult
+        public ViewComputationResultModel FullResult
         {
             get { return _fullResult; }
         }
 
-        public InMemoryViewComputationResultModel DeltaResult
+        public ViewDeltaResultModel DeltaResult
         {
             get { return _deltaResult; }
         }

@@ -216,9 +216,9 @@ namespace OGDotNet.Model.Resources
 
         //TODO EngineResourceReference<? extends IViewCycle> createCycleReference(UniqueIdentifier cycleId);
 
-        public InMemoryViewComputationResultModel GetLatestResult()
+        public ViewComputationResultModel GetLatestResult()
         {
-            return _rest.Resolve("latestResult").Get<InMemoryViewComputationResultModel>();
+            return _rest.Resolve("latestResult").Get<ViewComputationResultModel>();
         }
 
         public UniqueIdentifier GetUniqueId()
