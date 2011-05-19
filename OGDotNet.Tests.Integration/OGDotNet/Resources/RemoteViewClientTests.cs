@@ -364,6 +364,30 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        [Xunit.Extensions.Fact]
+        public void CanGetCycleById()
+        {
+            using (var executedMre = new ManualResetEventSlim(false))
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                var listener = new EventViewResultListener();
+                listener.ProcessCompleted += delegate { executedMre.Set(); };
+
+                remoteViewClient.SetResultListener(listener);
+                remoteViewClient.SetViewCycleAccessSupported(true);
+                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", ExecutionOptions.SingleCycle);
+                Assert.Null(remoteViewClient.CreateLatestCycleReference());
+
+                executedMre.Wait(TimeSpan.FromMinutes(1));
+
+                using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
+                {
+                    var refById = remoteViewClient.CreateCycleReference(engineResourceReference.Value.UniqueId);
+                    Assert.Equal(refById.Value.UniqueId, engineResourceReference.Value.UniqueId);
+                }
+            }
+        }
+
         [Theory]
         [TypedPropertyData("ViewDefinitions")]
         public void ViewResultsHaveSaneValues(ViewDefinition definition)

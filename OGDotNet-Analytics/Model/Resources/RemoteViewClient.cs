@@ -209,12 +209,14 @@ namespace OGDotNet.Model.Resources
 
         public IEngineResourceReference<IViewCycle> CreateLatestCycleReference()
         {
-            var rest = _rest.Resolve("createLatestCycleReference");
-            var location = rest.Create(null);
-            return location == null ? null : new RemoteViewCycleReference(location);
+            return CreateCycleReference(null);
         }
 
-        //TODO EngineResourceReference<? extends IViewCycle> createCycleReference(UniqueIdentifier cycleId);
+        public IEngineResourceReference<IViewCycle> CreateCycleReference(UniqueIdentifier cycleId)
+        {
+            var location = _rest.Resolve("createLatestCycleReference").Create(cycleId);
+            return location == null ? null : new RemoteViewCycleReference(location);
+        }
 
         public ViewComputationResultModel GetLatestResult()
         {
