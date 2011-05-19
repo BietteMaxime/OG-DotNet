@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Net;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Utils;
 
@@ -33,7 +34,21 @@ namespace OGDotNet.Model.Resources
         protected override void Dispose(bool disposing)
         {
             _heartbeatSender.Dispose();
-            _location.Delete();
+            try
+            {
+                _location.Delete();
+            }
+            catch (WebException e)
+            {
+                var httpWebResponse = (HttpWebResponse)e.Response;
+                switch (httpWebResponse.StatusCode)
+                {
+                    case HttpStatusCode.NotFound:
+                        break;
+                    default:
+                        throw;
+                }
+            }
         }
     }
 }
