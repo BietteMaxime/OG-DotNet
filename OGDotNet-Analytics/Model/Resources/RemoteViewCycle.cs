@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.compilation;
@@ -47,6 +48,23 @@ namespace OGDotNet.Model.Resources
             string msgBase64 = _location.EncodeBean(computationCacheQuery);
 
             return _location.Resolve("queryCaches", new Tuple<string, string>("msg", msgBase64)).Get<ComputationCacheResponse>();
+        }
+
+        public UniqueIdentifier GetViewProcessId()
+        {
+            return _location.Resolve("viewProcessId").Get<UniqueIdentifier>();
+        }
+
+        public ViewCycleState GetState()
+        {
+            var fudgeMsg = _location.Resolve("state").GetFudge();
+            return EnumBuilder<ViewCycleState>.Parse(fudgeMsg.GetString(1));
+        }
+
+        public long GetDurationNanos()
+        {
+            var fudgeMsg = _location.Resolve("duration").GetFudge();
+            return fudgeMsg.GetLong("value").Value;
         }
     }
 }

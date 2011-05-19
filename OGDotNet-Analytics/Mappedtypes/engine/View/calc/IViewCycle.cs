@@ -16,5 +16,10 @@ namespace OGDotNet.Mappedtypes.engine.View.calc
         ICompiledViewDefinitionWithGraphs GetCompiledViewDefinition();
         ViewComputationResultModel GetResultModel();
         ComputationCacheResponse QueryComputationCaches(ComputationCacheQuery computationCacheQuery);
+
+        UniqueIdentifier GetViewProcessId();
+
+        ViewCycleState GetState();
+        long GetDurationNanos();
     }
 }

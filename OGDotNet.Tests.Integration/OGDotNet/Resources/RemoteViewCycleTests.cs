@@ -35,16 +35,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
                 {
-                    Assert.NotNull(engineResourceReference.Value.UniqueId);
-                    var resultModel = engineResourceReference.Value.GetResultModel();
+                    var cycle = engineResourceReference.Value;
+
+                    Assert.NotNull(cycle.UniqueId);
+                    var resultModel = cycle.GetResultModel();
                     Assert.NotNull(resultModel);
 
-                    Assert.Throws<ArgumentException>(() => engineResourceReference.Value.QueryComputationCaches(new ComputationCacheQuery("Default")));
+                    Assert.Throws<ArgumentException>(() => cycle.QueryComputationCaches(new ComputationCacheQuery("Default")));
 
                     var computedValue = resultModel.AllResults.First().ComputedValue;
                     var valueSpec = computedValue.Specification;
 
-                    var nonEmptyResponse = engineResourceReference.Value.QueryComputationCaches(new ComputationCacheQuery("Default", valueSpec));
+                    var nonEmptyResponse = cycle.QueryComputationCaches(new ComputationCacheQuery("Default", valueSpec));
 
                     Assert.NotNull(nonEmptyResponse);
 
@@ -53,6 +55,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     Assert.Equal(1, results.Count());
                     Assert.Equal(computedValue.Specification, results.Single().First);
                     Assert.Equal(computedValue.Value, results.Single().Second);
+
+                    Assert.NotNull(cycle.GetViewProcessId());
+                    Assert.Equal(ViewCycleState.Executed, cycle.GetState());
+                    var duration = cycle.GetDurationNanos();
+                    Assert.InRange(duration, 10, long.MaxValue);
                 }
             }
         }
@@ -116,7 +123,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                     Assert.NotNull(compiledViewDefinition.Portfolio);
                     Assert.Equal(compiled.CompiledViewDefinition.Portfolio.UniqueId, compiledViewDefinition.Portfolio.UniqueId);
-                    
                 }
             }
         }
