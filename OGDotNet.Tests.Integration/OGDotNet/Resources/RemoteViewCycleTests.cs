@@ -58,7 +58,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             });
         }
 
-
         [Xunit.Extensions.Fact]
         public void CanGetCycleById()
         {
