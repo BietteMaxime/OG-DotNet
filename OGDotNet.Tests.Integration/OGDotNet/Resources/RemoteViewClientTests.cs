@@ -160,7 +160,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     throw new ArgumentOutOfRangeException("mode");
             }
 
-            CheckResults(results.SelectMany(c=>new IViewResultModel[]{c.FullResult, c.DeltaResult}).Where(r=>r!=null));
+            CheckResults(results.SelectMany(c => new IViewResultModel[] { c.FullResult, c.DeltaResult }).Where(r => r != null));
             CheckDeltas(results, mode);
         }
 
@@ -171,9 +171,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotNull(results.ViewCycleId);
                 Assert.NotNull(results.ViewProcessId);    
             }
-            
         }
-
 
         private static void CheckDeltas(IEnumerable<CycleCompletedArgs> results, ViewResultMode mode)
         {
@@ -197,9 +195,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             for (int i = 1; i < deltas.Count(); i++)
             {
-                if (deltas[i-1] != null)
+                var prevDelta = deltas[i - 1];
+                if (prevDelta != null)
                 {
-                    var prevTime = deltas[i - 1].ResultTimestamp;
+                    var prevTime = prevDelta.ResultTimestamp;
                     Assert.Equal(prevTime, deltas[i].PreviousResultTimestamp);    
                 }
             }
