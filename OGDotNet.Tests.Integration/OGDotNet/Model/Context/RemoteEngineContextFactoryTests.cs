@@ -28,7 +28,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Model.Context
             remoteEngineContextFactory.CreateRemoteEngineContext();
         }
 
-        [Fact]
+        [Fact(Timeout = 30000)]
         public void CreatingContextFromSlowUriThrows()
         {
             var remoteEngineContextFactory = GetContextFactory(new Uri("http://1.1.1.1"), "SomeConfig");
