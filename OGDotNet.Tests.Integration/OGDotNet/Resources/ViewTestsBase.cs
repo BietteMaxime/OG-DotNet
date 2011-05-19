@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Tests.Integration.Xunit.Extensions;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -72,14 +73,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static bool IsNotBanned(string n)
         {
-            return !BannedViews.Contains(n) && !ContainsGuid(n);
-        }
-
-        private static readonly Regex GuidRegex = new Regex(@"\w{8}\-\w{4}\-\w{4}\-\w{4}\-\w{12}", RegexOptions.Compiled);
-        private static bool ContainsGuid(string s)
-        {
-            var containsGuid = GuidRegex.IsMatch(s);
-            return containsGuid;
+            return !BannedViews.Contains(n) && !TestUtils.ContainsGuid(n);
         }
 
         public static IEnumerable<ViewDefinition> FastTickingViewDefinitions
