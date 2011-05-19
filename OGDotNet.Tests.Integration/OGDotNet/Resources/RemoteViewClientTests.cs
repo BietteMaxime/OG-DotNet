@@ -165,7 +165,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static void CheckDeltas(IEnumerable<CycleCompletedArgs> results, ViewResultMode mode)
         {
-            var deltas = results.Select(r => r.DeltaResult);
+            var deltas = results.Select(r => r.DeltaResult).ToList();
+
             switch (mode)
             {
                 case ViewResultMode.Both:
@@ -180,6 +181,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("mode");
+            }
+
+            for (int i = 1; i < deltas.Count(); i++)
+            {
+                if (deltas[i-1] != null)
+                {
+                    var prevTime = deltas[i - 1].ResultTimestamp;
+                    Assert.Equal(prevTime, deltas[i].PreviousResultTimestamp);    
+                }
             }
         }
 
