@@ -34,7 +34,6 @@ namespace OGDotNet.Model.Context
     /// This class handles getting values from the engine useful for creating snapshots
     /// <list type="table">
     /// <item>TODO: this implementation is evidence for the fact that the Snapshotting shouldn't be client</item>
-    /// <item>TODO: we fetch way more data then I think is neccesary</item>
     /// </list>
     /// </summary>
     internal class RawMarketDataSnapper : DisposableBase

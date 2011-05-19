@@ -25,7 +25,6 @@ namespace OGDotNet.Model.Context
     /// <para>This class handles creating and mutating snapshots based on Views and live data</para>
     /// <list type="table">
     /// <item>TODO: this implementation probably shouldn't be client side</item>
-    /// <item>TODO: we fetch way more data then I think is neccesary</item>
     /// </list>
     /// </summary>
     public class MarketDataSnapshotProcessor : DisposableBase
