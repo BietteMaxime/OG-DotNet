@@ -160,8 +160,20 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     throw new ArgumentOutOfRangeException("mode");
             }
 
+            CheckResults(results.SelectMany(c=>new IViewResultModel[]{c.FullResult, c.DeltaResult}).Where(r=>r!=null));
             CheckDeltas(results, mode);
         }
+
+        private static void CheckResults(IEnumerable<IViewResultModel> resultModels)
+        {
+            foreach (var results in resultModels)
+            {
+                Assert.NotNull(results.ViewCycleId);
+                Assert.NotNull(results.ViewProcessId);    
+            }
+            
+        }
+
 
         private static void CheckDeltas(IEnumerable<CycleCompletedArgs> results, ViewResultMode mode)
         {

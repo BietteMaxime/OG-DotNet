@@ -25,11 +25,10 @@ namespace OGDotNet.Builders.ViewResultModel
 
         public override T DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            //TODO: these are supposed to be reliably non null
             var viewProcIdStr = msg.GetString("viewProcessId");
-            UniqueIdentifier viewProcessId = string.IsNullOrEmpty(viewProcIdStr) ? null : UniqueIdentifier.Parse(viewProcIdStr);
+            UniqueIdentifier viewProcessId = UniqueIdentifier.Parse(viewProcIdStr);
             var viewCycleIdStr = msg.GetString("viewCycleId");
-            UniqueIdentifier viewCycleId = string.IsNullOrEmpty(viewCycleIdStr) ? null : UniqueIdentifier.Parse(msg.GetString("viewCycleId"));
+            UniqueIdentifier viewCycleId = UniqueIdentifier.Parse(viewCycleIdStr);
 
             var inputDataTimestamp = msg.GetValue<DateTimeOffset>("valuationTS");
             var resultTimestamp = msg.GetValue<DateTimeOffset>("resultTS");
