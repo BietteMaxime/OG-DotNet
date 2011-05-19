@@ -135,7 +135,7 @@ namespace OGDotNet.Model.Resources
 
         public void SetUpdatePeriod(long periodMillis)
         {
-            _rest.Resolve("updatePeriod").Post<object>(periodMillis, "updatePeriod");
+            _rest.Resolve("updatePeriod").Put(new FudgeMsg(new Field("updatePeriod", periodMillis)));
         }
 
         public void SetViewResultMode(ViewResultMode mode)

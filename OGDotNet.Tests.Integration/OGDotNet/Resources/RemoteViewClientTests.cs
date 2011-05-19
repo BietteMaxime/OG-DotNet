@@ -135,6 +135,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        [Xunit.Extensions.Fact]
+        public void CanSetUpdatePeriod()
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                remoteViewClient.SetUpdatePeriod(200);
+            }
+        }
+
         private static void Matches(ViewResultMode mode, IEnumerable<CycleCompletedArgs> results)
         {
             switch (mode)
