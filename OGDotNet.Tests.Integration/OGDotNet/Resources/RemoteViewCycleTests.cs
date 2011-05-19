@@ -106,10 +106,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var compiledViewDefinition = engineResourceReference.Value.GetCompiledViewDefinition();
                     Assert.NotNull(compiledViewDefinition.ViewDefinition);
                     Assert.NotEmpty(compiledViewDefinition.CompiledCalculationConfigurations);
+                    Assert.Equal(compiled.CompiledViewDefinition.CompiledCalculationConfigurations.Keys, compiledViewDefinition.CompiledCalculationConfigurations.Keys);
+                    
                     Assert.Equal(compiled.CompiledViewDefinition.EarliestValidity, compiledViewDefinition.EarliestValidity);
                     Assert.Equal(compiled.CompiledViewDefinition.LatestValidity, compiledViewDefinition.LatestValidity);
+
                     Assert.NotEmpty(compiledViewDefinition.LiveDataRequirements);
+                    Assert.Equal(compiled.CompiledViewDefinition.LiveDataRequirements.Count, compiledViewDefinition.LiveDataRequirements.Count);
+
                     Assert.NotNull(compiledViewDefinition.Portfolio);
+                    Assert.Equal(compiled.CompiledViewDefinition.Portfolio.UniqueId, compiledViewDefinition.Portfolio.UniqueId);
+                    
                 }
             }
         }
