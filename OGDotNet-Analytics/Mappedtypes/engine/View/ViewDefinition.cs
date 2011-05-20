@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -27,18 +28,18 @@ namespace OGDotNet.Mappedtypes.engine.view
 
         private readonly ResultModelDefinition _resultModelDefinition;
 
-        private readonly long? _minDeltaCalcPeriod;
-        private readonly long? _maxDeltaCalcPeriod;
+        private TimeSpan? _minDeltaCalcPeriod;
+        private TimeSpan? _maxDeltaCalcPeriod;
 
-        private readonly long? _minFullCalcPeriod;
-        private readonly long? _maxFullCalcPeriod;
+        private TimeSpan? _minFullCalcPeriod;
+        private TimeSpan? _maxFullCalcPeriod;
         private readonly Currency _defaultCurrency;
 
         private readonly Dictionary<string, ViewCalculationConfiguration> _calculationConfigurationsByName;
 
         private string _name;
 
-        public ViewDefinition(string name, ResultModelDefinition resultModelDefinition = null, UniqueIdentifier portfolioIdentifier = null, UserPrincipal user = null, Currency defaultCurrency = null, long? minDeltaCalcPeriod = null, long? maxDeltaCalcPeriod = null, long? minFullCalcPeriod = null, long? maxFullCalcPeriod = null, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName = null, UniqueIdentifier uniqueID = null)
+        public ViewDefinition(string name, ResultModelDefinition resultModelDefinition = null, UniqueIdentifier portfolioIdentifier = null, UserPrincipal user = null, Currency defaultCurrency = null, TimeSpan? minDeltaCalcPeriod = null, TimeSpan? maxDeltaCalcPeriod = null, TimeSpan? minFullCalcPeriod = null, TimeSpan? maxFullCalcPeriod = null, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName = null, UniqueIdentifier uniqueID = null)
         {
             _name = name;
             _uniqueID = uniqueID;
@@ -79,24 +80,28 @@ namespace OGDotNet.Mappedtypes.engine.view
             get { return _defaultCurrency; }
         }
 
-        public long? MinDeltaCalcPeriod
+        public TimeSpan? MinDeltaCalcPeriod
         {
             get { return _minDeltaCalcPeriod; }
+            set { _minDeltaCalcPeriod = value; }
         }
 
-        public long? MaxDeltaCalcPeriod
+        public TimeSpan? MaxDeltaCalcPeriod
         {
             get { return _maxDeltaCalcPeriod; }
+            set { _maxDeltaCalcPeriod = value; }
         }
 
-        public long? MinFullCalcPeriod
+        public TimeSpan? MinFullCalcPeriod
         {
             get { return _minFullCalcPeriod; }
+            set { _minFullCalcPeriod = value; }
         }
 
-        public long? MaxFullCalcPeriod
+        public TimeSpan? MaxFullCalcPeriod
         {
             get { return _maxFullCalcPeriod; }
+            set { _maxFullCalcPeriod = value; }
         }
 
         public Dictionary<string, ViewCalculationConfiguration> CalculationConfigurationsByName
@@ -121,11 +126,11 @@ namespace OGDotNet.Mappedtypes.engine.view
 
             var currency = ffc.GetValue<Currency>("currency");
 
-            var minDeltaCalcPeriod = ffc.GetLong("minDeltaCalcPeriod");
-            var maxDeltaCalcPeriod = ffc.GetLong("maxDeltaCalcPeriod");
+            var minDeltaCalcPeriod = ReadNullableTimeSpanField(ffc, "minDeltaCalcPeriod");
+            var maxDeltaCalcPeriod = ReadNullableTimeSpanField(ffc, "maxDeltaCalcPeriod");
 
-            var minFullCalcPeriod = ffc.GetLong("fullDeltaCalcPeriod");
-            var maxFullCalcPeriod = ffc.GetLong("maxFullCalcPeriod");
+            var minFullCalcPeriod = ReadNullableTimeSpanField(ffc, "fullDeltaCalcPeriod");
+            var maxFullCalcPeriod = ReadNullableTimeSpanField(ffc, "maxFullCalcPeriod");
 
             var calculationConfigurationsByName = ffc.GetAllByName("calculationConfiguration")
                                                     .Select(deserializer.FromField<ViewCalculationConfiguration>)
@@ -134,11 +139,17 @@ namespace OGDotNet.Mappedtypes.engine.view
             return new ViewDefinition(name, resultModelDefinition, portfolioIdentifier, user, currency, minDeltaCalcPeriod, maxDeltaCalcPeriod, minFullCalcPeriod, maxFullCalcPeriod, calculationConfigurationsByName, uniqueId);
         }
 
-        private static void WriteNullableLongField(IAppendingFudgeFieldContainer message, string name, long? value)
+        private static TimeSpan? ReadNullableTimeSpanField(IFudgeFieldContainer ffc, string fieldName)
+        {
+            var deltaCalcMillis = ffc.GetLong(fieldName);
+            return deltaCalcMillis.HasValue ? (TimeSpan?) TimeSpan.FromMilliseconds(deltaCalcMillis.Value) : null;
+        }
+
+        private static void WriteNullableTimeSpanField(IAppendingFudgeFieldContainer message, string name, TimeSpan? value)
         {
             if (value.HasValue)
             {
-                message.Add(name, value.Value);
+                message.Add(name, (long) value.Value.TotalMilliseconds);
             }
         }
 
@@ -158,10 +169,10 @@ namespace OGDotNet.Mappedtypes.engine.view
                 message.Add("currency", DefaultCurrency.ISOCode);
             }
 
-            WriteNullableLongField(message, "minDeltaCalcPeriod", MinDeltaCalcPeriod);
-            WriteNullableLongField(message, "maxDeltaCalcPeriod", MaxDeltaCalcPeriod);
-            WriteNullableLongField(message, "fullDeltaCalcPeriod", MinFullCalcPeriod);
-            WriteNullableLongField(message, "maxFullCalcPeriod", MinFullCalcPeriod);
+            WriteNullableTimeSpanField(message, "minDeltaCalcPeriod", MinDeltaCalcPeriod);
+            WriteNullableTimeSpanField(message, "maxDeltaCalcPeriod", MaxDeltaCalcPeriod);
+            WriteNullableTimeSpanField(message, "fullDeltaCalcPeriod", MinFullCalcPeriod);
+            WriteNullableTimeSpanField(message, "maxFullCalcPeriod", MaxFullCalcPeriod);
 
             foreach (var calcConfig in CalculationConfigurationsByName.Values)
             {
