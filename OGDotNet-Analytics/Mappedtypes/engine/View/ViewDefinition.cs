@@ -28,16 +28,17 @@ namespace OGDotNet.Mappedtypes.engine.view
 
         private readonly ResultModelDefinition _resultModelDefinition;
 
-        private TimeSpan? _minDeltaCalcPeriod;
-        private TimeSpan? _maxDeltaCalcPeriod;
-
-        private TimeSpan? _minFullCalcPeriod;
-        private TimeSpan? _maxFullCalcPeriod;
         private readonly Currency _defaultCurrency;
 
         private readonly Dictionary<string, ViewCalculationConfiguration> _calculationConfigurationsByName;
 
         private string _name;
+
+        private TimeSpan? _minDeltaCalcPeriod;
+        private TimeSpan? _maxDeltaCalcPeriod;
+
+        private TimeSpan? _minFullCalcPeriod;
+        private TimeSpan? _maxFullCalcPeriod;
 
         public ViewDefinition(string name, ResultModelDefinition resultModelDefinition = null, UniqueIdentifier portfolioIdentifier = null, UserPrincipal user = null, Currency defaultCurrency = null, TimeSpan? minDeltaCalcPeriod = null, TimeSpan? maxDeltaCalcPeriod = null, TimeSpan? minFullCalcPeriod = null, TimeSpan? maxFullCalcPeriod = null, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName = null, UniqueIdentifier uniqueID = null)
         {

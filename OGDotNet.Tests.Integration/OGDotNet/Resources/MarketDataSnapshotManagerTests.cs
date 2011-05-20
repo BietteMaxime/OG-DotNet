@@ -9,13 +9,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
+using OGDotNet.Mappedtypes.financial.view;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
+using OGDotNet.Model.Context;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 
@@ -139,6 +143,136 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                             Assert.Null(snapshot.Value.OverrideValue);
                         }
                     }
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void NoTicksViewDoesntTick()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+            WithNoTicksView(delegate(string viewName)
+            {
+                using (var proc = snapshotManager.CreateFromViewDefinition(viewName))
+                {
+                    proc.Snapshot.Name = TestUtils.GetUniqueName();
+                    Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
+
+                    using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+                    {
+                        var viewComputationResultModels = remoteViewClient.GetResults(viewName,
+                                                                                      ExecutionOptions.Snapshot(proc.Snapshot.UniqueId));
+                        using (var enumerator = viewComputationResultModels.GetEnumerator())
+                        {
+                            Assert.True(enumerator.MoveNext());
+                            var task = new Task<bool>(enumerator.MoveNext);
+                            task.Start();
+                            Assert.False(task.Wait(TimeSpan.FromSeconds(10)));
+                        }
+                    }
+                }
+            });
+        }
+        [Xunit.Extensions.Fact]
+        public void UpdatingSnapshotTicksView()
+        {
+            Assert.True(CausesTick(delegate(MarketDataSnapshotProcessor proc)
+                                       {
+                                           var action = proc.PrepareUpdate();
+                                           action.Execute();
+
+                                           Context.MarketDataSnapshotMaster.Update((new MarketDataSnapshotDocument(proc.Snapshot.UniqueId, proc.Snapshot)));
+                                       }));
+        }
+
+        [Xunit.Extensions.Fact]
+        public void AddingSnapshotDoesntTickView()
+        {
+            Assert.False(CausesTick(delegate(MarketDataSnapshotProcessor proc)
+            {
+                var action = proc.PrepareUpdate();
+                action.Execute();
+
+                proc.Snapshot.UniqueId = null;
+                Context.MarketDataSnapshotMaster.Add((new MarketDataSnapshotDocument(null, proc.Snapshot)));
+            }));
+        }
+
+        [Xunit.Extensions.Fact]
+        public void UpdatingSnapshotVersionedDoesntTickView()
+        {
+            Assert.False(CausesTick(
+                ExecutionOptions.Snapshot,
+                delegate(MarketDataSnapshotProcessor proc)
+                {
+                    var action = proc.PrepareUpdate();
+                    action.Execute();
+
+                    proc.Snapshot.UniqueId = null;
+                    Context.MarketDataSnapshotMaster.Add((new MarketDataSnapshotDocument(null, proc.Snapshot)));
+                }));
+        }
+
+        private static bool CausesTick(Action<MarketDataSnapshotProcessor> action)
+        {
+            return CausesTick(u => ExecutionOptions.Snapshot(u.ToLatest()), action);
+        }
+
+        private static bool CausesTick(Func<UniqueIdentifier, IViewExecutionOptions> optionsFactory, Action<MarketDataSnapshotProcessor> action)
+        {
+            bool ret = false;
+            var snapshotManager = Context.MarketDataSnapshotManager;
+            WithNoTicksView(delegate(string viewName)
+            {
+                using (var proc = snapshotManager.CreateFromViewDefinition(viewName))
+                {
+                    proc.Snapshot.Name = TestUtils.GetUniqueName();
+                    Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
+
+                    var options = optionsFactory(proc.Snapshot.UniqueId);
+
+                    using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+                    {
+                        var viewComputationResultModels = remoteViewClient.GetResults(viewName, options);
+                        using (var enumerator = viewComputationResultModels.GetEnumerator())
+                        {
+                            Assert.True(enumerator.MoveNext());
+
+                            var task = new Task<bool>(enumerator.MoveNext);
+                            task.Start();
+
+                            Assert.False(task.Wait(TimeSpan.FromSeconds(10)));
+
+                            action(proc);
+                            ret = task.Wait(TimeSpan.FromSeconds(10));
+                        }
+                    }
+                }
+            });
+            return ret;
+        }
+
+        private static void WithNoTicksView(Action<string> action)
+        {
+            using (var remoteClient = Context.CreateUserClient())
+            {
+                var viewDefinition =
+                    Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(RemoteViewClientBatchTests.ViewName);
+
+                viewDefinition.Name = string.Format("{0}-NoTicks-{1}", viewDefinition.Name, Guid.NewGuid());
+                
+                viewDefinition.MinFullCalcPeriod = null;
+                viewDefinition.MinDeltaCalcPeriod = null;
+                viewDefinition.MaxFullCalcPeriod = TimeSpan.FromDays(1);
+                viewDefinition.MaxDeltaCalcPeriod = TimeSpan.FromDays(1);
+                try
+                {
+                    remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
+                    action(viewDefinition.Name);
+                }
+                finally
+                {
+                    remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewDefinition.Name);
                 }
             }
         }
