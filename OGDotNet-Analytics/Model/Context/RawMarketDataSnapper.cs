@@ -74,7 +74,7 @@ namespace OGDotNet.Model.Context
         {
             var specifications = spec.Strips.Select(s => new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of(s.SecurityIdentifier)));
             var dict = specifications.ToDictionary(s => s,
-                s => (IDictionary<string, ValueSnapshot>)new Dictionary<string, ValueSnapshot> { { MarketValueReqName, tempResults.Values[s][MarketValueReqName] } });
+                s => (IDictionary<string, ValueSnapshot>)new Dictionary<string, ValueSnapshot> { { MarketValueReqName, new ValueSnapshot(tempResults.Values[s][MarketValueReqName].MarketValue) } });
 
             var values = new ManageableUnstructuredMarketDataSnapshot(dict);
             return new ManageableYieldCurveSnapshot(values, valuationTime);
