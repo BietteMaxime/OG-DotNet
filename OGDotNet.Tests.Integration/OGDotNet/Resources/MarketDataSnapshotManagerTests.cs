@@ -150,29 +150,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void NoTicksViewDoesntTick()
         {
-            var snapshotManager = Context.MarketDataSnapshotManager;
-            WithNoTicksView(delegate(string viewName)
-            {
-                using (var proc = snapshotManager.CreateFromViewDefinition(viewName))
-                {
-                    proc.Snapshot.Name = TestUtils.GetUniqueName();
-                    Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
-
-                    using (var remoteViewClient = Context.ViewProcessor.CreateClient())
-                    {
-                        var viewComputationResultModels = remoteViewClient.GetResults(viewName,
-                                                                                      ExecutionOptions.Snapshot(proc.Snapshot.UniqueId));
-                        using (var enumerator = viewComputationResultModels.GetEnumerator())
-                        {
-                            Assert.True(enumerator.MoveNext());
-                            var task = new Task<bool>(enumerator.MoveNext);
-                            task.Start();
-                            Assert.False(task.Wait(TimeSpan.FromSeconds(10)));
-                        }
-                    }
-                }
-            });
+            Assert.False(CausesTick(ExecutionOptions.Snapshot, p => { }));
         }
+
         [Xunit.Extensions.Fact]
         public void UpdatingSnapshotTicksView()
         {
@@ -245,6 +225,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                             action(proc);
                             ret = task.Wait(TimeSpan.FromSeconds(10));
+                            if (! ret)
+                            {
+                                ((Task) task).ContinueWith(t => { var ignore = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
+                            }
                         }
                     }
                 }
