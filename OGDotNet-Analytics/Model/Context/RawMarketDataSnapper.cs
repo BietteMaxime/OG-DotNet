@@ -103,7 +103,7 @@ namespace OGDotNet.Model.Context
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(UniqueIdentifier snapshotIdentifier, CancellationToken ct)
         {
-            return WithSingleCycle(GetYieldCurves, ExecutionOptions.Snapshot(snapshotIdentifier, DateTimeOffset.Now), ct);
+            return WithSingleCycle(GetYieldCurves, ExecutionOptions.Snapshot(snapshotIdentifier), ct);
         }
 
         private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(ViewComputationResultModel results, IViewCycle viewCycle)
@@ -148,7 +148,11 @@ namespace OGDotNet.Model.Context
                 var eventViewResultListener = new EventViewResultListener();
                 eventViewResultListener.ProcessCompleted += delegate { completed.Set(); };
                 eventViewResultListener.CycleCompleted +=
-                    delegate(object sender, CycleCompletedArgs e) { results = e.FullResult; };
+                    delegate(object sender, CycleCompletedArgs e)
+                        {
+                            results = e.FullResult;
+                            completed.Set();
+                        };
                 remoteViewClient.SetResultListener(eventViewResultListener);
 
                 remoteViewClient.SetViewCycleAccessSupported(true);
