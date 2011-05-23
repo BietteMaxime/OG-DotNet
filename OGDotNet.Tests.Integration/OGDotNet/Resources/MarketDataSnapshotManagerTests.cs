@@ -7,14 +7,13 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
-using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
@@ -32,24 +31,32 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             //LAPANA-50 : this test should cover all viewdefns
             var snapshotManager = Context.MarketDataSnapshotManager;
-            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName)) 
+            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName))
             {
                 proc.Snapshot.Name = TestUtils.GetUniqueName();
                 Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
-
+                
                 var options = ExecutionOptions.SingleCycle;
-                var withoutSnapshot = RemoteViewClientBatchTests.RunToCompletion(options);
+                ViewComputationResultModel withoutSnapshot = GetFirstResult(options);
 
                 options = ExecutionOptions.Snapshot(proc.Snapshot.UniqueId);
-                var withSnapshot = RemoteViewClientBatchTests.RunToCompletion(options);
+                var withSnapshot = GetFirstResult(options);
 
                 Assert.Equal(CountResults(withoutSnapshot), CountResults(withSnapshot));
             }
         }
 
-        private static int CountResults(Tuple<IEnumerable<ViewDefinitionCompiledArgs>, IEnumerable<CycleCompletedArgs>> withSnapshot)
+        private static ViewComputationResultModel GetFirstResult(IViewExecutionOptions options)
         {
-            return withSnapshot.Item2.Select(r => r.FullResult.AllResults.Count()).Sum();
+            using (var remoteViewClient2 = Context.ViewProcessor.CreateClient())
+            {
+                return remoteViewClient2.GetResults(RemoteViewClientBatchTests.ViewName, options).First();
+            }
+        }
+
+        private static int CountResults(ViewComputationResultModel results)
+        {
+            return results.AllResults.Count();
         }
 
         [Theory]
