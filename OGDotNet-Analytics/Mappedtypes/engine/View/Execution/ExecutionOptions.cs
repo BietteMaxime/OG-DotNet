@@ -59,12 +59,6 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
                 true);
         }
 
-        public static IViewExecutionOptions Snapshot(UniqueIdentifier snapshotIdentifier, DateTimeOffset valuationTime)
-        {
-            //TODO this should tick as well, but there's no repeated execution sequence yet
-            return new ExecutionOptions(ArbitraryViewCycleExecutionSequence.Of(valuationTime), true, false, null, false, snapshotIdentifier);
-        }
-
         public static IViewExecutionOptions Snapshot(UniqueIdentifier snapshotIdentifier)
         {
             return new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), false, true, null, false, snapshotIdentifier);
