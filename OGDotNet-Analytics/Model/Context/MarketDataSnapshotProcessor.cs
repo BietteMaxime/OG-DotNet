@@ -77,7 +77,7 @@ namespace OGDotNet.Model.Context
 
             var shallowClone = new ManageableMarketDataSnapshot(_snapshot.BasisViewName, _snapshot.GlobalValues, _snapshot.YieldCurves, _snapshot.UniqueId)
                                    {
-                                       Name = typeof (MarketDataSnapshotProcessor).Name + " Temp",
+                                       Name = typeof(MarketDataSnapshotProcessor).Name + " Temp",
                                        UniqueId = null
                                    };
             var snapshot = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, shallowClone));

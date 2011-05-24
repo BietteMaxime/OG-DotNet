@@ -134,7 +134,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                                                 (k, v) => PrepareRemoveAction(currSpec, k, v),
                                                 (k, v) =>
                                                     {
-                                                        var valueSnapshot =v.Clone();
+                                                        var valueSnapshot = v.Clone();
                                                         return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(
                                                                 delegate(ManageableUnstructuredMarketDataSnapshot s)
                                                                     {
