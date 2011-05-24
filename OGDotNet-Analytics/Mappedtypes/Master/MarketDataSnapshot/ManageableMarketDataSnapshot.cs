@@ -118,7 +118,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             return new UpdateAction<ManageableMarketDataSnapshot>(
                delegate(ManageableMarketDataSnapshot snap)
                {
-                   snap._yieldCurves.Add(key, manageableYieldCurveSnapshot);
+                   snap._yieldCurves.Add(key, manageableYieldCurveSnapshot.Clone());
                    snap.InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
                }
                );
