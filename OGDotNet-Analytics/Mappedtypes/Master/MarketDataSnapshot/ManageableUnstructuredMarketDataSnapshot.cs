@@ -181,16 +181,38 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         public static ManageableUnstructuredMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var dictionary = new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>();
-            var enumerable = ffc.GetAllByOrdinal(1).Select(deserializer.FromField<Entry>);
-            foreach (var entry in enumerable)
+            foreach (var entryField in ffc.GetAllByOrdinal(1))
             {
+                var entryMsg = (IFudgeFieldContainer) entryField.Value;
+                MarketDataValueSpecification valueSpec = null;
+                string valueName = null;
+                ValueSnapshot value = null;
+
+                foreach (var field in entryMsg)
+                {
+                    switch (field.Name)
+                    {
+                        case "valueSpec":
+                            valueSpec = deserializer.FromField<MarketDataValueSpecification>(field);
+                            break;
+                        case "valueName":
+                            valueName = (string) field.Value;
+                            break;
+                        case "value":
+                            value = deserializer.FromField<ValueSnapshot>(field);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }          
+                }
+
                 IDictionary<string, ValueSnapshot> innerDict;
-                if (! dictionary.TryGetValue(entry.ValueSpec, out innerDict))
+                if (!dictionary.TryGetValue(valueSpec, out innerDict))
                 {
                     innerDict = new Dictionary<string, ValueSnapshot>();
-                    dictionary[entry.ValueSpec] = innerDict;
+                    dictionary[valueSpec] = innerDict;
                 }
-                innerDict.Add(entry.ValueName, entry.Value);
+                innerDict.Add(valueName, value);
             }
             return new ManageableUnstructuredMarketDataSnapshot(dictionary);
         }
@@ -223,35 +245,6 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, e);
-        }
-
-        public class Entry
-        {
-            private readonly MarketDataValueSpecification valueSpec;
-            private readonly string valueName;
-            private readonly ValueSnapshot value;
-
-            public Entry(MarketDataValueSpecification valueSpec, string valueName, ValueSnapshot value)
-            {
-                this.valueSpec = valueSpec;
-                this.valueName = valueName;
-                this.value = value;
-            }
-
-            public MarketDataValueSpecification ValueSpec
-            {
-                get { return valueSpec; }
-            }
-
-            public string ValueName
-            {
-                get { return valueName; }
-            }
-
-            public ValueSnapshot Value
-            {
-                get { return value; }
-            }
         }
 
         public ManageableUnstructuredMarketDataSnapshot Clone()
