@@ -210,7 +210,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                 if (!dictionary.TryGetValue(valueSpec, out innerDict))
                 {
                     innerDict = new Dictionary<string, ValueSnapshot>();
-                    dictionary[valueSpec] = innerDict;
+                    dictionary.Add(valueSpec, innerDict);
                 }
                 innerDict.Add(valueName, value);
             }
