@@ -17,8 +17,10 @@ using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Context;
+using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 
@@ -128,7 +130,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var action = proc.PrepareUpdate();
                 Assert.Empty(action.Warnings);
                 Assert.False(seenUpdate);
-                action.Execute();
+                action.Execute(updated);
                 Assert.True(seenUpdate);
 
                 Assert.Null(updated.Name);
@@ -155,6 +157,64 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
+        public void UpdateCanBeReverseApplied()
+        {
+            WeakReference z;
+            UpdateAction<ManageableMarketDataSnapshot> x;
+            WeakReference y;
+            ReverseApply(out x, out y, out z);
+        }
+
+        [Xunit.Extensions.Fact]
+        public void UpdateDoesntReferenceSnapshot()
+        {
+            WeakReference z;
+            UpdateAction<ManageableMarketDataSnapshot> x;
+            WeakReference y;
+            ReverseApply(out x, out y, out z);
+            GC.Collect();
+            Assert.False(z.IsAlive);
+            Assert.False(y.IsAlive);
+        }
+
+        private static void ReverseApply(out UpdateAction<ManageableMarketDataSnapshot> fwdAction, out WeakReference beforeRef, out WeakReference afterRef)
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName))
+            {
+                beforeRef = new WeakReference(proc.Snapshot);
+
+                using (var newProc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName))
+                {
+                    afterRef = new WeakReference(newProc.Snapshot);
+                    //TODO more strict
+                    var testedMds = proc.Snapshot.GlobalValues.Values.First().Key;
+                    var valueSnapshots = newProc.Snapshot.GlobalValues.Values[testedMds];
+                    valueSnapshots.Remove(valueSnapshots.Keys.First());
+
+                    UpdateAction<ManageableMarketDataSnapshot> fwd = proc.Snapshot.PrepareUpdateFrom(newProc.Snapshot);
+                    UpdateAction<ManageableMarketDataSnapshot> bwd = newProc.Snapshot.PrepareUpdateFrom(proc.Snapshot);
+
+                    fwdAction = fwd;
+
+                    var pre = proc.Snapshot.GlobalValues.Values[testedMds].ToDictionary(k => k.Key, k => k.Value.MarketValue);
+
+                    fwd.Execute(proc.Snapshot);
+                    bwd.Execute(proc.Snapshot);
+
+                    var post = proc.Snapshot.GlobalValues.Values[testedMds].ToDictionary(k => k.Key, k => k.Value.MarketValue);
+
+                    Assert.True(pre.Keys.Concat(post.Keys).All(k => pre[k] == post[k]));
+                    
+                    bwd.Execute(newProc.Snapshot);
+                    fwd.Execute(newProc.Snapshot);
+                    
+                    //TODO check No-op
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
         public void NoTicksViewDoesntTick()
         {
             Assert.False(CausesTick(ExecutionOptions.Snapshot, p => { }));
@@ -166,7 +226,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.True(CausesTick(delegate(MarketDataSnapshotProcessor proc)
                                        {
                                            var action = proc.PrepareUpdate();
-                                           action.Execute();
+                                           action.Execute(proc.Snapshot);
 
                                            Context.MarketDataSnapshotMaster.Update((new MarketDataSnapshotDocument(proc.Snapshot.UniqueId, proc.Snapshot)));
                                        }));
@@ -178,7 +238,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.False(CausesTick(delegate(MarketDataSnapshotProcessor proc)
             {
                 var action = proc.PrepareUpdate();
-                action.Execute();
+                action.Execute(proc.Snapshot);
 
                 proc.Snapshot.UniqueId = null;
                 Context.MarketDataSnapshotMaster.Add((new MarketDataSnapshotDocument(null, proc.Snapshot)));
@@ -193,7 +253,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 delegate(MarketDataSnapshotProcessor proc)
                 {
                     var action = proc.PrepareUpdate();
-                    action.Execute();
+                    action.Execute(proc.Snapshot);
 
                     proc.Snapshot.UniqueId = null;
                     Context.MarketDataSnapshotMaster.Add((new MarketDataSnapshotDocument(null, proc.Snapshot)));

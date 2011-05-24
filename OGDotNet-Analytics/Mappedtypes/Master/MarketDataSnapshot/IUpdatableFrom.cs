@@ -10,8 +10,8 @@ using OGDotNet.Model.Context.MarketDataSnapshot;
 
 namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 {
-    internal interface IUpdatableFrom<in T>
+    public interface IUpdatableFrom<T>
     {
-        UpdateAction PrepareUpdateFrom(T newObject);
+        UpdateAction<T> PrepareUpdateFrom(T newObject);
     }
 }

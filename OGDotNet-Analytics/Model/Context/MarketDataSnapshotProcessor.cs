@@ -61,49 +61,12 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        public UpdateAction PrepareUpdate(CancellationToken ct = default(CancellationToken))
+        public UpdateAction<ManageableMarketDataSnapshot> PrepareUpdate(CancellationToken ct = default(CancellationToken))
         {
-            return PrepareUpdate(s => s, ct);
+            return Snapshot.PrepareUpdateFrom(GetNewSnapshotForUpdate(ct));
         }
 
-        public UpdateAction PrepareGlobalValuesUpdate(CancellationToken ct = default(CancellationToken))
-        {
-            return PrepareUpdate(s => s.GlobalValues, ct);
-        }
-
-        public UpdateAction PrepareYieldCurveUpdate(YieldCurveKey yieldCurveKey, CancellationToken ct = default(CancellationToken))
-        {
-            CheckDisposed();
-
-            if (!_snapshot.YieldCurves.ContainsKey(yieldCurveKey))
-            {//TODO should I be able to add a yield curve like this?
-                throw new ArgumentException(string.Format("Nonexistant yield curve {0}", yieldCurveKey));
-            }
-
-            ManageableMarketDataSnapshot newSnapshot = GetNewSnapshotForUpdate(ct);
-            if (newSnapshot.YieldCurves.ContainsKey(yieldCurveKey))
-            {
-                return PrepareUpdate(s => s.YieldCurves[yieldCurveKey], newSnapshot);
-            }
-            else
-            {
-                return _snapshot.PrepareRemoveAction(yieldCurveKey, _snapshot.YieldCurves[yieldCurveKey]);
-            }
-        }
-
-        private UpdateAction PrepareUpdate<T>(Func<ManageableMarketDataSnapshot, T> scopeSelector, CancellationToken ct = default(CancellationToken)) where T : IUpdatableFrom<T>
-        {
-            CheckDisposed();
-            ManageableMarketDataSnapshot newSnapshot = GetNewSnapshotForUpdate(ct);
-            return PrepareUpdate(scopeSelector, newSnapshot);
-        }
-
-        private UpdateAction PrepareUpdate<T>(Func<ManageableMarketDataSnapshot, T> scopeSelector, ManageableMarketDataSnapshot newSnapshot) where T : IUpdatableFrom<T>
-        {
-            return scopeSelector(Snapshot).PrepareUpdateFrom(scopeSelector(newSnapshot));
-        }
-
-        private ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct)
+        public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))
         {
             return _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now, ct);
         }
@@ -111,10 +74,13 @@ namespace OGDotNet.Model.Context
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
         {
             CheckDisposed();
-            var manageableMarketDataSnapshot = _snapshot.Clone();
-            manageableMarketDataSnapshot.Name = typeof(MarketDataSnapshotProcessor).Name + " Temp";
-            manageableMarketDataSnapshot.UniqueId = null;
-            var snapshot = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, manageableMarketDataSnapshot));
+
+            var shallowClone = new ManageableMarketDataSnapshot(_snapshot.BasisViewName, _snapshot.GlobalValues, _snapshot.YieldCurves, _snapshot.UniqueId)
+                                   {
+                                       Name = typeof (MarketDataSnapshotProcessor).Name + " Temp",
+                                       UniqueId = null
+                                   };
+            var snapshot = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, shallowClone));
             try
             {
                 return _rawMarketDataSnapper.GetYieldCurves(snapshot.UniqueId, ct);

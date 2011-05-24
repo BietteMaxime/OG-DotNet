@@ -10,7 +10,6 @@ using System;
 using System.ComponentModel;
 using Fudge;
 using Fudge.Serialization;
-using Fudge.Types;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 
@@ -37,15 +36,17 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             get { return _values; }
         }
 
-        public UpdateAction PrepareUpdateFrom(ManageableYieldCurveSnapshot other)
+        public UpdateAction<ManageableYieldCurveSnapshot> PrepareUpdateFrom(ManageableYieldCurveSnapshot other)
         {
-            UpdateAction valuesAction = _values.PrepareUpdateFrom(other._values);
-            var timeAction = new UpdateAction(delegate
+            var valuesAction = _values.PrepareUpdateFrom(other._values);
+            var otherValTime = other.ValuationTime;
+
+            var timeAction = new UpdateAction<ManageableYieldCurveSnapshot>(delegate(ManageableYieldCurveSnapshot snap)
                                  {
-                                     _valuationTime = other.ValuationTime;
-                                     InvokePropertyChanged(new PropertyChangedEventArgs("ValuationTime"));
+                                     snap._valuationTime = otherValTime;
+                                     snap.InvokePropertyChanged(new PropertyChangedEventArgs("ValuationTime"));
                                  });
-            return valuesAction.Concat(timeAction);
+            return valuesAction.Wrap<ManageableYieldCurveSnapshot>(y => y._values).Concat(timeAction);
         }
 
         public bool HaveOverrides()

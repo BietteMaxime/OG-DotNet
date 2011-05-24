@@ -13,28 +13,28 @@ using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
-    public class UpdateAction
+    public class UpdateAction<T>
     {
         private readonly List<Warning> _warnings;
-        private readonly List<Action> _updateActions;
-        private static readonly UpdateAction Empty = new UpdateAction(Enumerable.Empty<Action>(), Enumerable.Empty<Warning>());
+        private readonly List<Action<T>> _updateActions;
+        private static readonly UpdateAction<T> Empty = new UpdateAction<T>(Enumerable.Empty<Action<T>>(), Enumerable.Empty<Warning>());
 
-        internal static UpdateAction Of(IEnumerable<UpdateAction> actions)
+        internal static UpdateAction<T> Of(IEnumerable<UpdateAction<T>> actions)
         {
             return actions.Aggregate(Empty, (a, b) => a.Concat(b));
         }
 
-        internal UpdateAction(Action updateAction)
+        internal UpdateAction(Action<T> updateAction)
             : this(updateAction, Enumerable.Empty<Warning>())
         {
         }
 
-        internal UpdateAction(Action updateAction, IEnumerable<Warning> warnings)
-            : this(new List<Action> { updateAction }, warnings)
+        internal UpdateAction(Action<T> updateAction, IEnumerable<Warning> warnings)
+            : this(new List<Action<T>> { updateAction }, warnings)
         {
         }
 
-        private UpdateAction(IEnumerable<Action> updateActions, IEnumerable<Warning> warnings)
+        private UpdateAction(IEnumerable<Action<T>> updateActions, IEnumerable<Warning> warnings)
         {
             _warnings = warnings.ToList();
             _updateActions = updateActions.ToList();
@@ -44,27 +44,42 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         {
             get { return _warnings; }
         }
-        public void Execute()
+        public void Execute(T target)
         {
             foreach (var updateAction in _updateActions)
             {
-                updateAction();
+                updateAction(target);
             }
         }
 
-        private UpdateAction Concat(IEnumerable<Warning> w)
+        private UpdateAction<T> Concat(IEnumerable<Warning> w)
         {
-            return new UpdateAction(_updateActions, Warnings.Concat(w));
+            return new UpdateAction<T>(_updateActions, Warnings.Concat(w));
         }
 
-        private UpdateAction Concat(IEnumerable<Action> updateActions)
+        private UpdateAction<T> Concat(IEnumerable<Action<T>> updateActions)
         {
-            return new UpdateAction(_updateActions.Concat(updateActions), Warnings);
+            return new UpdateAction<T>(_updateActions.Concat(updateActions), Warnings);
         }
 
-        public UpdateAction Concat(UpdateAction r)
+        public UpdateAction<T> Concat(UpdateAction<T> r)
         {
             return Concat(r._warnings).Concat(r._updateActions);
+        }
+
+        public UpdateAction<TOuter> Wrap<TOuter>(Func<TOuter, T> projecter)
+        {
+            return new UpdateAction<TOuter>(_updateActions.Select<Action<T>, Action<TOuter>>(a => (o => a(projecter(o)))), Warnings);
+        }
+
+        private static Action<T> Wrap<TInner>(Action<TInner> action, Func<T, TInner> projecter)
+        {
+            return t => action(projecter(t));
+        }
+
+        private static UpdateAction<T> Wrap<TInner>(UpdateAction<TInner> r, Func<T, TInner> projecter)
+        {
+            return new UpdateAction<T>(r._updateActions.Select(a => Wrap(a, projecter)), r.Warnings);
         }
     }
 }

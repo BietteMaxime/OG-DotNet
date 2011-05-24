@@ -86,45 +86,42 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             }
         }
 
-        public UpdateAction PrepareUpdateFrom(ManageableMarketDataSnapshot newSnapshot)
+        public UpdateAction<ManageableMarketDataSnapshot> PrepareUpdateFrom(ManageableMarketDataSnapshot newSnapshot)
         {
-            UpdateAction globalUpdate = _globalValues.PrepareUpdateFrom(newSnapshot._globalValues);
+            var globalUpdate = _globalValues.PrepareUpdateFrom(newSnapshot._globalValues);
 
             var ycActions = _yieldCurves.ProjectStructure(newSnapshot._yieldCurves,
-                (k, va, vb) => va.PrepareUpdateFrom(vb),
+                (k, va, vb) => va.PrepareUpdateFrom(vb).Wrap<ManageableMarketDataSnapshot>(s => s._yieldCurves[k]),
                 PrepareRemoveAction,
                 PrepareAddAction
                 );
 
-            return globalUpdate.Concat(UpdateAction.Of(ycActions));
+            return globalUpdate.Wrap<ManageableMarketDataSnapshot>(s => s._globalValues).Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(ycActions));
         }
 
-        internal UpdateAction PrepareRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
+        internal static UpdateAction<ManageableMarketDataSnapshot> PrepareRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
         {
-            return new UpdateAction(
-                delegate
+            return new UpdateAction<ManageableMarketDataSnapshot>(
+                delegate(ManageableMarketDataSnapshot snap)
                 {
-                    _yieldCurves.Remove(key);
-                    InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
+                    snap._yieldCurves.Remove(key);
+                    snap.InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
                 },
                     OverriddenYieldCurveDisappearingWarning.Of(key, value)
                 );
         }
 
-        private UpdateAction PrepareAddAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
+        private static UpdateAction<ManageableMarketDataSnapshot> PrepareAddAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
         {
-            return new UpdateAction(
-               delegate
+            var manageableYieldCurveSnapshot = value.Clone();
+
+            return new UpdateAction<ManageableMarketDataSnapshot>(
+               delegate(ManageableMarketDataSnapshot snap)
                {
-                   _yieldCurves.Add(key, value);
-                   InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
+                   snap._yieldCurves.Add(key, manageableYieldCurveSnapshot);
+                   snap.InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
                }
                );
-        }
-
-        public ManageableMarketDataSnapshot Clone()
-        {
-            return new ManageableMarketDataSnapshot(BasisViewName, GlobalValues.Clone(), YieldCurves.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Clone()), UniqueId);
         }
 
         public static ManageableMarketDataSnapshot FromFudgeMsg(IFudgeFieldContainer ffc,

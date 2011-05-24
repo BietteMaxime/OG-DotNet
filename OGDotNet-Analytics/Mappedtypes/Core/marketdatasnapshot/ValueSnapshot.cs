@@ -51,6 +51,11 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
             }
         }
 
+        public ValueSnapshot Clone()
+        {
+            return new ValueSnapshot(MarketValue) { OverrideValue = OverrideValue};
+        }
+
         public static ValueSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new ValueSnapshot(ffc.GetDouble("marketValue").Value) {OverrideValue = ffc.GetDouble("overrideValue")};
