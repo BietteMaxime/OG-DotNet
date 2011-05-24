@@ -182,11 +182,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var snapshotManager = Context.MarketDataSnapshotManager;
             using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName))
             {
-                beforeRef = new WeakReference(proc.Snapshot);
-
                 using (var newProc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName))
                 {
-                    afterRef = new WeakReference(newProc.Snapshot);
                     //TODO more strict
                     var testedMds = proc.Snapshot.GlobalValues.Values.First().Key;
                     var valueSnapshots = newProc.Snapshot.GlobalValues.Values[testedMds];
@@ -194,8 +191,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                     UpdateAction<ManageableMarketDataSnapshot> fwd = proc.Snapshot.PrepareUpdateFrom(newProc.Snapshot);
                     UpdateAction<ManageableMarketDataSnapshot> bwd = newProc.Snapshot.PrepareUpdateFrom(proc.Snapshot);
-
-                    fwdAction = fwd;
 
                     var pre = proc.Snapshot.GlobalValues.Values[testedMds].ToDictionary(k => k.Key, k => k.Value.MarketValue);
 
@@ -209,7 +204,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     bwd.Execute(newProc.Snapshot);
                     fwd.Execute(newProc.Snapshot);
                     
-                    //TODO check No-op
+                    beforeRef = new WeakReference(proc.Snapshot);
+                    fwdAction = fwd;
+                    afterRef = new WeakReference(newProc.Snapshot);
                 }
             }
         }
