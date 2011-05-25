@@ -154,7 +154,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static bool Produces(DependencyNode n, ValueSpecification specToTest)
         {
             var targetMatches = n.Target.UniqueId == specToTest.TargetSpecification.Uid && n.Target.Type == specToTest.TargetSpecification.Type;
-            return targetMatches && n.OutputValues.Any(s=>s.Equals(specToTest));
+            return targetMatches && n.OutputValues.Any(s => s.Equals(specToTest));
         }
 
         [Xunit.Extensions.Fact]

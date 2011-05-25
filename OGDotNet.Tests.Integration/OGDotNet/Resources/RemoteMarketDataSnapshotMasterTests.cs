@@ -66,7 +66,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var snapshotMaster = Context.MarketDataSnapshotMaster;
 
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             var metaSearchResult = snapshotMaster.SearchMetadata("*", pagingRequest);
