@@ -7,6 +7,10 @@
 //-----------------------------------------------------------------------
 
 using System;
+using Fudge;
+using Fudge.Types;
+using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Master
 {
@@ -47,6 +51,32 @@ namespace OGDotNet.Mappedtypes.Master
         public DateTimeOffset CorrectionToInstant
         {
             get { return _correctionToInstant; }
+        }
+
+        protected static DateTimeOffset GetDocumentValues(IFudgeFieldContainer ffc, out DateTimeOffset versionToInstant, out DateTimeOffset correctionFromInstant, out DateTimeOffset correctionToInstant)
+        {
+            var versionFromInstant = ffc.GetValue<FudgeDateTime>("versionFromInstant").ToDateTimeOffsetWithDefault();
+            correctionFromInstant = ffc.GetValue<FudgeDateTime>("correctionFromInstant").ToDateTimeOffsetWithDefault();
+            versionToInstant = ffc.GetValue<FudgeDateTime>("versionToInstant").ToDateTimeOffsetWithDefault();
+            correctionToInstant = ffc.GetValue<FudgeDateTime>("correctionToInstant").ToDateTimeOffsetWithDefault();
+            return versionFromInstant;
+        }
+
+        protected void WriteDocumentFields(IAppendingFudgeFieldContainer a)
+        {
+            AddDateTimeOffsetWithDefault(a, "versionFromInstant", VersionFromInstant);
+            AddDateTimeOffsetWithDefault(a, "correctionFromInstant", CorrectionFromInstant);
+            
+            AddDateTimeOffsetWithDefault(a, "versionToInstant", VersionToInstant);
+            AddDateTimeOffsetWithDefault(a, "correctionToInstant", CorrectionToInstant);
+        }
+
+        private static void AddDateTimeOffsetWithDefault(IAppendingFudgeFieldContainer a, string fieldName, DateTimeOffset value)
+        {
+            if (value != default(DateTimeOffset))
+            {
+                a.Add(fieldName, new FudgeDateTime(value));
+            }
         }
     }
 }

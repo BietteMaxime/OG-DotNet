@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteMarketDataSnapshotMaster.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -8,6 +8,7 @@
 
 using System;
 using System.Linq;
+using OGDotNet.Mappedtypes.financial.marketdatasnapshot.rest;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
@@ -22,6 +23,12 @@ namespace OGDotNet.Model.Resources
         public RemoteMarketDataSnapshotMaster(RestTarget restTarget)
         {
             _restTarget = restTarget;
+        }
+
+        public SearchResult<MarketDataSnapshotMetadataDocument> SearchMetadata(string name, PagingRequest pagingRequest)
+        {
+            var request = new MarketDataSnapshotSearchRequest(pagingRequest, name);
+            return _restTarget.Resolve("searchMetadata").Post<SearchResult<MarketDataSnapshotMetadataDocument>>(request);
         }
 
         public SearchResult<MarketDataSnapshotDocument> Search(string name, PagingRequest pagingRequest)

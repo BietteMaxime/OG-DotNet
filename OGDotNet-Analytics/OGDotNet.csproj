@@ -171,6 +171,7 @@
     <Compile Include="Model\Context\MarketDataSnapshot\Warnings\Warning.cs" />
     <Compile Include="Model\Resources\HeartbeatSender.cs" />
     <Compile Include="Model\Resources\IFinancialSecuritySource.cs" />
+    <Compile Include="Mappedtypes\financial\marketdatasnapshot\rest\MarketDataSnapshotMetadataDocument.cs" />
     <Compile Include="Model\Resources\RemoteCompiledViewDefinitionWithGraphs.cs" />
     <Compile Include="Model\Resources\RemoteCurrencyMatrixSource.cs" />
     <Compile Include="Model\Resources\RemoteHistoricalDataSource.cs" />

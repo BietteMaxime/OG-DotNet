@@ -34,6 +34,31 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
+        public void SearchMatchesMetadata()
+        {
+            var pagingRequest = new PagingRequest(1, 2);
+
+            var snapshotMaster = Context.MarketDataSnapshotMaster;
+            var searchResult = snapshotMaster.Search("*", pagingRequest);
+            Assert.NotNull(searchResult.Documents);
+            Assert.NotEmpty(searchResult.Documents);
+
+            var metaSearchResult = snapshotMaster.SearchMetadata("*", pagingRequest);
+
+            Assert.Equal(metaSearchResult.Paging.TotalItems, searchResult.Paging.TotalItems);
+
+            foreach (var t in metaSearchResult.Documents.Zip(searchResult.Documents, Tuple.Create))
+            {
+                Assert.Equal(t.Item1.CorrectionFromInstant, t.Item2.CorrectionFromInstant);
+                Assert.Equal(t.Item1.CorrectionToInstant, t.Item2.CorrectionToInstant);
+                Assert.Equal(t.Item1.UniqueId, t.Item2.UniqueId);
+                Assert.Equal(t.Item1.VersionFromInstant, t.Item2.VersionFromInstant);
+                Assert.Equal(t.Item1.VersionToInstant, t.Item2.VersionToInstant);
+                Assert.Equal(t.Item1.Name, t.Item2.Snapshot.Name);
+            }
+        }
+
+        [Xunit.Extensions.Fact]
         public void CanCreate()
         {
             var snapshotMaster = Context.MarketDataSnapshotMaster;
