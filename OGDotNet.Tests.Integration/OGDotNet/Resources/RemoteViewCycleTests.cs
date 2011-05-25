@@ -7,9 +7,11 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.engine.depgraph;
+using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.Execution;
@@ -109,12 +111,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     var viewCalculationConfiguration = kvp.Key;
 
-                    var specToTest = resultModel.AllResults.First(r => r.CalculationConfiguration == viewCalculationConfiguration).ComputedValue.Specification;
+                    var vreToTest = resultModel.AllResults.OrderBy(r=>r.GetHashCode()).First(r => r.CalculationConfiguration == viewCalculationConfiguration);
+                    var specToTest = vreToTest.ComputedValue.Specification;
 
                     var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
                     Assert.NotNull(dependencyGraphExplorer);
                     var subgraph = dependencyGraphExplorer.GetSubgraphProducing(specToTest);
                     Assert.NotNull(subgraph);
+
                     Assert.Equal(viewCalculationConfiguration, subgraph.CalculationConfigurationName);
                     Assert.NotEmpty(subgraph.DependencyNodes);
                     Assert.True(subgraph.DependencyNodes.Any(n => Produces(n, specToTest)));
@@ -129,8 +133,35 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     
                     //Check the graph is connected
                     Assert.Equal(FollowInputs(lastNode).Count, subgraph.DependencyNodes.Count);
+
+                    WriteToDot(subgraph, viewCalculationConfiguration+".dot");
                 }
             });
+        }
+
+        private static void WriteToDot(IDependencyGraph subgraph, string dotFileName)
+        {
+            using (var streamWriter = new StreamWriter(dotFileName))
+            {
+                streamWriter.WriteLine("digraph graphname {");
+                var dependencyNodes = subgraph.DependencyNodes.ToList();
+                Dictionary<DependencyNode, int> map = dependencyNodes.Select((n, i) => Tuple.Create(n, i)).ToDictionary(t => t.Item1, t => t.Item2);
+                for (int index = 0; index < dependencyNodes.Count; index++)
+                {
+                    var dependencyNode = dependencyNodes[index];
+                    streamWriter.WriteLine(string.Format("{0} [label=\"{1}\"];", index, dependencyNode.Target.UniqueId));
+                }
+
+                for (int index = 0; index < dependencyNodes.Count; index++)
+                {
+                    var dependencyNode = dependencyNodes[index];
+                    foreach (var inputNode in dependencyNode.InputNodes)
+                    {
+                        streamWriter.WriteLine(string.Format("{0} -> {1};", map[inputNode], index));
+                    }
+                }
+                streamWriter.WriteLine("}");
+            }
         }
 
         private ISet<DependencyNode> FollowInputs(DependencyNode dependencyNode)
