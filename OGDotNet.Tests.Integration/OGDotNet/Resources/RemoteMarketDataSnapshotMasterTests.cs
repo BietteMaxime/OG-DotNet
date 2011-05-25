@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
@@ -56,6 +57,26 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Equal(t.Item1.VersionToInstant, t.Item2.VersionToInstant);
                 Assert.Equal(t.Item1.Name, t.Item2.Snapshot.Name);
             }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void MetadataSearchIsFaster()
+        {
+            var pagingRequest = PagingRequest.All;
+
+            var snapshotMaster = Context.MarketDataSnapshotMaster;
+
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            var metaSearchResult = snapshotMaster.SearchMetadata("*", pagingRequest);
+            var metadataTime = stopwatch.Elapsed;
+
+            stopwatch.Restart();
+            var searchResult = snapshotMaster.Search("*", pagingRequest);
+            var fullTime = stopwatch.Elapsed;
+
+            Assert.InRange(metadataTime, TimeSpan.Zero, TimeSpan.FromTicks(fullTime.Ticks / 3));
         }
 
         [Xunit.Extensions.Fact]
