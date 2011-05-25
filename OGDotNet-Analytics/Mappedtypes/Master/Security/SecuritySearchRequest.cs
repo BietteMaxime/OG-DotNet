@@ -24,7 +24,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
             _pagingRequest = pagingRequest;
             _securityKeys = securityKeys;
             _name = name;
-            _securityType = securityType ?? string.Empty;
+            _securityType = securityType;
         }
 
         public PagingRequest PagingRequest

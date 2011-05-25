@@ -55,6 +55,11 @@ namespace OGDotNet.SecurityViewer.View
             string type = typeBox.Text;
             string name = nameBox.Text;
 
+            if (type == string.Empty)
+            {
+                type = null; //Wildcard
+            }
+
             int currentPage = CurrentPage;
 
             ThreadPool.QueueUserWorkItem(delegate
