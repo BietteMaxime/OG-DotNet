@@ -6,8 +6,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using OGDotNet.Mappedtypes.engine.depgraph;
+using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
@@ -92,6 +95,66 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotNull(compiledViewDefinition.Portfolio);
                 Assert.Equal(compiled.CompiledViewDefinition.Portfolio.UniqueId, compiledViewDefinition.Portfolio.UniqueId);
             });
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetGraphs()
+        {
+            WithViewCycle(
+            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
+            {
+                var compiledViewDefinition = cycle.GetCompiledViewDefinition();
+                var resultModel = cycle.GetResultModel();
+                foreach (var kvp in compiledViewDefinition.ViewDefinition.CalculationConfigurationsByName)
+                {
+                    var viewCalculationConfiguration = kvp.Key;
+
+                    var specToTest = resultModel.AllResults.First(r => r.CalculationConfiguration == viewCalculationConfiguration).ComputedValue.Specification;
+
+                    var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
+                    Assert.NotNull(dependencyGraphExplorer);
+                    var subgraph = dependencyGraphExplorer.GetSubgraphProducing(specToTest);
+                    Assert.NotNull(subgraph);
+                    Assert.Equal(viewCalculationConfiguration, subgraph.CalculationConfigurationName);
+                    Assert.NotEmpty(subgraph.DependencyNodes);
+                    Assert.True(subgraph.DependencyNodes.Any(n => Produces(n, specToTest)));
+                    
+                    foreach (var node in subgraph.DependencyNodes)
+                    {
+                        Assert.NotEmpty(node.OutputValues);
+                    }
+
+                    var lastNode = subgraph.DependencyNodes.Single(n => Produces(n, specToTest));
+                    Assert.True(lastNode.TerminalOutputValues.Contains(specToTest));
+                    
+                    //Check the graph is connected
+                    Assert.Equal(FollowInputs(lastNode).Count, subgraph.DependencyNodes.Count);
+                }
+            });
+        }
+
+        private ISet<DependencyNode> FollowInputs(DependencyNode dependencyNode)
+        {
+            var set = new HashSet<DependencyNode>();
+            FollowInputs(set, dependencyNode);
+            return set;
+        }
+
+        private void FollowInputs(HashSet<DependencyNode> nodes, DependencyNode dependencyNode)
+        {
+            if (nodes.Contains(dependencyNode))
+                return;
+            nodes.Add(dependencyNode);
+            foreach (var inputNode in dependencyNode.InputNodes)
+            {
+                FollowInputs(nodes, inputNode);
+            }
+        }
+
+        private static bool Produces(DependencyNode n, ValueSpecification specToTest)
+        {
+            var targetMatches = n.Target.UniqueId == specToTest.TargetSpecification.Uid && n.Target.Type == specToTest.TargetSpecification.Type;
+            return targetMatches && n.OutputValues.Any(s=>s.Equals(specToTest));
         }
 
         [Xunit.Extensions.Fact]

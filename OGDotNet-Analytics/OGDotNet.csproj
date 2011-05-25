@@ -81,7 +81,12 @@
     <Compile Include="Mappedtypes\engine\ComputationTarget.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
-    <Compile Include="Mappedtypes\engine\depGraph\DependencyGraph\ResultOutputMode.cs" />
+    <Compile Include="Builders\DependencyGraphBuilder.cs" />
+    <Compile Include="Mappedtypes\engine\depGraph\DependencyGraph.cs" />
+    <Compile Include="Mappedtypes\engine\depGraph\dependencyGraph\ResultOutputMode.cs" />
+    <Compile Include="Mappedtypes\engine\depGraph\DependencyNode.cs" />
+    <Compile Include="Mappedtypes\engine\depGraph\IDependencyGraph.cs" />
+    <Compile Include="Mappedtypes\engine\depGraph\IDependencyGraphExplorer.cs" />
     <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
     <Compile Include="Mappedtypes\engine\View\calc\ComputationCacheQuery.cs" />
     <Compile Include="Mappedtypes\engine\View\calc\ComputationCacheResponse.cs" />
@@ -174,6 +179,7 @@
     <Compile Include="Mappedtypes\financial\marketdatasnapshot\rest\MarketDataSnapshotMetadataDocument.cs" />
     <Compile Include="Model\Resources\RemoteCompiledViewDefinitionWithGraphs.cs" />
     <Compile Include="Model\Resources\RemoteCurrencyMatrixSource.cs" />
+    <Compile Include="Model\Resources\RemoteDependencyGraphExplorer.cs" />
     <Compile Include="Model\Resources\RemoteHistoricalDataSource.cs" />
     <Compile Include="Model\Resources\RemoteInterpolatedYieldCurveSpecificationBuilder.cs" />
     <Compile Include="Model\MQTemplate.cs" />
