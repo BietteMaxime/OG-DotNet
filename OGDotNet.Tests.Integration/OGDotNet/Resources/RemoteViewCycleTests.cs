@@ -17,6 +17,7 @@ using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Model.Resources;
+using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
@@ -100,7 +101,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
-        public void CanGetGraphs()
+        public void CanGetSubGraphs()
         {
             WithViewCycle(
             delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
@@ -117,26 +118,53 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
                     Assert.NotNull(dependencyGraphExplorer);
                     var subgraph = dependencyGraphExplorer.GetSubgraphProducing(specToTest);
-                    Assert.NotNull(subgraph);
-
-                    Assert.Equal(viewCalculationConfiguration, subgraph.CalculationConfigurationName);
-                    Assert.NotEmpty(subgraph.DependencyNodes);
-                    Assert.True(subgraph.DependencyNodes.Any(n => Produces(n, specToTest)));
+                    CheckSaneGraph(viewCalculationConfiguration, subgraph);
                     
-                    foreach (var node in subgraph.DependencyNodes)
-                    {
-                        Assert.NotEmpty(node.OutputValues);
-                    }
-
+                    Assert.True(subgraph.DependencyNodes.Any(n => Produces(n, specToTest)));
+                   
                     var lastNode = subgraph.DependencyNodes.Single(n => Produces(n, specToTest));
                     Assert.True(lastNode.TerminalOutputValues.Contains(specToTest));
                     
                     //Check the graph is connected
                     Assert.Equal(FollowInputs(lastNode).Count, subgraph.DependencyNodes.Count);
-
-                    WriteToDot(subgraph, viewCalculationConfiguration+".dot");
                 }
             });
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetWholeGraph()
+        {
+            WithViewCycle(
+            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
+            {
+                var compiledViewDefinition = cycle.GetCompiledViewDefinition();
+                var resultModel = cycle.GetResultModel();
+                foreach (var kvp in compiledViewDefinition.ViewDefinition.CalculationConfigurationsByName)
+                {
+                    var viewCalculationConfiguration = kvp.Key;
+
+                    var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
+                    Assert.NotNull(dependencyGraphExplorer);
+                    var subgraph = dependencyGraphExplorer.GetWholeGraph();
+                    
+                    CheckSaneGraph(viewCalculationConfiguration, subgraph);
+                }
+            });
+        }
+
+        private static void CheckSaneGraph(string viewCalculationConfiguration, IDependencyGraph subgraph)
+        {
+            Assert.NotNull(subgraph);
+
+            Assert.Equal(viewCalculationConfiguration, subgraph.CalculationConfigurationName);
+            Assert.NotEmpty(subgraph.DependencyNodes);
+
+            foreach (var node in subgraph.DependencyNodes)
+            {
+                Assert.NotEmpty(node.OutputValues);
+            }
+
+            WriteToDot(subgraph, viewCalculationConfiguration +"." +TestUtils.ExecutingTestName+ ".dot");
         }
 
         private static void WriteToDot(IDependencyGraph subgraph, string dotFileName)

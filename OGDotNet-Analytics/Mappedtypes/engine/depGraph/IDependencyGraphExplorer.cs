@@ -11,6 +11,7 @@ namespace OGDotNet.Mappedtypes.engine.depGraph
 {
     public interface IDependencyGraphExplorer
     {
+        IDependencyGraph GetWholeGraph();
         IDependencyGraph GetSubgraphProducing(ValueSpecification output);
     }
 }

@@ -20,6 +20,11 @@ namespace OGDotNet.Model.Resources
             _resolve = resolve;
         }
 
+        public IDependencyGraph GetWholeGraph()
+        {
+            return _resolve.Resolve("wholeGraph").Get<IDependencyGraph>();
+        }
+
         public IDependencyGraph GetSubgraphProducing(ValueSpecification output)
         {
             string encodedValueSpec = _resolve.EncodeBean(output);
