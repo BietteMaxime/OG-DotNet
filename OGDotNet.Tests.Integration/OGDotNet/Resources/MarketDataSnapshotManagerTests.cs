@@ -28,31 +28,49 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class MarketDataSnapshotManagerTests : ViewTestsBase
     {
-        [Xunit.Extensions.Fact]
-        public void CanCreateAndRunFromView()
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanCreateAndRunFromView(ViewDefinition vd)
         {
-            //LAPANA-50 : this test should cover all viewdefns
+            var options = ExecutionOptions.SingleCycle;
+            ViewComputationResultModel withoutSnapshot = GetFirstResult(options, vd.Name);
+
             var snapshotManager = Context.MarketDataSnapshotManager;
-            using (var proc = snapshotManager.CreateFromViewDefinition(RemoteViewClientBatchTests.ViewName))
+            using (var proc = snapshotManager.CreateFromViewDefinition(vd.Name))
             {
+                Assert.Equal(withoutSnapshot.AllLiveData.Count(), proc.Snapshot.GlobalValues.Values.Sum(v=>v.Value.Count));
+
                 proc.Snapshot.Name = TestUtils.GetUniqueName();
                 Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
-                
-                var options = ExecutionOptions.SingleCycle;
-                ViewComputationResultModel withoutSnapshot = GetFirstResult(options);
 
-                options = ExecutionOptions.Snapshot(proc.Snapshot.UniqueId);
-                var withSnapshot = GetFirstResult(options);
+                try
+                {
+                    
 
-                Assert.Equal(CountResults(withoutSnapshot), CountResults(withSnapshot));
+                    var snapOptions = ExecutionOptions.Snapshot(proc.Snapshot.UniqueId);
+                    var withSnapshot = GetFirstResult(snapOptions, vd.Name);
+
+                    var withoutCount = CountResults(withoutSnapshot);
+                    var withCount = CountResults(withSnapshot);
+                    if (withoutCount != withCount)
+                    {
+                        Assert.True(false, string.Format("Running snapshot of {0} only had {1}, live had {2}", vd.Name, withCount, withoutCount));
+                    }
+
+                    Assert.Equal(withoutCount, withCount);
+                }
+                finally
+                {
+                    Context.MarketDataSnapshotMaster.Remove(proc.Snapshot.UniqueId);
+                }
             }
         }
 
-        private static ViewComputationResultModel GetFirstResult(IViewExecutionOptions options)
+        private static ViewComputationResultModel GetFirstResult(IViewExecutionOptions options, string viewName)
         {
             using (var remoteViewClient2 = Context.ViewProcessor.CreateClient())
             {
-                return remoteViewClient2.GetResults(RemoteViewClientBatchTests.ViewName, options).First();
+                return remoteViewClient2.GetResults(viewName, options).First();
             }
         }
 

@@ -21,11 +21,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanGetYieldCurveValues(ViewDefinition viewDefinition)
         {
-            if (viewDefinition.Name == "Swap Test View")
-            {
-                //TODO LAPANA-50 : this won't work yet.
-                return;
-            }
             var snapshotManager = Context.MarketDataSnapshotManager;
 
             using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
