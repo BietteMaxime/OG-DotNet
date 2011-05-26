@@ -38,15 +38,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var snapshotManager = Context.MarketDataSnapshotManager;
             using (var proc = snapshotManager.CreateFromViewDefinition(vd.Name))
             {
-                Assert.Equal(withoutSnapshot.AllLiveData.Count(), proc.Snapshot.GlobalValues.Values.Sum(v=>v.Value.Count));
-
                 proc.Snapshot.Name = TestUtils.GetUniqueName();
                 Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
 
                 try
                 {
-                    
-
                     var snapOptions = ExecutionOptions.Snapshot(proc.Snapshot.UniqueId);
                     var withSnapshot = GetFirstResult(snapOptions, vd.Name);
 
@@ -114,6 +110,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 foreach (var curve in manageableMarketDataSnapshot.YieldCurves.Values)
                 {
                     AssertSaneValue(curve);
+                    Assert.True(curve.Values.Values.Keys.Any(s => ! manageableMarketDataSnapshot.GlobalValues.Values.ContainsKey(s))); //LAP-37
                 }
             }
         }
