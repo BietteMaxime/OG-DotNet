@@ -123,25 +123,17 @@ namespace OGDotNet.Model.Context
 
         private static bool IsYieldCurveNode(DependencyNode node)
         {
-            var isYieldCurveNode = node.TerminalOutputValues.Any(IsYieldCurveValue);
-            if (node.TerminalOutputValues.Any() && isYieldCurveNode != node.TerminalOutputValues.All(IsYieldCurveValue))
+            var isYieldCurveNode = node.InputValues.Any(IsYieldCurveMarketDataSpec);
+            if (isYieldCurveNode && !node.InputValues.All(IsYieldCurveMarketDataSpec))
             {
                 throw new ArgumentException(string.Format("Unsure how to handle node {0}", node));
             }
             return isYieldCurveNode;
         }
 
-        private static bool IsYieldCurveValue(ValueSpecification arg)
+        private static bool IsYieldCurveMarketDataSpec(ValueSpecification s)
         {
-            switch (arg.ValueName)
-            {
-                case YieldCurveMarketDataReqName:
-                case YieldCurveSpecValueReqName:
-                case YieldCurveValueReqName:
-                    return true;
-                default:
-                    return false;
-            }
+            return s.ValueName == YieldCurveMarketDataReqName;
         }
 
         private static IDictionary<string, ValueSnapshot> GroupByValueName(IEnumerable<ComputedValue> r)
