@@ -12,10 +12,10 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
 {
-    static class EnumBuilder<T> where T : struct
+    public static class EnumBuilder<T> where T : struct
     {
         private static readonly Memoizer<string, T> ParseTable = new Memoizer<string, T>(ParseImpl);
-        internal static T Parse(string str)
+        public static T Parse(string str)
         {
             return ParseTable.Get(str);
         }
@@ -29,7 +29,7 @@ namespace OGDotNet.Builders
             return type;
         }
 
-        internal static string GetJavaName(T value)
+        public static string GetJavaName(T value)
         {
             var netName = value.ToString();
             Regex humpExp = new Regex("([a-z])([A-Z])");

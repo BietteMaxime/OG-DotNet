@@ -8,6 +8,7 @@
 
 using System;
 using System.Linq;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -54,7 +55,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var security = Context.SecuritySource.GetSecurity(new IdentifierBundle(fixedIncomeStripWithIdentifier.Security));
                 if (fixedIncomeStrip.InstrumentType == StripInstrumentType.Future)
                 {
-                    Assert.Equal(fixedIncomeStrip.InstrumentType.ToString(), security.SecurityType);
+                    Assert.Equal(EnumBuilder<StripInstrumentType>.GetJavaName(fixedIncomeStripWithIdentifier.InstrumentType), security.SecurityType);
                 }
                 else
                 {
