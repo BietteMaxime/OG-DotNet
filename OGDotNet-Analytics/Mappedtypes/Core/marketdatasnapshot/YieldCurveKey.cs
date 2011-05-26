@@ -14,7 +14,6 @@ using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
-    [DebuggerDisplay("YieldCurveKey {_currency}/{_name}")]
     public class YieldCurveKey : IComparable<YieldCurveKey>
     {
         private readonly Currency _currency;
@@ -36,6 +35,10 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
             get { return _name; }
         }
 
+        public override string ToString()
+        {
+            return string.Format("[YieldCurveKey {0} {1}]", _currency.ISOCode, _name);
+        }
         public static YieldCurveKey FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new YieldCurveKey(ffc.GetValue<Currency>("currency"), ffc.GetString("name"));
