@@ -138,18 +138,29 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
             {
                 var compiledViewDefinition = cycle.GetCompiledViewDefinition();
-                var resultModel = cycle.GetResultModel();
                 foreach (var kvp in compiledViewDefinition.ViewDefinition.CalculationConfigurationsByName)
                 {
                     var viewCalculationConfiguration = kvp.Key;
 
                     var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
                     Assert.NotNull(dependencyGraphExplorer);
-                    var subgraph = dependencyGraphExplorer.GetWholeGraph();
+                    var wholeGraph = dependencyGraphExplorer.GetWholeGraph();
                     
-                    CheckSaneGraph(viewCalculationConfiguration, subgraph);
+                    CheckSaneGraph(viewCalculationConfiguration, wholeGraph);
+                    CheckCompleteGraph(wholeGraph);
                 }
             });
+        }
+
+        private static void CheckCompleteGraph(IDependencyGraph wholeGraph)
+        {
+            foreach(DependencyNode node in wholeGraph.DependencyNodes)
+            {
+                if (! node.TerminalOutputValues.Any())
+                {
+                    Assert.True(wholeGraph.DependencyNodes.Any(n=> n.InputNodes.Contains(node)));
+                }
+            }
         }
 
         private static void CheckSaneGraph(string viewCalculationConfiguration, IDependencyGraph subgraph)
