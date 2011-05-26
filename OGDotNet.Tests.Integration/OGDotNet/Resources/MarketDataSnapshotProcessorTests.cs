@@ -32,13 +32,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 if (snappedCurveCount != valuedCurveCount)
                 {
-                    Console.Error.WriteLine(string.Join(",",snappedCurves.Select(s=>s.Key)));
-                    Console.Error.WriteLine(string.Join(",", valuedCurves.Select(s => s.Key)));
                     Assert.False(true, string.Format(
-                        "Only found {0} curves, snapshotted {1} for view {2}.  missing curves {3}", 
-                        valuedCurveCount, snappedCurveCount, viewDefinition.Name, string.Join(",",snappedCurves.Where(s => ! valuedCurves.Any(c => c.Key.Equals(s.Key))).Select(s=>s.Key))));    
+                        "Only found {0} curves, snapshotted {1} for view {2}.  missing curves {3}",
+                        valuedCurveCount, snappedCurveCount, viewDefinition.Name, string.Join(",", snappedCurves.Where(s => !valuedCurves.Any(c => c.Key.Equals(s.Key))).Select(s => s.Key))));    
                 }
-                
             }
         }
 

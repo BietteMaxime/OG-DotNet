@@ -112,7 +112,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     var viewCalculationConfiguration = kvp.Key;
 
-                    var vreToTest = resultModel.AllResults.OrderBy(r=>r.GetHashCode()).First(r => r.CalculationConfiguration == viewCalculationConfiguration);
+                    var vreToTest = resultModel.AllResults.OrderBy(r => r.GetHashCode()).First(r => r.CalculationConfiguration == viewCalculationConfiguration);
                     var specToTest = vreToTest.ComputedValue.Specification;
 
                     var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
@@ -154,11 +154,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static void CheckCompleteGraph(IDependencyGraph wholeGraph)
         {
-            foreach(DependencyNode node in wholeGraph.DependencyNodes)
+            foreach (DependencyNode node in wholeGraph.DependencyNodes)
             {
                 if (! node.TerminalOutputValues.Any())
                 {
-                    Assert.True(wholeGraph.DependencyNodes.Any(n=> n.InputNodes.Contains(node)));
+                    Assert.True(wholeGraph.DependencyNodes.Any(n => n.InputNodes.Contains(node)));
                 }
             }
         }
@@ -175,7 +175,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotEmpty(node.OutputValues);
             }
 
-            WriteToDot(subgraph, viewCalculationConfiguration +"." +TestUtils.ExecutingTestName+ ".dot");
+            WriteToDot(subgraph, string.Format("{0}.{1}.dot", viewCalculationConfiguration, TestUtils.ExecutingTestName));
         }
 
         private static void WriteToDot(IDependencyGraph subgraph, string dotFileName)
