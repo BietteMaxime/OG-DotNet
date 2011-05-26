@@ -24,7 +24,7 @@ namespace OGDotNet.Builders
             T type;
             if (!Enum.TryParse(str.Replace("_", string.Empty), true, out type))
             {
-                throw new ArgumentException("Unhandled computation target type");
+                throw new ArgumentException(string.Format("Can't parse {0} as {1}", str, typeof(T).Name));
             }
             return type;
         }
