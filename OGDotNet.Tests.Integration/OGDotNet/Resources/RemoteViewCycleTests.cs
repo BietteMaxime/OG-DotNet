@@ -173,6 +173,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             foreach (var node in subgraph.DependencyNodes)
             {
                 Assert.NotEmpty(node.OutputValues);
+
+                //TODO PLAT-1305: stricter checks
+                Assert.NotNull(node.Function);
+                Assert.NotNull(node.Function.UniqueId);
+                Assert.NotNull(node.Function.Parameters);
             }
 
             WriteToDot(subgraph, string.Format("{0}.{1}.dot", viewCalculationConfiguration, TestUtils.ExecutingTestName));

@@ -87,6 +87,10 @@
     <Compile Include="Mappedtypes\engine\depGraph\DependencyNode.cs" />
     <Compile Include="Mappedtypes\engine\depGraph\IDependencyGraph.cs" />
     <Compile Include="Mappedtypes\engine\depGraph\IDependencyGraphExplorer.cs" />
+    <Compile Include="Mappedtypes\engine\function\EmptyFunctionParameters.cs" />
+    <Compile Include="Mappedtypes\engine\function\ICompiledFunctionDefinition.cs" />
+    <Compile Include="Mappedtypes\engine\function\IFunctionParameters.cs" />
+    <Compile Include="Mappedtypes\engine\function\ParameterizedFunction.cs" />
     <Compile Include="Mappedtypes\engine\Value\ComputedValue.cs" />
     <Compile Include="Mappedtypes\engine\View\calc\ComputationCacheQuery.cs" />
     <Compile Include="Mappedtypes\engine\View\calc\ComputationCacheResponse.cs" />

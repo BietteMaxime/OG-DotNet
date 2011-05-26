@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using OGDotNet.Mappedtypes.engine.function;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -36,6 +37,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Mappedtypes
         public void TypesArentUseless(Type mappedType)
         {
             if (mappedType == typeof(ProcessCompletedCall))
+                return;
+            if (mappedType == typeof(EmptyFunctionParameters))
                 return;
             if (mappedType.IsInterface)
                 return;
