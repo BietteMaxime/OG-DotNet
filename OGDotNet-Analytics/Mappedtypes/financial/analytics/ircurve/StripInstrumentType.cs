@@ -10,12 +10,12 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 {
     public enum StripInstrumentType
     {
-        LIBOR,
-        CASH,
+        Libor,
+        Cash,
         FRA,
-        FUTURE,
-        SWAP,
-        TENOR_SWAP,
-        BASIS_SWAP
+        Future,
+        Swap,
+        TenorSwap,
+        BasisSwap
     }
 }

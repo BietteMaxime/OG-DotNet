@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="FixedIncomeStripWithSecurity.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -85,7 +85,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
                     deserializer.FromField<Core.Security.Security>(ffc.GetByName("security"))
                     );
 
-            if ((ret._instrumentType == StripInstrumentType.FUTURE) != ret._nthFutureFromTenor >= 0)
+            if ((ret._instrumentType == StripInstrumentType.Future) != ret._nthFutureFromTenor >= 0)
             {
                 throw new ArgumentException("Mismatched future options");
             }

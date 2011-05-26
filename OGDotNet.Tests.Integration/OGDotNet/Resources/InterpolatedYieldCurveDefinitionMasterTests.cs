@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="InterpolatedYieldCurveDefinitionMasterTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -139,7 +139,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                 CurveNodePointTime = Tenor.Day,
                                                 InstrumentType = stripInstrumentType
                                             };
-                    if (stripInstrumentType == StripInstrumentType.FUTURE)
+                    if (stripInstrumentType == StripInstrumentType.Future)
                         fixedIncomeStrip.NthFutureFromTenor = 12;
 
                     yieldCurveDefinitionDocument.Definition.AddStrip(fixedIncomeStrip);
@@ -188,8 +188,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             string curveName = TestUtils.GetUniqueName();
 
             var yieldCurveDefinition = new YieldCurveDefinition(Currency.USD, curveName, "Linear") { Region = new Identifier("SOMEWHERE", "Europe") };
-            yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.CASH });
-            yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.TwoYears, InstrumentType = StripInstrumentType.FUTURE, NthFutureFromTenor = 23 });
+            yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.Cash });
+            yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.TwoYears, InstrumentType = StripInstrumentType.Future, NthFutureFromTenor = 23 });
             return new YieldCurveDefinitionDocument
                        {
                            Definition = yieldCurveDefinition

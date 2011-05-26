@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="InterpolatedYieldCurveSpecificationBuilderTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -52,7 +52,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotNull(fixedIncomeStripWithIdentifier.Security);
 
                 var security = Context.SecuritySource.GetSecurity(new IdentifierBundle(fixedIncomeStripWithIdentifier.Security));
-                if (fixedIncomeStrip.InstrumentType == StripInstrumentType.FUTURE)
+                if (fixedIncomeStrip.InstrumentType == StripInstrumentType.Future)
                 {
                     Assert.Equal(fixedIncomeStrip.InstrumentType.ToString(), security.SecurityType);
                 }

@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="FixedIncomeStrip.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -26,7 +26,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             ret.InstrumentType = (StripInstrumentType) Enum.Parse(typeof(StripInstrumentType), ffc.GetValue<string>("type"));
             ret.CurveNodePointTime = new Tenor(ffc.GetValue<string>("tenor"));
             ret.ConventionName = ffc.GetValue<string>("conventionName");
-            if (ret.InstrumentType == StripInstrumentType.FUTURE)
+            if (ret.InstrumentType == StripInstrumentType.Future)
             {
                 ret.NthFutureFromTenor = ffc.GetValue<int>("numFutures");
             }
@@ -39,7 +39,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             a.Add("type", InstrumentType.ToString());
             s.WriteInline(a, "tenor", CurveNodePointTime);
             a.Add("conventionName", ConventionName);
-            if (InstrumentType == StripInstrumentType.FUTURE)
+            if (InstrumentType == StripInstrumentType.Future)
             {
                 a.Add("numFutures", NthFutureFromTenor);
             }
@@ -57,7 +57,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             {
                 return result;
             }
-            if (InstrumentType == StripInstrumentType.FUTURE)
+            if (InstrumentType == StripInstrumentType.Future)
             {
                 result = NthFutureFromTenor.CompareTo(other.NthFutureFromTenor);
             }
