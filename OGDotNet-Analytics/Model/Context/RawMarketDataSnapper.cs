@@ -14,6 +14,8 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.engine.depgraph;
+using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
@@ -25,6 +27,7 @@ using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Utils;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
@@ -57,10 +60,10 @@ namespace OGDotNet.Model.Context
         {
             CheckDisposed();
 
-            return WithSingleCycle(delegate(ViewComputationResultModel results, IViewCycle viewCycle)
+            return WithSingleCycle(delegate(ViewComputationResultModel results, IViewCycle viewCycle, Dictionary<string, IDependencyGraph> graphs)
                     {
-                        var globalValues = GetGlobalValues(results);
-                        var yieldCurves = GetYieldCurveValues(results, viewCycle, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], globalValues, results.ValuationTime));
+                        var globalValues = GetGlobalValues(results, graphs);
+                        var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
 
                         return new ManageableMarketDataSnapshot(_definition.Name, globalValues, yieldCurves);
                     }, ExecutionOptions.GetSingleCycle(valuationTime), ct);
@@ -71,23 +74,74 @@ namespace OGDotNet.Model.Context
             return new YieldCurveKey(Currency.Create(y.TargetSpecification.Uid), y.Properties["Curve"].Single());
         }
 
-        private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(SnapshotDataBundle bundle, ManageableUnstructuredMarketDataSnapshot tempResults, DateTimeOffset valuationTime)
+        private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(SnapshotDataBundle bundle, DateTimeOffset valuationTime)
         {
-            var specifications = bundle.DataPoints.Select(s => new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of(s.Key)));
-            var dict = specifications.ToDictionary(s => s,
-                s => (IDictionary<string, ValueSnapshot>)new Dictionary<string, ValueSnapshot> { { MarketValueReqName, new ValueSnapshot(tempResults.Values[s][MarketValueReqName].MarketValue) } });
-
-            var values = new ManageableUnstructuredMarketDataSnapshot(dict);
+            var data = bundle.DataPoints.ToDictionary(
+                s => new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of(s.Key)),
+                s => (IDictionary<string, ValueSnapshot>)new Dictionary<string, ValueSnapshot> { { MarketValueReqName, new ValueSnapshot(s.Value) } }
+            );
+            var values = new ManageableUnstructuredMarketDataSnapshot(data);
             return new ManageableYieldCurveSnapshot(values, valuationTime);
         }
 
-        private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(ViewComputationResultModel tempResults)
+        private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(ViewComputationResultModel tempResults, Dictionary<string, IDependencyGraph> graphs)
         {
             var data = tempResults.AllLiveData;
-            var dataByTarget = data.ToLookup(r => new MarketDataValueSpecification(GetMarketType(r.Specification.TargetSpecification.Type), r.Specification.TargetSpecification.Uid));
+            var includedSpecs = GetIncludedGlobalSpecs(graphs);
+            var includedGlobalData = data
+                .Where(d => includedSpecs.Contains(Tuple.Create(d.Specification.TargetSpecification, d.Specification.ValueName)));
+
+            var dataByTarget = includedGlobalData
+                .ToLookup(r => new MarketDataValueSpecification(GetMarketType(r.Specification.TargetSpecification.Type), r.Specification.TargetSpecification.Uid));
             var dict = dataByTarget.ToDictionary(g => g.Key, GroupByValueName);
 
             return new ManageableUnstructuredMarketDataSnapshot(dict);
+        }
+
+        private static HashSet<Tuple<ComputationTargetSpecification, string>> GetIncludedGlobalSpecs(Dictionary<string, IDependencyGraph> graphs)
+        {
+            var ret = new HashSet<Tuple<ComputationTargetSpecification, string>>();
+            foreach (var dependencyGraph in graphs)
+            {
+                var nodes = GetIncludedGlobalNodes(dependencyGraph.Value);
+                
+                foreach (var dependencyNode in nodes)
+                {
+                    foreach (var input in dependencyNode.OutputValues)
+                    {
+                        ret.Add(Tuple.Create(input.TargetSpecification, input.ValueName));
+                    }
+                }
+            }
+            return ret;
+        }
+
+        private static IEnumerable<DependencyNode> GetIncludedGlobalNodes(IDependencyGraph dependencyGraph)
+        { // LAP-37
+            return DependencyGraphWalker.GetNodesExcludingDependencies(dependencyGraph, IsYieldCurveNode);
+        }
+
+        private static bool IsYieldCurveNode(DependencyNode node)
+        {
+            var isYieldCurveNode = node.TerminalOutputValues.Any(IsYieldCurveValue);
+            if (node.TerminalOutputValues.Any() && isYieldCurveNode != node.TerminalOutputValues.All(IsYieldCurveValue))
+            {
+                throw new ArgumentException(string.Format("Unsure how to handle node {0}", node));
+            }
+            return isYieldCurveNode;
+        }
+
+        private static bool IsYieldCurveValue(ValueSpecification arg)
+        {
+            switch (arg.ValueName)
+            {
+                case YieldCurveMarketDataReqName:
+                case YieldCurveSpecValueReqName:
+                case YieldCurveValueReqName:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private static IDictionary<string, ValueSnapshot> GroupByValueName(IEnumerable<ComputedValue> r)
@@ -107,9 +161,9 @@ namespace OGDotNet.Model.Context
             return WithSingleCycle(EvaluateYieldCurves, ExecutionOptions.Snapshot(snapshotIdentifier), ct);
         }
 
-        private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(ViewComputationResultModel r, IViewCycle c)
+        private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(ViewComputationResultModel r, IViewCycle c, Dictionary<string, IDependencyGraph> graphs)
         {
-            return GetYieldCurveValues(r, c, YieldCurveValueReqName, YieldCurveSpecValueReqName)
+            return GetYieldCurveValues(c, graphs, YieldCurveValueReqName, YieldCurveSpecValueReqName)
                 .ToDictionary(k => k.Key, k => GetEvaluatedCurve(k.Value));
         }
 
@@ -119,9 +173,9 @@ namespace OGDotNet.Model.Context
                 (InterpolatedYieldCurveSpecificationWithSecurities) values[YieldCurveSpecValueReqName]);
         }
 
-        private static Dictionary<YieldCurveKey, Dictionary<string, object>> GetYieldCurveValues(ViewComputationResultModel results, IViewCycle viewCycle, params string[] valueNames)
+        private static Dictionary<YieldCurveKey, Dictionary<string, object>> GetYieldCurveValues(IViewCycle viewCycle, Dictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
         {
-            var values = GetMatchingSpecifications(results, viewCycle, valueNames);
+            var values = GetMatchingSpecifications(dependencyGraphs, valueNames);
             var yieldCurves = new Dictionary<YieldCurveKey, Dictionary<string, object>>();
 
             foreach (var yieldCurveSpecReq in values)
@@ -141,14 +195,14 @@ namespace OGDotNet.Model.Context
                 var yieldCurveInfo = computationCacheResponse.Results.ToLookup(r => GetYieldCurveKey(r.First));
                 foreach (var result in yieldCurveInfo)
                 {
-                    yieldCurves.Add(result.Key, result.ToDictionary(r=>r.First.ValueName, r=>r.Second));
+                    yieldCurves.Add(result.Key, result.ToDictionary(r => r.First.ValueName, r => r.Second));
                 }
             }
 
             return yieldCurves;
         }
 
-        private T WithSingleCycle<T>(Func<ViewComputationResultModel, IViewCycle, T> func, IViewExecutionOptions executionOptions, CancellationToken ct)
+        private T WithSingleCycle<T>(Func<ViewComputationResultModel, IViewCycle, Dictionary<string, IDependencyGraph>, T> func, IViewExecutionOptions executionOptions, CancellationToken ct)
         {
             CheckDisposed();
 
@@ -178,29 +232,38 @@ namespace OGDotNet.Model.Context
                 using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
                 {
                     var viewCycle = engineResourceReference.Value;
-                    return func(results, viewCycle);
+                    var graphs = GetGraphs(viewCycle, results);
+                    return func(results, viewCycle, graphs);
                 }
             }
         }
 
-        private static Dictionary<string, IEnumerable<ValueSpecification>> GetMatchingSpecifications(ViewComputationResultModel tempResults,  IViewCycle viewCycle, params string[] specNames)
+        private static Dictionary<string, IEnumerable<ValueSpecification>> GetMatchingSpecifications(Dictionary<string, IDependencyGraph> graphs, params string[] specNames)
         {
             var ret = new Dictionary<string, IEnumerable<ValueSpecification>>();
-            
-            foreach (string config in tempResults.CalculationResultsByConfiguration.Keys)
+
+            foreach (var kvp in graphs)
             {
-                var dependencyGraphExplorer = viewCycle.GetCompiledViewDefinition().GetDependencyGraphExplorer(config);
-                var graph = dependencyGraphExplorer.GetWholeGraph();
+                var config = kvp.Key;
+                var graph = kvp.Value;
+
                 var specs = graph.DependencyNodes.SelectMany(n => n.OutputValues)
                     //This is a hack: the spec value will be pruned from the dep graph but will be in the computation cache,
                     //  and we know that it has exactly the some properties as the Curve value
-                    .SelectMany(v => v.ValueName == YieldCurveValueReqName ?  new[] {v, new ValueSpecification(YieldCurveSpecValueReqName, v.TargetSpecification, v.Properties)}: new[] {v})
+                    .SelectMany(v => v.ValueName == YieldCurveValueReqName ? new[] { v, new ValueSpecification(YieldCurveSpecValueReqName, v.TargetSpecification, v.Properties) } : new[] { v })
 
                     .Where(v => specNames.Contains(v.ValueName));
                 ret.Add(config, specs.ToList());
             }
 
             return ret;
+        }
+
+        private static Dictionary<string, IDependencyGraph> GetGraphs(IViewCycle viewCycle, IViewResultModel tempResults)
+        {
+            return tempResults.CalculationResultsByConfiguration.Keys
+                .ToDictionary(k => k,
+                        k => viewCycle.GetCompiledViewDefinition().GetDependencyGraphExplorer(k).GetWholeGraph());
         }
 
         protected override void Dispose(bool disposing)
