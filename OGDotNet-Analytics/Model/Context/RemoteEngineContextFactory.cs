@@ -110,7 +110,7 @@ namespace OGDotNet.Model.Context
                 foreach (var uri in potentialServiceId.Value)
                 {
                     var webRequest = (HttpWebRequest)WebRequest.Create(uri);
-
+                    webRequest.Method = "HEAD";
                     var result = webRequest.BeginGetResponse(null, serviceId);
                     asyncRequests.Add(new Tuple<string, HttpWebRequest, IAsyncResult>(serviceId, webRequest, result));
                 }
