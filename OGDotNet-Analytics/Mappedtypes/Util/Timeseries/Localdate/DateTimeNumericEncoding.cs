@@ -9,6 +9,7 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.util.timeseries.fast
 {
@@ -20,7 +21,7 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast
 
         private enum Encoding
         {//TODO other encodings
-            DATE_EPOCH_DAYS
+            DateEpochDays
         }
 
         private DateTimeNumericEncoding(Encoding encoding)
@@ -37,7 +38,7 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast
 
         private static DateTimeNumericEncoding Build(string name)
         {
-            return new DateTimeNumericEncoding((Encoding)Enum.Parse(typeof(Encoding), name));
+            return new DateTimeNumericEncoding(EnumBuilder<Encoding>.Parse(name));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
@@ -47,7 +48,7 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast
         
         public DateTime ConvertToDateTime(long sourceValue)
         {
-            var daysSinceEpoch = ConvertToLong(sourceValue, Encoding.DATE_EPOCH_DAYS); // TODO don't use days
+            var daysSinceEpoch = ConvertToLong(sourceValue, Encoding.DateEpochDays); // TODO don't use days
             return Epoch + TimeSpan.FromDays(daysSinceEpoch);
         }
 

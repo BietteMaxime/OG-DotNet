@@ -9,6 +9,7 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Util.Time;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
@@ -23,7 +24,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         public static FixedIncomeStrip FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             FixedIncomeStrip ret = new FixedIncomeStrip();
-            ret.InstrumentType = (StripInstrumentType) Enum.Parse(typeof(StripInstrumentType), ffc.GetValue<string>("type"));
+            ret.InstrumentType = EnumBuilder<StripInstrumentType>.Parse(ffc.GetValue<string>("type"));
             ret.CurveNodePointTime = new Tenor(ffc.GetValue<string>("tenor"));
             ret.ConventionName = ffc.GetValue<string>("conventionName");
             if (ret.InstrumentType == StripInstrumentType.Future)
@@ -36,7 +37,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add("type", InstrumentType.ToString());
+            a.Add("type", EnumBuilder<StripInstrumentType>.GetJavaName(InstrumentType));
             s.WriteInline(a, "tenor", CurveNodePointTime);
             a.Add("conventionName", ConventionName);
             if (InstrumentType == StripInstrumentType.Future)

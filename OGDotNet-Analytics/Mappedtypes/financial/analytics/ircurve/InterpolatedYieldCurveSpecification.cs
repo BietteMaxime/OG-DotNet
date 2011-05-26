@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Time;
@@ -72,7 +73,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             var resolvedStripFields = ffc.GetAllByName("resolvedStrips");
 
             var resolvedStrips = resolvedStripFields.Select(deserializer.FromField<FixedIncomeStripWithIdentifierFudge>)
-                .Select(s => new FixedIncomeStripWithIdentifier((StripInstrumentType)Enum.Parse(typeof(StripInstrumentType), s.Type), new Tenor(s.Tenor), Identifier.Parse(s.Identifier))).
+                .Select(s => new FixedIncomeStripWithIdentifier(EnumBuilder<StripInstrumentType>.Parse(s.Type), new Tenor(s.Tenor), Identifier.Parse(s.Identifier))).
                 ToList();
             return new InterpolatedYieldCurveSpecification(curveDate, name, currency, resolvedStrips, region);
         }
