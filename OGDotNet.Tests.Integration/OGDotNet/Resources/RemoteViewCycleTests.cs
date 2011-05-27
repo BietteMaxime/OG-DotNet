@@ -203,9 +203,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var dependencyNode = dependencyNodes[index];
                     foreach (var inputNode in dependencyNode.InputNodes)
                     {
-                        //var valueSpecifications = dependencyNode.InputValues.Intersect(inputNode.OutputValues);
-                        
-                        streamWriter.WriteLine(string.Format("{0} -> {1} [label=\"{2}\"];", map[inputNode], index, ""));
+                        streamWriter.WriteLine(string.Format("{0} -> {1} [label=\"{2}\"];", map[inputNode], index, string.Empty));
                     }
                 }
                 streamWriter.WriteLine("}");
@@ -219,7 +217,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             return set;
         }
 
-        private void FollowInputs(HashSet<DependencyNode> nodes, DependencyNode dependencyNode)
+        private static void FollowInputs(HashSet<DependencyNode> nodes, DependencyNode dependencyNode)
         {
             if (nodes.Contains(dependencyNode))
                 return;
