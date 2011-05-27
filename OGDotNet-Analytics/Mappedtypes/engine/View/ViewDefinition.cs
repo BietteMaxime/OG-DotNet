@@ -19,7 +19,6 @@ using OGDotNet.Mappedtypes.LiveData;
 
 namespace OGDotNet.Mappedtypes.engine.view
 {
-    [DebuggerDisplay("ViewDefinition {_name}")]
     public class ViewDefinition
     {
         private readonly UniqueIdentifier _portfolioIdentifier;
@@ -113,6 +112,11 @@ namespace OGDotNet.Mappedtypes.engine.view
         public UniqueIdentifier UniqueID
         {
             get { return _uniqueID; }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[ViewDefinition {0}]", Name);
         }
 
         public static ViewDefinition FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
