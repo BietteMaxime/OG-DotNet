@@ -13,10 +13,11 @@ using System.Net;
 using System.Threading;
 using Fudge;
 using OGDotNet.Mappedtypes;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context
 {
-    public class RemoteEngineContextFactory
+    public class RemoteEngineContextFactory : LoggingClassBase
     {
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly Uri _rootUri;
@@ -42,6 +43,8 @@ namespace OGDotNet.Model.Context
 
         private IFudgeFieldContainer GetConfigMessage()
         {
+            Logger.Info("Getting configuration info for {0}", _rootUri);
+
             var msg = _rootRest.Resolve("configuration").GetFudge().GetMessage(_configId);
             if (msg == null)
             {
@@ -57,14 +60,14 @@ namespace OGDotNet.Model.Context
 
         #region ConfigReading
 
-        private static IDictionary<string, Uri> GetServiceUris(IFudgeFieldContainer configMsg)
+        private IDictionary<string, Uri> GetServiceUris(IFudgeFieldContainer configMsg)
         {
             Dictionary<string, List<string>> potentialServiceIds = GetPotentialServiceUris(configMsg);
 
             return GetValidServiceUris(potentialServiceIds);
         }
 
-        private static Dictionary<string, List<string>> GetPotentialServiceUris(IFudgeFieldContainer configMsg)
+        private Dictionary<string, List<string>> GetPotentialServiceUris(IFudgeFieldContainer configMsg)
         {
             var potentialServiceIds = new Dictionary<string, List<string>>();
             foreach (var userDataField in configMsg)
@@ -86,7 +89,9 @@ namespace OGDotNet.Model.Context
                             }
                             break;
                         case "uri":
-                            uris.Add((string)field.Value);
+                            var uri = (string)field.Value;
+                            Logger.Debug("Candidate service {0}-{1}", userDataField.Name, uri);
+                            uris.Add(uri);
                             break;
                         default:
                             continue;
@@ -98,7 +103,7 @@ namespace OGDotNet.Model.Context
             return potentialServiceIds;
         }
 
-        private static IDictionary<string, Uri> GetValidServiceUris(Dictionary<string, List<string>> potentialServiceIds)
+        private IDictionary<string, Uri> GetValidServiceUris(Dictionary<string, List<string>> potentialServiceIds)
         {
             var validServiceUris = new Dictionary<string, Uri>();
 
@@ -120,9 +125,11 @@ namespace OGDotNet.Model.Context
             {
                 var waitHandles = asyncRequests.Select(kvp => kvp.Item3.AsyncWaitHandle).ToArray();
 
-                var index = WaitHandle.WaitAny(waitHandles, 5000); //Have to timeout by hand, see http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx
+                var index = WaitHandle.WaitAny(waitHandles, 10); //Have to timeout by hand, see http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx
                 if (index == WaitHandle.WaitTimeout)
                 {
+                    var requestLogMessage = string.Join(",", asyncRequests.Select(a => string.Format("{0}-{1}", a.Item1, a.Item2.RequestUri)));
+                    Logger.Warn("Timed out when choosing services: {0}", requestLogMessage);
                     foreach (var req in asyncRequests)
                     {
                         req.Item2.Abort();
@@ -135,10 +142,12 @@ namespace OGDotNet.Model.Context
 
                 if (IsValidResponse(completedRequest))
                 {
+                    Logger.Info("Resolved {0} for service {1}", completedRequest.Item2.RequestUri, completedRequest.Item1);
                     validServiceUris[completedRequest.Item1] = completedRequest.Item2.RequestUri;
 
                     foreach (var req in asyncRequests.Where(r => r.Item1 == completedRequest.Item1))
                     {
+                        Logger.Debug("Ignoring candidate {0} for service {1}", completedRequest.Item2.RequestUri, completedRequest.Item1);
                         req.Item2.Abort();
                     }
                 }

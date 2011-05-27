@@ -42,6 +42,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core" />
+    <Reference Include="Castle.Facilities.Logging" />
+    <Reference Include="Castle.Services.Logging.Log4netIntegration" />
     <Reference Include="Castle.Windsor" />
     <Reference Include="Fudge, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -152,6 +154,9 @@
     </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

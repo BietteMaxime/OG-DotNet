@@ -241,6 +241,7 @@
     <Compile Include="Mappedtypes\Master\Security\SecurityDocument.cs" />
     <Compile Include="Mappedtypes\Master\Security\SecuritySearchRequest.cs" />
     <Compile Include="Utils\FudgeDateTimeExtensions.cs" />
+    <Compile Include="Utils\LoggingClassBase.cs" />
     <Compile Include="Utils\Memoizer.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Mappedtypes\Id\UniqueIdentifier.cs" />
