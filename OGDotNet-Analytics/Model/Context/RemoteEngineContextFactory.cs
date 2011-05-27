@@ -125,7 +125,7 @@ namespace OGDotNet.Model.Context
             {
                 var waitHandles = asyncRequests.Select(kvp => kvp.Item3.AsyncWaitHandle).ToArray();
 
-                var index = WaitHandle.WaitAny(waitHandles, 10); //Have to timeout by hand, see http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx
+                var index = WaitHandle.WaitAny(waitHandles, 5000); //Have to timeout by hand, see http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx
                 if (index == WaitHandle.WaitTimeout)
                 {
                     var requestLogMessage = string.Join(",", asyncRequests.Select(a => string.Format("{0}-{1}", a.Item1, a.Item2.RequestUri)));
