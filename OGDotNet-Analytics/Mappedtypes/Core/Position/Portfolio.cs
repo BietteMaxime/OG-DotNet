@@ -13,10 +13,9 @@ using OGDotNet.Mappedtypes.Id;
 namespace OGDotNet.Mappedtypes.Core.Position
 {
     [FudgeSurrogate(typeof(PortfolioBuilder))]
-    public abstract class IPortfolio : IUniqueIdentifiable
+    public interface IPortfolio : IUniqueIdentifiable
     {
-        public abstract string Name { get; }
-        public abstract PortfolioNode Root { get; }
-        public abstract UniqueIdentifier UniqueId { get; }
+        string Name { get; }
+        PortfolioNode Root { get; }
     }
 }

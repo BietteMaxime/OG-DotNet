@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Position;
@@ -25,8 +26,8 @@ namespace OGDotNet.Builders
             var id = ffc.GetValue<string>("identifier");
             var secKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
             var quant = ffc.GetValue<string>("quantity");
-
-            return new PositionImpl(UniqueIdentifier.Parse(id), long.Parse(quant), secKey);
+            var trades = deserializer.FromField<IList<ITrade>>(ffc.GetByName("trades")) ?? new List<ITrade>();
+            return new PositionImpl(UniqueIdentifier.Parse(id), long.Parse(quant), secKey, trades);
         }
     }
 }

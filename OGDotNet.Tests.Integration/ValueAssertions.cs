@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
@@ -190,8 +191,7 @@ namespace OGDotNet.Tests.Integration
             Assert.NotEmpty(viewDefin.LiveDataRequirements);
             AssertSensibleValue(viewDefin.LiveDataRequirements);
 
-            Assert.NotNull(viewDefin.Portfolio);
-
+            AssertSensibleValue(viewDefin.Portfolio);
             Assert.NotNull(viewDefin.ViewDefinition);
             AssertSensibleValue(viewDefin.ViewDefinition.CalculationConfigurationsByName);
 
@@ -207,6 +207,42 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(ValueProperties props)
         {
             Assert.NotNull(props);
+        }
+
+        public static void AssertSensibleValue(IPortfolio portfolio)
+        {
+            Assert.NotNull(portfolio);
+            Assert.NotNull(portfolio.UniqueId);
+            Assert.NotNull(portfolio.Name);
+            AssertSensibleValue(portfolio.Root);
+        }
+
+        public static void AssertSensibleValue(PortfolioNode node)
+        {
+            Assert.NotNull(node);
+            Assert.NotNull(node.UniqueId);
+            Assert.NotNull(node.Name);
+            Assert.NotNull(node.Positions);
+            Assert.NotNull(node.SubNodes);
+            AssertSensibleValue(node.Positions);
+            AssertSensibleValue(node.SubNodes);
+        }
+
+        public static void AssertSensibleValue(IPosition position)
+        {
+            Assert.NotNull(position);
+            Assert.NotNull(position.UniqueId);
+            Assert.NotNull(position.Identifier);
+            Assert.InRange(position.Quantity, -1, long.MaxValue); //Not sure why -1 is valid
+            Assert.NotNull(position.SecurityKey);
+            Assert.NotNull(position.Trades);
+            AssertSensibleValue(position.Trades);
+        }
+
+        public static void AssertSensibleValue(ITrade trade)
+        {
+            Assert.NotNull(trade);
+            Assert.NotNull(trade.UniqueId);
         }
     }
 }

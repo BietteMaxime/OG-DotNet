@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
@@ -18,5 +19,6 @@ namespace OGDotNet.Mappedtypes.Core.Position
         IdentifierBundle SecurityKey { get; }
         UniqueIdentifier Identifier { get; }
         long Quantity { get; }
+        IEnumerable<ITrade> Trades { get; }
     }
 }

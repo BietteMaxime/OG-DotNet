@@ -6,9 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using Fudge;
-using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position.Impl
@@ -26,17 +23,17 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             _name = name;
         }
 
-        public override string Name
+        public string Name
         {
             get { return _name; }
         }
 
-        public override PortfolioNode Root
+        public PortfolioNode Root
         {
             get { return _root; }
         }
 
-        public override UniqueIdentifier UniqueId
+        public UniqueIdentifier UniqueId
         {
             get { return _identifier; }
         }

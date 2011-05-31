@@ -63,6 +63,7 @@
     <Compile Include="Builders\EnumUtils.cs" />
     <Compile Include="Builders\IdentifierBuilder.cs" />
     <Compile Include="Builders\PositionBuilder.cs" />
+    <Compile Include="Builders\TradeBuilder.cs" />
     <Compile Include="Builders\ViewResultModel\InMemoryViewDeltaResultModelBuilder.cs" />
     <Compile Include="Builders\ViewResultModel\InMemoryViewResultModelBuilderBase.cs" />
     <Compile Include="Builders\MapBuilder.cs" />

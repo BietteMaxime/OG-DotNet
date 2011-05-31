@@ -5,18 +5,16 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position
 {
-    public abstract class Trade : IUniqueIdentifiable
+    [FudgeSurrogate(typeof(TradeBuilder))]
+    public interface ITrade : IUniqueIdentifiable
     {
         //TODO: the rest of this interface
-        public abstract UniqueIdentifier ParentPositionId { get; }
-        public abstract UniqueIdentifier UniqueId { get; }
+        UniqueIdentifier ParentPositionId { get; }
     }
 }

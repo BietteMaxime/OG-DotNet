@@ -5,17 +5,14 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
-    class TradeImpl : Trade
+    [FudgeSurrogate(typeof(TradeBuilder))]
+    class TradeImpl : ITrade
     {
         private readonly UniqueIdentifier _uniqueId;
         private readonly UniqueIdentifier _parentPositionId;
@@ -26,24 +23,14 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             _parentPositionId = parentPositionId;
         }
 
-        public override UniqueIdentifier ParentPositionId
+        public UniqueIdentifier ParentPositionId
         {
             get { return _parentPositionId; }
         }
 
-        public override UniqueIdentifier UniqueId
+        public UniqueIdentifier UniqueId
         {
             get { return _uniqueId; }
-        }
-
-        public static TradeImpl FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            return new TradeImpl(UniqueIdentifier.Parse(ffc.GetString("uniqueId")), UniqueIdentifier.Parse(ffc.GetString("parentPositionId")));
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            throw new NotImplementedException();
         }
     }
 }
