@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Db;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
@@ -28,7 +29,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var historicalDataSource = Context.HistoricalDataSource;
 
-            var end = DateTimeOffset.Now;
+            var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
             var start = end - TimeSpan.FromDays(7);
 
             ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Of("Tss", "3580"), start, false, end, true);
@@ -58,7 +59,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var historicalDataSource = Context.HistoricalDataSource;
 
-            var end = DateTimeOffset.Now;
             var result = historicalDataSource.GetHistoricalData(new IdentifierBundle(new Identifier("BLOOMBERG_BUID", "IX289029-0")));
             AssertSane(result);
         }
@@ -125,6 +125,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 Assert.InRange(value.Item1, start, end);
             }
+            Assert.Equal(series.Values, series.Values.OrderBy(s => s.Item1).ToList());
         }
     }
 }
