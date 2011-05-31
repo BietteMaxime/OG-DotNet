@@ -65,6 +65,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotEqual(0, searchResult.Paging.TotalItems);
                 Assert.Equal(securityType, searchResult.Documents.Single().Security.SecurityType);
             }
+            Assert.Equal(
+                Context.SecurityMaster.Search("*", null, PagingRequest.None).Paging.TotalItems,
+                result.SecurityTypes.Sum(r => Context.SecurityMaster.Search("*", r, PagingRequest.None).Paging.TotalItems)
+                );
         }
     }
 }
