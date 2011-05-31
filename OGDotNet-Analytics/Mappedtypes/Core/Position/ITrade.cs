@@ -19,5 +19,6 @@ namespace OGDotNet.Mappedtypes.Core.Position
         UniqueIdentifier ParentPositionId { get; }
         DateTimeOffset TradeDate { get; }
         IdentifierBundle SecurityKey { get; }
+        ICounterparty Counterparty { get; }
     }
 }

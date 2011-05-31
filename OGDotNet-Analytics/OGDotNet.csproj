@@ -74,6 +74,8 @@
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\SnapshotDataBundle.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\ValueSnapshot.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\YieldCurveKey.cs" />
+    <Compile Include="Mappedtypes\Core\Position\ICounterparty.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Impl\CounterpartyImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\PortfolioNodeImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\PositionImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\TradeImpl.cs" />

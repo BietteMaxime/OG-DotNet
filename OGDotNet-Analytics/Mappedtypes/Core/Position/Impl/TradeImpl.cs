@@ -19,11 +19,13 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
         private readonly UniqueIdentifier _parentPositionId;
         private readonly DateTimeOffset _tradeDate;
         private readonly IdentifierBundle _securityKey;
+        private readonly CounterpartyImpl _counterparty;
 
-        public TradeImpl(UniqueIdentifier uniqueId, UniqueIdentifier parentPositionId, DateTimeOffset tradeDate, IdentifierBundle securityKey)
+        public TradeImpl(UniqueIdentifier uniqueId, UniqueIdentifier parentPositionId, DateTimeOffset tradeDate, IdentifierBundle securityKey, CounterpartyImpl counterparty)
         {
             _uniqueId = uniqueId;
             _securityKey = securityKey;
+            _counterparty = counterparty;
             _tradeDate = tradeDate;
             _parentPositionId = parentPositionId;
         }
@@ -46,6 +48,11 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
         public UniqueIdentifier UniqueId
         {
             get { return _uniqueId; }
+        }
+
+        public ICounterparty Counterparty
+        {
+            get { return _counterparty; }
         }
     }
 }
