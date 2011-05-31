@@ -6,6 +6,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using OGDotNet.Utils;
+
 namespace OGDotNet.Mappedtypes.financial.analytics
 {
     public class LabelledMatrixEntry
@@ -15,6 +17,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics
 
         public LabelledMatrixEntry(object label, double value)
         {
+            ArgumentChecker.NotNull(label, "label");
+
             _label = label;
             _value = value;
         }
