@@ -5,31 +5,44 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
-    class PositionImpl : Position
+    [FudgeSurrogate(typeof(PositionBuilder))]
+    class PositionImpl : IPosition
     {
-        public PositionImpl(UniqueIdentifier identifier, long quantity, IdentifierBundle securityKey) : base(identifier, quantity, securityKey)
+        private readonly IdentifierBundle _securityKey;
+        private readonly UniqueIdentifier _identifier;
+        private readonly long _quantity;
+
+        public PositionImpl(UniqueIdentifier identifier, long quantity, IdentifierBundle securityKey)
         {
+            _securityKey = securityKey;
+            _identifier = identifier;
+            _quantity = quantity;
         }
 
-        public static new PositionImpl FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        public IdentifierBundle SecurityKey
         {
-            var id = ffc.GetValue<string>("identifier");
-            var secKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
-            var quant = ffc.GetValue<string>("quantity");
-
-            return new PositionImpl(UniqueIdentifier.Parse(id), long.Parse(quant), secKey);
+            get { return _securityKey; }
         }
 
-        public new void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        public UniqueIdentifier Identifier
         {
-            throw new NotImplementedException();
+            get { return _identifier; }
+        }
+
+        public long Quantity
+        {
+            get { return _quantity; }
+        }
+
+        public UniqueIdentifier UniqueId
+        {
+            get { return Identifier; }
         }
     }
 }

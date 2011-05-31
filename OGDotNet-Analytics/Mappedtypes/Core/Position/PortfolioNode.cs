@@ -20,9 +20,9 @@ namespace OGDotNet.Mappedtypes.Core.Position
         private readonly UniqueIdentifier _identifier;
         private readonly string _name;
         private readonly IList<PortfolioNode> _subNodes;
-        private readonly IList<Position> _positions;
+        private readonly IList<IPosition> _positions;
 
-        public PortfolioNode(UniqueIdentifier identifier, string name, IList<PortfolioNode> subNodes, IList<Position> positions)
+        public PortfolioNode(UniqueIdentifier identifier, string name, IList<PortfolioNode> subNodes, IList<IPosition> positions)
         {
             _identifier = identifier;
             _name = name;
@@ -40,7 +40,7 @@ namespace OGDotNet.Mappedtypes.Core.Position
             get { return _subNodes; }
         }
 
-        public IList<Position> Positions
+        public IList<IPosition> Positions
         {
             get { return _positions; }
         }

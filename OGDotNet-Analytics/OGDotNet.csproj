@@ -62,6 +62,7 @@
     <Compile Include="Builders\EnumBuilder.cs" />
     <Compile Include="Builders\EnumUtils.cs" />
     <Compile Include="Builders\IdentifierBuilder.cs" />
+    <Compile Include="Builders\PositionBuilder.cs" />
     <Compile Include="Builders\ViewResultModel\InMemoryViewDeltaResultModelBuilder.cs" />
     <Compile Include="Builders\ViewResultModel\InMemoryViewResultModelBuilderBase.cs" />
     <Compile Include="Builders\MapBuilder.cs" />
@@ -214,7 +215,7 @@
     <Compile Include="Mappedtypes\Core\Position\Portfolio.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\PortfolioImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\PortfolioNode.cs" />
-    <Compile Include="Mappedtypes\Core\Position\Position.cs" />
+    <Compile Include="Mappedtypes\Core\Position\IPosition.cs" />
     <Compile Include="Model\Context\RemoteEngineContext.cs" />
     <Compile Include="Model\Resources\RemoteSecuritySource.cs" />
     <Compile Include="Model\Resources\RemoteViewProcessor.cs" />

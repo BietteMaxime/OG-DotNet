@@ -15,7 +15,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
     internal class PortfolioNodeImpl : PortfolioNode
     {
-        public PortfolioNodeImpl(UniqueIdentifier identifier, string name, IList<PortfolioNode> subNodes, IList<Position> positions) : base(identifier, name, subNodes, positions)
+        public PortfolioNodeImpl(UniqueIdentifier identifier, string name, IList<PortfolioNode> subNodes, IList<IPosition> positions) : base(identifier, name, subNodes, positions)
         {
         }
 
@@ -24,7 +24,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             return new PortfolioNodeImpl(
                 UniqueIdentifier.Parse(ffc.GetString("identifier")), ffc.GetString("name"), 
                 deserializer.FromField<IList<PortfolioNode>>(ffc.GetByName("subNodes")) ?? new List<PortfolioNode>(),
-                deserializer.FromField<IList<Position>>(ffc.GetByName("positions")) ?? new List<Position>());
+                deserializer.FromField<IList<IPosition>>(ffc.GetByName("positions")) ?? new List<IPosition>());
         }
 
         public new void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
