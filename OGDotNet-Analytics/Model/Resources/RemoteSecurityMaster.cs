@@ -34,5 +34,10 @@ namespace OGDotNet.Model.Resources
             SecurityDocument securityDocument = _restTarget.Resolve("security").Resolve(uid.ToString()).Get<SecurityDocument>();
             return securityDocument.Security;
         }
+
+        public SecurityMetaDataResult MetaData(SecurityMetaDataRequest request)
+        {
+            return _restTarget.Resolve("metaData").Post<SecurityMetaDataResult>(request);
+        }
     }
 }

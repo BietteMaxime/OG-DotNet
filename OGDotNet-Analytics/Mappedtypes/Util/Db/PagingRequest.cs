@@ -11,6 +11,8 @@ namespace OGDotNet.Mappedtypes.Util.Db
     public class PagingRequest
     {
         public static readonly PagingRequest All = new PagingRequest(1, int.MaxValue);
+        public static readonly PagingRequest None = new PagingRequest(1, 0);
+        public static readonly PagingRequest One = new PagingRequest(1, 1);
         private readonly int _page;
         public int Page
         {

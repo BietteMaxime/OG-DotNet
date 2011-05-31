@@ -8,6 +8,7 @@
 
 using System.Linq;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Master.Security;
 using OGDotNet.Mappedtypes.Util.Db;
 using Xunit;
 
@@ -18,7 +19,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanSearchWithRequest()
         {
-            var searchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All);
+            var searchResult = Context.SecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 20));
             Assert.NotEmpty(searchResult.Documents);
 
             var securitytoFind = searchResult.Documents.First();
@@ -36,6 +37,33 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotEmpty(singleSearchResult.Documents);
                 Assert.Single(singleSearchResult.Documents);
                 Assert.Equal(singleSearchResult.Documents.Single().Security.UniqueId, securitytoFind.UniqueId);
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void GetsMatchSearch()
+        {
+            var searchResult = Context.SecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 1));
+            foreach (var securityDocument in searchResult.Documents)
+            {
+                var security = Context.SecurityMaster.GetSecurity(securityDocument.UniqueId);
+                Assert.NotNull(security);
+                Assert.Equal(securityDocument.Security.Name, security.Name);
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanQueryMetadata()
+        {
+            var result = Context.SecurityMaster.MetaData(new SecurityMetaDataRequest());
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.SecurityTypes);
+            Assert.Contains("FUTURE", result.SecurityTypes);
+            foreach (var securityType in result.SecurityTypes)
+            {
+                var searchResult = Context.SecurityMaster.Search("*", securityType, PagingRequest.One);
+                Assert.NotEqual(0, searchResult.Paging.TotalItems);
+                Assert.Equal(securityType, searchResult.Documents.Single().Security.SecurityType);
             }
         }
     }

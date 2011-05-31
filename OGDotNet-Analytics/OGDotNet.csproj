@@ -204,6 +204,8 @@
     <Compile Include="Model\Resources\RemoteViewCycleReference.cs" />
     <Compile Include="Model\Resources\RemoteViewDefinitionRepository.cs" />
     <Compile Include="Model\Resources\ResultEvent.cs" />
+    <Compile Include="Mappedtypes\Master\Security\SecurityMetaDataRequest.cs" />
+    <Compile Include="Mappedtypes\Master\Security\SecurityMetaDataResult.cs" />
     <Compile Include="Model\Resources\UriEncoding.cs" />
     <Compile Include="Mappedtypes\Util\PublicAPI\ViewClientState.cs" />
     <Compile Include="Model\RestExceptionMapping.cs" />

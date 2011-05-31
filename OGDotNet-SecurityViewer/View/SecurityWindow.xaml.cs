@@ -11,7 +11,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.Master.Security;
 using OGDotNet.Mappedtypes.Util.Db;
 using OGDotNet.Model.Resources;
 using OGDotNet.WPFUtils.Windsor;
@@ -29,6 +31,9 @@ namespace OGDotNet.SecurityViewer.View
         {
             InitializeComponent();
             itemGrid.Items.Clear();
+            typeBox.ItemsSource = new[] { string.Empty }.Concat(
+                OGContext.SecurityMaster.MetaData(new SecurityMetaDataRequest()).SecurityTypes);
+            typeBox.SelectedIndex = 0;
         }
 
         private RemoteSecurityMaster SecurityMaster
@@ -52,7 +57,7 @@ namespace OGDotNet.SecurityViewer.View
         {
             var token = ++_cancellationToken;
 
-            string type = typeBox.Text;
+            string type = (string) typeBox.SelectedItem;
             string name = nameBox.Text;
 
             if (type == string.Empty)
@@ -113,7 +118,7 @@ namespace OGDotNet.SecurityViewer.View
             }
         }
 
-        private void typeBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void typeBox_SelectedItemChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
             if (IsLoaded)
                 Update();
