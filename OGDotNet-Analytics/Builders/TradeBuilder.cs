@@ -29,7 +29,6 @@ namespace OGDotNet.Builders
             
             var tradeDate = ffc.GetValue<DateTimeOffset>("tradeDate");
 
-
             var securityKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
 
             return new TradeImpl(uniqueIdentifier, parentPositionId, tradeDate, securityKey);
