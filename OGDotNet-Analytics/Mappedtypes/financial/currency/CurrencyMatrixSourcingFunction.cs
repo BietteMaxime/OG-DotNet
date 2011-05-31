@@ -14,9 +14,9 @@ namespace OGDotNet.Mappedtypes.financial.currency
 {
     public class CurrencyMatrixSourcingFunction
     {
-        private readonly CurrencyMatrix _matrix;
+        private readonly ICurrencyMatrix _matrix;
 
-        public CurrencyMatrixSourcingFunction(CurrencyMatrix matrix)
+        public CurrencyMatrixSourcingFunction(ICurrencyMatrix matrix)
         {
             _matrix = matrix;
         }

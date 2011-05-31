@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
+    <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
     <Compile Include="Builders\EnumBuilder.cs" />
     <Compile Include="Builders\EnumUtils.cs" />
     <Compile Include="Builders\IdentifierBuilder.cs" />
@@ -179,7 +180,7 @@
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\InterpolatedYieldCurveSpecification.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ILocalDateDoubleTimeSeries.cs" />
-    <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
+    <Compile Include="Mappedtypes\financial\currency\ICurrencyMatrix.cs" />
     <Compile Include="Mappedtypes\financial\view\AddViewDefinitionRequest.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\UpdateAction.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\Warnings\Warning.cs" />
