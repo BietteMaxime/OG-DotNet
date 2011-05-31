@@ -34,7 +34,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                var resultModel = cycle.GetResultModel();
                Assert.NotNull(resultModel);
 
-               var computedValue = resultModel.AllResults.First().ComputedValue;
+               var computedValue = resultModel.AllResults.First(r=>r.ComputedValue.Value is double).ComputedValue;
                var valueSpec = computedValue.Specification;
 
                var nonEmptyResponse = cycle.QueryComputationCaches(new ComputationCacheQuery("Default", valueSpec));
