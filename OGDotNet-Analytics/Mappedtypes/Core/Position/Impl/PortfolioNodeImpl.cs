@@ -23,8 +23,8 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
         {
             return new PortfolioNodeImpl(
                 UniqueIdentifier.Parse(ffc.GetString("identifier")), ffc.GetString("name"), 
-                deserializer.FromField<IList<PortfolioNode>>(ffc.GetByName("subNodes")),
-                deserializer.FromField<IList<Position>>(ffc.GetByName("positions")));
+                deserializer.FromField<IList<PortfolioNode>>(ffc.GetByName("subNodes")) ?? new List<PortfolioNode>(),
+                deserializer.FromField<IList<Position>>(ffc.GetByName("positions")) ?? new List<Position>());
         }
 
         public new void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
