@@ -6,10 +6,13 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
+    [FudgeSurrogate(typeof(PortfolioBuilder))]
     internal class PortfolioImpl : IPortfolio
     {
         private readonly PortfolioNode _root;
