@@ -9,7 +9,6 @@
 using System;
 using Fudge;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Master
