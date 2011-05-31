@@ -20,6 +20,7 @@ using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Utils;
@@ -141,7 +142,7 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(Security security)
         {
             Assert.NotEmpty(security.Name);
-            Assert.NotEmpty(security.Identifiers.Identifiers);
+            AssertSensibleValue(security.Identifiers);
             Assert.NotEmpty(security.SecurityType);
             Assert.NotNull(security.UniqueId);
         }
@@ -234,7 +235,7 @@ namespace OGDotNet.Tests.Integration
             Assert.NotNull(position.UniqueId);
             Assert.NotNull(position.Identifier);
             Assert.InRange(position.Quantity, -1, long.MaxValue); //Not sure why -1 is valid
-            Assert.NotNull(position.SecurityKey);
+            AssertSensibleValue(position.SecurityKey);
             Assert.NotNull(position.Trades);
             AssertSensibleValue(position.Trades);
         }
@@ -243,6 +244,14 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(trade);
             Assert.NotNull(trade.UniqueId);
+            Assert.NotEqual(default(DateTimeOffset), trade.TradeDate);
+            AssertSensibleValue(trade.SecurityKey);
+        }
+
+        public static void AssertSensibleValue(IdentifierBundle bundle)
+        {
+            Assert.NotNull(bundle);
+            Assert.NotEmpty(bundle.Identifiers);
         }
     }
 }

@@ -22,9 +22,17 @@ namespace OGDotNet.Builders
 
         public override ITrade DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
+            var uniqueIdentifier = UniqueIdentifier.Parse(ffc.GetString("uniqueId"));
+
             var ppIdField = ffc.GetString("parentPositionId");
             var parentPositionId = ppIdField == null ? null : UniqueIdentifier.Parse(ppIdField);
-            return new TradeImpl(UniqueIdentifier.Parse(ffc.GetString("uniqueId")), parentPositionId);
+            
+            var tradeDate = ffc.GetValue<DateTimeOffset>("tradeDate");
+
+
+            var securityKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
+
+            return new TradeImpl(uniqueIdentifier, parentPositionId, tradeDate, securityKey);
         }
     }
 }
