@@ -45,7 +45,7 @@ namespace OGDotNet.Model.Context
         {
             Logger.Info("Getting configuration info for {0}", _rootUri);
 
-            var msg = _rootRest.Resolve("configuration").GetFudge().GetMessage(_configId);
+            var msg = _rootRest.Resolve("configuration").Resolve(_configId).GetFudge();
             if (msg == null)
             {
                 throw new OpenGammaException("Missing config " + _configId);
