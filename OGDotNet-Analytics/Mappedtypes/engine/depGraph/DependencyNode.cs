@@ -71,12 +71,15 @@ namespace OGDotNet.Mappedtypes.engine.depgraph
         {
             var target = deserializer.FromField<ComputationTarget>(ffc.GetByName("target"));
 
-            string functionUniqueId = ffc.GetString("functionUniqueId");
+            string parameterizedFunctionUniqueId = ffc.GetString("parameterizedFunctionUniqueId");
             var functionParametersField = ffc.GetByName("functionParameters");
             var functionParameters = functionParametersField != null ? deserializer.FromField<IFunctionParameters>(functionParametersField) : null;
 
-            ICompiledFunctionDefinition function = new CompiledFunctionDefinitionStub(target.Type);
-            var parameterizedFunction = new ParameterizedFunction(function, functionParameters, functionUniqueId);
+            string functionShortName = ffc.GetString("functionShortName");
+            string functionUniqueId = ffc.GetString("functionUniqueId");
+            
+            ICompiledFunctionDefinition function = new CompiledFunctionDefinitionStub(target.Type, functionShortName, functionUniqueId);
+            var parameterizedFunction = new ParameterizedFunction(function, functionParameters, parameterizedFunctionUniqueId);
 
             var inputValues = deserializer.FromField<ValueSpecification[]>(ffc.GetByName("inputValues"));
             var outputValues = deserializer.FromField<ValueSpecification[]>(ffc.GetByName("outputValues"));
@@ -85,24 +88,53 @@ namespace OGDotNet.Mappedtypes.engine.depgraph
             return new DependencyNode(target, inputValues, outputValues, terminalOutputValues, parameterizedFunction);
         }
 
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            throw new NotImplementedException();
+        }
+
         private class CompiledFunctionDefinitionStub : ICompiledFunctionDefinition
         {
             private readonly ComputationTargetType _targetType;
+            private readonly FunctionDefinitionStub _functionDefinition;
 
-            public CompiledFunctionDefinitionStub(ComputationTargetType targetType)
+            public CompiledFunctionDefinitionStub(ComputationTargetType targetType, string uniqueId, string shortName)
             {
                 _targetType = targetType;
+                _functionDefinition = new FunctionDefinitionStub(uniqueId, shortName);
             }
 
             public ComputationTargetType TargetType
             {
                 get { return _targetType; }
             }
+
+            public IFunctionDefinition FunctionDefinition
+            {
+                get { return _functionDefinition; }
+            }
         }
 
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        private class FunctionDefinitionStub : IFunctionDefinition
         {
-            throw new NotImplementedException();
+            private readonly string _uniqueId;
+            private readonly string _shortName;
+
+            public FunctionDefinitionStub(string uniqueId, string shortName)
+            {
+                _uniqueId = uniqueId;
+                _shortName = shortName;
+            }
+
+            public string UniqueId
+            {
+                get { return _uniqueId; }
+            }
+
+            public string ShortName
+            {
+                get { return _shortName; }
+            }
         }
     }
 }

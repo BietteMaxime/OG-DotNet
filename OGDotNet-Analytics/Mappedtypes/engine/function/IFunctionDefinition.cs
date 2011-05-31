@@ -1,16 +1,15 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ICompiledFunctionDefinition.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="IFunctionDefinition.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-
 namespace OGDotNet.Mappedtypes.engine.function
 {
-    public interface ICompiledFunctionDefinition
+    public interface IFunctionDefinition
     {
-        ComputationTargetType TargetType { get; }
-        IFunctionDefinition FunctionDefinition { get; }
+        string UniqueId { get; }
+        string ShortName { get; }
     }
 }

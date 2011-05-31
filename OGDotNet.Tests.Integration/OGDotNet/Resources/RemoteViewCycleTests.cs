@@ -178,6 +178,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotNull(node.Function);
                 Assert.NotNull(node.Function.UniqueId);
                 Assert.NotNull(node.Function.Parameters);
+                Assert.NotNull(node.Function.Function);
+                Assert.NotNull(node.Function.Function.TargetType);
+                Assert.NotNull(node.Function.Function.FunctionDefinition);
+                Assert.NotEmpty(node.Function.Function.FunctionDefinition.UniqueId);
+                Assert.NotEmpty(node.Function.Function.FunctionDefinition.ShortName);
             }
 
             WriteToDot(subgraph, string.Format("{0}.{1}.dot", viewCalculationConfiguration, TestUtils.ExecutingTestName));
