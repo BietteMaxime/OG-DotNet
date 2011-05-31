@@ -54,10 +54,10 @@ namespace OGDotNet.Model.Context
         }
 
         public RemoteSecurityMaster SecurityMaster
-        {//TODO this is a hack, should I even be exposing this?
+        {
             get
             {
-                return new RemoteSecurityMaster(new RestTarget(_fudgeContext, GetMasterUri("securityMaster")));
+                return new RemoteSecurityMaster(new RestTarget(_fudgeContext, _serviceUris["sharedSecurityMaster"]));
             }
         }
 
