@@ -32,9 +32,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanCreateAndRunFromView(ViewDefinition vd)
         {
-            var options = ExecutionOptions.SingleCycle;
-            ViewComputationResultModel withoutSnapshot = GetFirstResult(options, vd.Name);
-
             var snapshotManager = Context.MarketDataSnapshotManager;
             using (var proc = snapshotManager.CreateFromViewDefinition(vd.Name))
             {
@@ -45,6 +42,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     var snapOptions = ExecutionOptions.Snapshot(proc.Snapshot.UniqueId);
                     var withSnapshot = GetFirstResult(snapOptions, vd.Name);
+
+                    var options = ExecutionOptions.SingleCycle;
+                    ViewComputationResultModel withoutSnapshot = GetFirstResult(options, vd.Name);
 
                     var withoutCount = CountResults(withoutSnapshot);
                     var withCount = CountResults(withSnapshot);
