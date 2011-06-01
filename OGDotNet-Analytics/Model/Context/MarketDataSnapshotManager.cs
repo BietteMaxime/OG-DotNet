@@ -33,20 +33,11 @@ namespace OGDotNet.Model.Context
 
         public MarketDataSnapshotProcessor CreateFromViewDefinition(string name, CancellationToken ct = default(CancellationToken))
         {
-            return CreateFromViewDefinition(name, DateTimeOffset.Now, ct);
+            return CreateFromViewDefinition(_remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(name), ct);
         }
         public MarketDataSnapshotProcessor CreateFromViewDefinition(ViewDefinition definition, CancellationToken ct = default(CancellationToken))
         {
-            return CreateFromViewDefinition(definition, DateTimeOffset.Now, ct);
-        }
-
-        public MarketDataSnapshotProcessor CreateFromViewDefinition(string name, DateTimeOffset offset, CancellationToken ct = default(CancellationToken))
-        {
-            return CreateFromViewDefinition(_remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(name), offset, ct);
-        }
-        public MarketDataSnapshotProcessor CreateFromViewDefinition(ViewDefinition definition, DateTimeOffset offset, CancellationToken ct = default(CancellationToken))
-        {
-            return MarketDataSnapshotProcessor.Create(_remoteEngineContext, definition, offset, ct);
+            return MarketDataSnapshotProcessor.Create(_remoteEngineContext, definition, ct);
         }
     }
 }

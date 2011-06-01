@@ -56,7 +56,7 @@ namespace OGDotNet.Model.Context
         }
 
         #region create snapshot
-        public ManageableMarketDataSnapshot CreateSnapshotFromView(DateTimeOffset valuationTime, CancellationToken ct)
+        public ManageableMarketDataSnapshot CreateSnapshotFromView(CancellationToken ct)
         {
             CheckDisposed();
 
@@ -66,7 +66,7 @@ namespace OGDotNet.Model.Context
                         var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
 
                         return new ManageableMarketDataSnapshot(_definition.Name, globalValues, yieldCurves);
-                    }, ExecutionOptions.GetSingleCycle(valuationTime), ct);
+                    }, ExecutionOptions.SingleCycle, ct);
         }
 
         private static YieldCurveKey GetYieldCurveKey(ValueSpecification y)

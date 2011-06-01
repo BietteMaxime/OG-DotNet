@@ -33,10 +33,10 @@ namespace OGDotNet.Model.Context
         private readonly RawMarketDataSnapper _rawMarketDataSnapper;
         private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster; //TODO should be the user master
 
-        internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, DateTimeOffset valuationTime, CancellationToken ct)
+        internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, CancellationToken ct)
         {
             var rawMarketDataSnapper = new RawMarketDataSnapper(context, definition);
-            var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(valuationTime, ct);
+            var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(ct);
             return new MarketDataSnapshotProcessor(snapshot, rawMarketDataSnapper, context.MarketDataSnapshotMaster);
         }
 
@@ -68,7 +68,7 @@ namespace OGDotNet.Model.Context
 
         public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))
         {
-            return _rawMarketDataSnapper.CreateSnapshotFromView(DateTimeOffset.Now, ct);
+            return _rawMarketDataSnapper.CreateSnapshotFromView(ct);
         }
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
