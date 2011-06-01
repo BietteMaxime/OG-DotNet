@@ -136,11 +136,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             InitTableData();
             detailsPopup.IsOpen = true;
+            _timer.IsEnabled = false;
         }
 
         private void detailsButton_Unchecked(object sender, RoutedEventArgs e)
         {
             detailsPopup.IsOpen = false;
+            _timer.IsEnabled = true;
         }
 
         private void detailsPopup_Closed(object sender, EventArgs e)
