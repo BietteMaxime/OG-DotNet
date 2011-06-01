@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -20,6 +21,7 @@ using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
+using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
@@ -27,6 +29,7 @@ using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Utils;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
@@ -66,7 +69,7 @@ namespace OGDotNet.Model.Context
                         var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
 
                         return new ManageableMarketDataSnapshot(_definition.Name, globalValues, yieldCurves);
-                    }, ExecutionOptions.SingleCycle, ct);
+                    }, null, ct);
         }
 
         private static YieldCurveKey GetYieldCurveKey(ValueSpecification y)
@@ -150,7 +153,7 @@ namespace OGDotNet.Model.Context
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(UniqueIdentifier snapshotIdentifier, CancellationToken ct)
         {
-            return WithSingleCycle(EvaluateYieldCurves, ExecutionOptions.Snapshot(snapshotIdentifier), ct);
+            return WithSingleCycle(EvaluateYieldCurves, snapshotIdentifier, ct);
         }
 
         private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(ViewComputationResultModel r, IViewCycle c, Dictionary<string, IDependencyGraph> graphs)
@@ -177,14 +180,19 @@ namespace OGDotNet.Model.Context
                 {
                     continue;
                 }
-                var computationCacheResponse = viewCycle.QueryComputationCaches(new ComputationCacheQuery(yieldCurveSpecReq.Key, requiredSpecs));
+                var computationCacheResponse =
+                    viewCycle.QueryComputationCaches(new ComputationCacheQuery(yieldCurveSpecReq.Key, requiredSpecs));
 
-                if (computationCacheResponse.Results.Count != requiredSpecs.Count())
+                var results = computationCacheResponse == null
+                                  ? new List<Pair<ValueSpecification, object>>()
+                                  : computationCacheResponse.Results;
+
+                if (results.Count != requiredSpecs.Count())
                 {
-                    throw new ArgumentException("Failed to get all results");
+                    //TODO LOG throw new ArgumentException("Failed to get all results");
                 }
 
-                var yieldCurveInfo = computationCacheResponse.Results.ToLookup(r => GetYieldCurveKey(r.First));
+                var yieldCurveInfo = results.ToLookup(r => GetYieldCurveKey(r.First));
                 foreach (var result in yieldCurveInfo)
                 {
                     yieldCurves.Add(result.Key, result.ToDictionary(r => r.First.ValueName, r => r.Second));
@@ -194,38 +202,80 @@ namespace OGDotNet.Model.Context
             return yieldCurves;
         }
 
-        private T WithSingleCycle<T>(Func<ViewComputationResultModel, IViewCycle, Dictionary<string, IDependencyGraph>, T> func, IViewExecutionOptions executionOptions, CancellationToken ct)
+        private T WithSingleCycle<T>(Func<ViewComputationResultModel, IViewCycle, Dictionary<string, IDependencyGraph>, T> func, UniqueIdentifier snapshotIdentifier, CancellationToken ct)
         {
             CheckDisposed();
 
             using (var completed = new ManualResetEventSlim(false))
             using (var remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient())
             {
-                ViewComputationResultModel results = null;
+                var results =
+                    new BlockingCollection<ViewComputationResultModel>(new ConcurrentQueue<ViewComputationResultModel>());
                 var eventViewResultListener = new EventViewResultListener();
                 eventViewResultListener.ProcessCompleted += delegate { completed.Set(); };
+                eventViewResultListener.CycleExecutionFailed += delegate { completed.Set(); };
+                eventViewResultListener.ViewDefinitionCompilationFailed += delegate { completed.Set(); };
                 eventViewResultListener.CycleCompleted +=
                     delegate(object sender, CycleCompletedArgs e)
                         {
-                            results = e.FullResult;
+                            results.Add(e.FullResult);
                             completed.Set();
                         };
                 remoteViewClient.SetResultListener(eventViewResultListener);
 
                 remoteViewClient.SetViewCycleAccessSupported(true);
-                remoteViewClient.AttachToViewProcess(_definition.Name, executionOptions);
+                remoteViewClient.AttachToViewProcess(_definition.Name,
+                                                     snapshotIdentifier == null
+                                                         ? ExecutionOptions.RealTime
+                                                         : ExecutionOptions.Snapshot(snapshotIdentifier));
 
-                completed.Wait(ct);
-                if (results == null)
+                if (! completed.Wait(TimeSpan.FromMinutes(1), ct))
                 {
-                    throw new OpenGammaException("Failed to get results");
+                    throw new OpenGammaException("Failed to get any results");
                 }
-
-                using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
+                
+                int prevAvailable = 0;
+                
+                while (true)
                 {
-                    var viewCycle = engineResourceReference.Value;
-                    var graphs = GetGraphs(viewCycle, results);
-                    return func(results, viewCycle, graphs);
+                    ct.ThrowIfCancellationRequested();
+
+                    var cycleTimeout = TimeSpan.FromSeconds(10);
+                    ViewComputationResultModel result;
+                    if (! results.TryTake(out result, (int) cycleTimeout.TotalMilliseconds, ct))
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        result = remoteViewClient.GetLatestResult();
+                        if (result == null)
+                        {
+                            throw new OpenGammaException("Unexpectedly missing results");
+                        }
+                    }
+                    ct.ThrowIfCancellationRequested();
+                    using (var engineResourceReference = remoteViewClient.CreateCycleReference(result.ViewCycleId))
+                    {
+                        if (engineResourceReference == null)
+                        {
+                            //View is ahead of us
+                            continue;
+                        }
+                        ct.ThrowIfCancellationRequested();
+
+                        var viewCycle = engineResourceReference.Value;
+                        var compiledViewDefinitionWithGraphs = viewCycle.GetCompiledViewDefinition();
+                        var requiredCount = compiledViewDefinitionWithGraphs.LiveDataRequirements.Count;
+                        var available = result.AllLiveData.Count();
+
+                        if (snapshotIdentifier == null && prevAvailable != available && available != requiredCount)
+                        {
+                            //LAP-40 Try again, we're making progress but waiting for live data
+                            prevAvailable = available;
+                            continue;
+                        }
+
+                        var graphs = GetGraphs(compiledViewDefinitionWithGraphs);
+                        return func(result, viewCycle, graphs);
+                    }
                 }
             }
         }
@@ -251,11 +301,10 @@ namespace OGDotNet.Model.Context
             return ret;
         }
 
-        private static Dictionary<string, IDependencyGraph> GetGraphs(IViewCycle viewCycle, IViewResultModel tempResults)
+        private static Dictionary<string, IDependencyGraph> GetGraphs(ICompiledViewDefinitionWithGraphs compiledViewDefinitionWithGraphs)
         {
-            return tempResults.CalculationResultsByConfiguration.Keys
-                .ToDictionary(k => k,
-                        k => viewCycle.GetCompiledViewDefinition().GetDependencyGraphExplorer(k).GetWholeGraph());
+            return compiledViewDefinitionWithGraphs.CompiledCalculationConfigurations.Keys
+                .ToDictionary(k => k, k => compiledViewDefinitionWithGraphs.GetDependencyGraphExplorer(k).GetWholeGraph());
         }
 
         protected override void Dispose(bool disposing)
