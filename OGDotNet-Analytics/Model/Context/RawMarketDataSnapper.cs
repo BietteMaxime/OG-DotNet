@@ -62,7 +62,7 @@ namespace OGDotNet.Model.Context
         {
             CheckDisposed();
 
-            return WithSingleCycle(delegate(ViewComputationResultModel results, IViewCycle viewCycle, Dictionary<string, IDependencyGraph> graphs)
+            return WithSingleCycle(delegate(IViewComputationResultModel results, IViewCycle viewCycle, Dictionary<string, IDependencyGraph> graphs)
                     {
                         var globalValues = GetGlobalValues(results, graphs);
                         var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
@@ -86,7 +86,7 @@ namespace OGDotNet.Model.Context
             return new ManageableYieldCurveSnapshot(values, valuationTime);
         }
 
-        private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(ViewComputationResultModel tempResults, Dictionary<string, IDependencyGraph> graphs)
+        private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(IViewComputationResultModel tempResults, Dictionary<string, IDependencyGraph> graphs)
         {
             var data = tempResults.AllLiveData;
             var includedSpecs = GetIncludedGlobalSpecs(graphs);
@@ -155,7 +155,7 @@ namespace OGDotNet.Model.Context
             return WithSingleCycle(EvaluateYieldCurves, snapshotIdentifier, ct);
         }
 
-        private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(ViewComputationResultModel r, IViewCycle c, Dictionary<string, IDependencyGraph> graphs)
+        private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(IViewComputationResultModel r, IViewCycle c, Dictionary<string, IDependencyGraph> graphs)
         {
             return GetYieldCurveValues(c, graphs, YieldCurveValueReqName, YieldCurveSpecValueReqName)
                 .ToDictionary(k => k.Key, k => GetEvaluatedCurve(k.Value));
@@ -197,7 +197,7 @@ namespace OGDotNet.Model.Context
             return yieldCurves;
         }
 
-        private T WithSingleCycle<T>(Func<ViewComputationResultModel, IViewCycle, Dictionary<string, IDependencyGraph>, T> func, UniqueIdentifier snapshotIdentifier, CancellationToken ct)
+        private T WithSingleCycle<T>(Func<IViewComputationResultModel, IViewCycle, Dictionary<string, IDependencyGraph>, T> func, UniqueIdentifier snapshotIdentifier, CancellationToken ct)
         {
             CheckDisposed();
 
@@ -205,7 +205,7 @@ namespace OGDotNet.Model.Context
             using (var remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient())
             {
                 var results =
-                    new BlockingCollection<ViewComputationResultModel>(new ConcurrentQueue<ViewComputationResultModel>());
+                    new BlockingCollection<IViewComputationResultModel>(new ConcurrentQueue<IViewComputationResultModel>());
                 var eventViewResultListener = new EventViewResultListener();
                 eventViewResultListener.ProcessCompleted += delegate { completed.Set(); };
                 eventViewResultListener.CycleExecutionFailed += delegate { completed.Set(); };
@@ -236,7 +236,7 @@ namespace OGDotNet.Model.Context
                     ct.ThrowIfCancellationRequested();
 
                     var cycleTimeout = TimeSpan.FromSeconds(10);
-                    ViewComputationResultModel result;
+                    IViewComputationResultModel result;
                     if (! results.TryTake(out result, (int) cycleTimeout.TotalMilliseconds, ct))
                     {
                         ct.ThrowIfCancellationRequested();

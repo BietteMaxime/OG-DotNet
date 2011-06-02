@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
+    <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
     <Compile Include="Mappedtypes\engine\View\cache\MissingLiveDataSentinel.cs" />
@@ -125,7 +126,7 @@
     <Compile Include="Mappedtypes\engine\View\Execution\RealTimeViewCycleExecutionSequence.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\ViewCycleExecutionOptions.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\IViewExecutionOptions.cs" />
-    <Compile Include="Mappedtypes\engine\View\ViewComputationResultModel.cs" />
+    <Compile Include="Mappedtypes\engine\View\IViewComputationResultModel.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\CycleCompletedCall.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\EventViewResultListener.cs" />
     <Compile Include="Mappedtypes\engine\View\listener\IViewResultListener.cs" />
@@ -136,7 +137,7 @@
     <Compile Include="Mappedtypes\engine\value\ValueRequirement.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewCalculationConfiguration.cs" />
     <Compile Include="Builders\LabelledMatrix1DBuilder.cs" />
-    <Compile Include="Mappedtypes\engine\View\ViewDeltaResultModel.cs" />
+    <Compile Include="Mappedtypes\engine\View\IViewDeltaResultModel.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStrip.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStripWithIdentifier.cs" />
     <Compile Include="Mappedtypes\financial\analytics\ircurve\FixedIncomeStripWithSecurity.cs" />

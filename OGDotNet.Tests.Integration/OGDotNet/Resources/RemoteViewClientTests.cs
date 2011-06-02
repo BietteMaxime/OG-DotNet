@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteViewClientTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -232,8 +232,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        static readonly Memoizer<string, ViewComputationResultModel> GetOneResultCache = new Memoizer<string, ViewComputationResultModel>(GetOneResult);
-        private static ViewComputationResultModel GetOneResult(string viewDefinitionName)
+        static readonly Memoizer<string, IViewComputationResultModel> GetOneResultCache = new Memoizer<string, IViewComputationResultModel>(GetOneResult);
+        private static IViewComputationResultModel GetOneResult(string viewDefinitionName)
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
@@ -249,7 +249,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 ICompiledViewDefinition compiledViewDefinition = null;
-                ViewComputationResultModel viewComputationResultModel = null;
+                IViewComputationResultModel viewComputationResultModel = null;
                 ManualResetEvent resultsReady = new ManualResetEvent(false);
 
                 var listener = new EventViewResultListener();

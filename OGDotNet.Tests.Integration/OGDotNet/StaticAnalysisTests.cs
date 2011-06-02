@@ -62,5 +62,19 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                 }
             }
         }
+
+        [Theory]
+        [TypedPropertyData("Types")]
+        public void InterfacesNamedAsInterfaces(Type mappedType)
+        {
+            if (mappedType.IsInterface)
+            {
+                var name = mappedType.Name;
+                if (name[0] != 'I' || !char.IsUpper(name[1]))
+                {
+                    Assert.Equal(name, "ISomething");
+                }
+            }
+        }
     }
 }

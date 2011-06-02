@@ -13,6 +13,7 @@ using Fudge;
 using Fudge.Serialization;
 using Fudge.Serialization.Reflection;
 using Fudge.Types;
+using OGDotNet.Builders;
 using OGDotNet.Utils;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
@@ -31,7 +32,7 @@ namespace OGDotNet.Model
 
         public OpenGammaFudgeContext()
         {
-            SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategy("OGDotNet.Mappedtypes", "com.opengamma"));
+            SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategyWithInterfaces("OGDotNet.Mappedtypes", "com.opengamma"));
             SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
             AddSecondaryTypes(TypeDictionary);
             _fudgeSurrogateSelector = new MemoizingFudgeSurrogateSelector(this);

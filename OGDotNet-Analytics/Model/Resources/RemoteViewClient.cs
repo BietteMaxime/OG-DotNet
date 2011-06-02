@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteViewClient.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -218,9 +218,9 @@ namespace OGDotNet.Model.Resources
             return location == null ? null : new RemoteViewCycleReference(location);
         }
 
-        public ViewComputationResultModel GetLatestResult()
+        public IViewComputationResultModel GetLatestResult()
         {
-            return _rest.Resolve("latestResult").Get<ViewComputationResultModel>();
+            return _rest.Resolve("latestResult").Get<IViewComputationResultModel>();
         }
 
         public UniqueIdentifier GetUniqueId()

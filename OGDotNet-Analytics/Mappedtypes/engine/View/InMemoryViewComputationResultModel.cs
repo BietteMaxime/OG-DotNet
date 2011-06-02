@@ -13,7 +13,7 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
-    public class InMemoryViewComputationResultModel : InMemoryViewResultModelBase, ViewComputationResultModel
+    public class InMemoryViewComputationResultModel : InMemoryViewResultModelBase, IViewComputationResultModel
     {
         private readonly List<ComputedValue> _allLiveData;
 

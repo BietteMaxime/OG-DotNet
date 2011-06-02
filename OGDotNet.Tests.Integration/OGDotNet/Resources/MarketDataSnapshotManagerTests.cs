@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="MarketDataSnapshotManagerTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -44,7 +44,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var withSnapshot = GetFirstResult(snapOptions, vd.Name);
 
                     var options = ExecutionOptions.SingleCycle;
-                    ViewComputationResultModel withoutSnapshot = GetFirstResult(options, vd.Name);
+                    IViewComputationResultModel withoutSnapshot = GetFirstResult(options, vd.Name);
 
                     var withoutCount = CountResults(withoutSnapshot);
                     var withCount = CountResults(withSnapshot);
@@ -62,7 +62,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private static ViewComputationResultModel GetFirstResult(IViewExecutionOptions options, string viewName)
+        private static IViewComputationResultModel GetFirstResult(IViewExecutionOptions options, string viewName)
         {
             using (var remoteViewClient2 = Context.ViewProcessor.CreateClient())
             {
@@ -70,7 +70,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private static int CountResults(ViewComputationResultModel results)
+        private static int CountResults(IViewComputationResultModel results)
         {
             return results.AllResults.Count();
         }

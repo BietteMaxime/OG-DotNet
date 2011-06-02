@@ -11,7 +11,7 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
-    public class InMemoryViewDeltaResultModel : InMemoryViewResultModelBase, ViewDeltaResultModel
+    public class InMemoryViewDeltaResultModel : InMemoryViewResultModelBase, IViewDeltaResultModel
     {
         private readonly DateTimeOffset _previousResultTimestamp;
 

@@ -14,7 +14,7 @@ namespace OGDotNet.Mappedtypes.engine.View.calc
     public interface IViewCycle : IUniqueIdentifiable
     {
         ICompiledViewDefinitionWithGraphs GetCompiledViewDefinition();
-        ViewComputationResultModel GetResultModel();
+        IViewComputationResultModel GetResultModel();
         ComputationCacheResponse QueryComputationCaches(ComputationCacheQuery computationCacheQuery);
 
         UniqueIdentifier GetViewProcessId();

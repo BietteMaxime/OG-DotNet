@@ -41,9 +41,9 @@ namespace OGDotNet.Model.Resources
             return new RemoteCompiledViewDefinitionWithGraphs(_location.Resolve("compiledViewDefinition"));
         }
 
-        public ViewComputationResultModel GetResultModel()
+        public IViewComputationResultModel GetResultModel()
         {
-            return _location.Resolve("result").Get<ViewComputationResultModel>();
+            return _location.Resolve("result").Get<IViewComputationResultModel>();
         }
 
         public ComputationCacheResponse QueryComputationCaches(ComputationCacheQuery computationCacheQuery)
