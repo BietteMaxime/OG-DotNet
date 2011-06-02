@@ -157,7 +157,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanGetAllKindsOfValues(ViewDefinition defn)
         {
-
             WithViewCycle(
             delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
             {
