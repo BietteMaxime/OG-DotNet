@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteSecuritySource.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -27,30 +27,30 @@ namespace OGDotNet.Model.Resources
             _restTarget = restTarget;
         }
 
-        public Security GetSecurity(UniqueIdentifier uid)
+        public ISecurity GetSecurity(UniqueIdentifier uid)
         {
             var target = _restTarget.Resolve("securities").Resolve("security").Resolve(uid.ToString());
-            return target.Get<Security>();
+            return target.Get<ISecurity>();
         }
 
-        public Security GetSecurity(IdentifierBundle bundle)
+        public ISecurity GetSecurity(IdentifierBundle bundle)
         {
             ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
 
             Tuple<string, string>[] parameters = UriEncoding.GetParameters(bundle);
-            return _restTarget.Resolve("securities").Resolve("security", parameters).Get<Security>("security");
+            return _restTarget.Resolve("securities").Resolve("security", parameters).Get<ISecurity>("security");
         }
 
-        public IEnumerable<Security> GetBondsWithIssuerName(string issuerName)
+        public IEnumerable<ISecurity> GetBondsWithIssuerName(string issuerName)
         {
             ArgumentChecker.NotNull(issuerName, "issuerName");
             var target = _restTarget.Resolve("bonds", Tuple.Create("issuerName", issuerName));
             var msg = target.GetFudge();
             var fudgeSerializer = _fudgeContext.GetSerializer();
-            return msg.GetAllByName("security").Select(field => fudgeSerializer.Deserialize<Security>((FudgeMsg) field.Value)).ToList();
+            return msg.GetAllByName("security").Select(field => fudgeSerializer.Deserialize<ISecurity>((FudgeMsg) field.Value)).ToList();
         }
 
-        public ICollection<Security> GetSecurities(IdentifierBundle bundle)
+        public ICollection<ISecurity> GetSecurities(IdentifierBundle bundle)
         {
             ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
 
@@ -58,7 +58,7 @@ namespace OGDotNet.Model.Resources
             var fudgeMsg = _restTarget.Resolve("securities", parameters).GetFudge();
 
             var fudgeSerializer = _fudgeContext.GetSerializer();
-            return fudgeMsg.GetAllByName("security").Select(f => f.Value).Cast<FudgeMsg>().Select(fudgeSerializer.Deserialize<Security>).ToList();
+            return fudgeMsg.GetAllByName("security").Select(f => f.Value).Cast<FudgeMsg>().Select(fudgeSerializer.Deserialize<ISecurity>).ToList();
         }
     }
 }

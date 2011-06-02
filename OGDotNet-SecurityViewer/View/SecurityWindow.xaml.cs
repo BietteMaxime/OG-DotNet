@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="SecurityWindow.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -145,7 +145,7 @@ namespace OGDotNet.SecurityViewer.View
         {
             if (itemGrid.SelectedItem != null)
             {
-                Security security = (Security)itemGrid.SelectedItem;
+                ISecurity security = (ISecurity)itemGrid.SelectedItem;
 
                 var securities = new[] { security };
 
@@ -155,10 +155,10 @@ namespace OGDotNet.SecurityViewer.View
 
         private void showAll_Click(object sender, RoutedEventArgs e)
         {
-            ShowSecurities(itemGrid.Items.Cast<Security>());
+            ShowSecurities(itemGrid.Items.Cast<ISecurity>());
         }
 
-        private void ShowSecurities(IEnumerable<Security> securities)
+        private void ShowSecurities(IEnumerable<ISecurity> securities)
         {
             SecurityTimeSeriesWindow.ShowDialog(securities, this);
         }

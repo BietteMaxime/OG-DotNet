@@ -84,7 +84,7 @@
     <Compile Include="Mappedtypes\Core\Position\Impl\PositionImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\TradeImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\ITrade.cs" />
-    <Compile Include="Mappedtypes\Core\Security\Security.cs" />
+    <Compile Include="Mappedtypes\Core\Security\ISecurity.cs" />
     <Compile Include="Mappedtypes\DataNotFoundException.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTarget.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />

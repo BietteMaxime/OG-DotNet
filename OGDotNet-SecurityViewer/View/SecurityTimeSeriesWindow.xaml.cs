@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="SecurityTimeSeriesWindow.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -28,7 +28,7 @@ namespace OGDotNet.SecurityViewer.View
     /// </summary>
     public partial class SecurityTimeSeriesWindow : OGDotNetWindow
     {
-        public static void ShowDialog(IEnumerable<Security> securities, Window owner)
+        public static void ShowDialog(IEnumerable<ISecurity> securities, Window owner)
         {
             var securityTimeSeriesWindow = new SecurityTimeSeriesWindow
             {
@@ -48,9 +48,9 @@ namespace OGDotNet.SecurityViewer.View
             get { return OGContext.HistoricalDataSource; }
         }
 
-        private IEnumerable<Security> Securities
+        private IEnumerable<ISecurity> Securities
         {
-            get { return (IEnumerable<Security>)DataContext; }
+            get { return (IEnumerable<ISecurity>)DataContext; }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

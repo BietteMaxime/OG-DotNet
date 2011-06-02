@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="IFinancialSecuritySource.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -13,6 +13,6 @@ namespace OGDotNet.Model.Resources
 {
     public interface IFinancialSecuritySource : ISecuritySource
     {
-        IEnumerable<Security> GetBondsWithIssuerName(string issuerName);
+        IEnumerable<ISecurity> GetBondsWithIssuerName(string issuerName);
     }
 }

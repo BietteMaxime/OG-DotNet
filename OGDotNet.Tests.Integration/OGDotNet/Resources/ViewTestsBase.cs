@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 

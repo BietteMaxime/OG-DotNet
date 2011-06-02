@@ -10,6 +10,7 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Time;
 
@@ -24,9 +25,9 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
 
         private readonly DateTimeOffset _maturity;
         private readonly Identifier _securityIdentifier;
-        private readonly Core.Security.Security _security;
+        private readonly ISecurity _security;
 
-        private FixedIncomeStripWithSecurity(StripInstrumentType instrumentType, Tenor tenor, Tenor resolvedTenor, int nthFutureFromTenor, DateTimeOffset maturity, Identifier securityIdentifier, Core.Security.Security security)
+        private FixedIncomeStripWithSecurity(StripInstrumentType instrumentType, Tenor tenor, Tenor resolvedTenor, int nthFutureFromTenor, DateTimeOffset maturity, Identifier securityIdentifier, ISecurity security)
         {
             _instrumentType = instrumentType;
             _tenor = tenor;
@@ -67,7 +68,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
             get { return _securityIdentifier; }
         }
 
-        public Core.Security.Security Security
+        public ISecurity Security
         {
             get { return _security; }
         }
@@ -82,7 +83,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
                     ffc.GetInt("numFutures").GetValueOrDefault(-1),
                     GetDateTime(ffc.GetByName("maturity")),
                     Identifier.Parse(ffc.GetString("identifier")),
-                    deserializer.FromField<Core.Security.Security>(ffc.GetByName("security"))
+                    deserializer.FromField<ISecurity>(ffc.GetByName("security"))
                     );
 
             if ((ret._instrumentType == StripInstrumentType.Future) != ret._nthFutureFromTenor >= 0)

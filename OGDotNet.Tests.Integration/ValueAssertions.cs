@@ -139,7 +139,7 @@ namespace OGDotNet.Tests.Integration
             }
         }
 
-        public static void AssertSensibleValue(Security security)
+        public static void AssertSensibleValue(ISecurity security)
         {
             Assert.NotEmpty(security.Name);
             AssertSensibleValue(security.Identifiers);

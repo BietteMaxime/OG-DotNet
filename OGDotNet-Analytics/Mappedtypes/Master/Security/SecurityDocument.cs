@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="SecurityDocument.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -9,13 +9,14 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Master.Security
 {
     public class SecurityDocument : AbstractDocument
     {
-        private readonly Core.Security.Security _security;
+        private readonly ISecurity _security;
         private UniqueIdentifier _uniqueId;
 
         public override UniqueIdentifier UniqueId
@@ -24,9 +25,9 @@ namespace OGDotNet.Mappedtypes.Master.Security
             set { _uniqueId = value; }
         }
 
-        public Core.Security.Security Security { get { return _security; } }
+        public ISecurity Security { get { return _security; } }
 
-        public SecurityDocument(UniqueIdentifier uniqueId, Core.Security.Security security, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant)
+        public SecurityDocument(UniqueIdentifier uniqueId, ISecurity security, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant)
             : base(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant)
         {
             _uniqueId = uniqueId;
@@ -46,7 +47,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
             DateTimeOffset versionFromInstant = GetDocumentValues(ffc, out versionToInstant, out correctionFromInstant, out correctionToInstant);
 
             var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
-            var security = deserializer.FromField<Core.Security.Security>(ffc.GetByName("security"));
+            var security = deserializer.FromField<ISecurity>(ffc.GetByName("security"));
 
             return new SecurityDocument(uid, security, versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant);
         }

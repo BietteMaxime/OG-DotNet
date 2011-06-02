@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteSecurityMaster.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -29,7 +29,7 @@ namespace OGDotNet.Model.Resources
             return _restTarget.Resolve("search").Post<SearchResult<SecurityDocument>>(request);
         }
 
-        public Security GetSecurity(UniqueIdentifier uid)
+        public ISecurity GetSecurity(UniqueIdentifier uid)
         {
             SecurityDocument securityDocument = _restTarget.Resolve("security").Resolve(uid.ToString()).Get<SecurityDocument>();
             return securityDocument.Security;

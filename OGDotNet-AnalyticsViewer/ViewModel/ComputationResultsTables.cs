@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ComputationResultsTables.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -156,10 +156,10 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             private readonly UniqueIdentifier _identifier;
             private readonly string _name;
             private readonly ComputationTargetType _targetType;
-            private readonly Security _security;
+            private readonly ISecurity _security;
             private readonly int _depth;
 
-            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType, Security security, int depth)
+            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType, ISecurity security, int depth)
             {
                 _identifier = identifier;
                 _name = name;
@@ -173,7 +173,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 get { return _name; }
             }
 
-            public Security Security
+            public ISecurity Security
             {
                 get { return _security; }
             }

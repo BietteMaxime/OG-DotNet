@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ISecuritySource.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -14,8 +14,8 @@ namespace OGDotNet.Model.Resources
 {
     public interface ISecuritySource
     {
-        Security GetSecurity(UniqueIdentifier uid);
-        ICollection<Security> GetSecurities(IdentifierBundle bundle);
-        Security GetSecurity(IdentifierBundle bundle);
+        ISecurity GetSecurity(UniqueIdentifier uid);
+        ICollection<ISecurity> GetSecurities(IdentifierBundle bundle);
+        ISecurity GetSecurity(IdentifierBundle bundle);
     }
 }

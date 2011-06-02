@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="PortfolioRow.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -15,9 +15,9 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
     {
         private readonly string _positionName;
         private readonly ComputationTargetSpecification _computationTargetSpecification;
-        private readonly Security _security;
+        private readonly ISecurity _security;
 
-        public PortfolioRow(string positionName, Security security, ComputationTargetSpecification computationTargetSpecification)
+        public PortfolioRow(string positionName, ISecurity security, ComputationTargetSpecification computationTargetSpecification)
         {
             _positionName = positionName;
             _computationTargetSpecification = computationTargetSpecification;
@@ -37,7 +37,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             get { return _computationTargetSpecification; }
         }
 
-        public Security Security
+        public ISecurity Security
         {
             get { return _security; }
         }
