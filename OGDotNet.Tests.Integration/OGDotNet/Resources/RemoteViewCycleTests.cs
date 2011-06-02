@@ -13,6 +13,7 @@ using System.Threading;
 using OGDotNet.Mappedtypes.engine.depgraph;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
@@ -152,6 +153,39 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             });
         }
 
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanGetAllKindsOfValues(ViewDefinition defn)
+        {
+
+            WithViewCycle(
+            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
+            {
+                var compiledViewDefinition = cycle.GetCompiledViewDefinition();
+                foreach (var kvp in compiledViewDefinition.ViewDefinition.CalculationConfigurationsByName)
+                {
+                    var viewCalculationConfiguration = kvp.Key;
+
+                    var dependencyGraphExplorer =
+                        compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
+                    Assert.NotNull(dependencyGraphExplorer);
+                    var wholeGraph = dependencyGraphExplorer.GetWholeGraph();
+
+                    var distinctKindsOfSpec = wholeGraph.DependencyNodes.SelectMany(n => n.OutputValues)
+                        .ToLookup(s => s.ValueName).Select(g => g.First());
+                    var specs = new HashSet<ValueSpecification>(distinctKindsOfSpec);
+
+                    var computationCacheResponse = cycle.QueryComputationCaches(new ComputationCacheQuery(viewCalculationConfiguration, specs));
+                    Assert.InRange(computationCacheResponse.Results.Count, 0, specs.Count());
+                    foreach(var result in computationCacheResponse.Results)
+                    {
+                        Assert.Contains(result.First, specs);
+                        Assert.NotNull(result.Second);
+                    }
+                }
+            }, defn.Name);
+        }
+
         private static void CheckCompleteGraph(IDependencyGraph wholeGraph)
         {
             foreach (DependencyNode node in wholeGraph.DependencyNodes)
@@ -214,7 +248,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private ISet<DependencyNode> FollowInputs(DependencyNode dependencyNode)
+        private static ISet<DependencyNode> FollowInputs(DependencyNode dependencyNode)
         {
             var set = new HashSet<DependencyNode>();
             FollowInputs(set, dependencyNode);
@@ -249,7 +283,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             });
         }
 
-        private static void WithViewCycle(Action<ViewDefinitionCompiledArgs, IViewCycle, RemoteViewClient> action)
+        private static void WithViewCycle(Action<ViewDefinitionCompiledArgs, IViewCycle, RemoteViewClient> action, string viewName = "Equity Option Test View 1")
         {
             using (var executedMre = new ManualResetEventSlim(false))
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
@@ -262,7 +296,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 remoteViewClient.SetResultListener(listener);
                 remoteViewClient.SetViewCycleAccessSupported(true);
-                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", ExecutionOptions.SingleCycle);
+                remoteViewClient.AttachToViewProcess(viewName, ExecutionOptions.SingleCycle);
                 Assert.Null(remoteViewClient.CreateLatestCycleReference());
 
                 executedMre.Wait(TimeSpan.FromMinutes(1));
