@@ -8,7 +8,6 @@
 
 using System;
 using System.Linq;
-using OGDotNet.Mappedtypes.financial.marketdatasnapshot.rest;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;

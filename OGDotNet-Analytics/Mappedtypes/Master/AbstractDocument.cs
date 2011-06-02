@@ -9,11 +9,12 @@
 using System;
 using Fudge;
 using Fudge.Types;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Master
 {
-    public abstract class AbstractDocument
+    public abstract class AbstractDocument : IUniqueIdentifiable
     {
         private readonly DateTimeOffset _versionFromInstant;
         private readonly DateTimeOffset _versionToInstant;
@@ -77,5 +78,7 @@ namespace OGDotNet.Mappedtypes.Master
                 a.Add(fieldName, new FudgeDateTime(value));
             }
         }
+
+        public abstract UniqueIdentifier UniqueId { get; set; }
     }
 }

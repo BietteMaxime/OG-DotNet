@@ -9,10 +9,8 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using Fudge.Types;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
-using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
@@ -21,7 +19,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         private UniqueIdentifier _uniqueId;
         private ManageableMarketDataSnapshot _snapshot;
 
-        public UniqueIdentifier UniqueId
+        public override UniqueIdentifier UniqueId
         {
             get { return _uniqueId; }
             set { _uniqueId = value; }

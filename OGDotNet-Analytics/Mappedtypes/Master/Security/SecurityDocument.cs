@@ -13,14 +13,20 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Master.Security
 {
-    public class SecurityDocument
+    public class SecurityDocument : AbstractDocument
     {
-        private readonly UniqueIdentifier _uniqueId;
         private readonly ManageableSecurity _security;
-        public UniqueIdentifier UniqueId { get { return _uniqueId; } }
+        private UniqueIdentifier _uniqueId;
+
+        public override UniqueIdentifier UniqueId
+        {
+            get { return _uniqueId; }
+            set { _uniqueId = value; }
+        }
+
         public ManageableSecurity Security { get { return _security; } }//TODO DOTNET-5: type this with proto replacement
 
-        public SecurityDocument(UniqueIdentifier uniqueId, ManageableSecurity security)
+        public SecurityDocument(UniqueIdentifier uniqueId, ManageableSecurity security, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant) : base(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant)
         {
             _uniqueId = uniqueId;
             _security = security;
@@ -33,12 +39,26 @@ namespace OGDotNet.Mappedtypes.Master.Security
 
         public static SecurityDocument FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new SecurityDocument(UniqueIdentifier.Parse(ffc.GetString("uniqueId")), deserializer.FromField<ManageableSecurity>(ffc.GetByName("security")));
+            DateTimeOffset versionToInstant;
+            DateTimeOffset correctionFromInstant;
+            DateTimeOffset correctionToInstant;
+            DateTimeOffset versionFromInstant = GetDocumentValues(ffc, out versionToInstant, out correctionFromInstant, out correctionToInstant);
+
+            var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
+            var security = deserializer.FromField<ManageableSecurity>(ffc.GetByName("security"));
+
+            return new SecurityDocument(uid, security, versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            throw new NotImplementedException();
+            WriteDocumentFields(a);
+
+            if (UniqueId != null)
+            {
+                a.Add("uniqueId", UniqueId.ToString());
+            }
+            a.Add("security", Security);
         }
     }
 }

@@ -7,11 +7,12 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.Generic;
+using OGDotNet.Mappedtypes.Id;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Mappedtypes.financial.currency
 {
-    public interface ICurrencyMatrix
+    public interface ICurrencyMatrix : IUniqueIdentifiable
     {
         ICollection<Currency> SourceCurrencies { get; }
 

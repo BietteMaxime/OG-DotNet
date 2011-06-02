@@ -189,7 +189,6 @@
     <Compile Include="Model\Context\MarketDataSnapshot\Warnings\Warning.cs" />
     <Compile Include="Model\Resources\HeartbeatSender.cs" />
     <Compile Include="Model\Resources\IFinancialSecuritySource.cs" />
-    <Compile Include="Mappedtypes\financial\marketdatasnapshot\rest\MarketDataSnapshotMetadataDocument.cs" />
     <Compile Include="Model\Resources\RemoteCompiledViewDefinitionWithGraphs.cs" />
     <Compile Include="Model\Resources\RemoteCurrencyMatrixSource.cs" />
     <Compile Include="Model\Resources\RemoteDependencyGraphExplorer.cs" />
@@ -289,7 +288,9 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Mappedtypes\financial\marketdatasnapshot\rest\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -13,7 +13,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Core.Common
 {
-    public class Currency : IEquatable<Currency>
+    public class Currency : IEquatable<Currency>, IUniqueIdentifiable
     {
         private const string IdentificationDomain = "CurrencyISO";
         private static readonly Memoizer<string, Currency> InstanceMap = new Memoizer<string, Currency>(GetInstanceImpl);
@@ -129,7 +129,7 @@ namespace OGDotNet.Mappedtypes.Core.Common
 
             Currency ret = Create(isoCode.Value);
 
-            if (!ret.Identifier.Equals(isoCode))
+            if (!ret.UniqueId.Equals(isoCode))
                 throw new ArgumentException("Unexpected UID", "isoCode");
 
             return ret;
@@ -140,20 +140,20 @@ namespace OGDotNet.Mappedtypes.Core.Common
             return InstanceMap.Get(isoCode);
         }
 
-        private readonly UniqueIdentifier _identifier;
+        private readonly UniqueIdentifier _uniqueId;
 
         private Currency(string isoCode)
         {
-            _identifier = UniqueIdentifier.Of(IdentificationDomain, isoCode);
+            _uniqueId = UniqueIdentifier.Of(IdentificationDomain, isoCode);
         }
 
-        public UniqueIdentifier Identifier
+        public UniqueIdentifier UniqueId
         {
-            get { return _identifier; }
+            get { return _uniqueId; }
         }
         public string ISOCode
         {
-            get { return _identifier.Value; }
+            get { return _uniqueId.Value; }
         }
 
         public bool Equals(Currency other)
@@ -174,12 +174,12 @@ namespace OGDotNet.Mappedtypes.Core.Common
 
         public override int GetHashCode()
         {
-            return _identifier.GetHashCode();
+            return _uniqueId.GetHashCode();
         }
 
         public override string ToString()
         {
-            return string.Format("[Currency: {0}]", _identifier.Value);
+            return string.Format("[Currency: {0}]", _uniqueId.Value);
         }
     }
 }

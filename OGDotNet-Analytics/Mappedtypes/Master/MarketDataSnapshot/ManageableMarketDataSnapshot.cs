@@ -21,7 +21,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 {
-    public class ManageableMarketDataSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableMarketDataSnapshot>
+    public class ManageableMarketDataSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableMarketDataSnapshot>, IUniqueIdentifiable
     {
         private readonly string _basisViewName;
 
