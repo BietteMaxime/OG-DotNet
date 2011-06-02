@@ -12,13 +12,15 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
     public class MarketDataSnapshotSearchRequest
     {
+        private readonly bool _includeData;
         private readonly PagingRequest _pagingRequest;
         private readonly string _name;
         //TODO private readonly List<Identifier> _snapshotIds;
 
-        public MarketDataSnapshotSearchRequest(PagingRequest pagingRequest, string name)
+        public MarketDataSnapshotSearchRequest(string name, PagingRequest pagingRequest, bool includeData = true)
         {
             _pagingRequest = pagingRequest;
+            _includeData = includeData;
             _name = name;
         }
 
@@ -30,6 +32,11 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         public string Name
         {
             get { return _name; }
+        }
+
+        public bool IncludeData
+        {
+            get { return _includeData; }
         }
     }
 }

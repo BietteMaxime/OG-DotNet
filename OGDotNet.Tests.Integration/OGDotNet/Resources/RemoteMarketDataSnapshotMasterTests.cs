@@ -35,7 +35,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
-        public void SearchMatchesMetadata()
+        public void SearchMatchesNotInclude()
         {
             var pagingRequest = new PagingRequest(1, 2);
 
@@ -44,7 +44,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.NotNull(searchResult.Documents);
             Assert.NotEmpty(searchResult.Documents);
 
-            var metaSearchResult = snapshotMaster.SearchMetadata("*", pagingRequest);
+            var metaSearchResult = snapshotMaster.Search(new MarketDataSnapshotSearchRequest("*", pagingRequest, false));
 
             Assert.Equal(metaSearchResult.Paging.TotalItems, searchResult.Paging.TotalItems);
 
@@ -55,12 +55,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Equal(t.Item1.UniqueId, t.Item2.UniqueId);
                 Assert.Equal(t.Item1.VersionFromInstant, t.Item2.VersionFromInstant);
                 Assert.Equal(t.Item1.VersionToInstant, t.Item2.VersionToInstant);
-                Assert.Equal(t.Item1.Name, t.Item2.Snapshot.Name);
+                Assert.Equal(t.Item1.Snapshot.Name, t.Item2.Snapshot.Name);
+                Assert.Empty(t.Item1.Snapshot.YieldCurves);
+                Assert.Null(t.Item1.Snapshot.GlobalValues);
             }
         }
 
         [Xunit.Extensions.Fact]
-        public void MetadataSearchIsFaster()
+        public void NotIncludeSearchIsFaster()
         {
             var pagingRequest = PagingRequest.All;
 
@@ -68,7 +70,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var metaSearchResult = snapshotMaster.SearchMetadata("*", pagingRequest);
+            var metaSearchResult = snapshotMaster.Search(new MarketDataSnapshotSearchRequest("*", pagingRequest, false));
             var metadataTime = stopwatch.Elapsed;
 
             stopwatch.Restart();

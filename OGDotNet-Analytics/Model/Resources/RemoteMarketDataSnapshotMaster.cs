@@ -25,15 +25,14 @@ namespace OGDotNet.Model.Resources
             _restTarget = restTarget;
         }
 
-        public SearchResult<MarketDataSnapshotMetadataDocument> SearchMetadata(string name, PagingRequest pagingRequest)
-        {
-            var request = new MarketDataSnapshotSearchRequest(pagingRequest, name);
-            return _restTarget.Resolve("searchMetadata").Post<SearchResult<MarketDataSnapshotMetadataDocument>>(request);
-        }
-
         public SearchResult<MarketDataSnapshotDocument> Search(string name, PagingRequest pagingRequest)
         {
-            var request = new MarketDataSnapshotSearchRequest(pagingRequest, name);
+            var request = new MarketDataSnapshotSearchRequest(name, pagingRequest);
+            return Search(request);
+        }
+
+        public SearchResult<MarketDataSnapshotDocument> Search(MarketDataSnapshotSearchRequest request)
+        {
             return _restTarget.Resolve("search").Post<SearchResult<MarketDataSnapshotDocument>>(request);
         }
 
