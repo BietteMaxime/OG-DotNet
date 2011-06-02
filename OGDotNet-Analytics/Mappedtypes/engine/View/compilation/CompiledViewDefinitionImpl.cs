@@ -13,7 +13,6 @@ using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Utils;
 

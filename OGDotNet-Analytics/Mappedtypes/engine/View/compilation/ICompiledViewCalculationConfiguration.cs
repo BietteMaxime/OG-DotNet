@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.Value;
 
 namespace OGDotNet.Mappedtypes.engine.View.compilation
 {

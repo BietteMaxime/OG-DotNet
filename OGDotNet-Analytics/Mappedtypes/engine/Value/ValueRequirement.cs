@@ -9,7 +9,6 @@
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine.value

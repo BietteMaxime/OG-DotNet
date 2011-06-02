@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using OGDotNet.Mappedtypes.engine.depGraph;
-using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Mappedtypes.engine.value;
 
 namespace OGDotNet.Model.Resources
 {

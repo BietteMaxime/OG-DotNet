@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Builders.ViewResultModel;
-using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Mappedtypes.engine.value;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {

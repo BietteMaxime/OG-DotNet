@@ -7,13 +7,11 @@
 //-----------------------------------------------------------------------
 
 using System;
-using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.engine.Value
+namespace OGDotNet.Mappedtypes.engine.value
 {
     [FudgeSurrogate(typeof(ValueSpecificationBuilder))]
     public class ValueSpecification : IEquatable<ValueSpecification>

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.engine.function;
-using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Mappedtypes.engine.value;
 
 namespace OGDotNet.Mappedtypes.engine.depgraph
 {

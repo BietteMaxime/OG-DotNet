@@ -12,7 +12,6 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.Value;
 
 namespace OGDotNet.Mappedtypes.engine.View.compilation
 {

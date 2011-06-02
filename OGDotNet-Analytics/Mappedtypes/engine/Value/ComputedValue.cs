@@ -12,7 +12,7 @@ using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 
-namespace OGDotNet.Mappedtypes.engine.Value
+namespace OGDotNet.Mappedtypes.engine.value
 {
     public class ComputedValue
     {

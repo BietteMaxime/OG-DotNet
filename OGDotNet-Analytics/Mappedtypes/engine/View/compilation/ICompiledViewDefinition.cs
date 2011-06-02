@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.view;
 
 namespace OGDotNet.Mappedtypes.engine.View.compilation
