@@ -15,7 +15,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
 {
     public class SecurityDocument : AbstractDocument
     {
-        private readonly ManageableSecurity _security;
+        private readonly Core.Security.Security _security;
         private UniqueIdentifier _uniqueId;
 
         public override UniqueIdentifier UniqueId
@@ -24,9 +24,10 @@ namespace OGDotNet.Mappedtypes.Master.Security
             set { _uniqueId = value; }
         }
 
-        public ManageableSecurity Security { get { return _security; } }//TODO DOTNET-5: type this with proto replacement
+        public Core.Security.Security Security { get { return _security; } }
 
-        public SecurityDocument(UniqueIdentifier uniqueId, ManageableSecurity security, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant) : base(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant)
+        public SecurityDocument(UniqueIdentifier uniqueId, Core.Security.Security security, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant)
+            : base(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant)
         {
             _uniqueId = uniqueId;
             _security = security;
@@ -45,7 +46,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
             DateTimeOffset versionFromInstant = GetDocumentValues(ffc, out versionToInstant, out correctionFromInstant, out correctionToInstant);
 
             var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
-            var security = deserializer.FromField<ManageableSecurity>(ffc.GetByName("security"));
+            var security = deserializer.FromField<Core.Security.Security>(ffc.GetByName("security"));
 
             return new SecurityDocument(uid, security, versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant);
         }
