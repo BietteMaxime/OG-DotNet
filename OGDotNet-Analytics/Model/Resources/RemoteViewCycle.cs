@@ -6,11 +6,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -47,7 +50,7 @@ namespace OGDotNet.Model.Resources
             ArgumentChecker.NotNull(computationCacheQuery, "computationCacheQuery");
             string msgBase64 = _location.EncodeBean(computationCacheQuery);
 
-            return _location.Resolve("queryCaches", new Tuple<string, string>("msg", msgBase64)).Get<ComputationCacheResponse>();
+            return _location.Resolve("queryCaches", new Tuple<string, string>("msg", msgBase64)).Get<ComputationCacheResponse>() ?? new ComputationCacheResponse(new List<Pair<ValueSpecification, object>>());
         }
 
         public UniqueIdentifier GetViewProcessId()

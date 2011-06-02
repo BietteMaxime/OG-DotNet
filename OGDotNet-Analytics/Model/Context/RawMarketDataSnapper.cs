@@ -183,16 +183,12 @@ namespace OGDotNet.Model.Context
                 var computationCacheResponse =
                     viewCycle.QueryComputationCaches(new ComputationCacheQuery(yieldCurveSpecReq.Key, requiredSpecs));
 
-                var results = computationCacheResponse == null
-                                  ? new List<Pair<ValueSpecification, object>>()
-                                  : computationCacheResponse.Results;
-
-                if (results.Count != requiredSpecs.Count())
+                if (computationCacheResponse.Results.Count != requiredSpecs.Count())
                 {
                     //TODO LOG throw new ArgumentException("Failed to get all results");
                 }
 
-                var yieldCurveInfo = results.ToLookup(r => GetYieldCurveKey(r.First));
+                var yieldCurveInfo = computationCacheResponse.Results.ToLookup(r => GetYieldCurveKey(r.First));
                 foreach (var result in yieldCurveInfo)
                 {
                     yieldCurves.Add(result.Key, result.ToDictionary(r => r.First.ValueName, r => r.Second));
