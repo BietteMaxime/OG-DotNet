@@ -29,7 +29,6 @@ namespace OGDotNet.Mappedtypes.Core.Position
             _name = name;
             _subNodes = subNodes;
             _positions = positions;
-            
         }
 
         public string Name

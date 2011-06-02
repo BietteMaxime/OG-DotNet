@@ -16,7 +16,6 @@ namespace OGDotNet.Mappedtypes.Core.Position
     public interface ITrade : IPositionOrTrade
     {
         //TODO: the rest of this interface
-        UniqueIdentifier ParentPositionId { get; }
         DateTimeOffset TradeDate { get; }
         ICounterparty Counterparty { get; }
     }
