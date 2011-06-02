@@ -21,7 +21,7 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast.integer
         {
         }
 
-        public IList<Tuple<DateTime, double>> Values
+        public override IList<Tuple<DateTime, double>> Values
         {
             get
             {

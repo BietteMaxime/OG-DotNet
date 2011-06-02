@@ -7,12 +7,13 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 
 namespace OGDotNet.Mappedtypes.util.timeseries.fast.integer
 {
-    public class FastArrayTDoubleTimeSeries<T>
+    public abstract class FastArrayTDoubleTimeSeries<T>
     {
         protected readonly DateTimeNumericEncoding Encoding;
         protected readonly T[] Times;
@@ -26,6 +27,8 @@ namespace OGDotNet.Mappedtypes.util.timeseries.fast.integer
             Times = times;
             _values = values;
         }
+
+        public abstract IList<Tuple<DateTime, double>> Values { get; }
 
         protected static Tuple<DateTimeNumericEncoding, T[], double[]> FromFudgeMsgImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
