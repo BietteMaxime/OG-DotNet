@@ -7,6 +7,9 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Fudge;
+using Fudge.Serialization;
 using OGDotNet.Mappedtypes.engine.Value;
 using OGDotNet.Mappedtypes.Util.tuple;
 
@@ -24,6 +27,23 @@ namespace OGDotNet.Mappedtypes.engine.View.calc
         public IList<Pair<ValueSpecification, object>> Results
         {
             get { return _results; }
+        }
+
+        public static ComputationCacheResponse FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            return new ComputationCacheResponse(ffc.GetMessage("results").Select(f => GetValue(f, deserializer)).ToList());
+        }
+        private static Pair<ValueSpecification, object> GetValue(IFudgeField field, IFudgeDeserializer deserializer)
+        {
+            var msg = (IFudgeFieldContainer) field.Value;
+            var spec = deserializer.FromField<ValueSpecification>(msg.GetByName("first"));
+            var value = ComputedValue.GetValue(deserializer, msg.GetByName("second"), spec);
+            return new Pair<ValueSpecification, object>(spec, value);
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            throw new NotImplementedException();
         }
     }
 }

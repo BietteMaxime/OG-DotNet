@@ -47,7 +47,7 @@ namespace OGDotNet.Mappedtypes.engine.Value
             throw new NotImplementedException();
         }
 
-        private static object GetValue(IFudgeDeserializer deserializer, IFudgeField valueField, ValueSpecification valueSpecification)
+        public static object GetValue(IFudgeDeserializer deserializer, IFudgeField valueField, ValueSpecification valueSpecification)
         {
             if (valueField.Type != FudgeMsgFieldType.Instance)
             {
