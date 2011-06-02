@@ -11,18 +11,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Security;
-using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.Value;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.cache;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
+using OGDotNet.Mappedtypes.financial.model.volatility.surface;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.Util.Time;
+using OGDotNet.Mappedtypes.Util.Timeseries.fast.longint;
+using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
 using OGDotNet.Utils;
 using Xunit;
 
@@ -117,10 +122,9 @@ namespace OGDotNet.Tests.Integration
             {
                 var interestRate = value.GetInterestRate(value.Curve.XData[0]);
                 AssertSensibleValue(interestRate);
-                Assert.InRange(interestRate, 0, 1);
+                Assert.InRange(interestRate, -2, 2);
                 var discountFactor = value.GetDiscountFactor(value.Curve.XData[0]);
                 AssertSensibleValue(discountFactor);
-                Assert.InRange(discountFactor, 0, 1);
             }
         }
         public static void AssertSensibleValue(Curve value)
@@ -253,6 +257,55 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(bundle);
             Assert.NotEmpty(bundle.Identifiers);
+            AssertSensibleValue(bundle.Identifiers);
+        }
+
+        public static void AssertSensibleValue(Identifier identifier)
+        {
+            Assert.NotNull(identifier);
+        }
+
+        public static void AssertSensibleValue(SnapshotDataBundle bundle)
+        {
+            Assert.NotNull(bundle);
+            AssertSensibleValue(bundle.DataPoints);
+            Assert.NotEmpty(bundle.DataPoints);
+        }
+
+        public static void AssertSensibleValue(VolatilitySurface surface)
+        {
+            Assert.NotNull(surface);
+            Assert.NotNull(surface.Sigma);
+        }
+
+        public static void AssertSensibleValue(MissingLiveDataSentinel sentinel)
+        {
+            Assert.Equal(MissingLiveDataSentinel.Instance, sentinel);
+            Assert.True(ReferenceEquals(MissingLiveDataSentinel.Instance, sentinel));
+        }
+
+        public static void AssertSensibleValue(FastArrayLongDoubleTimeSeries series)
+        {
+            Assert.NotNull(series);
+            Assert.NotEmpty(series.Values);
+            AssertSensibleValue(series.Values);
+        }
+
+        public static void AssertSensibleValue(ILocalDateDoubleTimeSeries series)
+        {
+            Assert.NotNull(series);
+            Assert.NotEmpty(series.Values);
+            AssertSensibleValue(series.Values);
+        }
+
+        public static void AssertSensibleValue(DateTime dateTime)
+        {
+            var range = TimeSpan.FromDays(10000);
+            Assert.InRange(dateTime, DateTime.Now - range, DateTime.Now + range);
+        }
+        public static void AssertSensibleValue(DateTimeOffset dateTime)
+        {
+            AssertSensibleValue(dateTime.ToUniversalTime().DateTime);
         }
     }
 }

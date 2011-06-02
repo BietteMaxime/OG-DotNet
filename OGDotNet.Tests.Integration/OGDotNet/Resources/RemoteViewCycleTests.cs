@@ -180,6 +180,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     {
                         Assert.Contains(result.First, specs);
                         Assert.NotNull(result.Second);
+                        ValueAssertions.AssertSensibleValue(result.Second);
                     }
                 }
             }, defn.Name);
