@@ -139,7 +139,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             foreach (var position in node.Positions)
             {
                 var security = _remoteSecuritySource.GetSecurity(position.SecurityKey);
-                yield return new TreeNode(position.Identifier, string.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security, depth + 1);
+                yield return new TreeNode(position.UniqueId, string.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security, depth + 1);
             }
 
             foreach (var portfolioNode in node.SubNodes)

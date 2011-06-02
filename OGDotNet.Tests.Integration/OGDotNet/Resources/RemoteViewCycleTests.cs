@@ -176,7 +176,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                     var computationCacheResponse = cycle.QueryComputationCaches(new ComputationCacheQuery(viewCalculationConfiguration, specs));
                     Assert.InRange(computationCacheResponse.Results.Count, 0, specs.Count());
-                    foreach(var result in computationCacheResponse.Results)
+                    foreach (var result in computationCacheResponse.Results)
                     {
                         Assert.Contains(result.First, specs);
                         Assert.NotNull(result.Second);

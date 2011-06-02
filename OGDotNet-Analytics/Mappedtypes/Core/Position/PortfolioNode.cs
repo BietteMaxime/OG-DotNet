@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Position.Impl;
@@ -17,17 +18,18 @@ namespace OGDotNet.Mappedtypes.Core.Position
 {
     public class PortfolioNode : IUniqueIdentifiable
     {
-        private readonly UniqueIdentifier _identifier;
+        private readonly UniqueIdentifier _uniqueId;
         private readonly string _name;
         private readonly IList<PortfolioNode> _subNodes;
         private readonly IList<IPosition> _positions;
 
-        public PortfolioNode(UniqueIdentifier identifier, string name, IList<PortfolioNode> subNodes, IList<IPosition> positions)
+        internal PortfolioNode(UniqueIdentifier uniqueId, string name, IList<PortfolioNode> subNodes, IList<IPosition> positions)
         {
-            _identifier = identifier;
+            _uniqueId = uniqueId;
             _name = name;
             _subNodes = subNodes;
             _positions = positions;
+            
         }
 
         public string Name
@@ -47,7 +49,7 @@ namespace OGDotNet.Mappedtypes.Core.Position
 
         public UniqueIdentifier UniqueId
         {
-            get { return _identifier; }
+            get { return _uniqueId; }
         }
 
         public static PortfolioNode FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)

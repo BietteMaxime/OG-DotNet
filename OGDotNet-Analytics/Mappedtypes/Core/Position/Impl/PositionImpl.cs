@@ -34,11 +34,6 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             get { return _securityKey; }
         }
 
-        public UniqueIdentifier Identifier
-        {
-            get { return _identifier; }
-        }
-
         public long Quantity
         {
             get { return _quantity; }
@@ -51,7 +46,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
 
         public UniqueIdentifier UniqueId
         {
-            get { return Identifier; }
+            get { return _identifier; }
         }
     }
 }

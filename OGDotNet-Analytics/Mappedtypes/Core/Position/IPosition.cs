@@ -16,7 +16,6 @@ namespace OGDotNet.Mappedtypes.Core.Position
     [FudgeSurrogate(typeof(PositionBuilder))]
     public interface IPosition : IPositionOrTrade
     {
-        UniqueIdentifier Identifier { get; }
         IEnumerable<ITrade> Trades { get; }
     }
 }

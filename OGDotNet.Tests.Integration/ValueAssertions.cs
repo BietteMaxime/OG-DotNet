@@ -233,7 +233,6 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(position);
             Assert.NotNull(position.UniqueId);
-            Assert.NotNull(position.Identifier);
             Assert.InRange(position.Quantity, -1, long.MaxValue); //Not sure why -1 is valid
             AssertSensibleValue(position.SecurityKey);
             Assert.NotNull(position.Trades);
