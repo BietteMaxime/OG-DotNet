@@ -49,6 +49,8 @@ namespace OGDotNet.Model.Resources
         public ComputationCacheResponse QueryComputationCaches(ComputationCacheQuery computationCacheQuery)
         {
             ArgumentChecker.NotNull(computationCacheQuery, "computationCacheQuery");
+            ArgumentChecker.NotEmpty(computationCacheQuery.ValueSpecifications, "computationCacheQuery.ValueSpecifications");
+            
             return PagedQuery(computationCacheQuery.CalculationConfigurationName, computationCacheQuery.ValueSpecifications);
         }
 
