@@ -174,7 +174,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 Assert.NotEmpty(node.OutputValues);
 
-                //TODO PLAT-1305: stricter checks
                 Assert.NotNull(node.Function);
                 Assert.NotNull(node.Function.UniqueId);
                 Assert.NotNull(node.Function.Parameters);
