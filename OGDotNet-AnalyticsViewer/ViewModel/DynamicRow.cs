@@ -38,7 +38,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                     case 1:
                         return keyValuePairs[0].Value;
                     default:
-                        //TODO: we should probably work out which value to use, but in theory either is fine
+                        //TODO PLAT-1299: we should probably work out which value to use, but in theory either is fine
                         return keyValuePairs[0].Value;
                 }
             }
