@@ -20,10 +20,12 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
         private readonly DateTimeOffset _tradeDate;
         private readonly IdentifierBundle _securityKey;
         private readonly CounterpartyImpl _counterparty;
+        private readonly long _quantity;
 
-        public TradeImpl(UniqueIdentifier uniqueId, UniqueIdentifier parentPositionId, DateTimeOffset tradeDate, IdentifierBundle securityKey, CounterpartyImpl counterparty)
+        public TradeImpl(UniqueIdentifier uniqueId, UniqueIdentifier parentPositionId, DateTimeOffset tradeDate, IdentifierBundle securityKey, CounterpartyImpl counterparty, long quantity)
         {
             _uniqueId = uniqueId;
+            _quantity = quantity;
             _securityKey = securityKey;
             _counterparty = counterparty;
             _tradeDate = tradeDate;
@@ -43,6 +45,11 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
         public IdentifierBundle SecurityKey
         {
             get { return _securityKey; }
+        }
+
+        public long Quantity
+        {
+            get { return _quantity; }
         }
 
         public UniqueIdentifier UniqueId

@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
+    <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
     <Compile Include="Builders\EnumBuilder.cs" />

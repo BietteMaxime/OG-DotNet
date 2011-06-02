@@ -14,11 +14,9 @@ using OGDotNet.Mappedtypes.Id;
 namespace OGDotNet.Mappedtypes.Core.Position
 {
     [FudgeSurrogate(typeof(PositionBuilder))]
-    public interface IPosition : IUniqueIdentifiable
+    public interface IPosition : IPositionOrTrade
     {
-        IdentifierBundle SecurityKey { get; }
         UniqueIdentifier Identifier { get; }
-        long Quantity { get; }
         IEnumerable<ITrade> Trades { get; }
     }
 }

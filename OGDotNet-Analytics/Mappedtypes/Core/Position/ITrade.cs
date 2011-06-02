@@ -13,12 +13,11 @@ using OGDotNet.Mappedtypes.Id;
 namespace OGDotNet.Mappedtypes.Core.Position
 {
     [FudgeSurrogate(typeof(TradeBuilder))]
-    public interface ITrade : IUniqueIdentifiable
+    public interface ITrade : IPositionOrTrade
     {
         //TODO: the rest of this interface
         UniqueIdentifier ParentPositionId { get; }
         DateTimeOffset TradeDate { get; }
-        IdentifierBundle SecurityKey { get; }
         ICounterparty Counterparty { get; }
     }
 }

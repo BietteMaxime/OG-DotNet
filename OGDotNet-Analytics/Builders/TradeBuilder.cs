@@ -32,8 +32,8 @@ namespace OGDotNet.Builders
             var securityKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
 
             var counterPartyIdentifier = Identifier.Parse(ffc.GetString("counterparty"));
-
-            return new TradeImpl(uniqueIdentifier, parentPositionId, tradeDate, securityKey, new CounterpartyImpl(counterPartyIdentifier));
+            var quant = ffc.GetValue<long>("quantity");
+            return new TradeImpl(uniqueIdentifier, parentPositionId, tradeDate, securityKey, new CounterpartyImpl(counterPartyIdentifier), quant);
         }
     }
 }
