@@ -24,7 +24,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
         protected ManageableSecurity(string name, string securityType, UniqueIdentifier uniqueId, IdentifierBundle identifiers)
         {
             _name = name;
-            _securityType = securityType;
+            _securityType = string.Intern(securityType); // Should be a small static set
             _uniqueId = uniqueId;
             _identifiers = identifiers;
         }

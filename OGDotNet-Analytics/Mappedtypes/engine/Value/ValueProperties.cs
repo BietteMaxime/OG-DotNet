@@ -104,14 +104,14 @@ namespace OGDotNet.Mappedtypes.engine.value
                 if (properties is NearlyInfiniteValueProperties)
                 {
                     var niProps = (NearlyInfiniteValueProperties ) properties;
-                    return  !niProps.Without.Any(p => PropertyValues.ContainsKey(p) && ! _optional.Contains(p));
+                    return  !niProps.Without.Any(p => PropertyValues.ContainsKey(p) && (_optional == null || ! _optional.Contains(p)));
                 }
                 if (properties is FiniteValueProperties)
                 {
                     var finProps = (FiniteValueProperties) properties;
                     foreach (var propertyValue in PropertyValues)
                     {
-                        if (_optional.Contains(propertyValue.Key))
+                        if (_optional != null && _optional.Contains(propertyValue.Key))
                         {
                             continue;
                         }
@@ -255,11 +255,11 @@ namespace OGDotNet.Mappedtypes.engine.value
             IList<IFudgeField> fields = withMessage.GetAllFields();
             
             var properties = new Dictionary<string, HashSet<string>>(fields.Count);
-            var optional = new HashSet<string>();
+            HashSet<string> optional = null;
 
             foreach (var field in fields)
             {
-                var name = field.Name;
+                var name = string.Intern(field.Name); // Should be a small static set
 
                 if (field.Value is string)
                 {
@@ -278,6 +278,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                     IList<IFudgeField> fudgeFields = propMessage.GetAllFields();
                     if (fudgeFields.Count == 1 && fudgeFields[0].Type == IndicatorFieldType.Instance)
                     {
+                        optional = optional ?? new HashSet<string>();
                         optional.Add(name);
                     }
                     else

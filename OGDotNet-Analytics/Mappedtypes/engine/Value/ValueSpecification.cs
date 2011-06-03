@@ -25,7 +25,7 @@ namespace OGDotNet.Mappedtypes.engine.value
             ArgumentChecker.NotNull(valueName, "valueName");
             ArgumentChecker.NotNull(targetSpecification, "targetSpecification");
             ArgumentChecker.NotNull(properties, "properties");
-            _valueName = valueName;
+            _valueName = string.Intern(valueName); //Should be a small static set
             _targetSpecification = targetSpecification;
             _properties = properties;
         }

@@ -55,7 +55,7 @@ namespace OGDotNet.Mappedtypes.Id
         {
             ArgumentChecker.NotEmpty(scheme, "scheme");
             ArgumentChecker.NotEmpty(value, "value");
-            _scheme = scheme;
+            _scheme = string.Intern(scheme); //Should be a small static set
             _value = value;
             _version = StringUtils.TrimToNull(version);
         }
