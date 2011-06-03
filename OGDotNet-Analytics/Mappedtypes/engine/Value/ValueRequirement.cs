@@ -31,7 +31,7 @@ namespace OGDotNet.Mappedtypes.engine.value
 
         public ValueRequirement(string valueName, ComputationTargetSpecification targetSpecification, ValueProperties constraints)
         {
-            _valueName = valueName;
+            _valueName = string.Intern(valueName); //Should be small static set
             _constraints = constraints;
             _targetSpecification = targetSpecification;
         }
