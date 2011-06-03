@@ -18,14 +18,10 @@ namespace OGDotNet.Mappedtypes.engine.depgraph
         private readonly string _calcConfigName;
         private readonly ICollection<DependencyNode> _dependencyNodes = new List<DependencyNode>();
 
-        public DependencyGraph(string calcConfigName)
+        public DependencyGraph(string calcConfigName, List<DependencyNode> nodes)
         {
             _calcConfigName = calcConfigName;
-        }
-
-        public void AddDependencyNode(DependencyNode node)
-        {
-            _dependencyNodes.Add(node);
+            _dependencyNodes = nodes;
         }
 
         public string CalculationConfigurationName

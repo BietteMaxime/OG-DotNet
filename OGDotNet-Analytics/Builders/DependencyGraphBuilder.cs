@@ -38,12 +38,7 @@ namespace OGDotNet.Builders
                 dependentNode.AddInputNode(inputNode);
             }
 
-            var graph = new DependencyGraph(calcConfigName);
-            foreach (DependencyNode node in nodes)
-            {
-                graph.AddDependencyNode(node);
-            }
-            return graph;
+            return new DependencyGraph(calcConfigName, nodes);
         }
     }
 }
