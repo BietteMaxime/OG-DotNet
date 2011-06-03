@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.View;
@@ -50,26 +49,8 @@ namespace OGDotNet.Model.Resources
         {
             ArgumentChecker.NotNull(computationCacheQuery, "computationCacheQuery");
             ArgumentChecker.NotEmpty(computationCacheQuery.ValueSpecifications, "computationCacheQuery.ValueSpecifications");
-            
-            return PagedQuery(computationCacheQuery.CalculationConfigurationName, computationCacheQuery.ValueSpecifications);
-        }
 
-        const int MaxQuerySize = 5; // TODO PLAT-1304
-        private ComputationCacheResponse PagedQuery(string config, IEnumerable<ValueSpecification> specs)
-        {
-            var pages = specs.Select((s, i) => new { Page = i % MaxQuerySize, Spec = s }).GroupBy(t => t.Page).Select(g => g.Select(p => p.Spec));
-            return pages.Select(p => QueryComputationCacheImpl(new ComputationCacheQuery(config, p))).Aggregate(new ComputationCacheResponse(new List<Pair<ValueSpecification, object>>()), Join);
-        }
-
-        private ComputationCacheResponse QueryComputationCacheImpl(ComputationCacheQuery computationCacheQuery)
-        {
-            string msgBase64 = _location.EncodeBean(computationCacheQuery);
-            return _location.Resolve("queryCaches", new Tuple<string, string>("msg", msgBase64)).Get<ComputationCacheResponse>() ?? new ComputationCacheResponse(new List<Pair<ValueSpecification, object>>());
-        }
-
-        private static ComputationCacheResponse Join(ComputationCacheResponse tail, ComputationCacheResponse head)
-        {
-            return new ComputationCacheResponse(tail.Results.Concat(head.Results).ToList());
+            return _location.Resolve("queryCaches").Post<ComputationCacheResponse>(computationCacheQuery);
         }
 
         public UniqueIdentifier GetViewProcessId()
