@@ -61,6 +61,11 @@ namespace OGDotNet.Mappedtypes.engine.value
                 return null;
             }
 
+            public override bool Equals(ValueProperties other)
+            {
+                return ReferenceEquals(Instance, other);
+            }
+
             public static new EmptyValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
@@ -153,6 +158,30 @@ namespace OGDotNet.Mappedtypes.engine.value
                 return PropertyValues.Keys.OrderBy(s => s).Aggregate(0, (i, s) => i * 397 ^ s.GetHashCode());
             }
 
+            public override bool Equals(ValueProperties other)
+            {
+                var finiteOther = other as FiniteValueProperties;
+                if (finiteOther == null)
+                {
+                    return false;
+                }
+
+                return Equals(_optional, finiteOther._optional)
+                       &&
+                       PropertyValues.Count == finiteOther.PropertyValues.Count
+                       && PropertyValues.All(delegate(KeyValuePair<string, ISet<string>> entry)
+                       {
+                           var value = entry.Value;
+                           ISet<string> otherValue;
+                           if (!finiteOther.PropertyValues.TryGetValue(entry.Key, out otherValue))
+                           {
+                               return false;
+
+                           }
+                           return value.SetEquals(otherValue);
+                       });
+            }
+
             public override string ToString()
             {
                 return string.Format("[ValueProperties: {0}]",
@@ -195,6 +224,11 @@ namespace OGDotNet.Mappedtypes.engine.value
             {
                 throw new ArgumentException("This is just here to keep the surrogate selector happy");
             }
+
+            public override bool Equals(ValueProperties other)
+            {
+                return ReferenceEquals(other, Instance);
+            }
         }
 
         private class NearlyInfiniteValueProperties : ValueProperties
@@ -226,6 +260,16 @@ namespace OGDotNet.Mappedtypes.engine.value
             public override ISet<string> GetValues(string propertyName)
             {
                 return Without.Contains(propertyName) ? null : new HashSet<string>();
+            }
+
+            public override bool Equals(ValueProperties other)
+            {
+                var nearlyInfiniteValueProperties = other as NearlyInfiniteValueProperties;
+                if (nearlyInfiniteValueProperties == null)
+                {
+                    return false;
+                }
+                return nearlyInfiniteValueProperties.Without.SetEquals(nearlyInfiniteValueProperties.Without);
             }
 
             public static new NearlyInfiniteValueProperties FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -355,9 +399,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             a.Add("with", withMessage);
         }
 
-        public bool Equals(ValueProperties other)
-        {
-            return other != null && other.IsSatisfiedBy(this) && IsSatisfiedBy(other);
-        }
+        public abstract bool Equals(ValueProperties other);
     }
 }
