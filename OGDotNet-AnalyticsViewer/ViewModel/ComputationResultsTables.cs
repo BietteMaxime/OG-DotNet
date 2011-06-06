@@ -126,7 +126,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             return columns;
         }
 
-
         private IEnumerable<TreeNode> GetPortfolioNodes()
         {
             return GetPortfolioNodesInner(_portfolio.Root, 0).ToList();
@@ -159,7 +158,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             private readonly long _quantity;
 
             private string _name;
-
 
             public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType, int depth)
             {
