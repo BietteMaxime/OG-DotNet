@@ -66,6 +66,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\ActionFactory.cs" />
     <Compile Include="ViewModel\ColumnHeader.cs" />
     <Compile Include="ViewModel\DynamicRow.cs" />
     <Compile Include="View\CellTemplates\CellTemplateSelector.xaml.cs" />

@@ -27,7 +27,6 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private readonly ViewDefinition _viewDefinition;
         private readonly IPortfolio _portfolio;
-        private readonly ISecuritySource _remoteSecuritySource;
         private readonly ICompiledViewDefinition _compiledViewDefinition;
         private readonly List<ColumnHeader> _portfolioColumns;
         private readonly List<ColumnHeader> _primitiveColumns;
@@ -36,13 +35,14 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private readonly List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
 
-        private IEnumerable<TreeNode> _portfolioNodes;
+        readonly ActionFactory<IdentifierBundle, ISecurity> _securityFactory;
 
         public ComputationResultsTables(ISecuritySource remoteSecuritySource, ICompiledViewDefinition compiledViewDefinition)
         {
+            _securityFactory = new ActionFactory<IdentifierBundle, ISecurity>(remoteSecuritySource.GetSecurity);
+
             _viewDefinition = compiledViewDefinition.ViewDefinition;
             _portfolio = compiledViewDefinition.Portfolio;
-            _remoteSecuritySource = remoteSecuritySource;
             _compiledViewDefinition = compiledViewDefinition;
             _portfolioColumns = GetPortfolioColumns(_viewDefinition, _compiledViewDefinition).ToList();
             _primitiveColumns = GetPrimitiveColumns(_viewDefinition, _compiledViewDefinition).ToList();
@@ -126,20 +126,19 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             return columns;
         }
 
+
         private IEnumerable<TreeNode> GetPortfolioNodes()
         {
-            //We cache these in order to cache security names
-            _portfolioNodes = _portfolioNodes ?? GetPortfolioNodesInner(_portfolio.Root, 0).ToList();
-            return _portfolioNodes;
+            return GetPortfolioNodesInner(_portfolio.Root, 0).ToList();
         }
 
         private IEnumerable<TreeNode> GetPortfolioNodesInner(PortfolioNode node, int depth)
         {
-            yield return new TreeNode(node.UniqueId, node.Name, ComputationTargetType.PortfolioNode, null, depth);
+            yield return new TreeNode(node.UniqueId, node.Name, ComputationTargetType.PortfolioNode, depth);
             foreach (var position in node.Positions)
             {
-                var security = _remoteSecuritySource.GetSecurity(position.SecurityKey);
-                yield return new TreeNode(position.UniqueId, string.Format("{0} ({1})", security.Name, position.Quantity), ComputationTargetType.Position, security, depth + 1);
+                var security = _securityFactory.GetAction(position.SecurityKey);
+                yield return new TreeNode(position.UniqueId, ComputationTargetType.Position, security, depth + 1, position.Quantity);
             }
 
             foreach (var portfolioNode in node.SubNodes)
@@ -151,29 +150,44 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             }
         }
 
-        private class TreeNode
+        public class TreeNode
         {
             private readonly UniqueIdentifier _identifier;
-            private readonly string _name;
             private readonly ComputationTargetType _targetType;
-            private readonly ISecurity _security;
+            private readonly Func<ISecurity> _security;
             private readonly int _depth;
+            private readonly long _quantity;
 
-            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType, ISecurity security, int depth)
+            private string _name;
+
+
+            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType, int depth)
             {
                 _identifier = identifier;
                 _name = name;
                 _targetType = targetType;
+                _depth = depth;
+            }
+
+            public TreeNode(UniqueIdentifier identifier, ComputationTargetType targetType, Func<ISecurity> security, int depth, long quantity)
+            {
+                _identifier = identifier;
+                _targetType = targetType;
                 _security = security;
                 _depth = depth;
+                _quantity = quantity;
             }
 
             public string Name
             {
-                get { return _name; }
+                get
+                {
+                    _name = _name ?? string.Format("{0} ({1})", _security().Name, _quantity);
+                    return _name;
+                }
             }
 
-            public ISecurity Security
+            public Func<ISecurity> Security
             {
                 get { return _security; }
             }
@@ -195,8 +209,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 yield break;
             foreach (var position in GetPortfolioNodes())
             {
-                var treeName = string.Format("{0} {1}", new string('-', position.Depth), position.Name);
-                yield return new PortfolioRow(treeName, position.Security, position.ComputationTargetSpecification);
+                yield return new PortfolioRow(position);
             }
         }
 
@@ -236,7 +249,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             }
         }
 
-        public void InvokeResultReceived(EventArgs e)
+        private void InvokeResultReceived(EventArgs e)
         {
             EventHandler handler = ResultReceived;
             if (handler != null) handler(this, e);

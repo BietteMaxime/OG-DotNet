@@ -13,33 +13,31 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 {
     public class PortfolioRow : DynamicRow
     {
-        private readonly string _positionName;
-        private readonly ComputationTargetSpecification _computationTargetSpecification;
-        private readonly ISecurity _security;
+        private readonly ComputationResultsTables.TreeNode _treeNode;
+        private string _name;
 
-        public PortfolioRow(string positionName, ISecurity security, ComputationTargetSpecification computationTargetSpecification)
+        public PortfolioRow(ComputationResultsTables.TreeNode treeNode)
         {
-            _positionName = positionName;
-            _computationTargetSpecification = computationTargetSpecification;
-            _security = security;
+            _treeNode = treeNode;
         }
 
         public string PositionName
         {
             get
             {
-                return _positionName;
+                _name = _name ?? string.Format("{0} {1}", new string('-', _treeNode.Depth), _treeNode.Name);
+                return _name;
             }
         }
 
         public ComputationTargetSpecification ComputationTargetSpecification
         {
-            get { return _computationTargetSpecification; }
+            get { return _treeNode.ComputationTargetSpecification; }
         }
 
         public ISecurity Security
         {
-            get { return _security; }
+            get { return _treeNode.Security(); }
         }
     }
 }
