@@ -7,9 +7,9 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Threading;
+using System.IO;
 using Apache.NMS;
-using Fudge;
+using Fudge.Encodings;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
@@ -25,7 +25,6 @@ namespace OGDotNet.Model.Resources
 
         public event EventHandler<ResultEvent> MessageReceived;
 
-        private long _lastSequenceNumber = -1;
         public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate)
         {
             _fudgeContext = fudgeContext;
@@ -55,20 +54,13 @@ namespace OGDotNet.Model.Resources
 
         private T Deserialize(IMessage message)
         {
-            var bytesMessage = (IBytesMessage)message;
-            FudgeMsgEnvelope fudgeMsgEnvelope = _fudgeContext.Deserialize(bytesMessage.Content);
-
-            long? seqNumber = fudgeMsgEnvelope.Message.GetLong("#");
-            if (!seqNumber.HasValue)
+            //TODO check SEQ numbers without making this 20% slower
+            byte[] content = ((IBytesMessage)message).Content;
+            using (var memoryStream = new MemoryStream(content))
             {
-                throw new ArgumentException("Couldn't find sequence number");
+                var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(_fudgeContext, memoryStream);
+                return _fudgeContext.GetSerializer().Deserialize<T>(fudgeEncodedStreamReader);
             }
-            long expectedSeqNumber = Interlocked.Increment(ref _lastSequenceNumber);
-            if (expectedSeqNumber != seqNumber.Value)
-            {
-                throw new ArgumentException(string.Format("Unexpected SEQ number {0} expected {1}", seqNumber, expectedSeqNumber));
-            }
-            return _fudgeContext.GetSerializer().Deserialize<T>(fudgeMsgEnvelope.Message);
         }
 
         private void InvokeMessageReceived(ResultEvent e)
