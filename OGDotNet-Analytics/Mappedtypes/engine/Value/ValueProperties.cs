@@ -176,7 +176,6 @@ namespace OGDotNet.Mappedtypes.engine.value
                            if (!finiteOther.PropertyValues.TryGetValue(entry.Key, out otherValue))
                            {
                                return false;
-
                            }
                            return value.SetEquals(otherValue);
                        });
