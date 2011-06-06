@@ -94,7 +94,7 @@ namespace OGDotNet.Utils
             }
             else
             {
-                return Enumerable.Any(other, v => v.Equals(_value));
+                return other.Any(v => v.Equals(_value));
             }
         }
 
@@ -120,7 +120,21 @@ namespace OGDotNet.Utils
 
         public bool SetEquals(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            bool done = false;
+            foreach (var entry in other)
+            {
+                if (done)
+                {
+                    return false;
+                }
+                done = true;
+                if (!_value.Equals(entry))
+                {
+                    return false;
+                }
+            }
+
+            return done;
         }
 
         public void Clear()
