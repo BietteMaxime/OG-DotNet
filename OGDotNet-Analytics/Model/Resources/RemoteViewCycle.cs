@@ -50,7 +50,7 @@ namespace OGDotNet.Model.Resources
             ArgumentChecker.NotNull(computationCacheQuery, "computationCacheQuery");
             ArgumentChecker.NotEmpty(computationCacheQuery.ValueSpecifications, "computationCacheQuery.ValueSpecifications");
 
-            return _location.Resolve("queryCaches").Post<ComputationCacheResponse>(computationCacheQuery);
+            return _location.Resolve("queryCaches").Post<ComputationCacheResponse>(computationCacheQuery) ?? new ComputationCacheResponse(new List<Pair<ValueSpecification, object>>());
         }
 
         public UniqueIdentifier GetViewProcessId()
