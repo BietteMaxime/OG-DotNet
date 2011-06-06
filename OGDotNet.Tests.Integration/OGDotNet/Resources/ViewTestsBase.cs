@@ -28,7 +28,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Primitives Only",
                                                                       "OvernightBatchTestView",
                                                                       "GlobeOp Bond View",
-                                                                      "European Corporate Bond View"
+                                                                      "European Corporate Bond View",
+                                                                      "European Corporate Bond View - test"
                                                                   };
 
         private static bool IsSlowTicking(string definitionName)
