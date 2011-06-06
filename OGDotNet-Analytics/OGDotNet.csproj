@@ -62,6 +62,7 @@
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
+    <Compile Include="Utils\SmallSet.cs" />
     <Compile Include="Mappedtypes\engine\View\cache\MissingLiveDataSentinel.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
     <Compile Include="Builders\EnumBuilder.cs" />

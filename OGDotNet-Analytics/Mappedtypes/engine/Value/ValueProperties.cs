@@ -30,7 +30,7 @@ namespace OGDotNet.Mappedtypes.engine.value
             return EmptyValueProperties.Instance;
         }
 
-        public static ValueProperties Create(Dictionary<string, HashSet<string>> propertyValues, HashSet<string> optionalProperties)
+        public static ValueProperties Create(Dictionary<string, ISet<string>> propertyValues, HashSet<string> optionalProperties)
         {
             return new FiniteValueProperties(propertyValues, optionalProperties);
         }
@@ -69,16 +69,17 @@ namespace OGDotNet.Mappedtypes.engine.value
 
         private class FiniteValueProperties : ValueProperties
         {
-            public readonly Dictionary<string, HashSet<string>> PropertyValues;
-            private readonly HashSet<string> _optional;
-            private readonly Lazy<int> _hashCode;
+            public readonly Dictionary<string, ISet<string>> PropertyValues;
+            private readonly ISet<string> _optional;
 
-            internal FiniteValueProperties(Dictionary<string, HashSet<string>> propertyValues, HashSet<string> optional)
+            private readonly int _hashCode;
+
+            internal FiniteValueProperties(Dictionary<string, ISet<string>> propertyValues, ISet<string> optional)
             {
                 ArgumentChecker.NotEmpty(propertyValues, "propertyValues");
                 PropertyValues = propertyValues;
                 _optional = optional;
-                _hashCode = new Lazy<int>(GetHashCodeImpl);
+                _hashCode = GetHashCodeImpl();
             }
 
             public override ISet<string> Properties
@@ -115,7 +116,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                         {
                             continue;
                         }
-                        HashSet<string> other;
+                        ISet<string> other;
                         if (!finProps.PropertyValues.TryGetValue(propertyValue.Key, out other))
                         {
                             return false;
@@ -137,22 +138,19 @@ namespace OGDotNet.Mappedtypes.engine.value
 
             public override ISet<string> GetValues(string propertyName)
             {
-                HashSet<string> ret;
+                ISet<string> ret;
                 PropertyValues.TryGetValue(propertyName, out ret);
                 return ret;
             }
 
             public override int GetHashCode()
             {
-                return _hashCode.Value;
+                return _hashCode;
             }
 
             private int GetHashCodeImpl()
             {
-                unchecked
-                {
-                    return PropertyValues.Keys.OrderBy(s => s).Aggregate(0, (i, s) => i * 397 ^ s.GetHashCode());
-                }
+                return PropertyValues.Keys.OrderBy(s => s).Aggregate(0, (i, s) => i * 397 ^ s.GetHashCode());
             }
 
             public override string ToString()
@@ -241,7 +239,7 @@ namespace OGDotNet.Mappedtypes.engine.value
             var withoutMessage = ffc.GetMessage("without");
             if (withoutMessage != null)
             {
-                var without = new HashSet<string>(withoutMessage.GetAllFields().Select(f => f.Value).Cast<string>());
+                var without = SmallSet<string>.Create(withoutMessage.GetAllFields().Select(f => f.Value).Cast<string>());
                 return without.Any() ? (ValueProperties)new NearlyInfiniteValueProperties(without) : InfiniteValueProperties.Instance;
             }
 
@@ -253,8 +251,8 @@ namespace OGDotNet.Mappedtypes.engine.value
             }
 
             IList<IFudgeField> fields = withMessage.GetAllFields();
-            
-            var properties = new Dictionary<string, HashSet<string>>(fields.Count);
+
+            var properties = new Dictionary<string, ISet<string>>(fields.Count);
             HashSet<string> optional = null;
 
             foreach (var field in fields)
@@ -265,7 +263,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                 {
                     string value = (string)field.Value;
 
-                    properties.Add(name, new HashSet<string> { value });
+                    properties.Add(name, SmallSet<string>.Create(value));
                 }
                 else if (field.Type == IndicatorFieldType.Instance)
                 {
@@ -293,7 +291,7 @@ namespace OGDotNet.Mappedtypes.engine.value
                 }
             }
 
-            return new FiniteValueProperties(properties, optional);
+            return new FiniteValueProperties(properties, optional == null ? null : SmallSet<string>.Create(optional));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
