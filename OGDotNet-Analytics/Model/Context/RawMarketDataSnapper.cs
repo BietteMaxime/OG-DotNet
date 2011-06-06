@@ -79,7 +79,7 @@ namespace OGDotNet.Model.Context
         private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(SnapshotDataBundle bundle, DateTimeOffset valuationTime)
         {
             var data = bundle.DataPoints.ToDictionary(
-                s => new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of(s.Key)),
+                s => new MarketDataValueSpecification(MarketDataValueType.Primitive, s.Key),
                 s => (IDictionary<string, ValueSnapshot>)new Dictionary<string, ValueSnapshot> { { MarketValueReqName, new ValueSnapshot(s.Value) } }
             );
             var values = new ManageableUnstructuredMarketDataSnapshot(data);

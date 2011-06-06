@@ -17,22 +17,22 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
     public class SnapshotDataBundle
     {
-        private readonly Dictionary<Identifier, double> _dataPoints;
+        private readonly Dictionary<UniqueIdentifier, double> _dataPoints;
 
-        public SnapshotDataBundle(Dictionary<Identifier, double> dataPoints)
+        public SnapshotDataBundle(Dictionary<UniqueIdentifier, double> dataPoints)
         {
             ArgumentChecker.NotNull(dataPoints, "dataPoints");
             _dataPoints = dataPoints;
         }
 
-        public Dictionary<Identifier, double> DataPoints
+        public Dictionary<UniqueIdentifier, double> DataPoints
         {
             get { return _dataPoints; }
         }
 
         public static SnapshotDataBundle FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var map = MapBuilder.FromFudgeMsg(ffc.GetMessage("dataPoints"), f => Identifier.Parse((string)f.Value), f => (double)f.Value);
+            var map = MapBuilder.FromFudgeMsg(ffc.GetMessage("dataPoints"), f => UniqueIdentifier.Parse((string)f.Value), f => (double)f.Value);
             return new SnapshotDataBundle(map);
         }
 

@@ -32,11 +32,6 @@ namespace OGDotNet.Mappedtypes.Id
             return new UniqueIdentifier(scheme, value, version);
         }
 
-        public static UniqueIdentifier Of(Identifier id)
-        {
-            return new UniqueIdentifier(id.Scheme, id.Value, null);
-        }
-
         public static UniqueIdentifier Parse(string uidStr)
         {
             ArgumentChecker.NotEmpty(uidStr, "uidStr");
