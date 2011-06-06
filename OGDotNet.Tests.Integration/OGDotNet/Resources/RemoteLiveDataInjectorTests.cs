@@ -22,8 +22,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteLiveDataInjectorTests : TestWithContextBase
     {
-        readonly UniqueIdentifier _bloombergUid = UniqueIdentifier.Of("BLOOMBERG_TICKER", "USDRG Curncy");
-        readonly Identifier _bloombergId = Identifier.Of("BLOOMBERG_TICKER", "USDRG Curncy");
+        static readonly UniqueIdentifier BloombergUid = UniqueIdentifier.Of("BLOOMBERG_TICKER", "USDRG Curncy");
+        private static readonly Identifier BloombergId = BloombergUid.ToIdentifier();
 
         [Fact]
         public void CanAddValueByReq()
@@ -32,7 +32,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
                 remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
-                remoteClient.LiveDataOverrideInjector.AddValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergUid)), 100.0);
+                remoteClient.LiveDataOverrideInjector.AddValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, BloombergUid)), 100.0);
             }
         }
 
@@ -43,7 +43,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
                 remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
-                remoteClient.LiveDataOverrideInjector.AddValue(_bloombergId, "Market_Value", 100.0);
+                remoteClient.LiveDataOverrideInjector.AddValue(BloombergId, "Market_Value", 100.0);
             }
         }
 
@@ -54,7 +54,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
                 remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
-                remoteClient.LiveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergUid)));
+                remoteClient.LiveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, BloombergUid)));
             }
         }
 
@@ -65,14 +65,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
                 remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
-                remoteClient.LiveDataOverrideInjector.RemoveValue(_bloombergId, "Market_Value");
+                remoteClient.LiveDataOverrideInjector.RemoveValue(BloombergId, "Market_Value");
             }
         }
 
         [Fact]
         public void ValueChangesResults()
         {
-            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergUid));
+            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, BloombergUid));
 
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
@@ -102,7 +102,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void RemoveChangesResults()
         {
-            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergUid));
+            var valueRequirement = new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, BloombergUid));
 
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
@@ -134,7 +134,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private ViewDefinition GetViewDefinition()
         {
             return CreateViewDefinition(new ValueRequirement(
-                "Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, _bloombergUid))
+                "Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, BloombergUid))
                 );
         }
     }

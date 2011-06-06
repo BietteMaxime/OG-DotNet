@@ -96,6 +96,12 @@ namespace OGDotNet.Mappedtypes.Id
             }
         }
 
+        
+        public Identifier ToIdentifier()
+        {
+            return Identifier.Of("UID", ToString());
+        }
+
         public override string ToString()
         {
             StringBuilder buf = new StringBuilder()
