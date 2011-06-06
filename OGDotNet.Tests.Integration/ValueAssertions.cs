@@ -264,6 +264,11 @@ namespace OGDotNet.Tests.Integration
             Assert.NotNull(identifier);
         }
 
+        public static void AssertSensibleValue(UniqueIdentifier identifier)
+        {
+            Assert.NotNull(identifier);
+        }
+
         public static void AssertSensibleValue(SnapshotDataBundle bundle)
         {
             Assert.NotNull(bundle);
