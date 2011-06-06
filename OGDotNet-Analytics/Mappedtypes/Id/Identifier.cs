@@ -42,8 +42,12 @@ namespace OGDotNet.Mappedtypes.Id
 
         public static Identifier Parse(string s)
         {
-            string[] strings = s.Split(new[] { Separator }, StringSplitOptions.None);
-            return new Identifier(strings[0], strings[1]);
+            int pos = s.IndexOf(Separator);
+            if (pos < 0)
+            {
+                throw new ArgumentException(string.Format("Invalid identifier format: {0}", s), "s");
+            }
+            return new Identifier(s.Substring(0, pos), s.Substring(pos + 1));
         }
 
         public int CompareTo(Identifier other)
