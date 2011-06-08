@@ -95,7 +95,6 @@ namespace OGDotNet.Mappedtypes.Id
                 return this;
             }
         }
-
         
         public Identifier ToIdentifier()
         {
