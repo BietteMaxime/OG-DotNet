@@ -149,11 +149,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var retDoc = snapshotMaster.Get(marketDataSnapshotDocument.UniqueId);
             Assert.NotNull(retDoc);
-            Assert.Equal(DateTimeOffset.MinValue, retDoc.VersionFromInstant);
-            Assert.Equal(DateTimeOffset.MinValue, retDoc.CorrectionFromInstant);
+            Assert.NotEqual(DateTimeOffset.MinValue, retDoc.VersionFromInstant);
+            Assert.NotEqual(DateTimeOffset.MinValue, retDoc.CorrectionFromInstant);
 
             AssertEqual(retDoc, marketDataSnapshotDocument);
-
+            
             snapshotMaster.Remove(marketDataSnapshotDocument.UniqueId);
         }
 
