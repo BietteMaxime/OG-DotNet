@@ -91,7 +91,6 @@ namespace OGDotNet.Model.Context
 
             lock (_snapshotUidLock)
             {
-                
                 ManageableMarketDataSnapshot shallowClone = GetShallowCloneSnapshot();
                 shallowClone.UniqueId = _temporarySnapshotUid;
                 var snapshot = _marketDataSnapshotMaster.Update(new MarketDataSnapshotDocument(_temporarySnapshotUid, shallowClone));

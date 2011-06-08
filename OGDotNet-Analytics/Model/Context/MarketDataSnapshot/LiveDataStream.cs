@@ -91,7 +91,6 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-
         private void Update(IViewComputationResultModel results)
         {
             UpdateLastResults(results);
@@ -178,8 +177,8 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                         mre.Reset();
                         lock (_lastResultsLock)
                         {
-                            if (GetLastValuationTimeStamp() > waitFor) //TODO LAP-19 this is a hack
-                            {
+                            if (GetLastValuationTimeStamp() > waitFor)
+                            {//TODO LAP-19 this is a hack
                                 break;
                             }
                         }
