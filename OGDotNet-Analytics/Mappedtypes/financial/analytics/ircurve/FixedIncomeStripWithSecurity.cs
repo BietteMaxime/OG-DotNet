@@ -97,7 +97,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         {
             var inner = (IFudgeFieldContainer)zonedDateTimeField.Value;
             string zone = inner.GetString("zone"); // TODO this
-            string odt = inner.GetString("odt");
+            string odt = inner.GetString("datetime");
             DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(odt);
             if (zone != "UTC")
                 throw new NotImplementedException();
