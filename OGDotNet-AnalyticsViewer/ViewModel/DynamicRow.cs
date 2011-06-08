@@ -30,17 +30,14 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 {
                     return null;
                 }
-                var keyValuePairs = ret.Where(r => key.RequiredConstraints.IsSatisfiedBy(r.Key)).ToList();
-                switch (keyValuePairs.Count())
+                foreach (var o in ret)
                 {
-                    case 0:
-                        return null;
-                    case 1:
-                        return keyValuePairs[0].Value;
-                    default:
-                        //TODO PLAT-1299: we should probably work out which value to use, but in theory either is fine
-                        return keyValuePairs[0].Value;
+                    if (key.RequiredConstraints.IsSatisfiedBy(o.Key))
+                    { //TODO PLAT-1299: if there are multiple we should probably work out which value to use, but in theory either is fine
+                        return o.Value;
+                    }
                 }
+                return null;
             }
         }
 
