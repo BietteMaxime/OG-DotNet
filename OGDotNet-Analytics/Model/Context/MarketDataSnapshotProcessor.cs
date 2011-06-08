@@ -63,9 +63,19 @@ namespace OGDotNet.Model.Context
             }
         }
 
+        public UpdateAction<ManageableMarketDataSnapshot> PrepareUpdate(LiveDataStream stream, CancellationToken ct = default(CancellationToken))
+        {
+            return Snapshot.PrepareUpdateFrom(GetNewSnapshotForUpdate(stream, ct));
+        }
+
         public UpdateAction<ManageableMarketDataSnapshot> PrepareUpdate(CancellationToken ct = default(CancellationToken))
         {
             return Snapshot.PrepareUpdateFrom(GetNewSnapshotForUpdate(ct));
+        }
+
+        private ManageableMarketDataSnapshot GetNewSnapshotForUpdate(LiveDataStream stream, CancellationToken ct)
+        {
+            return stream.GetNewSnapshotForUpdate(_snapshot);
         }
 
         public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))

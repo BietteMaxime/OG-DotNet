@@ -7,10 +7,13 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Model.Context;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
@@ -103,6 +106,59 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     }
                 }
             }
+        }
+
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanUpdateFromLiveDataStream(ViewDefinition viewDefinition)
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
+            {
+                using (LiveDataStream liveDataStream = dataSnapshotProcessor.GetLiveDataStream())
+                {
+                    UpdateAction<ManageableMarketDataSnapshot> prepareUpdate = dataSnapshotProcessor.PrepareUpdate(liveDataStream);
+                    var before = GetCount(dataSnapshotProcessor);
+                    prepareUpdate.Execute(dataSnapshotProcessor.Snapshot);
+
+                    var after = GetCount(dataSnapshotProcessor);
+                    Assert.Equal(before, after);
+                }
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void UpdatingFromLiveDataStreamIsFast(ViewDefinition viewDefinition)
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
+            {
+                using (LiveDataStream liveDataStream = dataSnapshotProcessor.GetLiveDataStream())
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(5));
+                    var fromStream = Time(()=> dataSnapshotProcessor.PrepareUpdate(liveDataStream));
+                    var raw = Time(()=> dataSnapshotProcessor.PrepareUpdate());
+                    Assert.InRange(fromStream, TimeSpan.Zero, TimeSpan.FromTicks(raw.Ticks / 3));
+                }
+            }
+        }
+        private TimeSpan Time(Action act)
+        {
+            Stopwatch s = new Stopwatch();
+            s.Start();
+            act();
+            s.Stop();
+            return s.Elapsed;
+        }
+
+        private Tuple<int, int> GetCount(MarketDataSnapshotProcessor dataSnapshotProcessor)
+        {
+            int count = dataSnapshotProcessor.Snapshot.GlobalValues.Values.Count;
+            int ycCount = dataSnapshotProcessor.Snapshot.YieldCurves.First().Value.Values.Values.Count;
+            return Tuple.Create(count, ycCount);
         }
 
         private static double DiffProportion(double a, double b)

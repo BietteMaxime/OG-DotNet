@@ -36,6 +36,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly ManualResetEventSlim _prepared = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim _haveValues = new ManualResetEventSlim(false);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -119,6 +120,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private void Update(IEnumerable<ComputedValue> allLiveData)
         {
             _currentValues = allLiveData.ToDictionary(cv => Tuple.Create(cv.Specification.TargetSpecification.Uid, cv.Specification.ValueName), cv => (double)cv.Value);
+            _haveValues.Set();
             InvokePropertyChanged(new PropertyChangedEventArgs("Item[]"));
         }
 
@@ -152,6 +154,42 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                     _remoteViewClient.Dispose();
                 }
             }
+        }
+
+        public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(ManageableMarketDataSnapshot snapshot)
+        {
+            //TODO handle view changing shape, or its compilation changing
+            _haveValues.Wait();
+            var snapshotValues = _currentValues;  // Take a point in time copy
+
+            return new ManageableMarketDataSnapshot(snapshot.BasisViewName,
+                GetNewForUpdate(snapshot.GlobalValues, snapshotValues),
+                snapshot.YieldCurves.ToDictionary(kvp => kvp.Key, kvp => GetNewForUpdate(kvp.Value, snapshotValues)));
+        }
+
+        private static ManageableYieldCurveSnapshot GetNewForUpdate(ManageableYieldCurveSnapshot globalValues, Dictionary<Tuple<UniqueIdentifier, string>, double> snapshotValues)
+        {
+            return new ManageableYieldCurveSnapshot(GetNewForUpdate(globalValues.Values, snapshotValues), globalValues.ValuationTime); //TODO valuationTime
+        }
+
+        private static ManageableUnstructuredMarketDataSnapshot GetNewForUpdate(ManageableUnstructuredMarketDataSnapshot globalValues, Dictionary<Tuple<UniqueIdentifier, string>, double> snapshotValues)
+        {
+            return new ManageableUnstructuredMarketDataSnapshot(
+                globalValues.Values.ToDictionary(k => k.Key, k => GetNewForUpdate(k.Key, k.Value, snapshotValues)));
+        }
+
+        private static IDictionary<string,ValueSnapshot> GetNewForUpdate(MarketDataValueSpecification spec, IDictionary<string,ValueSnapshot> values, Dictionary<Tuple<UniqueIdentifier, string>, double> snapshotValues)
+        {
+            var ret = new Dictionary<string,ValueSnapshot>();
+            foreach (var valueSnapshot in values)
+            {
+                double marketValue;
+                if (snapshotValues.TryGetValue(Tuple.Create(spec.UniqueId, valueSnapshot.Key), out marketValue))
+                {
+                    ret.Add(valueSnapshot.Key, new ValueSnapshot(marketValue));
+                }
+            }
+            return ret;
         }
     }
 }
