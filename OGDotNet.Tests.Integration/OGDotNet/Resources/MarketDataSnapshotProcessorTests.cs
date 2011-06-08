@@ -139,8 +139,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 using (LiveDataStream liveDataStream = dataSnapshotProcessor.GetLiveDataStream())
                 {
                     Thread.Sleep(TimeSpan.FromSeconds(5));
-                    var fromStream = Time(()=> dataSnapshotProcessor.PrepareUpdate(liveDataStream));
-                    var raw = Time(()=> dataSnapshotProcessor.PrepareUpdate());
+                    var fromStream = Time(() => dataSnapshotProcessor.PrepareUpdate(liveDataStream));
+                    var raw = Time(() => dataSnapshotProcessor.PrepareUpdate());
                     Assert.InRange(fromStream, TimeSpan.Zero, TimeSpan.FromTicks(raw.Ticks / 3));
                 }
             }

@@ -178,9 +178,9 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 globalValues.Values.ToDictionary(k => k.Key, k => GetNewForUpdate(k.Key, k.Value, snapshotValues)));
         }
 
-        private static IDictionary<string,ValueSnapshot> GetNewForUpdate(MarketDataValueSpecification spec, IDictionary<string,ValueSnapshot> values, Dictionary<Tuple<UniqueIdentifier, string>, double> snapshotValues)
+        private static IDictionary<string, ValueSnapshot> GetNewForUpdate(MarketDataValueSpecification spec, IDictionary<string, ValueSnapshot> values, Dictionary<Tuple<UniqueIdentifier, string>, double> snapshotValues)
         {
-            var ret = new Dictionary<string,ValueSnapshot>();
+            var ret = new Dictionary<string, ValueSnapshot>();
             foreach (var valueSnapshot in values)
             {
                 double marketValue;
