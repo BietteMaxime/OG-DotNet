@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
@@ -64,6 +65,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 remoteClient.ViewDefinitionRepository.RemoveViewDefinition(vd.Name);
 
                 Assert.DoesNotContain(vd.Name, Context.ViewProcessor.ViewDefinitionRepository.GetDefinitionNames());
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CantRemoveMissingView()
+        {
+            using (var remoteClient = Context.CreateUserClient())
+            {
+                Assert.Throws<DataNotFoundException>(() => remoteClient.ViewDefinitionRepository.RemoveViewDefinition(TestUtils.GetUniqueName()));
             }
         }
 
