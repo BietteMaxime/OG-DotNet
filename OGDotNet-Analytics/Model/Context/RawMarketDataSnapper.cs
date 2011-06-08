@@ -7,26 +7,19 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.depgraph;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.compilation;
-using OGDotNet.Mappedtypes.engine.View.Execution;
-using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
-using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
@@ -40,21 +33,12 @@ namespace OGDotNet.Model.Context
     /// <item>TODO: this implementation is evidence for the fact that the Snapshotting shouldn't be client</item>
     /// </list>
     /// </summary>
-    internal class RawMarketDataSnapper
+    internal static class RawMarketDataSnapper
     {
         private const string YieldCurveValueReqName = "YieldCurve";
         private const string YieldCurveSpecValueReqName = "YieldCurveSpec";
         private const string MarketValueReqName = "Market_Value";
         private const string YieldCurveMarketDataReqName = "YieldCurveMarketData";
-
-        private readonly RemoteEngineContext _remoteEngineContext;
-        private readonly ViewDefinition _definition;
-
-        public RawMarketDataSnapper(RemoteEngineContext remoteEngineContext, ViewDefinition definition)
-        {
-            _remoteEngineContext = remoteEngineContext;
-            _definition = definition;
-        }
 
         #region create snapshot
 
@@ -145,12 +129,7 @@ namespace OGDotNet.Model.Context
         }
         #endregion
 
-        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(UniqueIdentifier snapshotIdentifier, CancellationToken ct)
-        {
-            return WithSingleCycle(EvaluateYieldCurves, snapshotIdentifier, ct);
-        }
-
-        private static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(IViewComputationResultModel r, IViewCycle c, Dictionary<string, IDependencyGraph> graphs)
+        public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(IViewCycle c, Dictionary<string, IDependencyGraph> graphs)
         {
             return GetYieldCurveValues(c, graphs, YieldCurveValueReqName, YieldCurveSpecValueReqName)
                 .ToDictionary(k => k.Key, k => GetEvaluatedCurve(k.Value));
@@ -190,82 +169,6 @@ namespace OGDotNet.Model.Context
             }
 
             return yieldCurves;
-        }
-
-        private T WithSingleCycle<T>(Func<IViewComputationResultModel, IViewCycle, Dictionary<string, IDependencyGraph>, T> func, UniqueIdentifier snapshotIdentifier, CancellationToken ct)
-        {
-            using (var completed = new ManualResetEventSlim(false))
-            using (var remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient())
-            {
-                var results =
-                    new BlockingCollection<IViewComputationResultModel>(new ConcurrentQueue<IViewComputationResultModel>());
-                var eventViewResultListener = new EventViewResultListener();
-                eventViewResultListener.ProcessCompleted += delegate { completed.Set(); };
-                eventViewResultListener.CycleExecutionFailed += delegate { completed.Set(); };
-                eventViewResultListener.ViewDefinitionCompilationFailed += delegate { completed.Set(); };
-                eventViewResultListener.CycleCompleted +=
-                    delegate(object sender, CycleCompletedArgs e)
-                        {
-                            results.Add(e.FullResult);
-                            completed.Set();
-                        };
-                remoteViewClient.SetResultListener(eventViewResultListener);
-
-                remoteViewClient.SetViewCycleAccessSupported(true);
-                remoteViewClient.AttachToViewProcess(_definition.Name,
-                                                     snapshotIdentifier == null
-                                                         ? ExecutionOptions.RealTime
-                                                         : ExecutionOptions.Snapshot(snapshotIdentifier));
-
-                if (! completed.Wait(TimeSpan.FromMinutes(1), ct))
-                {
-                    throw new OpenGammaException("Failed to get any results");
-                }
-                
-                int prevAvailable = 0;
-                
-                while (true)
-                {
-                    ct.ThrowIfCancellationRequested();
-
-                    var cycleTimeout = TimeSpan.FromSeconds(10);
-                    IViewComputationResultModel result;
-                    if (! results.TryTake(out result, (int) cycleTimeout.TotalMilliseconds, ct))
-                    {
-                        ct.ThrowIfCancellationRequested();
-                        result = remoteViewClient.GetLatestResult();
-                        if (result == null)
-                        {
-                            throw new OpenGammaException("Unexpectedly missing results");
-                        }
-                    }
-                    ct.ThrowIfCancellationRequested();
-                    using (var engineResourceReference = remoteViewClient.CreateCycleReference(result.ViewCycleId))
-                    {
-                        if (engineResourceReference == null)
-                        {
-                            //View is ahead of us
-                            continue;
-                        }
-                        ct.ThrowIfCancellationRequested();
-
-                        var viewCycle = engineResourceReference.Value;
-                        var compiledViewDefinitionWithGraphs = viewCycle.GetCompiledViewDefinition();
-                        var requiredCount = compiledViewDefinitionWithGraphs.LiveDataRequirements.Count;
-                        var available = result.AllLiveData.Count();
-
-                        if (snapshotIdentifier == null && prevAvailable != available && available != requiredCount)
-                        {
-                            //LAP-40 Try again, we're making progress but waiting for live data
-                            prevAvailable = available;
-                            continue;
-                        }
-
-                        var graphs = GetGraphs(compiledViewDefinitionWithGraphs);
-                        return func(result, viewCycle, graphs);
-                    }
-                }
-            }
         }
 
         private static Dictionary<string, IEnumerable<ValueSpecification>> GetMatchingSpecifications(Dictionary<string, IDependencyGraph> graphs, params string[] specNames)

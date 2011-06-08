@@ -5,6 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -16,7 +17,11 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
+using OGDotNet.Mappedtypes.financial.analytics.ircurve;
+using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
@@ -27,6 +32,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
     {
         private readonly string _basisViewName;
         private readonly RemoteEngineContext _remoteEngineContext;
+        private readonly UniqueIdentifier _snapshotId;
         private readonly ManualResetEventSlim _prepared = new ManualResetEventSlim(false);
         private readonly ManualResetEventSlim _haveLastResults = new ManualResetEventSlim(false);
 
@@ -41,10 +47,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             Pair<IEngineResourceReference<IViewCycle>, IViewComputationResultModel>>
             _lastResults;
 
-        public LiveDataStream(string basisViewName, RemoteEngineContext remoteEngineContext)
+        public LiveDataStream(string basisViewName, RemoteEngineContext remoteEngineContext, UniqueIdentifier snapshotId = null)
         {
             _basisViewName = basisViewName;
             _remoteEngineContext = remoteEngineContext;
+            _snapshotId = snapshotId;
             ThreadPool.QueueUserWorkItem(Prepare);
         }
 
@@ -58,7 +65,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 eventViewResultListener.ViewDefinitionCompiled += (sender, e) => { _graphs = null; };
                 _remoteViewClient.SetResultListener(eventViewResultListener);
                 _remoteViewClient.SetViewCycleAccessSupported(true);
-                _remoteViewClient.AttachToViewProcess(_basisViewName, ExecutionOptions.RealTime);
+                _remoteViewClient.AttachToViewProcess(_basisViewName, _snapshotId == null ? ExecutionOptions.RealTime : ExecutionOptions.Snapshot(_snapshotId));
             }
             finally
             {
@@ -85,6 +92,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
+
         private void Update(IViewComputationResultModel results)
         {
             UpdateLastResults(results);
@@ -102,6 +110,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 {
                     _graphs = RawMarketDataSnapper.GetGraphs(resourceReference.Value.GetCompiledViewDefinition());
                 }
+
                 var previous = Interlocked.Exchange(ref _lastResults,
                                                     Pair.Create(_graphs, Pair.Create(resourceReference, results)));
                 if (previous != null)
@@ -140,6 +149,60 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                                                                     _lastResults.First, _lastResults.Second.First.Value,
                                                                     _basisViewName);
             }
+        }
+
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(DateTimeOffset waitFor, CancellationToken ct)
+        {
+            _haveLastResults.Wait(ct);
+            WaitFor(waitFor, ct);
+            lock (_lastResultsLock)
+            {
+                Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> yieldCurves = null;
+                yieldCurves = RawMarketDataSnapper.EvaluateYieldCurves(_lastResults.Second.First.Value, _lastResults.First);
+                return yieldCurves;
+            }
+        }
+
+        private void WaitFor(DateTimeOffset waitFor, CancellationToken ct)
+        {
+            using (var mre = new ManualResetEventSlim())
+            {
+                PropertyChangedEventHandler onPropChanged = delegate
+                                                                {
+                                                                    mre.Set();
+                                                                };
+                PropertyChanged += onPropChanged;
+                try
+                {
+                    while (true)
+                    {
+                        mre.Reset(); 
+                        lock(_lastResultsLock)
+                        {
+                            if (GetLastResultTimeStamp() > waitFor) //TODO LAP-19 this is a hack
+                            {
+                                break;
+                            }
+                        }
+                        mre.Wait(ct);
+                    }
+                }
+                finally
+                {
+                    PropertyChanged -= onPropChanged;    
+                }
+            }
+        }
+
+        private DateTimeOffset GetLastResultTimeStamp()
+        {
+            var lastResults = _lastResults;
+            return lastResults == null ? default(DateTimeOffset) : lastResults.Second.Second.ResultTimestamp;
+        }
+
+        private DateTimeOffset GetLastResultTime()
+        {
+            return _lastResults == null ? default(DateTimeOffset) : _lastResults.Second.Second.ValuationTime;
         }
     }
 }

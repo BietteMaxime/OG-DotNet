@@ -7,11 +7,14 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.financial.analytics.ircurve;
+using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Context.MarketDataSnapshot;
@@ -54,6 +57,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
             {
                 var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
+                var beforeCurve = beforeCurves.First().Value.Item1.Curve;
 
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
@@ -64,7 +68,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var afterCurves = dataSnapshotProcessor.GetYieldCurves();
                 Assert.NotEmpty(afterCurves);
 
-                var beforeCurve = beforeCurves.First().Value.Item1.Curve;
                 var afterCurve = afterCurves.First().Value.Item1.Curve;
 
                 //Curve should change Ys but not x
@@ -72,6 +75,69 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var diffs = beforeCurve.YData.Zip(afterCurve.YData, DiffProportion).ToList();
                 Assert.NotEmpty(diffs.Where(d => d > 0.001).ToList());
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanDoStupidOverride()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
+
+                var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
+                var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
+
+                ValueSnapshot value = ycSnapshot.Values.Values.First().Value.First().Value;
+                value.OverrideValue = value.MarketValue * -1000;
+
+                var afterCurves = dataSnapshotProcessor.GetYieldCurves();
+                Assert.Equal(beforeCurves.Count -1, afterCurves.Count);
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void GettingYieldCurveValuesIsQuick()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition("Swap Test View"))
+            {
+                var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
+                YieldCurveKey curveKey = beforeCurves.Keys.First();
+                var beforeCurve = beforeCurves[curveKey].Item1.Curve;
+
+                var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
+                var ycSnapshot = manageableMarketDataSnapshot.YieldCurves[curveKey];
+
+                ValueSnapshot value = ycSnapshot.Values.Values.First().Value.First().Value;
+                double f = 1.5;
+                value.OverrideValue = value.MarketValue * f;
+
+                var afterCurves = dataSnapshotProcessor.GetYieldCurves();
+                Assert.NotEmpty(afterCurves);
+
+                var afterCurve = afterCurves[curveKey].Item1.Curve;
+
+                //Curve should change Ys but not x
+                Assert.Equal(beforeCurve.XData, afterCurve.XData);
+
+                var diffs = beforeCurve.YData.Zip(afterCurve.YData, DiffProportion).ToList();
+                Assert.NotEmpty(diffs.Where(d => d > 0.001).ToList());
+
+                value.OverrideValue = null;
+
+                Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>>
+                    timedCurves = null;
+
+                TimeSpan time = Time(() => timedCurves = dataSnapshotProcessor.GetYieldCurves());
+                Assert.InRange(time, TimeSpan.Zero, TimeSpan.FromSeconds(5)); // TODO faster
+                Console.Out.WriteLine(time);
+
+                var diffs2 = beforeCurves[curveKey].Item1.Curve.YData.Zip(timedCurves[curveKey].Item1.Curve.YData, DiffProportion).ToList();
+                Assert.Empty(diffs2.Where(d => d > 0.001).ToList());
             }
         }
 
@@ -89,6 +155,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     liveDataStream.PropertyChanged += delegate { art.Set(); };
 
                     TimeSpan timeout = TimeSpan.FromSeconds(30);
+                    art.Reset();
                     Assert.True(art.WaitOne(timeout));
 
                     foreach (var set in dataSnapshotProcessor.Snapshot.GlobalValues.Values)
