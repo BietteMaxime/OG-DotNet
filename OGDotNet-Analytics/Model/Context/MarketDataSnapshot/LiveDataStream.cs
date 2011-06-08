@@ -21,7 +21,6 @@ using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
-using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
@@ -42,7 +41,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private volatile Dictionary<string, IDependencyGraph> _graphs;
 
-        private readonly object  _lastResultsLock = new object();
+        private readonly object _lastResultsLock = new object();
         private Pair<Dictionary<string, IDependencyGraph>,
             Pair<IEngineResourceReference<IViewCycle>, IViewComputationResultModel>>
             _lastResults;
@@ -168,18 +167,18 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             using (var mre = new ManualResetEventSlim())
             {
                 PropertyChangedEventHandler onPropChanged = delegate
-                                                                {
-                                                                    mre.Set();
-                                                                };
+                {
+                    mre.Set();
+                };
                 PropertyChanged += onPropChanged;
                 try
                 {
                     while (true)
                     {
-                        mre.Reset(); 
-                        lock(_lastResultsLock)
+                        mre.Reset();
+                        lock (_lastResultsLock)
                         {
-                            if (GetLastResultTimeStamp() > waitFor) //TODO LAP-19 this is a hack
+                            if (GetLastValuationTimeStamp() > waitFor) //TODO LAP-19 this is a hack
                             {
                                 break;
                             }
@@ -189,20 +188,15 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 }
                 finally
                 {
-                    PropertyChanged -= onPropChanged;    
+                    PropertyChanged -= onPropChanged;
                 }
             }
         }
 
-        private DateTimeOffset GetLastResultTimeStamp()
+        private DateTimeOffset GetLastValuationTimeStamp()
         {
             var lastResults = _lastResults;
-            return lastResults == null ? default(DateTimeOffset) : lastResults.Second.Second.ResultTimestamp;
-        }
-
-        private DateTimeOffset GetLastResultTime()
-        {
-            return _lastResults == null ? default(DateTimeOffset) : _lastResults.Second.Second.ValuationTime;
+            return lastResults == null ? default(DateTimeOffset) : lastResults.Second.Second.ValuationTime;
         }
     }
 }
