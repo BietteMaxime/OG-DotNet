@@ -12,6 +12,13 @@ using Fudge.Types;
 
 namespace OGDotNet.Mappedtypes.Util.tuple
 {
+    public static class Pair
+    {
+        public static Pair<TFirst, TSecond> Create<TFirst, TSecond>(TFirst first, TSecond second) where TFirst : class where TSecond : class
+        {
+            return new Pair<TFirst, TSecond>(first, second);
+        }
+    }
     public class Pair<TFirst, TSecond>
         where TFirst : class
         where TSecond : class

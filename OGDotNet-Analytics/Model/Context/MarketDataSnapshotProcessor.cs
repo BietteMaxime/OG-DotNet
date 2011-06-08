@@ -32,26 +32,28 @@ namespace OGDotNet.Model.Context
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RawMarketDataSnapper _rawMarketDataSnapper;
         private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster; //TODO should be the user master
-        private readonly RemoteEngineContext _remoteEngineContext;
+        private readonly LiveDataStream _liveDataStream;
 
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, CancellationToken ct)
         {
+            var liveDataStream = new LiveDataStream(definition.Name, context);
             var rawMarketDataSnapper = new RawMarketDataSnapper(context, definition);
-            var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(ct);
-            return new MarketDataSnapshotProcessor(snapshot, rawMarketDataSnapper, context);
+            var snapshot = liveDataStream.GetNewSnapshotForUpdate(ct);
+            
+            return new MarketDataSnapshotProcessor(snapshot, rawMarketDataSnapper, context, liveDataStream);
         }
 
-        internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot) 
-            : this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(snapshot.BasisViewName)), remoteEngineContext)
+        internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot)
+            : this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(snapshot.BasisViewName)), remoteEngineContext, new LiveDataStream(snapshot.BasisViewName, remoteEngineContext))
         {
         }
 
-        private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RawMarketDataSnapper rawMarketDataSnapper, RemoteEngineContext remoteEngineContext)
+        private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RawMarketDataSnapper rawMarketDataSnapper, RemoteEngineContext remoteEngineContext, LiveDataStream liveDataStream)
         {
             _snapshot = snapshot;
             _rawMarketDataSnapper = rawMarketDataSnapper;
             _marketDataSnapshotMaster = remoteEngineContext.MarketDataSnapshotMaster;
-            _remoteEngineContext = remoteEngineContext;
+            _liveDataStream = liveDataStream;
         }
 
         public ManageableMarketDataSnapshot Snapshot
@@ -63,30 +65,21 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        public UpdateAction<ManageableMarketDataSnapshot> PrepareUpdate(LiveDataStream stream, CancellationToken ct = default(CancellationToken))
-        {
-            return Snapshot.PrepareUpdateFrom(GetNewSnapshotForUpdate(stream, ct));
-        }
-
         public UpdateAction<ManageableMarketDataSnapshot> PrepareUpdate(CancellationToken ct = default(CancellationToken))
         {
             return Snapshot.PrepareUpdateFrom(GetNewSnapshotForUpdate(ct));
         }
 
-        public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(LiveDataStream stream, CancellationToken ct)
-        {
-            return stream.GetNewSnapshotForUpdate(_snapshot);
-        }
-
         public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))
         {
-            return _rawMarketDataSnapper.CreateSnapshotFromView(ct);
+            return _liveDataStream.GetNewSnapshotForUpdate(ct);
         }
 
-        public LiveDataStream GetLiveDataStream()
+        public LiveDataStream LiveDataStream
         {
-            return new LiveDataStream(_snapshot, _remoteEngineContext);
+            get { return _liveDataStream; }
         }
+
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
         {
             CheckDisposed();
@@ -111,7 +104,7 @@ namespace OGDotNet.Model.Context
         {
             if (disposing)
             {
-                _rawMarketDataSnapper.Dispose();
+                _liveDataStream.Dispose();
             }
         }
     }

@@ -85,25 +85,20 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 using (var art = new AutoResetEvent(false))
                 {
-                    using (LiveDataStream liveDataStream = dataSnapshotProcessor.GetLiveDataStream())
+                    LiveDataStream liveDataStream = dataSnapshotProcessor.LiveDataStream;
+                    liveDataStream.PropertyChanged += delegate { art.Set(); };
+
+                    TimeSpan timeout = TimeSpan.FromSeconds(30);
+                    Assert.True(art.WaitOne(timeout));
+
+                    foreach (var set in dataSnapshotProcessor.Snapshot.GlobalValues.Values)
                     {
-                        liveDataStream.PropertyChanged += delegate
-                                                              {
-                                                                  art.Set();
-                                                              };
-
-                        TimeSpan timeout = TimeSpan.FromSeconds(30);
-                        Assert.True(art.WaitOne(timeout));
-
-                        foreach (var set in dataSnapshotProcessor.Snapshot.GlobalValues.Values)
+                        foreach (var entry in set.Value)
                         {
-                            foreach (var entry in set.Value)
-                            {
-                                Assert.NotNull(liveDataStream[set.Key, entry.Key]);   
-                            }
+                            Assert.NotNull(liveDataStream[set.Key, entry.Key]);
                         }
-                        Assert.True(art.WaitOne(timeout));
                     }
+                    Assert.True(art.WaitOne(timeout));
                 }
             }
         }
@@ -116,36 +111,28 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
             {
-                using (LiveDataStream liveDataStream = dataSnapshotProcessor.GetLiveDataStream())
-                {
-                    UpdateAction<ManageableMarketDataSnapshot> prepareUpdate = dataSnapshotProcessor.PrepareUpdate(liveDataStream);
-                    var before = GetCount(dataSnapshotProcessor);
-                    prepareUpdate.Execute(dataSnapshotProcessor.Snapshot);
+                UpdateAction<ManageableMarketDataSnapshot> prepareUpdate = dataSnapshotProcessor.PrepareUpdate();
+                var before = GetCount(dataSnapshotProcessor);
+                prepareUpdate.Execute(dataSnapshotProcessor.Snapshot);
 
-                    var after = GetCount(dataSnapshotProcessor);
-                    Assert.Equal(before, after);
-                }
+                var after = GetCount(dataSnapshotProcessor);
+                Assert.Equal(before, after);
             }
         }
 
-        [Theory]
-        [TypedPropertyData("FastTickingViewDefinitions")]
-        public void UpdatingFromLiveDataStreamIsFast(ViewDefinition viewDefinition)
+        [Xunit.Extensions.Fact]
+        public void UpdatingFromLiveDataStreamIsFast()
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
 
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
             {
-                using (LiveDataStream liveDataStream = dataSnapshotProcessor.GetLiveDataStream())
-                {
-                    Thread.Sleep(TimeSpan.FromSeconds(5));
-                    var fromStream = Time(() => dataSnapshotProcessor.PrepareUpdate(liveDataStream));
-                    var raw = Time(() => dataSnapshotProcessor.PrepareUpdate());
-                    Assert.InRange(fromStream, TimeSpan.Zero, TimeSpan.FromTicks(raw.Ticks / 3));
-                }
+                var fromStream = Time(() => dataSnapshotProcessor.PrepareUpdate());
+                Assert.InRange(fromStream, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+                //TODO check that we have actually updated
             }
         }
-        private TimeSpan Time(Action act)
+        private static TimeSpan Time(Action act)
         {
             Stopwatch s = new Stopwatch();
             s.Start();

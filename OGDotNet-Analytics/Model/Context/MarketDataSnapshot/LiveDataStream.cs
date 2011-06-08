@@ -5,26 +5,19 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using OGDotNet.Builders;
-using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.engine;
-using OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph;
-using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
-using OGDotNet.Mappedtypes.financial.view;
-using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
 
@@ -32,49 +25,40 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
     public class LiveDataStream : DisposableBase, INotifyPropertyChanged
     {
-        private const string CalcConfigName = "Default";
-        private readonly ManageableMarketDataSnapshot _snapshot;
+        private readonly string _basisViewName;
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly ManualResetEventSlim _prepared = new ManualResetEventSlim(false);
-        private readonly ManualResetEventSlim _haveValues = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim _haveLastResults = new ManualResetEventSlim(false);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private Dictionary<Tuple<UniqueIdentifier, string>, double> _currentValues = new Dictionary<Tuple<UniqueIdentifier, string>, double>();
-
-        private string _temporaryViewName;
-        private RemoteClient _remoteClient;
         private RemoteViewClient _remoteViewClient;
 
-        public LiveDataStream(ManageableMarketDataSnapshot snapshot, RemoteEngineContext remoteEngineContext)
+        private volatile Dictionary<string, IDependencyGraph> _graphs;
+
+        private readonly object  _lastResultsLock = new object();
+        private Pair<Dictionary<string, IDependencyGraph>,
+            Pair<IEngineResourceReference<IViewCycle>, IViewComputationResultModel>>
+            _lastResults;
+
+        public LiveDataStream(string basisViewName, RemoteEngineContext remoteEngineContext)
         {
-            _snapshot = snapshot;
+            _basisViewName = basisViewName;
             _remoteEngineContext = remoteEngineContext;
             ThreadPool.QueueUserWorkItem(Prepare);
         }
 
         private void Prepare(object state)
         {
-            //TODO reinit when snapshot changes shape?
             try
             {
-                List<Tuple<MarketDataValueSpecification, string>> marketDataValueSpecifications =
-                    Wrap(_snapshot.GlobalValues).Concat(_snapshot.YieldCurves.SelectMany(yc => Wrap(yc.Value.Values))).Distinct().ToList();
-
-                _remoteClient = _remoteEngineContext.CreateUserClient();
-
-                var temporaryViewName = typeof(LiveDataStream).FullName + Guid.NewGuid() + _snapshot.BasisViewName;
-                var viewDefinition = new ViewDefinition(temporaryViewName, new ResultModelDefinition(ResultOutputMode.TerminalOutputs), null, calculationConfigurationsByName: new Dictionary<string, ViewCalculationConfiguration> { { CalcConfigName, GetCalcConfig(marketDataValueSpecifications) } });
-
-                _remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(
-                                                                             viewDefinition));
-                _temporaryViewName = temporaryViewName;
-
                 _remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient();
                 var eventViewResultListener = new EventViewResultListener();
-                eventViewResultListener.CycleCompleted += (sender, e) => Update(e.FullResult.AllLiveData);
+                eventViewResultListener.CycleCompleted += (sender, e) => Update(e.FullResult);
+                eventViewResultListener.ViewDefinitionCompiled += (sender, e) => { _graphs = null; };
                 _remoteViewClient.SetResultListener(eventViewResultListener);
-                _remoteViewClient.AttachToViewProcess(temporaryViewName, ExecutionOptions.RealTime);
+                _remoteViewClient.SetViewCycleAccessSupported(true);
+                _remoteViewClient.AttachToViewProcess(_basisViewName, ExecutionOptions.RealTime);
             }
             finally
             {
@@ -82,46 +66,50 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-        private static IEnumerable<Tuple<MarketDataValueSpecification, string>> Wrap(ManageableUnstructuredMarketDataSnapshot manageableUnstructuredMarketDataSnapshot)
-        {
-            return manageableUnstructuredMarketDataSnapshot.Values.SelectMany(kvp => kvp.Value.Keys.SelectMany(kk => kvp.Value.Keys.Select(v => Tuple.Create(kvp.Key, v))));
-        }
-
-        private static ViewCalculationConfiguration GetCalcConfig(IEnumerable<Tuple<MarketDataValueSpecification, string>> marketDataValueSpecifications)
-        {
-            return new ViewCalculationConfiguration(CalcConfigName, marketDataValueSpecifications.Select(m => new ValueRequirement(m.Item2, new ComputationTargetSpecification(
-                GetType(m.Item1),
-                m.Item1.UniqueId
-                ))), new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>());
-        }
-
-        private static ComputationTargetType GetType(MarketDataValueSpecification m)
-        {
-            return EnumUtils<MarketDataValueType, ComputationTargetType>.ConvertTo(m.Type);
-        }
-
         [IndexerName("Item")]
         public double? this[MarketDataValueSpecification spec, string valueName]
         {
             get
             {
-                double ret;
-                if (_currentValues.TryGetValue(Tuple.Create(spec.UniqueId, valueName), out ret))
-                {
-                    return ret;
-                }
-                else
+                var lastResults = _lastResults;
+                //TODO index this
+                var result = lastResults.Second.Second.AllLiveData.FirstOrDefault(
+                        d =>
+                        d.Specification.TargetSpecification.Uid == spec.UniqueId &&
+                        d.Specification.ValueName == valueName);
+                if (result == null)
                 {
                     return null;
                 }
+                return (double?)result.Value;
             }
         }
 
-        private void Update(IEnumerable<ComputedValue> allLiveData)
+        private void Update(IViewComputationResultModel results)
         {
-            _currentValues = allLiveData.ToDictionary(cv => Tuple.Create(cv.Specification.TargetSpecification.Uid, cv.Specification.ValueName), cv => (double)cv.Value);
-            _haveValues.Set();
+            UpdateLastResults(results);
             InvokePropertyChanged(new PropertyChangedEventArgs("Item[]"));
+        }
+
+        private void UpdateLastResults(IViewComputationResultModel results)
+        {
+            lock (_lastResultsLock)
+            {
+                IEngineResourceReference<IViewCycle> resourceReference =
+                    _remoteViewClient.CreateCycleReference(results.ViewCycleId);
+
+                if (_graphs == null)
+                {
+                    _graphs = RawMarketDataSnapper.GetGraphs(resourceReference.Value.GetCompiledViewDefinition());
+                }
+                var previous = Interlocked.Exchange(ref _lastResults,
+                                                    Pair.Create(_graphs, Pair.Create(resourceReference, results)));
+                if (previous != null)
+                {
+                    _haveLastResults.Set(); // TODO : this is a hack for PLAT-1325
+                    previous.Second.First.Dispose();
+                }
+            }
         }
 
         private void InvokePropertyChanged(PropertyChangedEventArgs e)
@@ -135,20 +123,6 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             if (disposing)
             {
                 _prepared.Wait();
-
-                try
-                {
-                    _remoteClient.ViewDefinitionRepository.RemoveViewDefinition(_temporaryViewName);
-                }
-                catch (DataNotFoundException)
-                {
-                    // This is fine
-                }
-                if (_remoteClient != null)
-                {
-                    _remoteClient.Dispose();
-                }
-
                 if (_remoteViewClient != null)
                 {
                     _remoteViewClient.Dispose();
@@ -156,40 +130,16 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-        public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(ManageableMarketDataSnapshot snapshot)
+        public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))
         {
-            //TODO handle view changing shape, or its compilation changing
-            _haveValues.Wait();
-            var snapshotValues = _currentValues;  // Take a point in time copy
-
-            return new ManageableMarketDataSnapshot(snapshot.BasisViewName,
-                GetNewForUpdate(snapshot.GlobalValues, snapshotValues),
-                snapshot.YieldCurves.ToDictionary(kvp => kvp.Key, kvp => GetNewForUpdate(kvp.Value, snapshotValues)));
-        }
-
-        private static ManageableYieldCurveSnapshot GetNewForUpdate(ManageableYieldCurveSnapshot globalValues, Dictionary<Tuple<UniqueIdentifier, string>, double> snapshotValues)
-        {
-            return new ManageableYieldCurveSnapshot(GetNewForUpdate(globalValues.Values, snapshotValues), globalValues.ValuationTime); //TODO valuationTime
-        }
-
-        private static ManageableUnstructuredMarketDataSnapshot GetNewForUpdate(ManageableUnstructuredMarketDataSnapshot globalValues, Dictionary<Tuple<UniqueIdentifier, string>, double> snapshotValues)
-        {
-            return new ManageableUnstructuredMarketDataSnapshot(
-                globalValues.Values.ToDictionary(k => k.Key, k => GetNewForUpdate(k.Key, k.Value, snapshotValues)));
-        }
-
-        private static IDictionary<string, ValueSnapshot> GetNewForUpdate(MarketDataValueSpecification spec, IDictionary<string, ValueSnapshot> values, Dictionary<Tuple<UniqueIdentifier, string>, double> snapshotValues)
-        {
-            var ret = new Dictionary<string, ValueSnapshot>();
-            foreach (var valueSnapshot in values)
+            _haveLastResults.Wait(ct);
+            lock (_lastResultsLock)
             {
-                double marketValue;
-                if (snapshotValues.TryGetValue(Tuple.Create(spec.UniqueId, valueSnapshot.Key), out marketValue))
-                {
-                    ret.Add(valueSnapshot.Key, new ValueSnapshot(marketValue));
-                }
+                IViewComputationResultModel results = _lastResults.Second.Second;
+                return RawMarketDataSnapper.CreateSnapshotFromCycle(results,
+                                                                    _lastResults.First, _lastResults.Second.First.Value,
+                                                                    _basisViewName);
             }
-            return ret;
         }
     }
 }

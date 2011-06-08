@@ -30,7 +30,6 @@ using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
-using OGDotNet.Utils;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Model.Context
@@ -41,7 +40,7 @@ namespace OGDotNet.Model.Context
     /// <item>TODO: this implementation is evidence for the fact that the Snapshotting shouldn't be client</item>
     /// </list>
     /// </summary>
-    internal class RawMarketDataSnapper : DisposableBase
+    internal class RawMarketDataSnapper
     {
         private const string YieldCurveValueReqName = "YieldCurve";
         private const string YieldCurveSpecValueReqName = "YieldCurveSpec";
@@ -58,17 +57,13 @@ namespace OGDotNet.Model.Context
         }
 
         #region create snapshot
-        public ManageableMarketDataSnapshot CreateSnapshotFromView(CancellationToken ct)
+
+        public static ManageableMarketDataSnapshot CreateSnapshotFromCycle(IViewComputationResultModel results, Dictionary<string, IDependencyGraph> graphs, IViewCycle viewCycle, string basisViewName)
         {
-            CheckDisposed();
+            var globalValues = GetGlobalValues(results, graphs);
+            var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
 
-            return WithSingleCycle(delegate(IViewComputationResultModel results, IViewCycle viewCycle, Dictionary<string, IDependencyGraph> graphs)
-                    {
-                        var globalValues = GetGlobalValues(results, graphs);
-                        var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
-
-                        return new ManageableMarketDataSnapshot(_definition.Name, globalValues, yieldCurves);
-                    }, null, ct);
+            return new ManageableMarketDataSnapshot(basisViewName, globalValues, yieldCurves);
         }
 
         private static YieldCurveKey GetYieldCurveKey(ValueSpecification y)
@@ -199,8 +194,6 @@ namespace OGDotNet.Model.Context
 
         private T WithSingleCycle<T>(Func<IViewComputationResultModel, IViewCycle, Dictionary<string, IDependencyGraph>, T> func, UniqueIdentifier snapshotIdentifier, CancellationToken ct)
         {
-            CheckDisposed();
-
             using (var completed = new ManualResetEventSlim(false))
             using (var remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient())
             {
@@ -296,15 +289,10 @@ namespace OGDotNet.Model.Context
             return ret;
         }
 
-        private static Dictionary<string, IDependencyGraph> GetGraphs(ICompiledViewDefinitionWithGraphs compiledViewDefinitionWithGraphs)
+        public static Dictionary<string, IDependencyGraph> GetGraphs(ICompiledViewDefinitionWithGraphs compiledViewDefinitionWithGraphs)
         {
             return compiledViewDefinitionWithGraphs.CompiledCalculationConfigurations.Keys
                 .ToDictionary(k => k, k => compiledViewDefinitionWithGraphs.GetDependencyGraphExplorer(k).GetWholeGraph());
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            //TODO -I'm going to need this in order to be less slow
         }
     }
 }
