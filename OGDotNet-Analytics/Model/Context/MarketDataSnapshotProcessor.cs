@@ -32,7 +32,7 @@ namespace OGDotNet.Model.Context
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RawMarketDataSnapper _rawMarketDataSnapper;
         private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster; //TODO should be the user master
-        private RemoteEngineContext _remoteEngineContext;
+        private readonly RemoteEngineContext _remoteEngineContext;
 
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, CancellationToken ct)
         {
@@ -73,7 +73,7 @@ namespace OGDotNet.Model.Context
             return Snapshot.PrepareUpdateFrom(GetNewSnapshotForUpdate(ct));
         }
 
-        private ManageableMarketDataSnapshot GetNewSnapshotForUpdate(LiveDataStream stream, CancellationToken ct)
+        public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(LiveDataStream stream, CancellationToken ct)
         {
             return stream.GetNewSnapshotForUpdate(_snapshot);
         }
