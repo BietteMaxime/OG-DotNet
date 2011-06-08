@@ -8,8 +8,10 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 
@@ -67,6 +69,39 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var diffs = beforeCurve.YData.Zip(afterCurve.YData, DiffProportion).ToList();
                 Assert.NotEmpty(diffs.Where(d => d > 0.001).ToList());
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanGetLiveDataStream(ViewDefinition viewDefinition)
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
+            {
+                using (var art = new AutoResetEvent(false))
+                {
+                    using (LiveDataStream liveDataStream = dataSnapshotProcessor.GetLiveDataStream())
+                    {
+                        liveDataStream.PropertyChanged += delegate
+                                                              {
+                                                                  art.Set();
+                                                              };
+
+                        TimeSpan timeout = TimeSpan.FromSeconds(30);
+                        Assert.True(art.WaitOne(timeout));
+
+                        foreach (var set in dataSnapshotProcessor.Snapshot.GlobalValues.Values)
+                        {
+                            foreach (var entry in set.Value)
+                            {
+                                Assert.NotNull(liveDataStream[set.Key, entry.Key]);   
+                            }
+                        }
+                        Assert.True(art.WaitOne(timeout));
+                    }
+                }
             }
         }
 

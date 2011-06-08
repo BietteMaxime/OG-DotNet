@@ -32,24 +32,26 @@ namespace OGDotNet.Model.Context
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RawMarketDataSnapper _rawMarketDataSnapper;
         private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster; //TODO should be the user master
+        private RemoteEngineContext _remoteEngineContext;
 
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, CancellationToken ct)
         {
             var rawMarketDataSnapper = new RawMarketDataSnapper(context, definition);
             var snapshot = rawMarketDataSnapper.CreateSnapshotFromView(ct);
-            return new MarketDataSnapshotProcessor(snapshot, rawMarketDataSnapper, context.MarketDataSnapshotMaster);
+            return new MarketDataSnapshotProcessor(snapshot, rawMarketDataSnapper, context);
         }
 
         internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot) 
-            : this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(snapshot.BasisViewName)), remoteEngineContext.MarketDataSnapshotMaster)
+            : this(snapshot, new RawMarketDataSnapper(remoteEngineContext, remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(snapshot.BasisViewName)), remoteEngineContext)
         {
         }
 
-        private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RawMarketDataSnapper rawMarketDataSnapper, RemoteMarketDataSnapshotMaster marketDataSnapshotMaster)
+        private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RawMarketDataSnapper rawMarketDataSnapper, RemoteEngineContext remoteEngineContext)
         {
             _snapshot = snapshot;
             _rawMarketDataSnapper = rawMarketDataSnapper;
-            _marketDataSnapshotMaster = marketDataSnapshotMaster;
+            _marketDataSnapshotMaster = remoteEngineContext.MarketDataSnapshotMaster;
+            _remoteEngineContext = remoteEngineContext;
         }
 
         public ManageableMarketDataSnapshot Snapshot
@@ -71,6 +73,10 @@ namespace OGDotNet.Model.Context
             return _rawMarketDataSnapper.CreateSnapshotFromView(ct);
         }
 
+        public LiveDataStream GetLiveDataStream()
+        {
+            return new LiveDataStream(_snapshot, _remoteEngineContext);
+        }
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
         {
             CheckDisposed();
