@@ -94,7 +94,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 value.OverrideValue = value.MarketValue * -1000;
 
                 var afterCurves = dataSnapshotProcessor.GetYieldCurves();
-                Assert.Equal(beforeCurves.Count -1, afterCurves.Count);
+                Assert.Equal(beforeCurves.Count - 1, afterCurves.Count);
             }
         }
 
