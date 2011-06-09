@@ -42,7 +42,7 @@ namespace OGDotNet.Model.Context
 
         #region create snapshot
 
-        public static ManageableMarketDataSnapshot CreateSnapshotFromCycle(IViewComputationResultModel results, Dictionary<string, IDependencyGraph> graphs, IViewCycle viewCycle, string basisViewName)
+        public static ManageableMarketDataSnapshot CreateSnapshotFromCycle(IViewComputationResultModel results, IDictionary<string, IDependencyGraph> graphs, IViewCycle viewCycle, string basisViewName)
         {
             var globalValues = GetGlobalValues(results, graphs);
             var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
@@ -65,7 +65,7 @@ namespace OGDotNet.Model.Context
             return new ManageableYieldCurveSnapshot(values, valuationTime);
         }
 
-        private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(IViewComputationResultModel tempResults, Dictionary<string, IDependencyGraph> graphs)
+        private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(IViewComputationResultModel tempResults, IDictionary<string, IDependencyGraph> graphs)
         {
             var data = tempResults.AllLiveData;
             var includedSpecs = GetIncludedGlobalSpecs(graphs);
@@ -79,7 +79,7 @@ namespace OGDotNet.Model.Context
             return new ManageableUnstructuredMarketDataSnapshot(dict);
         }
 
-        private static HashSet<Tuple<ComputationTargetSpecification, string>> GetIncludedGlobalSpecs(Dictionary<string, IDependencyGraph> graphs)
+        private static HashSet<Tuple<ComputationTargetSpecification, string>> GetIncludedGlobalSpecs(IDictionary<string, IDependencyGraph> graphs)
         {
             var ret = new HashSet<Tuple<ComputationTargetSpecification, string>>();
             foreach (var dependencyGraph in graphs)
@@ -129,7 +129,7 @@ namespace OGDotNet.Model.Context
         }
         #endregion
 
-        public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(IViewCycle c, Dictionary<string, IDependencyGraph> graphs)
+        public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(IViewCycle c, IDictionary<string, IDependencyGraph> graphs)
         {
             return GetYieldCurveValues(c, graphs, YieldCurveValueReqName, YieldCurveSpecValueReqName)
                 .ToDictionary(k => k.Key, k => GetEvaluatedCurve(k.Value));
@@ -141,7 +141,7 @@ namespace OGDotNet.Model.Context
                 (InterpolatedYieldCurveSpecificationWithSecurities) values[YieldCurveSpecValueReqName]);
         }
 
-        private static Dictionary<YieldCurveKey, Dictionary<string, object>> GetYieldCurveValues(IViewCycle viewCycle, Dictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
+        private static Dictionary<YieldCurveKey, Dictionary<string, object>> GetYieldCurveValues(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
         {
             var values = GetMatchingSpecifications(dependencyGraphs, valueNames);
             var yieldCurves = new Dictionary<YieldCurveKey, Dictionary<string, object>>();
@@ -171,7 +171,7 @@ namespace OGDotNet.Model.Context
             return yieldCurves;
         }
 
-        private static Dictionary<string, IEnumerable<ValueSpecification>> GetMatchingSpecifications(Dictionary<string, IDependencyGraph> graphs, params string[] specNames)
+        private static Dictionary<string, IEnumerable<ValueSpecification>> GetMatchingSpecifications(IDictionary<string, IDependencyGraph> graphs, params string[] specNames)
         {
             var ret = new Dictionary<string, IEnumerable<ValueSpecification>>();
 

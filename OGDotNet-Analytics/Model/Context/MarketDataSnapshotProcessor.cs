@@ -34,7 +34,7 @@ namespace OGDotNet.Model.Context
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster; //TODO should be the user master
         private readonly LiveDataStream _liveDataStream;
-        private readonly LiveDataStream _snapshotDataStream;
+        private readonly SnapshotDataStream _snapshotDataStream;
 
         private readonly object _snapshotUidLock = new object();
         private UniqueIdentifier _temporarySnapshotUid;
@@ -58,7 +58,7 @@ namespace OGDotNet.Model.Context
             _marketDataSnapshotMaster = remoteEngineContext.MarketDataSnapshotMaster;
             _liveDataStream = liveDataStream;
             _temporarySnapshotUid = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, GetShallowCloneSnapshot())).UniqueId;
-            _snapshotDataStream = new LiveDataStream(_snapshot.BasisViewName, remoteEngineContext, _temporarySnapshotUid.ToLatest());
+            _snapshotDataStream = new SnapshotDataStream(_snapshot.BasisViewName, remoteEngineContext, _temporarySnapshotUid.ToLatest(), _liveDataStream);
         }
 
         public ManageableMarketDataSnapshot Snapshot
