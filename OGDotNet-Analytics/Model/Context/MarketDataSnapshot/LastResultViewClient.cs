@@ -15,7 +15,6 @@ using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
-using OGDotNet.Mappedtypes.engine.View.client;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Resources;

@@ -62,7 +62,12 @@
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeData.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeDefinition.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeKey.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityPoint.cs" />
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />
+    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilityCubeSnapshot.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LastResultViewClient.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LiveDataStream.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStream.cs" />

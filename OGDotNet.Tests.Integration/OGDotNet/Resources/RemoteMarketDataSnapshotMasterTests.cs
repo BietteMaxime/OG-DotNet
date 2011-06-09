@@ -12,11 +12,13 @@ using System.Diagnostics;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
@@ -228,12 +230,19 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                             }
                     }
                 );
+            var manageableVolCubeSnapshot = new ManageableVolatilityCubeSnapshot();
+            manageableVolCubeSnapshot.SetPoint(new VolatilityPoint(Tenor.Day, Tenor.Day, -100), new ValueSnapshot(2));
+            manageableVolCubeSnapshot.SetPoint(new VolatilityPoint(Tenor.Day, Tenor.Day, 100), null);
             return new MarketDataSnapshotDocument(null,
                 new ManageableMarketDataSnapshot("SomeView",
                     manageableUnstructuredMarketDataSnapshot,
                     new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>
                         {
                             {new YieldCurveKey(Currency.USD, "Default"), new ManageableYieldCurveSnapshot(manageableUnstructuredMarketDataSnapshot, DateTimeOffset.Now)}
+                        },
+                    new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>()
+                        {
+                            {new VolatilityCubeKey(Currency.USD, "Test"), manageableVolCubeSnapshot}
                         }
                     ) { Name = name });
         }
@@ -257,7 +266,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             AssertEqual(mSnapshot.YieldCurves, retSnapshot.YieldCurves, AssertEqual);
 
+            AssertEqual(mSnapshot.VolatilityCubes, retSnapshot.VolatilityCubes, AssertEqual);
+
             // TODO volatility surfaces etc.
+        }
+
+        private static void AssertEqual(ManageableVolatilityCubeSnapshot a, ManageableVolatilityCubeSnapshot b)
+        {
+            AssertEqual(a.Values, b.Values, AssertEqual);
         }
 
         private static void AssertEqual(ManageableYieldCurveSnapshot a, ManageableYieldCurveSnapshot b)
@@ -279,8 +295,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static void AssertEqual(ValueSnapshot a, ValueSnapshot b)
         {
-            Assert.Equal(a.MarketValue, b.MarketValue);
-            Assert.Equal(a.OverrideValue, b.OverrideValue);
+            if (a == null || b == null)
+            {
+                Assert.Null(a);
+                Assert.Null(b);
+            }
+            else
+            {
+                Assert.Equal(a.MarketValue, b.MarketValue);
+                Assert.Equal(a.OverrideValue, b.OverrideValue);
+            }
         }
 
         private static void AssertEqual<TKey, TValue>(IDictionary<TKey, TValue> a, IDictionary<TKey, TValue> b, Action<TValue, TValue> assert)

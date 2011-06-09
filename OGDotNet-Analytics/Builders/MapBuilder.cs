@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using Fudge.Types;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
@@ -53,7 +54,14 @@ namespace OGDotNet.Builders
             foreach (var value in dict)
             {
                 valuesMessage.Add(1, keyMsgGen(value.Key));
-                valuesMessage.Add(2, valueMsgGen(value.Value));
+                if (value.Value == null)
+                {
+                    valuesMessage.Add(2, IndicatorType.Instance);
+                }
+                else
+                {
+                    valuesMessage.Add(2, valueMsgGen(value.Value));
+                }
             }
             return valuesMessage;
         }

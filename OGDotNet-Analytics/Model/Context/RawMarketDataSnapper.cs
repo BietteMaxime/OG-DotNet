@@ -19,6 +19,7 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
@@ -40,19 +41,30 @@ namespace OGDotNet.Model.Context
         private const string MarketValueReqName = "Market_Value";
         private const string YieldCurveMarketDataReqName = "YieldCurveMarketData";
 
+        private const string VolatilityCubeMarketDataReqName = "VolatilityCubeMarketData";
+        private const string VolatilityCubeDefnReqName = "VolatilityCubeDefinition";
+        
+
         #region create snapshot
 
         public static ManageableMarketDataSnapshot CreateSnapshotFromCycle(IViewComputationResultModel results, IDictionary<string, IDependencyGraph> graphs, IViewCycle viewCycle, string basisViewName)
         {
             var globalValues = GetGlobalValues(results, graphs);
             var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
+            var volCubeDefinitions = GetVolCubeValues(viewCycle, graphs, VolatilityCubeMarketDataReqName, VolatilityCubeDefnReqName)
+                .ToDictionary(kvp => kvp.Key, kvp => GetVolCubeSnapshot((VolatilityCubeData)kvp.Value[VolatilityCubeMarketDataReqName], (VolatilityCubeDefinition)kvp.Value[VolatilityCubeDefnReqName]));
 
-            return new ManageableMarketDataSnapshot(basisViewName, globalValues, yieldCurves);
+            return new ManageableMarketDataSnapshot(basisViewName, globalValues, yieldCurves, volCubeDefinitions);
         }
 
         private static YieldCurveKey GetYieldCurveKey(ValueSpecification y)
         {
             return new YieldCurveKey(Currency.Create(y.TargetSpecification.Uid), y.Properties["Curve"].Single());
+        }
+
+        private static VolatilityCubeKey GetVolCubeKey(ValueSpecification y)
+        {
+            return new VolatilityCubeKey(Currency.Create(y.TargetSpecification.Uid), y.Properties["Cube"].Single());
         }
 
         private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(SnapshotDataBundle bundle, DateTimeOffset valuationTime)
@@ -63,6 +75,20 @@ namespace OGDotNet.Model.Context
             );
             var values = new ManageableUnstructuredMarketDataSnapshot(data);
             return new ManageableYieldCurveSnapshot(values, valuationTime);
+        }
+
+        private static ManageableVolatilityCubeSnapshot GetVolCubeSnapshot(VolatilityCubeData volatilityCubeData, VolatilityCubeDefinition volatilityCubeDefinition)
+        {
+            var ret = new ManageableVolatilityCubeSnapshot();
+            foreach (var ycp in volatilityCubeDefinition.AllPoints)
+            {
+                ret.SetPoint(ycp, null);
+            }
+            foreach (var ycp in volatilityCubeData.DataPoints)
+            {
+                ret.SetPoint(ycp.Key, new ValueSnapshot(ycp.Value));
+            }
+            return ret;
         }
 
         private static ManageableUnstructuredMarketDataSnapshot GetGlobalValues(IViewComputationResultModel tempResults, IDictionary<string, IDependencyGraph> graphs)
@@ -149,14 +175,14 @@ namespace OGDotNet.Model.Context
                 (InterpolatedYieldCurveSpecificationWithSecurities) values[YieldCurveSpecValueReqName]);
         }
 
-        private static Dictionary<YieldCurveKey, Dictionary<string, object>> GetYieldCurveValues(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
+        private static Dictionary<T, Dictionary<string, object>> GetGroupedValues<T>(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, Func<ValueSpecification, T> projecter, params string[] valueNames)
         {
             var values = GetMatchingSpecifications(dependencyGraphs, valueNames);
-            var yieldCurves = new Dictionary<YieldCurveKey, Dictionary<string, object>>();
+            var ts = new Dictionary<T, Dictionary<string, object>>();
 
             foreach (var yieldCurveSpecReq in values)
             {
-                var requiredSpecs = yieldCurveSpecReq.Value.Where(r => !yieldCurves.ContainsKey(GetYieldCurveKey(r)));
+                var requiredSpecs = yieldCurveSpecReq.Value.Where(r => !ts.ContainsKey(projecter(r)));
                 if (!requiredSpecs.Any())
                 {
                     continue;
@@ -169,14 +195,22 @@ namespace OGDotNet.Model.Context
                     //TODO LOG throw new ArgumentException("Failed to get all results");
                 }
 
-                var yieldCurveInfo = computationCacheResponse.Results.ToLookup(r => GetYieldCurveKey(r.First));
-                foreach (var result in yieldCurveInfo)
+                var infos = computationCacheResponse.Results.ToLookup(r => projecter(r.First));
+                foreach (var result in infos)
                 {
-                    yieldCurves.Add(result.Key, result.ToDictionary(r => r.First.ValueName, r => r.Second));
+                    ts.Add(result.Key, result.ToDictionary(r => r.First.ValueName, r => r.Second));
                 }
             }
 
-            return yieldCurves;
+            return ts;
+        }
+        private static Dictionary<VolatilityCubeKey, Dictionary<string, object>> GetVolCubeValues(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
+        {
+            return GetGroupedValues(viewCycle, dependencyGraphs, GetVolCubeKey, valueNames);
+        }
+        private static Dictionary<YieldCurveKey, Dictionary<string, object>> GetYieldCurveValues(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
+        {
+            return GetGroupedValues(viewCycle, dependencyGraphs, GetYieldCurveKey, valueNames);
         }
 
         private static Dictionary<string, IEnumerable<ValueSpecification>> GetMatchingSpecifications(IDictionary<string, IDependencyGraph> graphs, params string[] specNames)

@@ -13,6 +13,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
@@ -28,18 +29,19 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
         private readonly ManageableUnstructuredMarketDataSnapshot _globalValues;
 
         private readonly Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> _yieldCurves;
-
-        //TODO private Map<Triple<string, CurrencyUnit, CurrencyUnit>, FXVolatilitySurfaceSnapshot> _fxVolatilitySurfaces;
+        private readonly Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> _volatilityCubes;
 
         private UniqueIdentifier _uniqueId;
 
         public ManageableMarketDataSnapshot(string basisViewName, ManageableUnstructuredMarketDataSnapshot globalValues,
                                             Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurves,
+                                            Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> volatilityCubes,
                                             UniqueIdentifier uniqueId = null)
         {
             _basisViewName = basisViewName;
             _globalValues = globalValues;
             _yieldCurves = yieldCurves;
+            _volatilityCubes = volatilityCubes;
             _uniqueId = uniqueId;
         }
 
@@ -54,6 +56,11 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
         public Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> YieldCurves
         {
             get { return _yieldCurves; }
+        }
+
+        public Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> VolatilityCubes
+        {
+            get { return _volatilityCubes; }
         }
 
         public string BasisViewName
@@ -96,6 +103,8 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                 PrepareAddAction
                 );
 
+            //TODO vol cubes 
+
             return globalUpdate.Wrap<ManageableMarketDataSnapshot>(s => s._globalValues).Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(ycActions));
         }
 
@@ -134,6 +143,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                 ffc.GetString("basisViewName"),
                 deserializer.FromField<ManageableUnstructuredMarketDataSnapshot>(ffc.GetByName("globalValues")),
                 MapBuilder.FromFudgeMsg<YieldCurveKey, ManageableYieldCurveSnapshot>(ffc.GetMessage("yieldCurves"), deserializer),
+                MapBuilder.FromFudgeMsg<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>(ffc.GetMessage("volatilityCubes"), deserializer),
                 uid
 
                 ) { Name = ffc.GetString("name") };
@@ -153,6 +163,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             }
 
             a.Add("yieldCurves", MapBuilder.ToFudgeMsg(s, _yieldCurves));
+            a.Add("volatilityCubes", MapBuilder.ToFudgeMsg(s, _volatilityCubes));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
