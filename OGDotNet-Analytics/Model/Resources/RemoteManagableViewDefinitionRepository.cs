@@ -24,6 +24,11 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("viewDefinitions").Post(request);
         }
 
+        public void UpdateViewDefinition(UpdateViewDefinitionRequest request)
+        {
+            _rest.Resolve("viewDefinitions").Resolve(request.Name).Put(request);
+        }
+
         public void RemoveViewDefinition(string name)
         {
             _rest.Resolve("viewDefinitions").Resolve(name).Delete();
