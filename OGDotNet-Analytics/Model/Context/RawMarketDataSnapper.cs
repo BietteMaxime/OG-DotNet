@@ -44,7 +44,6 @@ namespace OGDotNet.Model.Context
         private const string VolatilityCubeMarketDataReqName = "VolatilityCubeMarketData";
         private const string VolatilityCubeDefnReqName = "VolatilityCubeDefinition";
         
-
         #region create snapshot
 
         public static ManageableMarketDataSnapshot CreateSnapshotFromCycle(IViewComputationResultModel results, IDictionary<string, IDependencyGraph> graphs, IViewCycle viewCycle, string basisViewName)

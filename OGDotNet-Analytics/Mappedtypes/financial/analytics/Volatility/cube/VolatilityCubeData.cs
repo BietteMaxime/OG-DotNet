@@ -1,7 +1,13 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="VolatilityCubeData.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Fudge;
 using Fudge.Serialization;
 
@@ -9,7 +15,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
 {
     public class VolatilityCubeData
     {
-        private Dictionary<VolatilityPoint, Double> _dataPoints;
+        private readonly Dictionary<VolatilityPoint, double> _dataPoints;
 
         public VolatilityCubeData(Dictionary<VolatilityPoint, double> dataPoints)
         {

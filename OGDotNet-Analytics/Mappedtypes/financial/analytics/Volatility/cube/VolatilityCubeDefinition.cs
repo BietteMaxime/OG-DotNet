@@ -1,4 +1,11 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="VolatilityCubeDefinition.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Fudge;
@@ -54,8 +61,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
         public static VolatilityCubeDefinition FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new VolatilityCubeDefinition(
-                deserializer.FromField<List<String>>(ffc.GetByName("swapTenors")).Select(s=> new Tenor(s)).ToList(),
-                deserializer.FromField<List<String>>(ffc.GetByName("optionExpiries")).Select(s => new Tenor(s)).ToList(),
+                deserializer.FromField<List<string>>(ffc.GetByName("swapTenors")).Select(s => new Tenor(s)).ToList(),
+                deserializer.FromField<List<string>>(ffc.GetByName("optionExpiries")).Select(s => new Tenor(s)).ToList(),
                 ffc.GetMessage("relativeStrikes").Select(f => f.Value).Cast<double>().ToList()
                 );
         }

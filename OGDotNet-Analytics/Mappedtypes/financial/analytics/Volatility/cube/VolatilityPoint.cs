@@ -1,4 +1,11 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="VolatilityPoint.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//
+//     Please see distribution for license.
+// </copyright>
+//-----------------------------------------------------------------------
+using System;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Util.Time;
@@ -33,7 +40,6 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
             get { return _relativeStrike; }
         }
 
-
         public bool Equals(VolatilityPoint other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -45,8 +51,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (VolatilityPoint)) return false;
-            return Equals((VolatilityPoint) obj);
+            if (obj.GetType() != typeof(VolatilityPoint)) return false;
+            return Equals((VolatilityPoint)obj);
         }
 
         public override int GetHashCode()
@@ -54,8 +60,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
             unchecked
             {
                 int result = _swapTenor.GetHashCode();
-                result = (result*397) ^ _optionExpiry.GetHashCode();
-                result = (result*397) ^ _relativeStrike.GetHashCode();
+                result = (result * 397) ^ _optionExpiry.GetHashCode();
+                result = (result * 397) ^ _relativeStrike.GetHashCode();
                 return result;
             }
         }
@@ -73,10 +79,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
         {
             s.WriteInline(a, "swapTenor", _swapTenor);
             s.WriteInline(a, "optionExpiry", _optionExpiry);
-            
+
             a.Add("relativeStrike", _relativeStrike);
         }
-
-
     }
 }
