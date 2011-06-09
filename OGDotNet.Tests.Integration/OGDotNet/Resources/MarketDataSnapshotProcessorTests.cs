@@ -113,12 +113,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves[curveKey];
 
                 ValueSnapshot value = ycSnapshot.Values.Values.First().Value.First().Value;
-                double f = 1.5;
+                double f = 1.001;
                 value.OverrideValue = value.MarketValue * f;
 
                 var afterCurves = dataSnapshotProcessor.GetYieldCurves();
                 Assert.NotEmpty(afterCurves);
 
+                Assert.Empty(beforeCurves.Keys.Except(afterCurves.Keys));
+                
                 var afterCurve = afterCurves[curveKey].Item1.Curve;
 
                 //Curve should change Ys but not x
@@ -133,7 +135,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     timedCurves = null;
 
                 TimeSpan time = Time(() => timedCurves = dataSnapshotProcessor.GetYieldCurves());
-                Assert.InRange(time, TimeSpan.Zero, TimeSpan.FromSeconds(5)); // TODO faster
+                Assert.InRange(time, TimeSpan.Zero, TimeSpan.FromSeconds(1)); // TODO faster
                 Console.Out.WriteLine(time);
 
                 var diffs2 = beforeCurves[curveKey].Item1.Curve.YData.Zip(timedCurves[curveKey].Item1.Curve.YData, DiffProportion).ToList();
