@@ -69,8 +69,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
         public static VolatilityPoint FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new VolatilityPoint(
-                deserializer.FromField<Tenor>(ffc.GetByName("swapTenor")),
-                deserializer.FromField<Tenor>(ffc.GetByName("optionExpiry")),
+                new Tenor(ffc.GetString("swapTenor")),
+                new Tenor(ffc.GetString("optionExpiry")), 
                 ffc.GetDouble("relativeStrike").Value
                 );
         }

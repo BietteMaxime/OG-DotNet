@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.depgraph;

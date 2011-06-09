@@ -62,7 +62,7 @@
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
-    <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeData.cs" />
+    <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityCubeData.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeKey.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityPoint.cs" />

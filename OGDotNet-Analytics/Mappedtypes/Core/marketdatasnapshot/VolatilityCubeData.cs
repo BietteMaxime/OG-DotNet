@@ -10,8 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
+namespace OGDotNet.Mappedtypes.core.marketdatasnapshot
 {
     public class VolatilityCubeData
     {
@@ -31,9 +33,10 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
         {
             if (ffc.GetMessage("dataPoints").Any())
             {
-                throw new NotImplementedException();
+            
             }
-            return new VolatilityCubeData(new Dictionary<VolatilityPoint, double>());
+            var dataPoints = MapBuilder.FromFudgeMsg(ffc.GetMessage("dataPoints"), deserializer.FromField<VolatilityPoint>, f=>(double) f.Value );
+            return new VolatilityCubeData(dataPoints);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
