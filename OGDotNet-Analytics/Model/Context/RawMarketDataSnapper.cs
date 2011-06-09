@@ -128,11 +128,19 @@ namespace OGDotNet.Model.Context
             return EnumUtils<ComputationTargetType, MarketDataValueType>.ConvertTo(type);
         }
         #endregion
-
-        public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(IViewCycle c, IDictionary<string, IDependencyGraph> graphs)
+        public static IEnumerable<ValueSpecification> GetYieldCurveSpecs(IDictionary<string, IDependencyGraph> graphs)
         {
-            return GetYieldCurveValues(c, graphs, YieldCurveValueReqName, YieldCurveSpecValueReqName)
-                .ToDictionary(k => k.Key, k => GetEvaluatedCurve(k.Value));
+            return GetMatchingSpecifications(graphs, YieldCurveValueReqName, YieldCurveSpecValueReqName).SelectMany(s => s.Value);
+        }
+        public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(IViewComputationResultModel results)
+        {
+            var ycResults = results.AllResults
+                .Where(r => new[] { YieldCurveValueReqName, YieldCurveSpecValueReqName }.Contains(r.ComputedValue.Specification.ValueName));
+            var lookup = ycResults
+                .ToLookup(r => GetYieldCurveKey(r.ComputedValue.Specification));
+            return lookup
+                .ToDictionary(g => g.Key,
+                              g => GetEvaluatedCurve(g.ToDictionary(e => e.ComputedValue.Specification.ValueName, e => e.ComputedValue.Value)));
         }
 
         private static Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetEvaluatedCurve(Dictionary<string, object> values)

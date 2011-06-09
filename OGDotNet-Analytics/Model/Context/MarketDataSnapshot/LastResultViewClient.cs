@@ -15,6 +15,7 @@ using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
+using OGDotNet.Mappedtypes.engine.View.client;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Resources;
@@ -24,6 +25,8 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
     public abstract class LastResultViewClient : DisposableBase, INotifyPropertyChanged
     {
+        public event EventHandler GraphChanged;
+
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly ManualResetEventSlim _prepared = new ManualResetEventSlim(false);
         private readonly ManualResetEventSlim _haveLastResults = new ManualResetEventSlim(false);
@@ -63,6 +66,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
+        protected RemoteViewClient RemoteViewClient
+        {
+            get { return _remoteViewClient; }
+        }
+
         protected abstract void AttachToViewProcess(RemoteViewClient remoteViewClient);
 
         [IndexerName("Item")]
@@ -100,17 +108,27 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 if (_graphs == null)
                 {
                     _graphs = RawMarketDataSnapper.GetGraphs(resourceReference.Value.GetCompiledViewDefinition());
+                    InvokeGraphChanged();
                 }
 
                 var previous = Interlocked.Exchange(ref _lastResults,
                                                     Pair.Create(_graphs, Pair.Create(resourceReference, results)));
+                bool ready = (!ShouldWaitForExtraCycle) || previous != null;
+                if (ready)
+                {
+                    _haveLastResults.Set(); 
+                }
                 if (previous != null)
                 {
-                    _haveLastResults.Set(); // TODO : this is a hack for PLAT-1325
                     previous.Second.First.Dispose();
                 }
             }
         }
+
+        /// <Reremarks>
+        /// TODO : this is a hack for PLAT-1325
+        /// </Reremarks>
+        protected abstract bool ShouldWaitForExtraCycle { get; }
 
         private void InvokePropertyChanged(PropertyChangedEventArgs e)
         {
@@ -130,7 +148,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-        protected T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
+        public T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
         {
             _haveLastResults.Wait(ct);
             lock (_lastResultsLock)
@@ -139,15 +157,15 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-        protected T WithLastResults<T>(DateTimeOffset waitFor, CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
+        protected T WithLastResults<T>(Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, bool> waitFor, CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
         {
             WaitFor(waitFor, ct);
             return WithLastResults(ct, func);
         }
 
-        private void WaitFor(DateTimeOffset waitFor, CancellationToken ct)
+        private void WaitFor(Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, bool> waitFor, CancellationToken ct)
         {
-            _haveLastResults.Wait(ct);
+             _haveLastResults.Wait(ct);
             using (var mre = new ManualResetEventSlim())
             {
                 PropertyChangedEventHandler onPropChanged = delegate
@@ -160,12 +178,9 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                     while (true)
                     {
                         mre.Reset();
-                        lock (_lastResultsLock)
+                        if (WithLastResults(ct, waitFor))
                         {
-                            if (GetLastValuationTimeStamp() > waitFor)
-                            {//TODO LAP-19 this is a hack
-                                break;
-                            }
+                            return;
                         }
                         mre.Wait(ct);
                     }
@@ -177,10 +192,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-        private DateTimeOffset GetLastValuationTimeStamp()
+        private void InvokeGraphChanged()
         {
-            var lastResults = _lastResults;
-            return lastResults == null ? default(DateTimeOffset) : lastResults.Second.Second.ValuationTime;
+            EventHandler handler = GraphChanged;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
     }
 }

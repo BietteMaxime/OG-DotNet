@@ -5,6 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Threading;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
@@ -31,6 +32,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         protected override void AttachToViewProcess(RemoteViewClient remoteViewClient)
         {
             remoteViewClient.AttachToViewProcess(_basisViewName, ExecutionOptions.RealTime);
+        }
+
+        protected override bool ShouldWaitForExtraCycle
+        {
+            get { return true; }
         }
     }
 }
