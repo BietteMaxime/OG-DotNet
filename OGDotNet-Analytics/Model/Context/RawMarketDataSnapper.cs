@@ -82,7 +82,7 @@ namespace OGDotNet.Model.Context
             var ret = new ManageableVolatilityCubeSnapshot();
             foreach (var ycp in volatilityCubeDefinition.AllPoints)
             {
-                ret.SetPoint(ycp, null);
+                ret.SetPoint(ycp, new ValueSnapshot(null));
             }
             foreach (var ycp in volatilityCubeData.DataPoints)
             {

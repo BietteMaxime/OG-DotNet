@@ -14,15 +14,15 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
     public class ValueSnapshot : INotifyPropertyChanged
     {
-        private double _marketValue;
+        private double? _marketValue;
         private double? _overrideValue;
 
-        public ValueSnapshot(double marketValue)
+        public ValueSnapshot(double? marketValue)
         {
             _marketValue = marketValue;
         }
 
-        public double MarketValue
+        public double? MarketValue
         {
             get
             {
@@ -58,7 +58,7 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 
         public static ValueSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new ValueSnapshot(ffc.GetDouble("marketValue").Value) {OverrideValue = ffc.GetDouble("overrideValue")};
+            return new ValueSnapshot(ffc.GetDouble("marketValue")) {OverrideValue = ffc.GetDouble("overrideValue")};
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
@@ -67,7 +67,10 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
             {
                 a.Add("overrideValue", _overrideValue);
             }
-            a.Add("marketValue", _marketValue);
+            if (_marketValue != null)
+            {
+                a.Add("marketValue", _marketValue);
+            }
         }
 
         private void InvokePropertyChanged(string propertyName)

@@ -31,11 +31,7 @@ namespace OGDotNet.Mappedtypes.core.marketdatasnapshot
 
         public static VolatilityCubeData FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            if (ffc.GetMessage("dataPoints").Any())
-            {
-            
-            }
-            var dataPoints = MapBuilder.FromFudgeMsg(ffc.GetMessage("dataPoints"), deserializer.FromField<VolatilityPoint>, f=>(double) f.Value );
+            var dataPoints = MapBuilder.FromFudgeMsg(ffc.GetMessage("dataPoints"), deserializer.FromField<VolatilityPoint>, f => (double)f.Value);
             return new VolatilityCubeData(dataPoints);
         }
 
