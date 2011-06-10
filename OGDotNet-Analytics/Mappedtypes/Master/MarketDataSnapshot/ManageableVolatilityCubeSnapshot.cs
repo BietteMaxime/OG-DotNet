@@ -22,20 +22,28 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
     public class ManageableVolatilityCubeSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableVolatilityCubeSnapshot>
     {
         private readonly Dictionary<VolatilityPoint, ValueSnapshot> _values;
+        private readonly ManageableUnstructuredMarketDataSnapshot _otherValues;
 
-        public ManageableVolatilityCubeSnapshot()
+        public ManageableVolatilityCubeSnapshot(ManageableUnstructuredMarketDataSnapshot otherValues)
         {
             _values = new Dictionary<VolatilityPoint, ValueSnapshot>();
+            _otherValues = otherValues;
         }
 
-        private ManageableVolatilityCubeSnapshot(Dictionary<VolatilityPoint, ValueSnapshot> values)
+        private ManageableVolatilityCubeSnapshot(Dictionary<VolatilityPoint, ValueSnapshot> values, ManageableUnstructuredMarketDataSnapshot otherValues)
         {
             _values = values;
+            _otherValues = otherValues;
         }
 
         public Dictionary<VolatilityPoint, ValueSnapshot> Values
         {
             get { return _values.ToDictionary(k => k.Key, k => k.Value); }
+        }
+
+        public ManageableUnstructuredMarketDataSnapshot OtherValues
+        {
+            get { return _otherValues; }
         }
 
         public void SetPoint(VolatilityPoint point, ValueSnapshot snapshot)
@@ -59,7 +67,8 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         public static ManageableVolatilityCubeSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new ManageableVolatilityCubeSnapshot(MapBuilder.FromFudgeMsg<VolatilityPoint, ValueSnapshot>(ffc.GetMessage("values"), deserializer));
+            return new ManageableVolatilityCubeSnapshot(MapBuilder.FromFudgeMsg<VolatilityPoint, ValueSnapshot>(ffc.GetMessage("values"), deserializer),
+                deserializer.FromField<ManageableUnstructuredMarketDataSnapshot>(ffc.GetByName("otherValues")));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
@@ -67,6 +76,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             s.WriteTypeHeader(a, typeof(ManageableVolatilityCubeSnapshot));
             var valuesMessage = MapBuilder.ToFudgeMsg(s, _values);
             a.Add("values", valuesMessage);
+            s.WriteInline(a, "otherValues", _otherValues);
         }
     }
 }

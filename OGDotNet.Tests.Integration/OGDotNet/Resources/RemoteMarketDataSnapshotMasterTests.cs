@@ -230,7 +230,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                             }
                     }
                 );
-            var manageableVolCubeSnapshot = new ManageableVolatilityCubeSnapshot();
+            var manageableVolCubeSnapshot = new ManageableVolatilityCubeSnapshot(new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>()));
             manageableVolCubeSnapshot.SetPoint(new VolatilityPoint(Tenor.Day, Tenor.Day, -100), new ValueSnapshot(2));
             manageableVolCubeSnapshot.SetPoint(new VolatilityPoint(Tenor.Day, Tenor.Day, 100), null);
             return new MarketDataSnapshotDocument(null,
@@ -273,6 +273,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static void AssertEqual(ManageableVolatilityCubeSnapshot a, ManageableVolatilityCubeSnapshot b)
         {
+            Assert.NotNull(a.OtherValues);
+            Assert.NotNull(b.OtherValues);
             AssertEqual(a.Values, b.Values, AssertEqual);
         }
 

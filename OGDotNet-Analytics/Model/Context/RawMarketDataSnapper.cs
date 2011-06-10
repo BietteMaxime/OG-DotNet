@@ -69,17 +69,22 @@ namespace OGDotNet.Model.Context
 
         private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(SnapshotDataBundle bundle, DateTimeOffset valuationTime)
         {
+            ManageableUnstructuredMarketDataSnapshot values = GetUnstructured(bundle);
+            return new ManageableYieldCurveSnapshot(values, valuationTime);
+        }
+
+        private static ManageableUnstructuredMarketDataSnapshot GetUnstructured(SnapshotDataBundle bundle)
+        {
             var data = bundle.DataPoints.ToDictionary(
                 s => new MarketDataValueSpecification(MarketDataValueType.Primitive, s.Key),
                 s => (IDictionary<string, ValueSnapshot>)new Dictionary<string, ValueSnapshot> { { MarketValueReqName, new ValueSnapshot(s.Value) } }
-            );
-            var values = new ManageableUnstructuredMarketDataSnapshot(data);
-            return new ManageableYieldCurveSnapshot(values, valuationTime);
+                );
+            return new ManageableUnstructuredMarketDataSnapshot(data);
         }
 
         private static ManageableVolatilityCubeSnapshot GetVolCubeSnapshot(VolatilityCubeData volatilityCubeData, VolatilityCubeDefinition volatilityCubeDefinition)
         {
-            var ret = new ManageableVolatilityCubeSnapshot();
+            var ret = new ManageableVolatilityCubeSnapshot(GetUnstructured(volatilityCubeData.OtherData));
             foreach (var ycp in volatilityCubeDefinition.AllPoints)
             {
                 ret.SetPoint(ycp, new ValueSnapshot(null));

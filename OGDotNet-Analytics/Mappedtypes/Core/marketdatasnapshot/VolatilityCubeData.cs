@@ -11,6 +11,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 
 namespace OGDotNet.Mappedtypes.core.marketdatasnapshot
@@ -18,10 +19,12 @@ namespace OGDotNet.Mappedtypes.core.marketdatasnapshot
     public class VolatilityCubeData
     {
         private readonly Dictionary<VolatilityPoint, double> _dataPoints;
+        private readonly SnapshotDataBundle _otherData;
 
-        public VolatilityCubeData(Dictionary<VolatilityPoint, double> dataPoints)
+        public VolatilityCubeData(Dictionary<VolatilityPoint, double> dataPoints, SnapshotDataBundle otherData)
         {
             _dataPoints = dataPoints;
+            _otherData = otherData;
         }
 
         public Dictionary<VolatilityPoint, double> DataPoints
@@ -29,10 +32,16 @@ namespace OGDotNet.Mappedtypes.core.marketdatasnapshot
             get { return _dataPoints; }
         }
 
+        public SnapshotDataBundle OtherData
+        {
+            get { return _otherData; }
+        }
+
         public static VolatilityCubeData FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var dataPoints = MapBuilder.FromFudgeMsg(ffc.GetMessage("dataPoints"), deserializer.FromField<VolatilityPoint>, f => (double)f.Value);
-            return new VolatilityCubeData(dataPoints);
+            var otherValues = deserializer.FromField<SnapshotDataBundle>(ffc.GetByName("otherData"));
+            return new VolatilityCubeData(dataPoints, otherValues);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
