@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.View;
@@ -27,7 +28,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         public event EventHandler GraphChanged;
 
         private readonly RemoteEngineContext _remoteEngineContext;
-        private readonly ManualResetEventSlim _prepared = new ManualResetEventSlim(false);
+        private readonly Task _prepared;
         private readonly ManualResetEventSlim _haveLastResults = new ManualResetEventSlim(false);
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -44,25 +45,19 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         protected LastResultViewClient(RemoteEngineContext remoteEngineContext)
         {
             _remoteEngineContext = remoteEngineContext;
-            ThreadPool.QueueUserWorkItem(Prepare);
+            _prepared = new Task(Prepare);
+            _prepared.Start();
         }
 
-        private void Prepare(object state)
+        private void Prepare()
         {
-            try
-            {
-                _remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient();
-                var eventViewResultListener = new EventViewResultListener();
-                eventViewResultListener.CycleCompleted += (sender, e) => Update(e.FullResult);
-                eventViewResultListener.ViewDefinitionCompiled += (sender, e) => { _graphs = null; };
-                _remoteViewClient.SetResultListener(eventViewResultListener);
-                _remoteViewClient.SetViewCycleAccessSupported(true);
-                AttachToViewProcess(_remoteViewClient);
-            }
-            finally
-            {
-                _prepared.Set();
-            }
+            _remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient();
+            var eventViewResultListener = new EventViewResultListener();
+            eventViewResultListener.CycleCompleted += (sender, e) => Update(e.FullResult);
+            eventViewResultListener.ViewDefinitionCompiled += (sender, e) => { _graphs = null; };
+            _remoteViewClient.SetResultListener(eventViewResultListener);
+            _remoteViewClient.SetViewCycleAccessSupported(true);
+            AttachToViewProcess(_remoteViewClient);
         }
 
         protected RemoteEngineContext RemoteEngineContext
@@ -154,6 +149,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         public T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
         {
+            _prepared.Wait(ct);
             _haveLastResults.Wait(ct);
             lock (_lastResultsLock)
             {
@@ -169,6 +165,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private void WaitFor(Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, bool> waitFor, CancellationToken ct)
         {
+            _prepared.Wait(ct);
              _haveLastResults.Wait(ct);
             using (var mre = new ManualResetEventSlim())
             {
