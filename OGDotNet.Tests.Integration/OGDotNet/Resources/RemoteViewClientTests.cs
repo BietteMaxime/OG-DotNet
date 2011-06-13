@@ -135,7 +135,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-
         [Xunit.Extensions.Fact]
         public void CanGetDefinition()
         {
@@ -143,7 +142,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 var options = ExecutionOptions.RealTime;
                 remoteViewClient.AttachToViewProcess("Equity Option Test View 1", options);
-                for (int i=0;i<30;i++)
+                for (int i = 0; i < 30; i++)
                 {
                     var viewDefinition = remoteViewClient.GetViewDefinition();
                     if (viewDefinition != null)
@@ -156,7 +155,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.True(false, "Failed to get view definition");
             }
         }
-
 
         [Xunit.Extensions.Fact]
         public void CanSetUpdatePeriod()
