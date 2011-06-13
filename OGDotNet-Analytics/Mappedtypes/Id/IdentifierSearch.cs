@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
@@ -37,10 +38,7 @@ namespace OGDotNet.Mappedtypes.Id
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            foreach (var identifier in _identifiers)
-            {
-                a.Add("identifier", identifier);
-            }
+            s.WriteInline(a, "identifiers", _identifiers.Select(id => id.ToString()).ToList());
             a.Add("searchType", EnumBuilder<IdentifierSearchType>.GetJavaName(_searchType));
         }
     }
