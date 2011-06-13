@@ -9,6 +9,7 @@
 using System;
 using Fudge;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.client;
@@ -222,6 +223,11 @@ namespace OGDotNet.Model.Resources
         {
             return _rest.Resolve("latestResult").Get<IViewComputationResultModel>();
         }
+
+         public ViewDefinition GetViewDefinition()
+         {
+             return _rest.Resolve("viewDefinition").Get<ViewDefinition>();
+         }
 
         public UniqueIdentifier GetUniqueId()
         {
