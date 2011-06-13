@@ -20,6 +20,7 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.cache;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.financial.model.volatility.surface;
@@ -316,6 +317,19 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(DateTimeOffset dateTime)
         {
             AssertSensibleValue(dateTime.ToUniversalTime().DateTime);
+        }
+
+        public static void AssertSensibleValue(VolatilityCubeDefinition defn)
+        {
+            Assert.NotNull(defn);
+            AssertSensibleValue(defn.AllPoints);
+        }
+        public static void AssertSensibleValue(VolatilityPoint point)
+        {
+            Assert.NotNull(point);        
+            AssertSensibleValue(point.OptionExpiry);
+            AssertSensibleValue(point.SwapTenor);
+            AssertSensibleValue(point.RelativeStrike);
         }
     }
 }

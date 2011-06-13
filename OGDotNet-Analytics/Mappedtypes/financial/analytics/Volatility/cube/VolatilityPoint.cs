@@ -9,6 +9,7 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Util.Time;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
 {
@@ -20,6 +21,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
 
         public VolatilityPoint(Tenor swapTenor, Tenor optionExpiry, double relativeStrike)
         {
+            ArgumentChecker.NotNull(swapTenor, "swapTenor");
+            ArgumentChecker.NotNull(optionExpiry, "optionExpiry");
             _swapTenor = swapTenor;
             _optionExpiry = optionExpiry;
             _relativeStrike = relativeStrike;

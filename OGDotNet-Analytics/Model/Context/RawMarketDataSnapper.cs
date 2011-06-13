@@ -43,16 +43,15 @@ namespace OGDotNet.Model.Context
         private const string YieldCurveMarketDataReqName = "YieldCurveMarketData";
 
         private const string VolatilityCubeMarketDataReqName = "VolatilityCubeMarketData";
-        private const string VolatilityCubeDefnReqName = "VolatilityCubeDefinition";
         
         #region create snapshot
 
-        public static ManageableMarketDataSnapshot CreateSnapshotFromCycle(IViewComputationResultModel results, IDictionary<string, IDependencyGraph> graphs, IViewCycle viewCycle, string basisViewName)
+        public static ManageableMarketDataSnapshot CreateSnapshotFromCycle(IViewComputationResultModel results, IDictionary<string, IDependencyGraph> graphs, IViewCycle viewCycle, string basisViewName, RemoteEngineContext remoteEngineContext)
         {
             var globalValues = GetGlobalValues(results, graphs);
             var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
-            var volCubeDefinitions = GetVolCubeValues(viewCycle, graphs, VolatilityCubeMarketDataReqName, VolatilityCubeDefnReqName)
-                .ToDictionary(kvp => kvp.Key, kvp => GetVolCubeSnapshot((VolatilityCubeData)kvp.Value[VolatilityCubeMarketDataReqName], (VolatilityCubeDefinition)kvp.Value[VolatilityCubeDefnReqName]));
+            var volCubeDefinitions = GetVolCubeValues(viewCycle, graphs, VolatilityCubeMarketDataReqName)
+                .ToDictionary(kvp => kvp.Key, kvp => GetVolCubeSnapshot((VolatilityCubeData)kvp.Value[VolatilityCubeMarketDataReqName], remoteEngineContext.VolatilityCubeDefinitionSource.GetDefinition(kvp.Key.Currency, kvp.Key.Name)));
 
             return new ManageableMarketDataSnapshot(basisViewName, globalValues, yieldCurves, volCubeDefinitions);
         }

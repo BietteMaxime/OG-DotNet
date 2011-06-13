@@ -99,5 +99,13 @@ namespace OGDotNet.Model.Context
                 return new RemoteCurrencyMatrixSource(new RestTarget(_fudgeContext, _serviceUris["currencyMatrixSource"]));
             }
         }
+
+        public RemoteVolatilityCubeDefinitionSource VolatilityCubeDefinitionSource
+        {
+            get
+            {
+                return new RemoteVolatilityCubeDefinitionSource(new RestTarget(_fudgeContext, _serviceUris["volatilityCubeDefinitionSource"]));
+            }
+        }
     }
 }

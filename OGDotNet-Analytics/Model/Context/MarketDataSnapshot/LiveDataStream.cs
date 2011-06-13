@@ -26,7 +26,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         {
             return WithLastResults(ct,
                 (cycle, graphs, results) =>
-                    RawMarketDataSnapper.CreateSnapshotFromCycle(results, graphs, cycle, _basisViewName));
+                    RawMarketDataSnapper.CreateSnapshotFromCycle(results, graphs, cycle, _basisViewName, RemoteEngineContext));
         }
 
         protected override void AttachToViewProcess(RemoteViewClient remoteViewClient)

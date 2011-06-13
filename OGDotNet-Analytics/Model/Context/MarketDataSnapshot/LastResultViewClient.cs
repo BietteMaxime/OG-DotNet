@@ -65,6 +65,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
+        protected RemoteEngineContext RemoteEngineContext
+        {
+            get { return _remoteEngineContext; }
+        }
+
         protected RemoteViewClient RemoteViewClient
         {
             get { return _remoteViewClient; }
