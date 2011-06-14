@@ -16,6 +16,7 @@ using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -131,8 +132,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 value.OverrideValue = null;
 
-                Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>>
-                    timedCurves = null;
+                Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> timedCurves = null;
 
                 TimeSpan time = Time(() => timedCurves = dataSnapshotProcessor.GetYieldCurves());
                 Assert.InRange(time, TimeSpan.Zero, TimeSpan.FromSeconds(1)); // TODO faster
@@ -140,6 +140,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var diffs2 = beforeCurves[curveKey].Item1.Curve.YData.Zip(timedCurves[curveKey].Item1.Curve.YData, DiffProportion).ToList();
                 Assert.Empty(diffs2.Where(d => d > 0.001).ToList());
+
+                //TODO check nodal curves
             }
         }
 

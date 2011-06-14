@@ -68,6 +68,7 @@
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityPoint.cs" />
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilityCubeSnapshot.cs" />
+    <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LastResultViewClient.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LiveDataStream.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStream.cs" />

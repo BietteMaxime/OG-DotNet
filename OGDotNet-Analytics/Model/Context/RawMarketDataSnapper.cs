@@ -24,6 +24,7 @@ using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
@@ -39,6 +40,7 @@ namespace OGDotNet.Model.Context
     {
         private const string YieldCurveValueReqName = "YieldCurve";
         private const string YieldCurveSpecValueReqName = "YieldCurveSpec";
+        private const string YieldCurveInterpolatedValueReqName = "YieldCurveInterpolated";
         private const string MarketValueReqName = "Market_Value";
         private const string YieldCurveMarketDataReqName = "YieldCurveMarketData";
 
@@ -160,12 +162,24 @@ namespace OGDotNet.Model.Context
         #endregion
         public static IEnumerable<ValueSpecification> GetYieldCurveSpecs(IDictionary<string, IDependencyGraph> graphs)
         {
-            return GetMatchingSpecifications(graphs, YieldCurveValueReqName, YieldCurveSpecValueReqName).SelectMany(s => s.Value);
+            var matchingSpecifications = GetMatchingSpecifications(graphs, YieldCurveValueReqName, YieldCurveSpecValueReqName);
+            var included = matchingSpecifications.SelectMany(s => s.Value);
+            var interpolated = included.Where(s => s.ValueName == YieldCurveValueReqName).Select(
+                sp => new ValueSpecification(YieldCurveInterpolatedValueReqName, sp.TargetSpecification, GetCurveProperties(sp)));
+            return included.Concat(interpolated);
         }
-        public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> EvaluateYieldCurves(IViewComputationResultModel results)
+
+        private static ValueProperties GetCurveProperties(ValueSpecification sp)
+        {
+            return ValueProperties.Create(
+                new Dictionary<string, ISet<string>> {{"Curve", new HashSet<string>(sp.Properties["Curve"])}},
+                new HashSet<string>());
+        }
+
+        public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> EvaluateYieldCurves(IViewComputationResultModel results)
         {
             var ycResults = results.AllResults
-                .Where(r => new[] { YieldCurveValueReqName, YieldCurveSpecValueReqName }.Contains(r.ComputedValue.Specification.ValueName));
+                .Where(r => new[] { YieldCurveValueReqName, YieldCurveSpecValueReqName, YieldCurveInterpolatedValueReqName }.Contains(r.ComputedValue.Specification.ValueName));
             var lookup = ycResults
                 .ToLookup(r => GetYieldCurveKey(r.ComputedValue.Specification));
             return lookup
@@ -173,10 +187,10 @@ namespace OGDotNet.Model.Context
                               g => GetEvaluatedCurve(g.ToDictionary(e => e.ComputedValue.Specification.ValueName, e => e.ComputedValue.Value)));
         }
 
-        private static Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities> GetEvaluatedCurve(Dictionary<string, object> values)
+        private static Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve> GetEvaluatedCurve(Dictionary<string, object> values)
         {
             return Tuple.Create((YieldCurve)values[YieldCurveValueReqName],
-                (InterpolatedYieldCurveSpecificationWithSecurities) values[YieldCurveSpecValueReqName]);
+                (InterpolatedYieldCurveSpecificationWithSecurities) values[YieldCurveSpecValueReqName], (NodalDoublesCurve) values[YieldCurveInterpolatedValueReqName]);
         }
 
         private static Dictionary<T, Dictionary<string, object>> GetGroupedValues<T>(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, Func<ValueSpecification, T> projecter, params string[] valueNames)

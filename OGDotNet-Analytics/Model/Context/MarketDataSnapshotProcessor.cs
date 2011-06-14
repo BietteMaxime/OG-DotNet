@@ -16,6 +16,7 @@ using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
+using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
@@ -84,7 +85,7 @@ namespace OGDotNet.Model.Context
             get { return _liveDataStream; }
         }
 
-        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
         {
             CheckDisposed();
 

@@ -20,6 +20,7 @@ using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot
@@ -109,7 +110,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities>> GetYieldCurves(DateTimeOffset waitFor, CancellationToken ct)
+        public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> GetYieldCurves(DateTimeOffset waitFor, CancellationToken ct)
         {
             return WithLastResults((cycle, graphs, results) => Matches(results, waitFor, cycle), 
                 ct, (cycle, graphs, results) => RawMarketDataSnapper.EvaluateYieldCurves(results));
