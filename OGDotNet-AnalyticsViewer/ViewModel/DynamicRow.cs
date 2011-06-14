@@ -9,7 +9,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Data;
 using OGDotNet.Mappedtypes.engine.value;
 
@@ -19,22 +18,27 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly ConcurrentDictionary<Tuple<string, string>, ConcurrentDictionary<ValueProperties, object>> _dynamicColumns = new ConcurrentDictionary<Tuple<string, string>, ConcurrentDictionary<ValueProperties, object>>();
+        private readonly object _lock = new object();
+        private readonly ConcurrentDictionary<Tuple<string, string>, Dictionary<ValueProperties, object>> _dynamicColumns = new ConcurrentDictionary<Tuple<string, string>, Dictionary<ValueProperties, object>>();
 
         public object this[ColumnHeader key]
         {
             get
             {
-                ConcurrentDictionary<ValueProperties, object> ret;
+                Dictionary<ValueProperties, object> ret;
                 if (!_dynamicColumns.TryGetValue(GetKey(key), out ret))
                 {
                     return null;
                 }
-                foreach (var o in ret)
+                lock (_lock)
                 {
-                    if (key.RequiredConstraints.IsSatisfiedBy(o.Key))
-                    { //TODO PLAT-1299: if there are multiple we should probably work out which value to use, but in theory either is fine
-                        return o.Value;
+                    foreach (var o in ret)
+                    {
+                        if (key.RequiredConstraints.IsSatisfiedBy(o.Key))
+                        {
+                            //TODO PLAT-1299: if there are multiple we should probably work out which value to use, but in theory either is fine
+                            return o.Value;
+                        }
                     }
                 }
                 return null;
@@ -54,12 +58,15 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         public void UpdateDynamicColumns(Dictionary<ColumnHeader, object> values)
         {
-            foreach (var value in values)
+            lock (_lock)
             {
-                Tuple<string, string> key = GetKey(value.Key);
-                var concurrentDictionary = _dynamicColumns.GetOrAdd(key, new ConcurrentDictionary<ValueProperties, object>());
+                foreach (var value in values)
+                {
+                    Tuple<string, string> key = GetKey(value.Key);
+                    var dict = _dynamicColumns.GetOrAdd(key, new Dictionary<ValueProperties, object>());
 
-                concurrentDictionary[value.Key.RequiredConstraints] = value.Value;
+                    dict[value.Key.RequiredConstraints] = value.Value;
+                }
             }
 
             switch (values.Count)
