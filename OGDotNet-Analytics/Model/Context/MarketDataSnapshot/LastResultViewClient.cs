@@ -103,7 +103,13 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             {
                 IEngineResourceReference<IViewCycle> resourceReference =
                     _remoteViewClient.CreateCycleReference(results.ViewCycleId);
-
+                
+                if (resourceReference == null)
+                {
+                    //The engine has overtaken us.  We'll get another one soon
+                    // -- In theory this can live lock if the view is very fast
+                    return;
+                }
                 if (_graphs == null)
                 {
                     _graphs = RawMarketDataSnapper.GetGraphs(resourceReference.Value.GetCompiledViewDefinition());
