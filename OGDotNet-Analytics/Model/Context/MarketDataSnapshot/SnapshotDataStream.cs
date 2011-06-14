@@ -142,11 +142,14 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             if (disposing)
             {
                 _liveDataStream.GraphChanged -= LiveDataStreamGraphChanged;
-                _remoteClient.ViewDefinitionRepository.RemoveViewDefinition(_tempviewName);
-                _remoteClient.Dispose();
-                _recompileEvent.Dispose();
             }
             base.Dispose(disposing);
+            if (disposing)
+            {
+                _remoteClient.Dispose();
+                _recompileEvent.Dispose();
+                _remoteClient.ViewDefinitionRepository.RemoveViewDefinition(_tempviewName);
+            }
         }
     }
 }
