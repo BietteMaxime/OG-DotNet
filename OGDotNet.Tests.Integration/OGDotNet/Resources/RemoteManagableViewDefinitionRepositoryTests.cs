@@ -135,9 +135,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 using (var remoteClient = Context.CreateUserClient())
                 {
                     viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, Guid.NewGuid());
+
+                    remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                     try
                     {
-                        remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
+                        AssertEquivalent(Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(viewDefinition.Name), viewDefinition);
                         using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                         {
                             Assert.NotNull(remoteViewClient.GetResults(viewDefinition.Name, ExecutionOptions.SingleCycle).First());
@@ -192,6 +194,24 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(aVal.SpecificRequirements.Count(), matchedRequirements.Count());
 
             Assert.Equal(aVal.PortfolioRequirementsBySecurityType.ToList().Count, bVal.PortfolioRequirementsBySecurityType.ToList().Count);
+            AssertEquivalent(aVal.DeltaDefinition, bVal.DeltaDefinition);
+        }
+
+        private static void AssertEquivalent(DeltaDefinition aVal, DeltaDefinition bVal)
+        {
+            if (aVal == null)
+            {
+                Assert.Equal(null, bVal);
+                return;
+            }
+            Assert.NotNull(bVal);
+
+            AssertEquivalent(aVal.NumberComparer, bVal.NumberComparer);
+        }
+
+        private static void AssertEquivalent(IDeltaComparer<double> aVal, IDeltaComparer<double> bVal)
+        {
+            Assert.Equal(aVal, bVal);
         }
 
         private class ValueReqEquivalentComparer : IEqualityComparer<ValueRequirement>
