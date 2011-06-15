@@ -22,17 +22,19 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly IEnumerable<ValueRequirement> _specificRequirements;
         private readonly Dictionary<string, HashSet<Tuple<string, ValueProperties>>> _portfolioRequirementsBySecurityType;
         private readonly ValueProperties _defaultProperties;
+        private readonly DeltaDefinition _deltaDefinition;
 
         public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType)
-            : this(name, specificRequirements, portfolioRequirementsBySecurityType, ValueProperties.Create())
+            : this(name, specificRequirements, portfolioRequirementsBySecurityType, ValueProperties.Create(), null)
         {
         }
-        public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, ValueProperties defaultProperties)
+        public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, ValueProperties defaultProperties, DeltaDefinition deltaDefinition)
         {
             _name = name;
             _specificRequirements = specificRequirements;
             _portfolioRequirementsBySecurityType = portfolioRequirementsBySecurityType;
             _defaultProperties = defaultProperties;
+            _deltaDefinition = deltaDefinition;
         }
 
         public string Name
@@ -53,6 +55,11 @@ namespace OGDotNet.Mappedtypes.engine.View
         public ValueProperties DefaultProperties
         {
             get { return _defaultProperties; }
+        }
+
+        public DeltaDefinition DeltaDefinition
+        {
+            get { return _deltaDefinition; }
         }
 
         public static ViewCalculationConfiguration FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
@@ -77,7 +84,7 @@ namespace OGDotNet.Mappedtypes.engine.View
             var deltaDefnField = ffc.GetByName("deltaDefinition");
             var deltaDefinition = deltaDefnField == null ? null : deserializer.FromField<DeltaDefinition>(deltaDefnField);
 
-            return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType, defaultProperties);
+            return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType, defaultProperties, deltaDefinition);
         }
 
         private static Tuple<string, ValueProperties> GetReqPair(IFudgeField field, IFudgeDeserializer deserializer)
@@ -124,8 +131,8 @@ namespace OGDotNet.Mappedtypes.engine.View
             var defaultPropsMessage = fudgeSerializer.SerializeToMsg(DefaultProperties);
             calcConfigMsg.Add("defaultProperties", defaultPropsMessage);
 
-            //TODO delta defn
-            calcConfigMsg.Add("deltaDefinition", new FudgeMsg());
+            var deltaDefnMessage = fudgeSerializer.SerializeToMsg(_deltaDefinition);
+            calcConfigMsg.Add("deltaDefinition", deltaDefnMessage);
         }
     }
 }
