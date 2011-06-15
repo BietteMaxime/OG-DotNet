@@ -14,18 +14,11 @@ namespace OGDotNet.Mappedtypes.engine.View
 {
     public class ViewCalculationResultModel
     {
-        private readonly IDictionary<ComputationTargetSpecification, IDictionary<string, ComputedValue>> _map;
         private readonly Dictionary<ComputationTargetSpecification, ISet<ComputedValue>> _mapAll;
 
         public ViewCalculationResultModel(IDictionary<ComputationTargetSpecification, IDictionary<string, ComputedValue>> map, Dictionary<ComputationTargetSpecification, ISet<ComputedValue>> mapAll)
         {
-            _map = map;
             _mapAll = mapAll;
-        }
-
-        public IEnumerable<ComputationTargetSpecification> AllTargets
-        {
-            get { return _map.Keys; }
         }
 
         public IEnumerable<ComputedValue> AllResults
@@ -34,28 +27,6 @@ namespace OGDotNet.Mappedtypes.engine.View
             {
                 return _mapAll.SelectMany(kvp => kvp.Value);
             }
-        }
-
-        /// <summary>
-        /// NOTE:  If multiple values were produced for a given value name, an arbitrary choice is made for which to include in the map.  
-        /// </summary>
-        public bool TryGetValues(ComputationTargetSpecification target, out IDictionary<string, ComputedValue> values)
-        {
-            return _map.TryGetValue(target, out values);
-        }
-
-        /// <summary>
-        /// /// NOTE:  If multiple values were produced for a given value name, an arbitrary choice is made for which to include in the map.  
-        /// </summary>
-        public bool TryGetValue(ComputationTargetSpecification target, string valueName, out ComputedValue value)
-        {
-            IDictionary<string, ComputedValue> valueDict;
-            if (!TryGetValues(target, out valueDict))
-            {
-                value = null;
-                return false;
-            }
-            return valueDict.TryGetValue(valueName, out value);
         }
 
         public bool TryGetAllValues(ComputationTargetSpecification target, out ISet<ComputedValue> values)
