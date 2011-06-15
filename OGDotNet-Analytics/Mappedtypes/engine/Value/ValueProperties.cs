@@ -166,9 +166,15 @@ namespace OGDotNet.Mappedtypes.engine.value
                     return false;
                 }
 
-                return Equals(_optional, finiteOther._optional)
-                       &&
-                       PropertyValues.Count == finiteOther.PropertyValues.Count
+                if (_optional == null ^ finiteOther._optional == null)
+                {
+                    return false;
+                }
+                if (_optional != null && ! _optional.SetEquals(finiteOther._optional))
+                {
+                    return false;
+                }
+                return PropertyValues.Count == finiteOther.PropertyValues.Count
                        && PropertyValues.All(delegate(KeyValuePair<string, ISet<string>> entry)
                        {
                            var value = entry.Value;
