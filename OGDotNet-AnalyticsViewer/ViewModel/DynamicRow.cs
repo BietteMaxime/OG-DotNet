@@ -19,19 +19,20 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly object _lock = new object();
-        private readonly ConcurrentDictionary<Tuple<string, string>, Dictionary<ValueProperties, object>> _dynamicColumns = new ConcurrentDictionary<Tuple<string, string>, Dictionary<ValueProperties, object>>();
+        private readonly Dictionary<Tuple<string, string>, Dictionary<ValueProperties, object>> _dynamicColumns = new Dictionary<Tuple<string, string>, Dictionary<ValueProperties, object>>();
 
         public object this[ColumnHeader key]
         {
             get
             {
-                Dictionary<ValueProperties, object> ret;
-                if (!_dynamicColumns.TryGetValue(GetKey(key), out ret))
-                {
-                    return null;
-                }
                 lock (_lock)
                 {
+                    Dictionary<ValueProperties, object> ret;
+                    if (!_dynamicColumns.TryGetValue(GetKey(key), out ret))
+                    {
+                        return null;
+                    }
+                
                     foreach (var o in ret)
                     {
                         if (key.RequiredConstraints.IsSatisfiedBy(o.Key))
@@ -63,7 +64,13 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 foreach (var value in values)
                 {
                     Tuple<string, string> key = GetKey(value.Key);
-                    var dict = _dynamicColumns.GetOrAdd(key, new Dictionary<ValueProperties, object>());
+
+                    Dictionary<ValueProperties, object> dict;
+                    if (! _dynamicColumns.TryGetValue(key, out dict))
+                    {
+                        dict = new Dictionary<ValueProperties, object>(1);
+                        _dynamicColumns.Add(key, dict);
+                    }
 
                     dict[value.Key.RequiredConstraints] = value.Value;
                 }
