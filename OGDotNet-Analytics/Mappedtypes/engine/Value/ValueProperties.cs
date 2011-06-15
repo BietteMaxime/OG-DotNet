@@ -148,7 +148,9 @@ namespace OGDotNet.Mappedtypes.engine.value
 
             public override int GetHashCode()
             {
-                return PropertyValues.Keys.OrderBy(s => s).Aggregate(0, (i, s) => i * 397 ^ s.GetHashCode());
+                int hashCode = PropertyValues.Count;
+                hashCode = hashCode * 397 ^ (_optional == null ? 0 : _optional.Count);
+                return hashCode;
             }
 
             public override bool Equals(ValueProperties other)
