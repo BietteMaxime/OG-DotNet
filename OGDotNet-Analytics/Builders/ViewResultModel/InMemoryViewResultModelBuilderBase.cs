@@ -36,7 +36,7 @@ namespace OGDotNet.Builders.ViewResultModel
             var keys = new Queue<string>();
             var values = new Queue<ViewCalculationResultModel>();
 
-            foreach (var field in (IFudgeFieldContainer)msg.GetByName("results").Value)
+            foreach (var field in msg.GetMessage("results"))
             {
                 switch (field.Ordinal)
                 {

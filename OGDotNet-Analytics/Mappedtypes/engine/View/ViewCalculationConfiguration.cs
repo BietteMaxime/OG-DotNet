@@ -12,6 +12,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.engine.view;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
@@ -73,6 +74,8 @@ namespace OGDotNet.Mappedtypes.engine.View
             }
 
             var defaultProperties = deserializer.FromField<ValueProperties>(ffc.GetByName("defaultProperties"));
+            var deltaDefnField = ffc.GetByName("deltaDefinition");
+            var deltaDefinition = deltaDefnField == null ? null : deserializer.FromField<DeltaDefinition>(deltaDefnField);
 
             return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType, defaultProperties);
         }
