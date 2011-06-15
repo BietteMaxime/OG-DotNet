@@ -11,9 +11,11 @@ using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
+using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.engine.value
 {
+    [FudgeSurrogate(typeof(ComputedValueBuilder))]
     public class ComputedValue
     {
         private readonly ValueSpecification _specification;
@@ -33,33 +35,6 @@ namespace OGDotNet.Mappedtypes.engine.value
         public object Value
         {
             get { return _value; }
-        }
-
-        public static ComputedValue FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            var valueSpecification = deserializer.FromField<ValueSpecification>(ffc.GetByName("specification"));
-            var value = GetValue(deserializer, ffc.GetByName("value"), valueSpecification);
-            return new ComputedValue(valueSpecification, value);
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static object GetValue(IFudgeDeserializer deserializer, IFudgeField valueField, ValueSpecification valueSpecification)
-        {
-            if (valueField.Type != FudgeMsgFieldType.Instance)
-            {
-                return valueField.Value;
-            }
-
-            if (valueSpecification.ValueName == "YieldCurveJacobian")
-            {//TODO I hope this gets a better type one day?
-                return deserializer.FromField<List<double[]>>(valueField);
-            }
-
-            return deserializer.FromField(valueField, null);
         }
     }
 }

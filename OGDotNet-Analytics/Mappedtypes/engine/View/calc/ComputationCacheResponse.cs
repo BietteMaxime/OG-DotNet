@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.Util.tuple;
 
@@ -37,7 +38,7 @@ namespace OGDotNet.Mappedtypes.engine.View.calc
         {
             var msg = (IFudgeFieldContainer) field.Value;
             var spec = deserializer.FromField<ValueSpecification>(msg.GetByName("first"));
-            var value = ComputedValue.GetValue(deserializer, msg.GetByName("second"), spec);
+            var value = ComputedValueBuilder.GetValue(deserializer, msg.GetByName("second"), spec);
             return new Pair<ValueSpecification, object>(spec, value);
         }
 

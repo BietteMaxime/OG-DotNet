@@ -59,7 +59,9 @@
   <ItemGroup>
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
+    <Compile Include="Builders\ComputedValueBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
+    <Compile Include="Builders\ValuePropertiesBuilder.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityCubeData.cs" />
