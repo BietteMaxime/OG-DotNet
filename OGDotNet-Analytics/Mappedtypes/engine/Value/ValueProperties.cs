@@ -77,14 +77,12 @@ namespace OGDotNet.Mappedtypes.engine.value
             public readonly Dictionary<string, ISet<string>> PropertyValues;
             private readonly ISet<string> _optional;
 
-            private readonly int _hashCode;
 
             internal FiniteValueProperties(Dictionary<string, ISet<string>> propertyValues, ISet<string> optional)
             {
                 ArgumentChecker.NotEmpty(propertyValues, "propertyValues");
                 PropertyValues = propertyValues;
                 _optional = optional;
-                _hashCode = GetHashCodeImpl();
             }
 
             public override ISet<string> Properties
@@ -149,11 +147,6 @@ namespace OGDotNet.Mappedtypes.engine.value
             }
 
             public override int GetHashCode()
-            {
-                return _hashCode;
-            }
-
-            private int GetHashCodeImpl()
             {
                 return PropertyValues.Keys.OrderBy(s => s).Aggregate(0, (i, s) => i * 397 ^ s.GetHashCode());
             }
