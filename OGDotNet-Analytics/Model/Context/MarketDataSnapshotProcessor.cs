@@ -32,12 +32,13 @@ namespace OGDotNet.Model.Context
     public class MarketDataSnapshotProcessor : DisposableBase
     {
         private readonly ManageableMarketDataSnapshot _snapshot;
-        private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster; //TODO should be the user master
+        private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster;
         private readonly LiveDataStream _liveDataStream;
         private readonly SnapshotDataStream _snapshotDataStream;
 
         private readonly object _snapshotUidLock = new object();
         private UniqueIdentifier _temporarySnapshotUid;
+        private readonly RemoteClient _remoteClient;
 
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, CancellationToken ct)
         {
@@ -55,7 +56,8 @@ namespace OGDotNet.Model.Context
         private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RemoteEngineContext remoteEngineContext, LiveDataStream liveDataStream)
         {
             _snapshot = snapshot;
-            _marketDataSnapshotMaster = remoteEngineContext.MarketDataSnapshotMaster;
+            _remoteClient = remoteEngineContext.CreateUserClient();
+            _marketDataSnapshotMaster = _remoteClient.MarketDataSnapshotMaster;
             _liveDataStream = liveDataStream;
             _temporarySnapshotUid = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, GetShallowCloneSnapshot())).UniqueId;
             _snapshotDataStream = new SnapshotDataStream(_snapshot.BasisViewName, remoteEngineContext, _temporarySnapshotUid.ToLatest(), _liveDataStream);
@@ -117,6 +119,7 @@ namespace OGDotNet.Model.Context
                 _liveDataStream.Dispose();
                 _snapshotDataStream.Dispose();
                 _marketDataSnapshotMaster.Remove(_temporarySnapshotUid.ToLatest());
+                _remoteClient.Dispose();
             }
         }
     }
