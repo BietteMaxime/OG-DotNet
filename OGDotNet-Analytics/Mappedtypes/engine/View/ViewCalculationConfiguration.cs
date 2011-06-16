@@ -13,6 +13,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.engine.View
 {
@@ -25,11 +26,17 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly DeltaDefinition _deltaDefinition;
 
         public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType)
-            : this(name, specificRequirements, portfolioRequirementsBySecurityType, ValueProperties.Create(), null)
+            : this(name, specificRequirements, portfolioRequirementsBySecurityType, new DeltaDefinition(null))
         {
         }
-        public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, ValueProperties defaultProperties, DeltaDefinition deltaDefinition)
+
+        public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, DeltaDefinition deltaDefinition)
+            : this(name, specificRequirements, portfolioRequirementsBySecurityType, deltaDefinition, ValueProperties.Create())
         {
+        }
+        public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, DeltaDefinition deltaDefinition, ValueProperties defaultProperties)
+        {
+            ArgumentChecker.NotNull(deltaDefinition, "deltaDefinition");
             _name = name;
             _specificRequirements = specificRequirements;
             _portfolioRequirementsBySecurityType = portfolioRequirementsBySecurityType;
@@ -81,10 +88,9 @@ namespace OGDotNet.Mappedtypes.engine.View
             }
 
             var defaultProperties = deserializer.FromField<ValueProperties>(ffc.GetByName("defaultProperties"));
-            var deltaDefnField = ffc.GetByName("deltaDefinition");
-            var deltaDefinition = deltaDefnField == null ? null : deserializer.FromField<DeltaDefinition>(deltaDefnField);
+            var deltaDefinition = deserializer.FromField<DeltaDefinition>(ffc.GetByName("deltaDefinition"));
 
-            return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType, defaultProperties, deltaDefinition);
+            return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType, deltaDefinition, defaultProperties);
         }
 
         private static Tuple<string, ValueProperties> GetReqPair(IFudgeField field, IFudgeDeserializer deserializer)
