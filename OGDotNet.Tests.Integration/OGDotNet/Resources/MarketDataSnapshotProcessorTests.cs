@@ -34,21 +34,43 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
             {
-                var valuedCurves = dataSnapshotProcessor.GetYieldCurves();
-                var snappedCurves = dataSnapshotProcessor.Snapshot.YieldCurves;
-                var snappedCurveCount = snappedCurves.Count;
-                var valuedCurveCount = valuedCurves.Count;
-
-                if (snappedCurveCount != valuedCurveCount)
-                {
-                    Assert.False(true, string.Format(
-                        "Only found {0} curves, snapshotted {1} for view {2}.  missing curves {3}",
-                        valuedCurveCount, snappedCurveCount, viewDefinition.Name, string.Join(",", snappedCurves.Where(s => !valuedCurves.Any(c => c.Key.Equals(s.Key))).Select(s => s.Key))));    
-                }
+                var viewDefinitionName = viewDefinition.Name;
+                GetAndCheckYieldCurves(dataSnapshotProcessor, viewDefinitionName);
             }
         }
 
         private const string ViewDefinitionName = "Equity Option Test View 1";
+
+        [Xunit.Extensions.Fact]
+        public void CanGetYieldCurveValuesRepeatedly()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    GetAndCheckYieldCurves(dataSnapshotProcessor, ViewDefinitionName);
+                }
+            }
+        }
+
+        private static void GetAndCheckYieldCurves(MarketDataSnapshotProcessor dataSnapshotProcessor, string viewDefinitionName)
+        {
+            var valuedCurves = dataSnapshotProcessor.GetYieldCurves();
+
+            var snappedCurves = dataSnapshotProcessor.Snapshot.YieldCurves;
+            var snappedCurveCount = snappedCurves.Count;
+            var valuedCurveCount = valuedCurves.Count;
+
+            if (snappedCurveCount != valuedCurveCount)
+            {
+                Assert.False(true, string.Format(
+                    "Only found {0} curves, snapshotted {1} for view {2}.  missing curves {3}",
+                    valuedCurveCount, snappedCurveCount, viewDefinitionName, string.Join(",", snappedCurves.Where(s => !valuedCurves.Any(c => c.Key.Equals(s.Key))).Select(s => s.Key))));
+            }
+        }
+
 
         [Xunit.Extensions.Fact]
         public void CanOverrideYieldCurveValuesEqView()
