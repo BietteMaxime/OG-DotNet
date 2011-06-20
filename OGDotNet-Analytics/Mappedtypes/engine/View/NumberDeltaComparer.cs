@@ -51,7 +51,7 @@ namespace OGDotNet.Mappedtypes.engine.view
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (NumberDeltaComparer)) return false;
+            if (obj.GetType() != typeof(NumberDeltaComparer)) return false;
             return Equals((NumberDeltaComparer) obj);
         }
 
