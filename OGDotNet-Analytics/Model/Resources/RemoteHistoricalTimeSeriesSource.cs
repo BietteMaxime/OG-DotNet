@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="RemoteHistoricalDataSource.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="RemoteHistoricalTimeSeriesSource.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -13,25 +13,25 @@ using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
 
 namespace OGDotNet.Model.Resources
 {
-    public class RemoteHistoricalDataSource
+    public class RemoteHistoricalTimeSeriesSource
     {
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly RestTarget _rest;
 
-        public RemoteHistoricalDataSource(OpenGammaFudgeContext fudgeContext, RestTarget rest)
+        public RemoteHistoricalTimeSeriesSource(OpenGammaFudgeContext fudgeContext, RestTarget rest)
         {
             _fudgeContext = fudgeContext;
             _rest = rest;
         }
 
-        public ILocalDateDoubleTimeSeries GetHistoricalData(UniqueIdentifier uid)
+        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueIdentifier uid)
         {
             RestTarget target = _rest.Resolve("uid")
                 .Resolve(uid.ToString());
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
-        public ILocalDateDoubleTimeSeries GetHistoricalData(UniqueIdentifier uid, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
+        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueIdentifier uid, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
         {
             RestTarget target = _rest.Resolve("uidByDate")
                                       .Resolve(uid.ToString())
@@ -42,12 +42,12 @@ namespace OGDotNet.Model.Resources
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, string configDocName = null)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(IdentifierBundle identifiers, string configDocName = null)
         {
-            return GetHistoricalData(identifiers, default(DateTimeOffset), configDocName);
+            return GetHistoricalTimeSeries(identifiers, default(DateTimeOffset), configDocName);
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset currentDate, string configDocName)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(IdentifierBundle identifiers, DateTimeOffset currentDate, string configDocName)
         {
             RestTarget target = _rest.Resolve("default")
                                       .Resolve(EncodeDate(currentDate))
@@ -55,12 +55,12 @@ namespace OGDotNet.Model.Resources
             return DecodePairMessage(target.GetFudge());
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd, string configDocName = null)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(IdentifierBundle identifiers, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd, string configDocName = null)
         {
-            return GetHistoricalData(identifiers, default(DateTimeOffset), configDocName, start, inclusiveStart, end, exclusiveEnd);
+            return GetHistoricalTimeSeries(identifiers, default(DateTimeOffset), configDocName, start, inclusiveStart, end, exclusiveEnd);
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalData(IdentifierBundle identifiers, DateTimeOffset currentDate, string configDocName, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(IdentifierBundle identifiers, DateTimeOffset currentDate, string configDocName, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
         {
             RestTarget target = _rest.Resolve("defaultByDate")
                                 .Resolve(EncodeDate(currentDate))

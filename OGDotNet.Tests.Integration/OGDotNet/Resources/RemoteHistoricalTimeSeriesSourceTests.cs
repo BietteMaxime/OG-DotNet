@@ -1,5 +1,5 @@
-//-----------------------------------------------------------------------
-// <copyright file="RemoteHistoricalDataSourceTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+﻿//-----------------------------------------------------------------------
+// <copyright file="RemoteHistoricalTimeSeriesSourceTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -15,72 +15,72 @@ using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
-    public class RemoteHistoricalDataSourceTests : TestWithContextBase
+    public class RemoteHistoricalTimeSeriesSourceTests : TestWithContextBase
     {
         [Xunit.Extensions.Fact]
         public void CanGet()
         {
-            var historicalDataSource = Context.HistoricalDataSource;
-            Assert.NotNull(historicalDataSource);
+            var timeSeriesSource = Context.HistoricalTimeSeriesSource;
+            Assert.NotNull(timeSeriesSource);
         }
 
         [FactAttribute]
         public void CanGetATimeSeries()
         {
-            var historicalDataSource = Context.HistoricalDataSource;
+            var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
             var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
             var start = end - TimeSpan.FromDays(7);
 
-            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Of("Tss", "3580"), start, false, end, true);
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalData(UniqueIdentifier.Of("Tss", "3580"), start, false, end, true);
             AssertSane(series, start, end);
         }
 
         [FactAttribute]
         public void CanGetACompleteTimeSeries()
         {
-            var historicalDataSource = Context.HistoricalDataSource;
+            var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
             var end = DateTimeOffset.Now;
 
-            ILocalDateDoubleTimeSeries series = historicalDataSource.GetHistoricalData(UniqueIdentifier.Of("Tss", "3580"));
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalData(UniqueIdentifier.Of("Tss", "3580"));
             AssertSane(series, end);
         }
 
         [FactAttribute]
         public void CantGetATimeSeriesByEmptyIdentifierBundle()
         {
-            var historicalDataSource = Context.HistoricalDataSource;
-            Assert.Throws<ArgumentException>(() => historicalDataSource.GetHistoricalData(new IdentifierBundle()));
+            var timeSeriesSource = Context.HistoricalTimeSeriesSource;
+            Assert.Throws<ArgumentException>(() => timeSeriesSource.GetHistoricalData(new IdentifierBundle()));
         }
 
         [FactAttribute]
         public void CanGetATimeSeriesByIdentifierBundle()
         {
-            var historicalDataSource = Context.HistoricalDataSource;
+            var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
-            var result = historicalDataSource.GetHistoricalData(new IdentifierBundle(new Identifier("BLOOMBERG_BUID", "IX289029-0")));
+            var result = timeSeriesSource.GetHistoricalData(new IdentifierBundle(new Identifier("BLOOMBERG_BUID", "IX289029-0")));
             AssertSane(result);
         }
 
         [FactAttribute]
         public void CanGetSeriesForSomeFutures()
         {
-            var historicalDataSource = Context.HistoricalDataSource;
+            var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
             var remoteSecurityMaster = Context.SecurityMaster;
             var searchResult = remoteSecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 10));
             foreach (var securityDocument in searchResult.Documents)
             {
                 var identifierBundle = securityDocument.Security.Identifiers;
-                var result = historicalDataSource.GetHistoricalData(identifierBundle);
+                var result = timeSeriesSource.GetHistoricalData(identifierBundle);
                 AssertSane(result);
             }
         }
         [FactAttribute]
         public void CanGetSeriesForSomeFuturesAlt()
         {
-            var historicalDataSource = Context.HistoricalDataSource;
+            var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
             var remoteSecurityMaster = Context.SecurityMaster;
             var searchResult = remoteSecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 10));
@@ -91,7 +91,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var end = DateTimeOffset.Now.Date;
                 var start = end - TimeSpan.FromDays(3650);
 
-                var result = historicalDataSource.GetHistoricalData(identifierBundle, start, false, end, true);
+                var result = timeSeriesSource.GetHistoricalData(identifierBundle, start, false, end, true);
                 AssertSane(result);
                 AssertSane(result.Item2, start, end);
             }

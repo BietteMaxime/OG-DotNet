@@ -43,9 +43,9 @@ namespace OGDotNet.SecurityViewer.View
             InitializeComponent();
         }
 
-        private RemoteHistoricalDataSource DataSource
+        private RemoteHistoricalTimeSeriesSource TimeSeriesSource
         {
-            get { return OGContext.HistoricalDataSource; }
+            get { return OGContext.HistoricalTimeSeriesSource; }
         }
 
         private IEnumerable<ISecurity> Securities
@@ -89,11 +89,11 @@ namespace OGDotNet.SecurityViewer.View
                 var security = tuple.Item1;
                 var style = tuple.Item2;
 
-                var historicalData = DataSource.GetHistoricalData(security.Identifiers);
-                if (historicalData.Item1 == null && historicalData.Item2 == null)
+                var seriesTuple = TimeSeriesSource.GetHistoricalData(security.Identifiers);
+                if (seriesTuple.Item1 == null && seriesTuple.Item2 == null)
                     continue;
 
-                var timeSeries = historicalData.Item2;
+                var timeSeries = seriesTuple.Item2;
                 //NOTE: the chart understands DateTime, but not DateTime Offset
                 var tuples = timeSeries.Values.Select(t => Tuple.Create(t.Item1.LocalDateTime, t.Item2)).ToList();
 

@@ -210,7 +210,7 @@
     <Compile Include="Model\Resources\RemoteCompiledViewDefinitionWithGraphs.cs" />
     <Compile Include="Model\Resources\RemoteCurrencyMatrixSource.cs" />
     <Compile Include="Model\Resources\RemoteDependencyGraphExplorer.cs" />
-    <Compile Include="Model\Resources\RemoteHistoricalDataSource.cs" />
+    <Compile Include="Model\Resources\RemoteHistoricalTimeSeriesSource.cs" />
     <Compile Include="Model\Resources\RemoteInterpolatedYieldCurveSpecificationBuilder.cs" />
     <Compile Include="Model\MQTemplate.cs" />
     <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMaster.cs" />

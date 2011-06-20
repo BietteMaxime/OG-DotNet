@@ -84,11 +84,11 @@ namespace OGDotNet.Model.Context
             }
         }
 
-        public RemoteHistoricalDataSource HistoricalDataSource
+        public RemoteHistoricalTimeSeriesSource HistoricalTimeSeriesSource
         {
             get
             {
-                return new RemoteHistoricalDataSource(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["historicalData"]));
+                return new RemoteHistoricalTimeSeriesSource(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["historicalTimeSeriesSource"]));
             }
         }
 
