@@ -94,7 +94,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     manualResetEvent.WaitOne();
                 }
 
-                Assert.InRange(compiles.Count, cycles.Any() ? 1 : 0, cycles.Count);
+                Assert.InRange(compiles.Count, cycles.Any() ? 1 : 0, cycles.Count + 1);
                 Assert.True(remoteViewClient.IsCompleted);
                 return new Tuple<IEnumerable<ViewDefinitionCompiledArgs>, IEnumerable<CycleCompletedArgs>>(compiles, cycles);
             }
