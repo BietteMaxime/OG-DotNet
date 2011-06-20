@@ -61,7 +61,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(valuationTimes)));
 
-            Assert.Equal(runToCompletion.Item2.Count(), valuationTimes.Count());
             foreach (var t in runToCompletion.Item2.Zip(valuationTimes, Tuple.Create))
             {
                 DateTimeOffset expected = t.Item2;
