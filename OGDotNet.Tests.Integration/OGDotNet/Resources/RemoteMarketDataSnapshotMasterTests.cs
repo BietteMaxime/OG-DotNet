@@ -79,7 +79,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var searchResult = snapshotMaster.Search("*", pagingRequest);
             var fullTime = stopwatch.Elapsed;
 
-            Assert.InRange(metadataTime, TimeSpan.Zero, TimeSpan.FromTicks(fullTime.Ticks / 3));
+            var maxAllowed = TimeSpan.FromTicks(fullTime.Ticks / 10);
+            Assert.InRange(metadataTime, TimeSpan.Zero, maxAllowed);
         }
 
         [Xunit.Extensions.Fact]
