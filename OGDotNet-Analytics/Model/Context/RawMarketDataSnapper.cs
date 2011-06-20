@@ -131,7 +131,12 @@ namespace OGDotNet.Model.Context
 
         private static IEnumerable<DependencyNode> GetIncludedGlobalNodes(IDependencyGraph dependencyGraph)
         { // LAP-37
-            return DependencyGraphWalker.GetNodesExcludingDependencies(dependencyGraph, IsYieldCurveNode);
+            return DependencyGraphWalker.GetNodesExcludingDependencies(dependencyGraph, IsStructuredMarketDataNode);
+        }
+
+        private static bool IsStructuredMarketDataNode(DependencyNode node)
+        {
+            return IsYieldCurveNode(node) || IsVolatilityCubeNode(node);
         }
 
         private static bool IsYieldCurveNode(DependencyNode node)
@@ -144,6 +149,20 @@ namespace OGDotNet.Model.Context
             return isYieldCurveNode;
         }
 
+        private static bool IsVolatilityCubeNode(DependencyNode node)
+        {
+            var isVolCubeNode = node.OutputValues.Any(IsVolatilityCubeMarketDataSpec);
+            if (isVolCubeNode && !node.OutputValues.All(IsVolatilityCubeMarketDataSpec))
+            {
+                throw new ArgumentException(string.Format("Unsure how to handle node {0}", node));
+            }
+            return isVolCubeNode;
+        }
+
+        private static bool IsVolatilityCubeMarketDataSpec(ValueSpecification s)
+        {
+            return s.ValueName == VolatilityCubeMarketDataReqName;
+        }
         private static bool IsYieldCurveMarketDataSpec(ValueSpecification s)
         {
             return s.ValueName == YieldCurveMarketDataReqName;
