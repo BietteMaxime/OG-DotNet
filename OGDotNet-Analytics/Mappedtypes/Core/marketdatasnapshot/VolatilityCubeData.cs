@@ -48,5 +48,10 @@ namespace OGDotNet.Mappedtypes.core.marketdatasnapshot
         {
             throw new NotImplementedException();
         }
+
+        public override string ToString()
+        {
+            return string.Format("[VolatilityCubeData {0} points]", _dataPoints.Count);
+        }
     }
 }
