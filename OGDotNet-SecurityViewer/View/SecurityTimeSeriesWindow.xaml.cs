@@ -89,7 +89,7 @@ namespace OGDotNet.SecurityViewer.View
                 var security = tuple.Item1;
                 var style = tuple.Item2;
 
-                var seriesTuple = TimeSeriesSource.GetHistoricalData(security.Identifiers);
+                var seriesTuple = TimeSeriesSource.GetHistoricalTimeSeries(security.Identifiers);
                 if (seriesTuple.Item1 == null && seriesTuple.Item2 == null)
                     continue;
 

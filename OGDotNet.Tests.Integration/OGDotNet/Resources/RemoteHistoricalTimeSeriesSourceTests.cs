@@ -32,7 +32,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
             var start = end - TimeSpan.FromDays(7);
 
-            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalData(UniqueIdentifier.Of("Tss", "3580"), start, false, end, true);
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueIdentifier.Of("Tss", "3580"), start, false, end, true);
             AssertSane(series, start, end);
         }
 
@@ -43,7 +43,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var end = DateTimeOffset.Now;
 
-            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalData(UniqueIdentifier.Of("Tss", "3580"));
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueIdentifier.Of("Tss", "3580"));
             AssertSane(series, end);
         }
 
@@ -51,7 +51,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CantGetATimeSeriesByEmptyIdentifierBundle()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
-            Assert.Throws<ArgumentException>(() => timeSeriesSource.GetHistoricalData(new IdentifierBundle()));
+            Assert.Throws<ArgumentException>(() => timeSeriesSource.GetHistoricalTimeSeries(new IdentifierBundle()));
         }
 
         [FactAttribute]
@@ -59,7 +59,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
-            var result = timeSeriesSource.GetHistoricalData(new IdentifierBundle(new Identifier("BLOOMBERG_BUID", "IX289029-0")));
+            var result = timeSeriesSource.GetHistoricalTimeSeries(new IdentifierBundle(new Identifier("BLOOMBERG_BUID", "IX289029-0")));
             AssertSane(result);
         }
 
@@ -73,7 +73,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             foreach (var securityDocument in searchResult.Documents)
             {
                 var identifierBundle = securityDocument.Security.Identifiers;
-                var result = timeSeriesSource.GetHistoricalData(identifierBundle);
+                var result = timeSeriesSource.GetHistoricalTimeSeries(identifierBundle);
                 AssertSane(result);
             }
         }
@@ -91,7 +91,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var end = DateTimeOffset.Now.Date;
                 var start = end - TimeSpan.FromDays(3650);
 
-                var result = timeSeriesSource.GetHistoricalData(identifierBundle, start, false, end, true);
+                var result = timeSeriesSource.GetHistoricalTimeSeries(identifierBundle, start, false, end, true);
                 AssertSane(result);
                 AssertSane(result.Item2, start, end);
             }
