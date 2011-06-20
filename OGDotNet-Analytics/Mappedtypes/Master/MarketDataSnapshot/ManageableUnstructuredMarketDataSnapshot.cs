@@ -58,7 +58,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                                      PrepareUpdateFrom,
                                      PrepareRemoveAction,
                                      PrepareAddAction
-                ).Aggregate((a, b) => a.Concat(b));
+                ).Aggregate(UpdateAction<ManageableUnstructuredMarketDataSnapshot>.Empty, (a, b) => a.Concat(b));
         }
 
         private static Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> GetUpdateDictionary(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> values)
