@@ -21,6 +21,7 @@ using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.math.curve;
+using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot
@@ -67,6 +68,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 return;
             }
 
+            if (IsDisposed)
+            {
+                return;
+            }
+
             _tempViewUid = GetNewUid();
             _liveDataStream.WithLastResults(default(CancellationToken), (cycle, graphs, results) =>
                                                                             {
@@ -102,6 +108,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         {
             lock (_attachLock)
             {
+                if (remoteViewClient.GetState() == ViewClientState.Terminated)
+                {
+                    return;
+                }
                 if (remoteViewClient.IsAttached)
                 {
                     RemoteViewClient.DetachFromViewProcess();
