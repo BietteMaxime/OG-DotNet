@@ -76,6 +76,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             _tempViewUid = GetNewUid();
             _liveDataStream.WithLastResults(default(CancellationToken), (cycle, graphs, results) =>
                                                                             {
+                                                                                if (IsDisposed)
+                                                                                {
+                                                                                    return null;
+                                                                                }
                                                                                 _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, GetViewDefinition(graphs, _tempViewUid)));
                                                                                 ViewDefinition viewDefinition = _remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(_tempviewName);
                                                                                 return viewDefinition;
