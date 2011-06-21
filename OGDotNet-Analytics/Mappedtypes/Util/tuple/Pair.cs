@@ -19,7 +19,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
             return new Pair<TFirst, TSecond>(first, second);
         }
     }
-    public class Pair<TFirst, TSecond>
+    public class Pair<TFirst, TSecond> : IEquatable<Pair<TFirst, TSecond>>
         where TFirst : class
         where TSecond : class
     {
@@ -62,6 +62,29 @@ namespace OGDotNet.Mappedtypes.Util.tuple
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             throw new NotImplementedException();
+        }
+
+        public bool Equals(Pair<TFirst, TSecond> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other._first, _first) && Equals(other._second, _second);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof (Pair<TFirst, TSecond>)) return false;
+            return Equals((Pair<TFirst, TSecond>) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((_first != null ? _first.GetHashCode() : 0)*397) ^ (_second != null ? _second.GetHashCode() : 0);
+            }
         }
     }
 }

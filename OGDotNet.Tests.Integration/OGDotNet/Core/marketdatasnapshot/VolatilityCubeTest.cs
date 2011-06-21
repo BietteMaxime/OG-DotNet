@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph;
@@ -16,12 +17,14 @@ using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.financial.view;
+using OGDotNet.Mappedtypes.Util.Time;
+using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Tests.Integration.OGDotNet.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
-namespace OGDotNet.Tests.Integration.OGDotNet
+
+namespace OGDotNet.Tests.Integration.OGDotNet.Core.marketdatasnapshot
 {
     public class VolatilityCubeTest : TestWithContextBase
     {
@@ -42,8 +45,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet
 
             var defn = new ViewDefinition(vdName, new ResultModelDefinition(ResultOutputMode.TerminalOutputs),
                                calculationConfigurationsByName:
-                                   new Dictionary<string, ViewCalculationConfiguration>()
-                                       {{"Default", viewCalculationConfiguration}}, maxFullCalcPeriod:TimeSpan.FromSeconds(1));
+                                   new Dictionary<string, ViewCalculationConfiguration> {{"Default", viewCalculationConfiguration}}, maxFullCalcPeriod:TimeSpan.FromSeconds(1));
             using (var remoteClient = Context.CreateUserClient())
             {
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(defn));
@@ -61,7 +63,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                             if (liveDataCount > 10 && liveDataCount == i)
                             {
                                 var volatilityCubeData = (VolatilityCubeData) viewComputationResultModel.AllResults.Single().ComputedValue.Value;
-                                var actual = volatilityCubeData.DataPoints.Count + volatilityCubeData.OtherData.DataPoints.Count;
+                                Assert.InRange(volatilityCubeData.DataPoints.Count, 1, int.MaxValue);
+                                Assert.InRange(volatilityCubeData.Strikes.Count, 1, int.MaxValue);
+                                Assert.Empty(volatilityCubeData.OtherData.DataPoints);
+
+                                var actual = volatilityCubeData.DataPoints.Count + volatilityCubeData.Strikes.Count;
                                 Assert.InRange(actual, liveDataCount * 0.9, liveDataCount); //Allow 10% for PLAT-1383
 
                                 var pays = volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike < 0);
@@ -71,7 +77,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                                 Assert.NotEmpty(recvs);
 
                                 Assert.InRange(pays.Count(), recvs.Count() / 2.0, recvs.Count() * 2.0); //Disallow completely unbalanced cubes
-
+                                foreach (var dataPoint in volatilityCubeData.DataPoints.Keys)
+                                {
+                                    var strike = volatilityCubeData.Strikes[GetStrikeKey(dataPoint)];
+                                    Assert.True(strike > 0.0);
+                                }
                                 break;
                             }
                             i = liveDataCount;
@@ -83,6 +93,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                     remoteClient.ViewDefinitionRepository.RemoveViewDefinition(defn.Name);
                 }
             }
+        }
+
+        private Pair<Tenor, Tenor> GetStrikeKey(VolatilityPoint dataPoint)
+        {
+            return new Pair<Tenor, Tenor>(dataPoint.SwapTenor, dataPoint.OptionExpiry);
         }
     }
 }
