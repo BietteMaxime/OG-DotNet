@@ -108,6 +108,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         {
             lock (_attachLock)
             {
+                if (remoteViewClient == null)
+                {
+                    return;
+                }
                 if (remoteViewClient.GetState() == ViewClientState.Terminated)
                 {
                     return;
