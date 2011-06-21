@@ -75,7 +75,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Pair<TFirst, TSecond>)) return false;
+            if (obj.GetType() != typeof(Pair<TFirst, TSecond>)) return false;
             return Equals((Pair<TFirst, TSecond>) obj);
         }
 
@@ -83,7 +83,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
         {
             unchecked
             {
-                return ((_first != null ? _first.GetHashCode() : 0)*397) ^ (_second != null ? _second.GetHashCode() : 0);
+                return ((_first != null ? _first.GetHashCode() : 0) * 397) ^ (_second != null ? _second.GetHashCode() : 0);
             }
         }
     }
