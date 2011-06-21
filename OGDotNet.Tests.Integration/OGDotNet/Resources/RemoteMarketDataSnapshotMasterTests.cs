@@ -73,10 +73,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             var metaSearchResult = snapshotMaster.Search(new MarketDataSnapshotSearchRequest("*", pagingRequest, false));
+            Assert.NotNull(metaSearchResult);
             var metadataTime = stopwatch.Elapsed;
 
             stopwatch.Restart();
             var searchResult = snapshotMaster.Search("*", pagingRequest);
+            Assert.NotNull(searchResult);
             var fullTime = stopwatch.Elapsed;
 
             var maxAllowed = TimeSpan.FromTicks(fullTime.Ticks / 10);
@@ -241,7 +243,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         {
                             {new YieldCurveKey(Currency.USD, "Default"), new ManageableYieldCurveSnapshot(manageableUnstructuredMarketDataSnapshot, DateTimeOffset.Now)}
                         },
-                    new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>()
+                    new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>
                         {
                             {new VolatilityCubeKey(Currency.USD, "Test"), manageableVolCubeSnapshot}
                         }

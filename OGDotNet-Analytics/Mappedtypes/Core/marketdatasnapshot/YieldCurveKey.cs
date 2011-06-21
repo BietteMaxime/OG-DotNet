@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
 using Fudge;
 using Fudge.Serialization;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;

@@ -70,7 +70,7 @@
     <Compile Include="Mappedtypes\engine\View\NumberDeltaComparer.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeKey.cs" />
-    <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityPoint.cs" />
+    <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityPoint.cs" />
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilityCubeSnapshot.cs" />
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />

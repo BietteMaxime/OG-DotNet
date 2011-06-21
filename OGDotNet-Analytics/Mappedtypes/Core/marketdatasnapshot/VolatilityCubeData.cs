@@ -7,14 +7,11 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 
-namespace OGDotNet.Mappedtypes.core.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
     public class VolatilityCubeData
     {

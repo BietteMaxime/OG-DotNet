@@ -103,7 +103,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                 );
         }
 
-        private static IDictionary<string, ValueSnapshot> Clone(IDictionary<string, ValueSnapshot> valueSnapshots)
+        private static IDictionary<T, ValueSnapshot> Clone<T>(IDictionary<T, ValueSnapshot> valueSnapshots)
         {
             return valueSnapshots.ToDictionary(k => k.Key, k => k.Value.Clone());
         }

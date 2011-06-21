@@ -40,7 +40,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                     case "Identifier":
                     case "Id":
                     case "UniqueIdentifier":
-                        throw new Exception(string.Format("{0} has property {1}, use UniqeId instead (And {1})", mappedType.Name, propertyInfo.Name, typeof(IUniqueIdentifiable).Name));
+                        throw new Exception(string.Format("{0} has property {1}, use UniqeId instead (And {2})", mappedType.Name, propertyInfo.Name, typeof(IUniqueIdentifiable).Name));
                 }
             }
         }
