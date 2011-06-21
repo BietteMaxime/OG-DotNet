@@ -17,7 +17,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
     {
         private readonly List<Warning> _warnings;
         private readonly List<Action<T>> _updateActions;
-        private static readonly UpdateAction<T> Empty = new UpdateAction<T>(Enumerable.Empty<Action<T>>(), Enumerable.Empty<Warning>());
+        public static readonly UpdateAction<T> Empty = new UpdateAction<T>(Enumerable.Empty<Action<T>>(), Enumerable.Empty<Warning>());
 
         internal static UpdateAction<T> Of(IEnumerable<UpdateAction<T>> actions)
         {
