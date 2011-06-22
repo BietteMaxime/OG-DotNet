@@ -156,7 +156,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> timedCurves = null;
 
                 TimeSpan time = Time(() => timedCurves = dataSnapshotProcessor.GetYieldCurves());
-                Assert.InRange(time, TimeSpan.Zero, TimeSpan.FromSeconds(1)); // TODO faster
+                Assert.InRange(time, TimeSpan.Zero, TimeSpan.FromSeconds(3)); // TODO faster
                 Console.Out.WriteLine(time);
 
                 var diffs2 = beforeCurves[curveKey].Item1.Curve.YData.Zip(timedCurves[curveKey].Item1.Curve.YData, DiffProportion).ToList();
