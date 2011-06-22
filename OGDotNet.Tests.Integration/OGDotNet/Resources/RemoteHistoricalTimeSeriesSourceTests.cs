@@ -9,6 +9,8 @@
 using System;
 using System.Linq;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Master;
+using OGDotNet.Mappedtypes.Master.Security;
 using OGDotNet.Mappedtypes.Util.Db;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
 using Xunit;
@@ -64,12 +66,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [FactAttribute]
-        public void CanGetSeriesForSomeFutures()
+        public void CanGetSeriesForSomeEquities()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
-            var remoteSecurityMaster = Context.SecurityMaster;
-            var searchResult = remoteSecurityMaster.Search("*", "EQUITY", new PagingRequest(1, 10));
+            SearchResult<SecurityDocument> searchResult = GetSomeEquities();
             foreach (var securityDocument in searchResult.Documents)
             {
                 var identifierBundle = securityDocument.Security.Identifiers;
@@ -77,13 +78,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 AssertSane(result);
             }
         }
+
         [FactAttribute]
-        public void CanGetSeriesForSomeFuturesAlt()
+        public void CanGetSeriesForSomeEquitiesAlt()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
             var remoteSecurityMaster = Context.SecurityMaster;
-            var searchResult = remoteSecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 10));
+            var searchResult = remoteSecurityMaster.Search("*", "EQUITY", new PagingRequest(1, 10));
             foreach (var securityDocument in searchResult.Documents)
             {
                 var identifierBundle = securityDocument.Security.Identifiers;
@@ -95,6 +97,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 AssertSane(result);
                 AssertSane(result.Item2, start, end);
             }
+        }
+
+        private static SearchResult<SecurityDocument> GetSomeEquities()
+        {
+            var remoteSecurityMaster = Context.SecurityMaster;
+            return remoteSecurityMaster.Search("*", "EQUITY", new PagingRequest(1, 10));
         }
 
         private static void AssertSane(Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> result)
