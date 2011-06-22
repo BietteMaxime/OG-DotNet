@@ -14,6 +14,10 @@
 	
 	<MSBuild.Community.Tasks.Xslt Inputs="test-reports\$(AssemblyName).xunit.xml" Xsl="..\lib\HTML.xslt" RootTag="" RootAttributes="" Output="test-reports\$(AssemblyName).html" />
     
+	<!-- 
+	Proper build system integration doesn't need this
 	<Error Text="Test error(s) occured" Code="%(XUnitExitCodes.Identity)" Condition=" '%(XUnitExitCodes.Identity)' != '0'"/>
+	
+	 -->
   </Target>
 </Project>
