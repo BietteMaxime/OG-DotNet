@@ -86,7 +86,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Null(manageableMarketDataSnapshot.Name);
                 Assert.Null(manageableMarketDataSnapshot.UniqueId);
 
-                Assert.True(manageableMarketDataSnapshot.Values.Any() || manageableMarketDataSnapshot.YieldCurves.Any(c=>c.Value.Values.Values.Any()) || manageableMarketDataSnapshot.VolatilityCubes.Any(v=>v.Value.Values.Any()));
+                Assert.True(manageableMarketDataSnapshot.Values.Any() || manageableMarketDataSnapshot.YieldCurves.Any(c => c.Value.Values.Values.Any()) || manageableMarketDataSnapshot.VolatilityCubes.Any(v => v.Value.Values.Any()));
                 foreach (var valueSnapshot in manageableMarketDataSnapshot.Values)
                 {
                     foreach (var snapshot in valueSnapshot.Value)
