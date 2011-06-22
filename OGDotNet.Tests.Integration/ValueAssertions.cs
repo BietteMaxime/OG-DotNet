@@ -192,8 +192,6 @@ namespace OGDotNet.Tests.Integration
 
         public static void AssertSensibleValue(ICompiledViewDefinition viewDefin)
         {
-            AssertSensibleValue(viewDefin);
-
             Assert.NotEmpty(viewDefin.LiveDataRequirements);
             AssertSensibleValue(viewDefin.LiveDataRequirements);
 
