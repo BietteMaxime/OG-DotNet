@@ -69,7 +69,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
             var remoteSecurityMaster = Context.SecurityMaster;
-            var searchResult = remoteSecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 10));
+            var searchResult = remoteSecurityMaster.Search("*", "EQUITY", new PagingRequest(1, 10));
             foreach (var securityDocument in searchResult.Documents)
             {
                 var identifierBundle = securityDocument.Security.Identifiers;
