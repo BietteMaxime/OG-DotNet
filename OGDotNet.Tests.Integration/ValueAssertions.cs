@@ -29,6 +29,7 @@ using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Mappedtypes.Util.Timeseries.fast.longint;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
+using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Utils;
 using Xunit;
 
@@ -88,6 +89,11 @@ namespace OGDotNet.Tests.Integration
         {
             AssertSensibleValue(tuple.Key);
             AssertSensibleValue(tuple.Value);
+        }
+        public static void AssertSensibleValue<TKey, TValue>(Pair<TKey, TValue> tuple) where TKey : class where TValue : class
+        {
+            AssertSensibleValue(tuple.First);
+            AssertSensibleValue(tuple.Second);
         }
 
         public static void AssertSensibleValue(IEnumerable values)
@@ -328,6 +334,13 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(point.OptionExpiry);
             AssertSensibleValue(point.SwapTenor);
             AssertSensibleValue(point.RelativeStrike);
+        }
+        public static void AssertSensibleValue(VolatilityCubeData data)
+        {
+            Assert.NotNull(data);
+            AssertSensibleValue(data.DataPoints);
+            AssertSensibleValue(data.Strikes);
+            Assert.Empty(data.OtherData.DataPoints);
         }
     }
 }
