@@ -3,6 +3,10 @@
   
   <Target Name="BeforeBuild" DependsOnTargets="DontSetVersionTarget;SetVersionTarget;SetSearchPathTarget;WarnOnNoStyleCop" />
   
+  <PropertyGroup >
+    <SourceAnalysisTreatErrorsAsWarnings>false</SourceAnalysisTreatErrorsAsWarnings>
+  </PropertyGroup>
+  
   <!-- StyleCop -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets" Condition="exists('$(MSBuildExtensionsPath32)\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" /> 
   <Import Project="$(MSBuildExtensionsPath64)\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets" Condition="exists('$(MSBuildExtensionsPath64)\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" /> 
