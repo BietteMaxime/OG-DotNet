@@ -99,6 +99,15 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
                                                                                     throw;
                                                                                 }
+                                                                                catch (InvalidOperationException)
+                                                                                {
+                                                                                    if (IsDisposed)
+                                                                                    {
+                                                                                        return null; //expected
+                                                                                    }
+
+                                                                                    throw;
+                                                                                }
                                                                             });
             
             AttachToViewProcess(RemoteViewClient); //TODO: should happen magically
