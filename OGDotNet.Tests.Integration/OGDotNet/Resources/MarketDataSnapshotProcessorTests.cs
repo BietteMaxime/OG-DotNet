@@ -125,7 +125,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
 
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition("Swap Test View"))
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition("Equity Option Test View 1"))
             {
                 var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
                 YieldCurveKey curveKey = beforeCurves.Keys.First();
@@ -156,7 +156,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> timedCurves = null;
 
                 TimeSpan time = Time(() => timedCurves = dataSnapshotProcessor.GetYieldCurves());
-                Assert.InRange(time, TimeSpan.Zero, TimeSpan.FromSeconds(3)); // TODO faster
+                Assert.InRange(time, TimeSpan.Zero, TimeSpan.FromSeconds(2)); // TODO faster
                 Console.Out.WriteLine(time);
 
                 var diffs2 = beforeCurves[curveKey].Item1.Curve.YData.Zip(timedCurves[curveKey].Item1.Curve.YData, DiffProportion).ToList();
