@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.value;
@@ -83,9 +84,21 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                                                                                 {
                                                                                     return null;
                                                                                 }
-                                                                                _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, GetViewDefinition(graphs, _tempViewUid)));
-                                                                                ViewDefinition viewDefinition = _remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(_tempviewName);
-                                                                                return viewDefinition;
+                                                                                try
+                                                                                {
+                                                                                    _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, GetViewDefinition(graphs, _tempViewUid)));
+                                                                                    ViewDefinition viewDefinition = _remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(_tempviewName);
+                                                                                    return viewDefinition;
+                                                                                }
+                                                                                catch (DataNotFoundException)
+                                                                                {
+                                                                                    if (IsDisposed)
+                                                                                    {
+                                                                                        return null; //expected
+                                                                                    }
+
+                                                                                    throw;
+                                                                                }
                                                                             });
             
             AttachToViewProcess(RemoteViewClient); //TODO: should happen magically
