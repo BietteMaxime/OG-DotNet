@@ -36,6 +36,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        [Xunit.Extensions.Fact]
+        public void CantAttachToNullValues()
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                Assert.Throws<ArgumentNullException>(() => remoteViewClient.AttachToViewProcess(null, ExecutionOptions.RealTime));
+                Assert.Throws<ArgumentNullException>(() => remoteViewClient.AttachToViewProcess("SomeView", null));
+            }
+        }
+
         [Theory]
         [TypedPropertyData("ViewDefinitions")]
         public void CanAttach(ViewDefinition vd)

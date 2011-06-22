@@ -154,15 +154,12 @@ namespace OGDotNet.Model.Resources
             }
         }
 
-        public void AttachToViewProcess(string viewDefinitionName, IViewExecutionOptions executionOptions)
+        public void AttachToViewProcess(string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess = false)
         {
-            AttachToViewProcess(viewDefinitionName, executionOptions, false);
-        }
-
-        public void AttachToViewProcess(string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
-        {
+            ArgumentChecker.NotNull(viewDefinitionName, "viewDefinitionName");
+            ArgumentChecker.NotNull(executionOptions, "executionOptions");
             AttachToViewProcessRequest request = new AttachToViewProcessRequest(viewDefinitionName, executionOptions, newBatchProcess);
-            var reponse = _rest.Resolve("attachSearch").Post(request);
+            _rest.Resolve("attachSearch").Post(request);
         }
         public void DetachFromViewProcess()
         {
