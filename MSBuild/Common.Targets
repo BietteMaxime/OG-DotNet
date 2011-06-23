@@ -71,7 +71,7 @@
   </Target>
 
   
-  <Target Name="DeployZip" DependsOnTargets="Build" Condition="Exists('$(MSBuildProjectDirectory)\bin')" >
+  <Target Name="DeployZip" DependsOnTargets="Build" >
 	<ItemGroup>
 		<ZipFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.*" />
 	</ItemGroup>
