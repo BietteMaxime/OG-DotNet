@@ -47,18 +47,16 @@
       </Compile>
     </ItemGroup>
   </Target>
-
+    
+  <Target Name="AfterBuild" Condition=" '$(BuildingInsideVisualStudio)'!='true' ">
+    <Delete  Files="$(VersionFileName)" />
+  </Target>
+  
   <!-- Search path -->
   <Target Name="SetSearchPathTarget" >
   
     <CreateProperty  Value="$(MSBuildProjectDirectory)\..\lib\;$(AssemblySearchPaths)">  
 		<Output TaskParameter="Value" PropertyName="AssemblySearchPaths" />  
 	</CreateProperty>  
-  </Target>
-  
-  <Target Name="AfterBuild" Condition=" '$(BuildingInsideVisualStudio)'!='true' ">
-    <Delete  Files="$(VersionFileName)" />
-
-
   </Target>
 </Project>
