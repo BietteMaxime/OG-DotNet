@@ -36,7 +36,7 @@ namespace OGDotNet.Builders
             var finite = obj as FiniteValueProperties;
             if (finite != null)
             {
-                Serialize(finite, msg, serializer);
+                finite.Serialize(msg, serializer);
             }
             else
             {
@@ -51,41 +51,6 @@ namespace OGDotNet.Builders
                 }
                 msg.Add("without", withoutMessage);
             }
-        }
-        
-        private static void Serialize(FiniteValueProperties finite, IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            var withMessage = new FudgeMsg();
-
-            foreach (var property in finite.PropertyValues)
-            {
-                if (property.Value == null)
-                {
-                    var optMessage = new FudgeMsg(s.Context);
-                    optMessage.Add((string)null, IndicatorType.Instance);
-
-                    withMessage.Add(property.Key, optMessage);
-                }
-                else if (!property.Value.Any())
-                {
-                    withMessage.Add(property.Key, IndicatorType.Instance);
-                }
-                else if (property.Value.Count == 1)
-                {
-                    withMessage.Add(property.Key, property.Value.Single());
-                }
-                else
-                {
-                    var manyMesssage = new FudgeMsg(s.Context);
-                    foreach (var val in property.Value)
-                    {
-                        manyMesssage.Add(property.Key, val);
-                    }
-                    withMessage.Add(property.Key, manyMesssage);
-                }
-            }
-
-            a.Add("with", withMessage);
         }
 
         public override ValueProperties DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)

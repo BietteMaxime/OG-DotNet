@@ -9,7 +9,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Fudge;
 using Fudge.Serialization;
+using Fudge.Types;
 using OGDotNet.Builders;
 using OGDotNet.Utils;
 
@@ -180,6 +182,47 @@ namespace OGDotNet.Mappedtypes.engine.value
             {
                 return string.Format("[ValueProperties: {0}]",
                                      string.Join(" ", PropertyValues.Select(k => string.Format("{0}->{1}", k.Key, string.Join(",", k.Value)))));
+            }
+
+            public void Serialize(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+            {
+                var withMessage = new FudgeMsg();
+
+                foreach (var property in PropertyValues)
+                {
+                    if (property.Value == null)
+                    {
+                        var optMessage = new FudgeMsg(s.Context);
+                        optMessage.Add((string)null, IndicatorType.Instance);
+
+                        withMessage.Add(property.Key, optMessage);
+                    }
+                    else if (!property.Value.Any())
+                    {
+                        withMessage.Add(property.Key, IndicatorType.Instance);
+                    }
+                    else if (property.Value.Count == 1)
+                    {
+                        withMessage.Add(property.Key, property.Value.Single());
+                    }
+                    else
+                    {
+                        var manyMesssage = new FudgeMsg(s.Context);
+                        foreach (var val in property.Value)
+                        {
+                            manyMesssage.Add(property.Key, val);
+                        }
+                        withMessage.Add(property.Key, manyMesssage);
+                    }
+                }
+                if (_optional != null)
+                {
+                    foreach (var optional in _optional)
+                    {
+                        withMessage.Add(optional, new FudgeMsg(new Field("optional", IndicatorType.Instance)));
+                    }
+                }
+                a.Add("with", withMessage);
             }
         }
 
