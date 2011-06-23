@@ -17,7 +17,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
     {
         public static string GetUniqueName()
         {
-            return String.Format("{0}-{1}", ExecutingTestName, Guid.NewGuid());
+            return string.Format("{0}-{1}", ExecutingTestName, Guid.NewGuid());
         }
 
         public static string ExecutingTestName
@@ -28,7 +28,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
 
                 var testFrames = stackTrace.GetFrames().SkipWhile(f => f.GetMethod().DeclaringType.FullName.StartsWith(typeof(TestUtils).FullName)).TakeWhile(f => !f.GetMethod().DeclaringType.FullName.StartsWith("Xunit.Sdk")).ToList();
                 var frames = testFrames.Last(f => f.GetMethod().DeclaringType.FullName.StartsWith("OGDotNet"));
-                return String.Format("{0}.{1}", frames.GetMethod().DeclaringType.Name, frames.GetMethod().Name);
+                return string.Format("{0}.{1}", frames.GetMethod().DeclaringType.Name, frames.GetMethod().Name);
             }
         }
 

@@ -42,7 +42,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
 
         public override string ToString()
         {
-            return String.Format("[JavaException {0}: {1}]", Type, Message);
+            return string.Format("[JavaException {0}: {1}]", Type, Message);
         }
 
         private static readonly IDictionary<string, Type> DotNetTypesByJavaTypeName = new Dictionary<string, Type>
@@ -65,7 +65,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
                 {
                     ConstructorInfo constructorInfo = exceptionType.GetConstructor(new Type[] { });
                     if (constructorInfo == null)
-                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", this.Type, exceptionType), "javaType");
+                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", this.Type, exceptionType), "javaType");
 
                     return (Exception)constructorInfo.Invoke(new object[] { });
                 }
@@ -74,9 +74,9 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
                     ConstructorInfo constructorInfo = exceptionType.GetConstructor(new[] { typeof(string) });
 
                     if (constructorInfo == null)
-                        throw new ArgumentException(String.Format("Can't construct exception type {0}->{1}", this.Type, exceptionType), "javaType");
+                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", this.Type, exceptionType), "javaType");
                     if (constructorInfo.GetParameters()[0].Name != "message")
-                        throw new ArgumentException(String.Format("Exception type {0}->{1} expectes {2} not message", this.Type, exceptionType, this.Message), "javaType");
+                        throw new ArgumentException(string.Format("Exception type {0}->{1} expectes {2} not message", this.Type, exceptionType, this.Message), "javaType");
                     return (Exception)constructorInfo.Invoke(new object[] { this.Message });
                 }
             }
@@ -88,7 +88,7 @@ namespace OGDotNet.Mappedtypes.engine.View.listener
 
         private static Exception BuildGenericException(string javaType, string message = null)
         {
-            return new Exception(String.Format("{0}: {1} - {2}", javaType, message, "Unmappable java exception ocurred"));
+            return new Exception(string.Format("{0}: {1} - {2}", javaType, message, "Unmappable java exception ocurred"));
         }
     }
 }

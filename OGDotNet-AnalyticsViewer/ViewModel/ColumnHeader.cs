@@ -34,7 +34,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         public string Text
         {
-            get { return _configuration == "Default" ? _valueName : String.Format("{0}/{1}", _configuration, _valueName); }
+            get { return _configuration == "Default" ? _valueName : string.Format("{0}/{1}", _configuration, _valueName); }
         }
         public string ToolTip
         {
