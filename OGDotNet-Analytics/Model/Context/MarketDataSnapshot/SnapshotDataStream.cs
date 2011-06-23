@@ -24,6 +24,7 @@ using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Model.Resources;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
@@ -57,7 +58,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             _remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(new ViewDefinition(_tempviewName))); //Make sure we have something to attach to
 
             _viewDefinitionCreatedEvent.Set();
-            ThreadPool.RegisterWaitForSingleObject(_recompileEvent, Recompile, null, int.MaxValue, false);
+            ThreadPool.RegisterWaitForSingleObject(_recompileEvent, Recompile, null, -1, false);
         }
 
         void LiveDataStreamGraphChanged(object sender, EventArgs e)
@@ -67,11 +68,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private void Recompile(object state, bool timedout)
         {
-            if (timedout)
-            {
-                return;
-            }
-
+            ArgumentChecker.Not(timedout, "timedOut");
             IgnoreDisposingExceptions(() =>
             {
                 _tempViewUid = GetNewUid();

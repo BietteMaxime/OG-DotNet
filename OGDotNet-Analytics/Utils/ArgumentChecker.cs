@@ -14,6 +14,14 @@ namespace OGDotNet.Utils
 {
     internal static class ArgumentChecker
     {
+        public static void Not(bool condition, string argName)
+        {
+            if (condition)
+            {
+                throw new ArgumentException("Cannot be true", argName);
+            }
+        }
+
         public static void NotEmpty<T>(IEnumerable<T> arg, string argName)
         {
             NotNull(arg, argName);
