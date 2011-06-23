@@ -3,15 +3,17 @@
   
   <Target Name="BeforeBuild" DependsOnTargets="DontSetVersionTarget;SetVersionTarget;SetSearchPathTarget;WarnOnNoStyleCop" />
   
+  <!-- StyleCop -->
   <PropertyGroup >
+    <StyleCopTargetFile>\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets</StyleCopTargetFile>
     <SourceAnalysisTreatErrorsAsWarnings>false</SourceAnalysisTreatErrorsAsWarnings>
   </PropertyGroup>
   
-  <!-- StyleCop -->
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets" Condition="exists('$(MSBuildExtensionsPath32)\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" /> 
-  <Import Project="$(MSBuildExtensionsPath64)\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets" Condition="exists('$(MSBuildExtensionsPath64)\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" /> 
+  
+  <Import Project="$(MSBuildExtensionsPath32)$(StyleCopTargetFile)" Condition="exists('$(MSBuildExtensionsPath32)$(StyleCopTargetFile)')" /> 
+  <Import Project="$(MSBuildExtensionsPath64)$(StyleCopTargetFile)" Condition="exists('$(MSBuildExtensionsPath64)$(StyleCopTargetFile)')" /> 
 
-  <Target Name="WarnOnNoStyleCop" Condition="('$(BuildingInsideVisualStudio)'!='true') and ! exists('$(ProgramFiles)\MSBuild\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets')" >
+  <Target Name="WarnOnNoStyleCop" Condition="('$(BuildingInsideVisualStudio)'!='true') and ! exists('$(MSBuildExtensionsPath32)$(StyleCopTargetFile)') and ! exists('$(MSBuildExtensionsPath64)$(StyleCopTargetFile)')" >
 	<Warning Text="Not checking StyleCop rules due to missing Microsoft.StyleCop.targets" />
   </Target>
   
