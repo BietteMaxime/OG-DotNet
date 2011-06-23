@@ -19,6 +19,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteHistoricalTimeSeriesSourceTests : TestWithContextBase
     {
+         const string DataField = "PX_LAST";
+        const string DataSource = "BLOOMBERG";
+        const string DataProvider = null;
+
         [Xunit.Extensions.Fact]
         public void CanGet()
         {
@@ -50,10 +54,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [FactAttribute]
-        public void CantGetATimeSeriesByEmptyIdentifierBundle()
+        public void CanGetATimeSeriesByEmptyIdentifierBundle()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
-            Assert.Throws<ArgumentException>(() => timeSeriesSource.GetHistoricalTimeSeries(new IdentifierBundle()));
+            var series = timeSeriesSource.GetHistoricalTimeSeries(new IdentifierBundle(), DateTimeOffset.Now, DataSource, DataProvider, DataField);
+            Assert.NotNull(series);
         }
 
         [FactAttribute]
@@ -61,7 +66,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
-            var result = timeSeriesSource.GetHistoricalTimeSeries(new IdentifierBundle(new Identifier("BLOOMBERG_BUID", "IX289029-0")));
+            var result = timeSeriesSource.GetHistoricalTimeSeries(new IdentifierBundle(new Identifier("BLOOMBERG_BUID", "IX289029-0")), DateTimeOffset.Now, DataSource, DataProvider, DataField);
             AssertSane(result);
         }
 
@@ -74,7 +79,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             foreach (var securityDocument in searchResult.Documents)
             {
                 var identifierBundle = securityDocument.Security.Identifiers;
-                var result = timeSeriesSource.GetHistoricalTimeSeries(identifierBundle);
+                var result = timeSeriesSource.GetHistoricalTimeSeries(identifierBundle, DateTimeOffset.Now, DataSource, DataProvider, DataField);
                 AssertSane(result);
             }
         }
@@ -93,7 +98,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var end = DateTimeOffset.Now.Date;
                 var start = end - TimeSpan.FromDays(3650);
 
-                var result = timeSeriesSource.GetHistoricalTimeSeries(identifierBundle, start, false, end, true);
+                var result = timeSeriesSource.GetHistoricalTimeSeries(identifierBundle, DateTimeOffset.Now, DataSource, DataProvider, DataField, start, false, end, true);
                 AssertSane(result);
                 AssertSane(result.Item2, start, end);
             }
