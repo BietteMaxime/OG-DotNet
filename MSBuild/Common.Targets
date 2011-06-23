@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
   <PropertyGroup>
-    <BuildDependsOn>$(BuildDependsOn);DontSetVersionTarget;SetVersionTarget;SetSearchPathTarget;WarnOnNoStyleCop;WarnOnConfiguration</BuildDependsOn>
+    <BuildDependsOn>SetSearchPathTarget;DontSetVersionTarget;SetVersionTarget;$(BuildDependsOn);WarnOnNoStyleCop;WarnOnConfiguration</BuildDependsOn>
   </PropertyGroup>
   
   <!-- config warning -->
