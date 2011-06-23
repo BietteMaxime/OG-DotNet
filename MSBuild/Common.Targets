@@ -59,4 +59,26 @@
 		<Output TaskParameter="Value" PropertyName="AssemblySearchPaths" />  
 	</CreateProperty>  
   </Target>
+  
+  
+  <!-- Build deploy zips -->
+  <Target Name="DeployZips">
+	 <ItemGroup>
+        <ConfigList Condition=" '@(ConfigList)' == '' and $(Config) != '' " Include="$(Config.Split('+'))" />
+        <ConfigList Condition=" '@(ConfigList)' == '' " Include="Debug;Release" /><!-- if no configurations were specified, default to both standard -->
+    </ItemGroup>
+	<MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=%(ConfigList.Identity);OutputPath=$(MSBuildProjectDirectory)\bin\%(ConfigList.Identity)" Targets="DeployZip" />
+  </Target>
+
+  
+  <Target Name="DeployZip" DependsOnTargets="Build" Condition="Exists('$(MSBuildProjectDirectory)\bin')" >
+	<ItemGroup>
+		<ZipFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.*" />
+	</ItemGroup>
+	<MakeDir Directories="$(MSBuildProjectDirectory)\builds" Condition="!Exists('$(MSBuildProjectDirectory)\builds')" />
+	<Zip Files="@(ZipFiles)"
+       WorkingDirectory="$(MSBuildProjectDirectory)\bin\$(Configuration)\" 
+       ZipFileName="$(MSBuildProjectDirectory)\builds\$(AssemblyName)-$(Configuration)-$(VersionString)-BuildName.zip"
+       ZipLevel="9" /> 
+  </Target>
 </Project>

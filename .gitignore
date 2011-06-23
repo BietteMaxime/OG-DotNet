@@ -5,6 +5,7 @@
 *.csproj.user
 */bin
 */obj
+*/builds
 
 # Generated help files
 Help/
