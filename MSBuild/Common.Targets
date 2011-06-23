@@ -78,7 +78,7 @@
 	<MakeDir Directories="$(MSBuildProjectDirectory)\builds" Condition="!Exists('$(MSBuildProjectDirectory)\builds')" />
 	<Zip Files="@(ZipFiles)"
        WorkingDirectory="$(MSBuildProjectDirectory)\bin\$(Configuration)\" 
-       ZipFileName="$(MSBuildProjectDirectory)\builds\$(AssemblyName)-$(Configuration)-$(VersionString)-BuildName.zip"
+       ZipFileName="$(MSBuildProjectDirectory)\builds\$(AssemblyName)-$(Configuration)-$(VersionString)-$(BuildName).zip"
        ZipLevel="9" /> 
   </Target>
 </Project>
