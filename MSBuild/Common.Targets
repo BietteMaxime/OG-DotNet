@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
-  <Target Name="BeforeBuild" DependsOnTargets="DontSetVersionTarget;SetVersionTarget;SetSearchPathTarget;WarnOnNoStyleCop" />
+  <PropertyGroup>
+    <BuildDependsOn>$(BuildDependsOn);DontSetVersionTarget;SetVersionTarget;SetSearchPathTarget;WarnOnNoStyleCop;WarnOnConfiguration</BuildDependsOn>
+  </PropertyGroup>
+  
+  <!-- config warning -->
+  <Target Name="WarnOnConfiguration" Condition="'$(Platform)'!='AnyCPU' OR '$(PlatformTarget)'!='AnyCPU'" >
+	<Warning Text="Building $(MSBuildProjectFile) for platform $(Platform) -> $(PlatformTarget). Should be AnyCPU" />
+  </Target>
   
   <!-- StyleCop -->
   <PropertyGroup >
