@@ -112,13 +112,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 foreach (var kvp in compiledViewDefinition.ViewDefinition.CalculationConfigurationsByName)
                 {
                     var viewCalculationConfiguration = kvp.Key;
+                    var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
 
                     var vresToTest = resultModel.AllResults.Where(r => r.CalculationConfiguration == viewCalculationConfiguration);
                     foreach (var vreToTest in vresToTest)
                     {
                         var specToTest = vreToTest.ComputedValue.Specification;
 
-                        var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
                         Assert.NotNull(dependencyGraphExplorer);
                         var subgraph = dependencyGraphExplorer.GetSubgraphProducing(specToTest);
                         CheckSaneGraph(viewCalculationConfiguration, subgraph);
