@@ -72,47 +72,52 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 return;
             }
 
+            IgnoreDisposingExceptions(() =>
+            {
+                _tempViewUid = GetNewUid();
+                _liveDataStream.WithLastResults(default(CancellationToken),
+                                                (cycle, graphs, results) =>
+                                                    {
+                                                        if (IsDisposed)
+                                                        {
+                                                            return; // double check here since we might have waited for a long time
+                                                        }
+                                                        _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, GetViewDefinition(graphs, _tempViewUid)));
+                                                    });
+
+                AttachToViewProcess(RemoteViewClient); //TODO: should happen magically
+            });
+        }
+
+        private void IgnoreDisposingExceptions(Action a)
+        {
             if (IsDisposed)
             {
                 return;
             }
+            try
+            {
+                a();
+            }
+            catch (DataNotFoundException)
+            {
+                if (IsDisposed)
+                {
+                    return;
+                }
 
-            _tempViewUid = GetNewUid();
-            _liveDataStream.WithLastResults(default(CancellationToken), (cycle, graphs, results) =>
-                                                                            {
-                                                                                if (IsDisposed)
-                                                                                {
-                                                                                    return null;
-                                                                                }
-                                                                                try
-                                                                                {
-                                                                                    _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, GetViewDefinition(graphs, _tempViewUid)));
-                                                                                    ViewDefinition viewDefinition = _remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(_tempviewName);
-                                                                                    return viewDefinition;
-                                                                                }
-                                                                                catch (DataNotFoundException)
-                                                                                {
-                                                                                    if (IsDisposed)
-                                                                                    {
-                                                                                        return null; //expected
-                                                                                    }
+                throw;
+            }
+            catch (InvalidOperationException)
+            {
+                if (IsDisposed)
+                {
+                    return;
+                }
 
-                                                                                    throw;
-                                                                                }
-                                                                                catch (InvalidOperationException)
-                                                                                {
-                                                                                    if (IsDisposed)
-                                                                                    {
-                                                                                        return null; //expected
-                                                                                    }
-
-                                                                                    throw;
-                                                                                }
-                                                                            });
-            
-            AttachToViewProcess(RemoteViewClient); //TODO: should happen magically
+                throw;
+            }
         }
-
         private ViewDefinition GetViewDefinition(IDictionary<string, IDependencyGraph> graphs, UniqueIdentifier uid)
         {
             IEnumerable<ValueSpecification> specs = RawMarketDataSnapper.GetYieldCurveSpecs(graphs);

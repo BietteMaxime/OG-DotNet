@@ -153,6 +153,14 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
+        public void WithLastResults(CancellationToken ct, Action<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel> action)
+        {
+            WithLastResults<object>(ct, (c, g, m) =>
+                                            {
+                                                action(c, g, m);
+                                                return null;
+                                            });
+        }
         public T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
         {
             _prepared.Wait(ct);
