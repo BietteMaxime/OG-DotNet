@@ -113,21 +113,24 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     var viewCalculationConfiguration = kvp.Key;
 
-                    var vreToTest = resultModel.AllResults.OrderBy(r => r.GetHashCode()).First(r => r.CalculationConfiguration == viewCalculationConfiguration);
-                    var specToTest = vreToTest.ComputedValue.Specification;
+                    var vresToTest = resultModel.AllResults.Where(r => r.CalculationConfiguration == viewCalculationConfiguration);
+                    foreach (var vreToTest in vresToTest)
+                    {
+                        var specToTest = vreToTest.ComputedValue.Specification;
 
-                    var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
-                    Assert.NotNull(dependencyGraphExplorer);
-                    var subgraph = dependencyGraphExplorer.GetSubgraphProducing(specToTest);
-                    CheckSaneGraph(viewCalculationConfiguration, subgraph);
-                    
-                    Assert.True(subgraph.DependencyNodes.Any(n => Produces(n, specToTest)));
-                   
-                    var lastNode = subgraph.DependencyNodes.Single(n => Produces(n, specToTest));
-                    Assert.True(lastNode.TerminalOutputValues.Contains(specToTest));
-                    
-                    //Check the graph is connected
-                    Assert.Equal(FollowInputs(lastNode).Count, subgraph.DependencyNodes.Count);
+                        var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
+                        Assert.NotNull(dependencyGraphExplorer);
+                        var subgraph = dependencyGraphExplorer.GetSubgraphProducing(specToTest);
+                        CheckSaneGraph(viewCalculationConfiguration, subgraph);
+
+                        Assert.True(subgraph.DependencyNodes.Any(n => Produces(n, specToTest)));
+
+                        var lastNode = subgraph.DependencyNodes.Single(n => Produces(n, specToTest));
+                        Assert.True(lastNode.TerminalOutputValues.Contains(specToTest));
+
+                        //Check the graph is connected
+                        Assert.Equal(FollowInputs(lastNode).Count, subgraph.DependencyNodes.Count);
+                    }
                 }
             });
         }
