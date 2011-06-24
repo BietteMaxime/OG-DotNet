@@ -60,12 +60,14 @@
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
     <Compile Include="Builders\ComputedValueBuilder.cs" />
+    <Compile Include="Builders\ExecutionOptionsBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
     <Compile Include="Builders\ValuePropertiesBuilder.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityCubeData.cs" />
     <Compile Include="Mappedtypes\engine\View\DeltaDefinition.cs" />
+    <Compile Include="Mappedtypes\engine\View\Execution\ViewExecutionFlags.cs" />
     <Compile Include="Mappedtypes\engine\View\IDeltaComparer.cs" />
     <Compile Include="Mappedtypes\engine\View\NumberDeltaComparer.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeDefinition.cs" />

@@ -5,14 +5,15 @@
 //     Please see distribution for license.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+using OGDotNet.Mappedtypes.Id;
+
 namespace OGDotNet.Mappedtypes.engine.View.Execution
 {
     public interface IViewExecutionOptions
     {
         IViewCycleExecutionSequence ExecutionSequence { get; }
-        bool RunAsFastAsPossible { get; }
-        bool LiveDataTriggerEnabled { get; }
         int? MaxSuccessiveDeltaCycles { get; }
-        bool CompileOnly { get; }
+        ViewExecutionFlags Flags { get; }
+        UniqueIdentifier MarketDataSnapshotIdentifier { get; }
     }
 }

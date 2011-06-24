@@ -12,6 +12,19 @@ using System.Linq;
 
 namespace OGDotNet.Builders
 {
+    public static class EnumUtils
+    {
+        public static IEnumerable<T> EnumValues<T>() where T : struct
+        {
+            Type type = typeof(T);
+            if (! type.IsEnum)
+            {
+                throw new ArgumentException("Not an enum type", "T");
+            }
+            Array values = Enum.GetValues(type);
+            return values.Cast<T>();
+        }
+    }
     public static class EnumUtils<TA, TB>
         where TA : struct
         where TB : struct
@@ -20,7 +33,7 @@ namespace OGDotNet.Builders
 
         static EnumUtils()
         {
-            var values = Enum.GetValues(typeof(TA)).Cast<TA>();
+            var values = EnumUtils.EnumValues<TA>();
             LookupTable = new Dictionary<TA, TB>();
             foreach (var a in values)
             {
