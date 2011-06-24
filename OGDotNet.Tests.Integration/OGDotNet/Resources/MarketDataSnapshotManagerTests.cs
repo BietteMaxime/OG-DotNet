@@ -14,7 +14,6 @@ using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
-using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
@@ -279,65 +278,50 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static bool CausesTick(Func<UniqueIdentifier, IViewExecutionOptions> optionsFactory, Action<MarketDataSnapshotProcessor> action)
         {
-            bool ret = false;
+            const string viewName = RemoteViewClientBatchTests.ViewName;
+
             var snapshotManager = Context.MarketDataSnapshotManager;
-            WithNoTicksView(delegate(string viewName)
+
+            using (var proc = snapshotManager.CreateFromViewDefinition(viewName))
             {
-                using (var proc = snapshotManager.CreateFromViewDefinition(viewName))
+                proc.Snapshot.Name = TestUtils.GetUniqueName();
+                Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
+
+                var options = optionsFactory(proc.Snapshot.UniqueId);
+
+                var noTickOptions = GetNoTickOptions(options);
+
+                using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                 {
-                    proc.Snapshot.Name = TestUtils.GetUniqueName();
-                    Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
-
-                    var options = optionsFactory(proc.Snapshot.UniqueId);
-
-                    using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+                    var viewComputationResultModels = remoteViewClient.GetResults(viewName, noTickOptions);
+                    using (var enumerator = viewComputationResultModels.GetEnumerator())
                     {
-                        var viewComputationResultModels = remoteViewClient.GetResults(viewName, options);
-                        using (var enumerator = viewComputationResultModels.GetEnumerator())
+                        Assert.True(enumerator.MoveNext());
+
+                        var task = new Task<bool>(enumerator.MoveNext);
+                        task.Start();
+
+                        Assert.False(task.Wait(TimeSpan.FromSeconds(10)));
+
+                        action(proc);
+                        bool ret = task.Wait(TimeSpan.FromSeconds(10));
+                        if (! ret)
                         {
-                            Assert.True(enumerator.MoveNext());
-
-                            var task = new Task<bool>(enumerator.MoveNext);
-                            task.Start();
-
-                            Assert.False(task.Wait(TimeSpan.FromSeconds(10)));
-
-                            action(proc);
-                            ret = task.Wait(TimeSpan.FromSeconds(10));
-                            if (! ret)
-                            {
-                                ((Task) task).ContinueWith(t => { var ignore = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
-                            }
+                            ((Task) task).ContinueWith(t => { var ignore = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
                         }
+                        return ret;
                     }
                 }
-            });
-            return ret;
+            }
         }
 
-        private static void WithNoTicksView(Action<string> action)
+        private static IViewExecutionOptions GetNoTickOptions(IViewExecutionOptions options)
         {
-            using (var remoteClient = Context.CreateUserClient())
-            {
-                var viewDefinition =
-                    Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(RemoteViewClientBatchTests.ViewName);
-
-                viewDefinition.Name = string.Format("{0}-NoTicks-{1}", viewDefinition.Name, Guid.NewGuid());
-                
-                viewDefinition.MinFullCalcPeriod = null;
-                viewDefinition.MinDeltaCalcPeriod = null;
-                viewDefinition.MaxFullCalcPeriod = TimeSpan.FromDays(1);
-                viewDefinition.MaxDeltaCalcPeriod = TimeSpan.FromDays(1);
-                try
-                {
-                    remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
-                    action(viewDefinition.Name);
-                }
-                finally
-                {
-                    remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewDefinition.Name);
-                }
-            }
+            options = new ExecutionOptions(options.ExecutionSequence,
+                                           options.Flags & ~ViewExecutionFlags.TriggerCycleOnTimeElapsed,
+                                           options.MaxSuccessiveDeltaCycles,
+                                           options.MarketDataSnapshotIdentifier);
+            return options;
         }
 
         private static void AssertSaneValue(ManageableYieldCurveSnapshot yieldCurveSnapshot)
