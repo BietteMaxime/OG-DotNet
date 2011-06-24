@@ -121,7 +121,16 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 bool ready = (!ShouldWaitForExtraCycle) || previous != null;
                 if (ready)
                 {
-                    _haveLastResults.Set(); 
+                    _haveLastResults.Set();
+                }
+                else
+                {
+                    ThreadPool.RegisterWaitForSingleObject(_haveLastResults.WaitHandle, delegate
+                                                            {
+                                                                //Give up on the hack LAP-60
+                                                                _haveLastResults.Set();
+                                                            }, null,
+                                                           TimeSpan.FromSeconds(10), true);
                 }
                 if (previous != null)
                 {
