@@ -65,6 +65,7 @@
     <Compile Include="Builders\ExecutionOptionsBuilder.cs" />
     <Compile Include="Builders\IdentifierBundleBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
+    <Compile Include="Builders\PortfolioNodeImplBuilder.cs" />
     <Compile Include="Builders\Streaming\DependencyGraphStreamingBuilder.cs" />
     <Compile Include="Builders\Streaming\IStreamingFudgeBuilder.cs" />
     <Compile Include="Builders\Streaming\SecuritiesResponseStreamingBuilder.cs" />

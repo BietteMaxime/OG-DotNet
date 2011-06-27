@@ -6,16 +6,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Core.Position.Impl;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position
 {
+    [FudgeSurrogate(typeof(PortfolioNodeImplBuilder))]
     public class PortfolioNode : IUniqueIdentifiable
     {
         private readonly UniqueIdentifier _uniqueId;
@@ -49,16 +47,6 @@ namespace OGDotNet.Mappedtypes.Core.Position
         public UniqueIdentifier UniqueId
         {
             get { return _uniqueId; }
-        }
-
-        public static PortfolioNode FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            return PortfolioNodeImpl.FromFudgeMsg(ffc, deserializer);
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            throw new NotImplementedException();
         }
     }
 }
