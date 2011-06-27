@@ -74,17 +74,17 @@
         <ConfigList Condition=" '@(ConfigList)' == '' and $(Config) != '' " Include="$(Config.Split('+'))" />
         <ConfigList Condition=" '@(ConfigList)' == '' " Include="Debug;Release" /><!-- if no configurations were specified, default to both standard -->
     </ItemGroup>
-	<MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=%(ConfigList.Identity);OutputPath=$(MSBuildProjectDirectory)\bin\%(ConfigList.Identity)" Targets="DeployZip" />
+	<MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=%(ConfigList.Identity)" Targets="DeployZip" />
   </Target>
 
   
   <Target Name="DeployZip" DependsOnTargets="Build" >
 	<ItemGroup>
-		<ZipFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.*" />
+		<ZipFiles Include="$(OutputPath)\*.*" />
 	</ItemGroup>
 	<MakeDir Directories="$(MSBuildProjectDirectory)\builds" Condition="!Exists('$(MSBuildProjectDirectory)\builds')" />
 	<Zip Files="@(ZipFiles)"
-       WorkingDirectory="$(MSBuildProjectDirectory)\bin\$(Configuration)\" 
+       WorkingDirectory="$(OutputPath)" 
        ZipFileName="$(MSBuildProjectDirectory)\builds\$(AssemblyName)-$(VersionString)-$(Configuration).zip"
        ZipLevel="9" /> 
   </Target>
