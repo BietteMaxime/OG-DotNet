@@ -60,6 +60,7 @@
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
     <Compile Include="Builders\ComputedValueBuilder.cs" />
+    <Compile Include="Builders\DependencyNodeBuilder.cs" />
     <Compile Include="Builders\ExecutionOptionsBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
     <Compile Include="Builders\Streaming\DependencyGraphStreamingBuilder.cs" />
