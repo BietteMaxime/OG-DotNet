@@ -5,15 +5,13 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using Fudge;
 using Fudge.Serialization;
-using Fudge.Types;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine
 {
+    [FudgeSurrogate(typeof(ComputationTargetBuilder))]
     public class ComputationTarget
     {
         private readonly ComputationTargetType _type;
@@ -42,31 +40,6 @@ namespace OGDotNet.Mappedtypes.engine
                 var uniqueIdentifiable = Value as IUniqueIdentifiable;
                 return uniqueIdentifiable == null ? null : uniqueIdentifiable.UniqueId;
             }
-        }
-
-        public static ComputationTarget FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            var computationTargetType = EnumBuilder<ComputationTargetType>.Parse(ffc.GetMessage("type").GetString(1));
-            object value = GetValue(deserializer, ffc.GetByName("value"));
-            return new ComputationTarget(computationTargetType, value);
-        }
-
-        private static object GetValue(IFudgeDeserializer deserializer, IFudgeField valueField)
-        {
-            if (valueField.Type != FudgeMsgFieldType.Instance)
-            {
-                if (valueField.Value is string)
-                {
-                    return UniqueIdentifier.Parse((string) valueField.Value);
-                }
-                throw new ArgumentException("Computation target type which I don't know how to deserialize");
-            }
-            return deserializer.FromField<object>(valueField);
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            throw new NotImplementedException();
         }
     }
 }

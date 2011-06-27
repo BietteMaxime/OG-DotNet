@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\BuilderBase.xaml.cs" />
+    <Compile Include="Builders\ComputationTargetBuilder.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
     <Compile Include="Builders\ComputedValueBuilder.cs" />
     <Compile Include="Builders\DependencyNodeBuilder.cs" />
