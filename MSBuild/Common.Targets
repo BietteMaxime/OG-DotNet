@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"
+  Condition="exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')"/>
   
   <PropertyGroup>
     <BuildDependsOn>SetSearchPathTarget;DontSetVersionTarget;SetVersionTarget;$(BuildDependsOn);WarnOnNoStyleCop;WarnOnConfiguration</BuildDependsOn>
@@ -25,8 +28,6 @@
   </Target>
   
   <!-- Set version -->
-  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"
-  Condition="exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')"/>
   
   
   <Target Name="DontSetVersionTarget" Condition=" ('$(BuildingInsideVisualStudio)'!='true') and ( ! exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets') or '$(Revision)' == '' )" >
