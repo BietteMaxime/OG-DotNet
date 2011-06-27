@@ -62,6 +62,10 @@
     <Compile Include="Builders\ComputedValueBuilder.cs" />
     <Compile Include="Builders\ExecutionOptionsBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
+    <Compile Include="Builders\Streaming\DependencyGraphStreamingBuilder.cs" />
+    <Compile Include="Builders\Streaming\IStreamingFudgeBuilder.cs" />
+    <Compile Include="Builders\Streaming\SecuritiesResponseStreamingBuilder.cs" />
+    <Compile Include="Builders\Streaming\StreamingFudgeBuilderBase.cs" />
     <Compile Include="Builders\ValuePropertiesBuilder.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
@@ -81,6 +85,7 @@
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStream.cs" />
     <Compile Include="Model\Resources\FudgeMessageDecoder.cs" />
     <Compile Include="Model\Resources\RemoteVolatilityCubeDefinitionSource.cs" />
+    <Compile Include="Builders\Streaming\StreamingFudgeBuilder.cs" />
     <Compile Include="Utils\SmallSet.cs" />
     <Compile Include="Mappedtypes\engine\View\cache\MissingLiveDataSentinel.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
@@ -110,7 +115,6 @@
     <Compile Include="Mappedtypes\engine\ComputationTarget.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetSpecification.cs" />
     <Compile Include="Mappedtypes\engine\ComputationTargetType.cs" />
-    <Compile Include="Builders\DependencyGraphBuilder.cs" />
     <Compile Include="Mappedtypes\engine\depGraph\DependencyGraph.cs" />
     <Compile Include="Mappedtypes\engine\depGraph\dependencyGraph\ResultOutputMode.cs" />
     <Compile Include="Mappedtypes\engine\depGraph\DependencyNode.cs" />

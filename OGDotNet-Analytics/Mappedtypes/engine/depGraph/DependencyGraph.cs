@@ -6,13 +6,17 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.Collections.Generic;
-using Fudge.Serialization;
-using OGDotNet.Builders;
+using OGDotNet.Builders.Streaming;
 using OGDotNet.Mappedtypes.engine.depGraph;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.engine.depgraph
 {
-    [FudgeSurrogate(typeof(DependencyGraphBuilder))]
+    /// <summary>
+    /// </summary>
+    /// <remarks>
+    /// <see cref="DependencyGraphStreamingBuilder"/> Does the building for this class
+    /// </remarks>
     public class DependencyGraph : IDependencyGraph
     {
         private readonly string _calcConfigName;
@@ -20,6 +24,7 @@ namespace OGDotNet.Mappedtypes.engine.depgraph
 
         public DependencyGraph(string calcConfigName, List<DependencyNode> nodes)
         {
+            ArgumentChecker.NotNull(calcConfigName, "calcConfigName");
             _calcConfigName = calcConfigName;
             _dependencyNodes = nodes;
         }

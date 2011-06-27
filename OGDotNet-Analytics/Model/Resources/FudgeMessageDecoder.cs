@@ -8,8 +8,6 @@
 using System.IO;
 using Apache.NMS;
 using Apache.NMS.ActiveMQ.Commands;
-using Fudge;
-using Fudge.Encodings;
 
 namespace OGDotNet.Model.Resources
 {
@@ -33,8 +31,7 @@ namespace OGDotNet.Model.Resources
             byte[] content = ((IBytesMessage)message).Content;
             using (var memoryStream = new MemoryStream(content))
             {
-                var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(_fudgeContext, memoryStream);
-                return _fudgeContext.GetSerializer().Deserialize(fudgeEncodedStreamReader);
+                return _fudgeContext.DeFudgeSerialize(memoryStream);
             }
         }
     }

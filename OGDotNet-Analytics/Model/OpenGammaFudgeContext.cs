@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="OpenGammaFudgeContext.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -7,13 +7,16 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.IO;
 using Castle.Core;
 using Castle.Core.Logging;
 using Fudge;
+using Fudge.Encodings;
 using Fudge.Serialization;
 using Fudge.Serialization.Reflection;
 using Fudge.Types;
 using OGDotNet.Builders;
+using OGDotNet.Builders.Streaming;
 using OGDotNet.Utils;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
@@ -29,6 +32,7 @@ namespace OGDotNet.Model
         private static readonly Type[] ForcedReferences = new[] { typeof(Apache.NMS.ActiveMQ.ConnectionFactory) };
 
         private readonly MemoizingFudgeSurrogateSelector _fudgeSurrogateSelector;
+        private readonly StreamingFudgeBuilder _streamingBuilder;
 
         public OpenGammaFudgeContext()
         {
@@ -38,6 +42,7 @@ namespace OGDotNet.Model
             _fudgeSurrogateSelector = new MemoizingFudgeSurrogateSelector(this);
 
             _logger.Debug("Forced references to {0} types", ForcedReferences.Length);
+            _streamingBuilder = new StreamingFudgeBuilder(this);
         }
 
         private static void AddSecondaryTypes(FudgeTypeDictionary typeDictionary)
@@ -52,6 +57,29 @@ namespace OGDotNet.Model
             // b. We shouldn't artificially inflate the type indexes
             // see 3c356af3736508f1c2a18146a28af6dca4bf8525
             return new FudgeSerializer(this, new SerializationTypeMap(this, _fudgeSurrogateSelector));
+        }
+
+        public T DeFudgeSerialize<T>(Stream stream)
+        {
+            T t;
+            if (_streamingBuilder.TryDeserialize(stream, out t))
+            {
+                return t;
+            }
+
+            var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(this, stream);
+            return GetSerializer().Deserialize<T>(fudgeEncodedStreamReader);
+        }
+
+        public object DeFudgeSerialize(Stream stream)
+        {
+            var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(this, stream);
+            return GetSerializer().Deserialize(fudgeEncodedStreamReader);
+        }
+
+        public T DeFudgeSerialize<T>(FudgeMsg newMessage)
+        {
+            return GetSerializer().Deserialize<T>(newMessage);
         }
 
         /// <remarks>

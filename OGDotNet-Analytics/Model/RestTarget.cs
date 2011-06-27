@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Fudge;
+using Fudge.Encodings;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.engine.View.calc;
 
@@ -80,8 +81,7 @@ namespace OGDotNet.Model
 
         public TRet Get<TRet>()
         {
-            FudgeMsg retMsg = GetFudge();
-            return retMsg == null ? default(TRet) : Deserialize<TRet>(retMsg);
+            return FudgeDeserializedRequestImpl<TRet>();
         }
 
         public FudgeMsg GetFudge()
@@ -176,7 +176,7 @@ namespace OGDotNet.Model
             return ProjectSubMessage<TRet>(retMsg, subMessageField);
         }
 
-        private FudgeMsg FudgeRequestImpl(string method = "GET", FudgeMsg reqMsg = null)
+        private T FudgeMimeRequestImpl<T>(Func<HttpWebResponse, Stream, T> action, Func<T> noContent, T notFound, string method = "GET", FudgeMsg reqMsg = null)
         {
             try
             {
@@ -187,15 +187,12 @@ namespace OGDotNet.Model
                     switch (response.ContentType)
                     {
                         case FudgeMimeType:
-                            var fudgeMsgEnvelope = _fudgeContext.Deserialize(buff);
-                            if (fudgeMsgEnvelope == null)
-                                return null;
-                            return fudgeMsgEnvelope.Message;
+                            return action(response, buff);
                         case "":
-                            return null;
+                            return notFound;
                         default:
                             throw new Exception("Unexpected content type " + response.ContentType);
-                    }
+                    }                    
                 }
             }
             catch (WebException e)
@@ -206,13 +203,35 @@ namespace OGDotNet.Model
                 switch (httpWebResponse.StatusCode)
                 {
                     case HttpStatusCode.NoContent://204
-                        return new FudgeMsg(_fudgeContext);
+                        return noContent();
                     case HttpStatusCode.NotFound://404
-                        return null;
+                        return notFound;
                     default:
                         throw;
                 }
             }
+        }
+
+        private T FudgeDeserializedRequestImpl<T>(string method = "GET", FudgeMsg reqMsg = null)
+        {
+            return FudgeMimeRequestImpl(
+                (response, stream) => _fudgeContext.DeFudgeSerialize<T>(stream),
+                () => _fudgeContext.DeFudgeSerialize<T>(_fudgeContext.NewMessage()),
+                default(T), method, reqMsg);
+        }
+
+        /// <note>
+        /// NOTE: prefer <see cref="FudgeDeserializedRequestImpl"/> to this
+        /// </note>
+        private FudgeMsg FudgeRequestImpl(string method = "GET", FudgeMsg reqMsg = null)
+        {
+            return FudgeMimeRequestImpl((response, stream) =>
+                    {
+                        var fudgeMsgEnvelope = _fudgeContext.Deserialize(stream);
+                        if (fudgeMsgEnvelope == null)
+                            return null;
+                        return fudgeMsgEnvelope.Message;
+                    }, () => _fudgeContext.NewMessage(), null, method, reqMsg);
         }
 
         public string EncodeBean(object bean)
@@ -267,7 +286,7 @@ namespace OGDotNet.Model
         }
         private TRet Deserialize<TRet>(FudgeMsg retMsg)
         {
-            return _fudgeContext.GetSerializer().Deserialize<TRet>(retMsg);
+            return _fudgeContext.DeFudgeSerialize<TRet>(retMsg);
         }
     }
 }

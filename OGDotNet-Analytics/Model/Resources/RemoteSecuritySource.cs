@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Fudge;
+using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
@@ -38,16 +39,14 @@ namespace OGDotNet.Model.Resources
             ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
 
             Tuple<string, string>[] parameters = UriEncoding.GetParameters(bundle);
-            return _restTarget.Resolve("securities").Resolve("security", parameters).Get<ISecurity>("security");
+            return _restTarget.Resolve("securities").Resolve("security", parameters).Get<SecurityResponse>().Security;
         }
 
         public IEnumerable<ISecurity> GetBondsWithIssuerName(string issuerName)
         {
             ArgumentChecker.NotNull(issuerName, "issuerName");
             var target = _restTarget.Resolve("bonds", Tuple.Create("issuerName", issuerName));
-            var msg = target.GetFudge();
-            var fudgeSerializer = _fudgeContext.GetSerializer();
-            return msg.GetAllByName("security").Select(field => fudgeSerializer.Deserialize<ISecurity>((FudgeMsg) field.Value)).ToList();
+            return target.Get<SecuritiesResponse>().Securities;
         }
 
         public ICollection<ISecurity> GetSecurities(IdentifierBundle bundle)
@@ -55,10 +54,37 @@ namespace OGDotNet.Model.Resources
             ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
 
             var parameters = UriEncoding.GetParameters(bundle);
-            var fudgeMsg = _restTarget.Resolve("securities", parameters).GetFudge();
+            return _restTarget.Resolve("securities", parameters).Get<SecuritiesResponse>().Securities;
+        }
 
-            var fudgeSerializer = _fudgeContext.GetSerializer();
-            return fudgeMsg.GetAllByName("security").Select(f => f.Value).Cast<FudgeMsg>().Select(fudgeSerializer.Deserialize<ISecurity>).ToList();
+        private class SecurityResponse
+        {
+            public ISecurity Security { get; set; }
+        }
+    }
+
+    internal class SecuritiesResponse
+    {
+        private readonly IList<ISecurity> _securities;
+
+        public SecuritiesResponse(IList<ISecurity> securities)
+        {
+            _securities = securities;
+        }
+
+        public IList<ISecurity> Securities
+        {
+            get { return _securities; }
+        }
+
+        public static SecuritiesResponse FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            return new SecuritiesResponse(ffc.GetAllByName("security").Select(deserializer.FromField<ISecurity>).ToList());
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            throw new NotImplementedException();
         }
     }
 }
