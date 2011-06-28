@@ -51,40 +51,42 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Core.marketdatasnapshot
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(defn));
                 try
                 {
-                    var remoteViewClient = Context.ViewProcessor.CreateClient();
-                    var viewComputationResultModels = remoteViewClient.GetResults(defn.Name, ExecutionOptions.RealTime);
-                    int i = 0;
-
-                    foreach (var viewComputationResultModel in viewComputationResultModels)
+                    using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                     {
-                        if (viewComputationResultModel.AllLiveData.Any())
+                        var viewComputationResultModels = remoteViewClient.GetResults(defn.Name, ExecutionOptions.RealTime);
+                        int i = 0;
+
+                        foreach (var viewComputationResultModel in viewComputationResultModels)
                         {
-                            var liveDataCount = viewComputationResultModel.AllLiveData.Count();
-                            if (liveDataCount > 10 && liveDataCount == i)
+                            if (viewComputationResultModel.AllLiveData.Any())
                             {
-                                var volatilityCubeData = (VolatilityCubeData) viewComputationResultModel.AllResults.Single().ComputedValue.Value;
-                                Assert.InRange(volatilityCubeData.DataPoints.Count, 1, int.MaxValue);
-                                Assert.InRange(volatilityCubeData.Strikes.Count, 1, int.MaxValue);
-                                Assert.Empty(volatilityCubeData.OtherData.DataPoints);
-
-                                var actual = volatilityCubeData.DataPoints.Count + volatilityCubeData.Strikes.Count;
-                                Assert.InRange(actual, liveDataCount * 0.9, liveDataCount); //Allow 10% for PLAT-1383
-
-                                var pays = volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike < 0);
-                                var recvs = volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike > 0);
-                                Assert.NotEmpty(pays);
-                                Assert.NotEmpty(volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike == 0));
-                                Assert.NotEmpty(recvs);
-
-                                Assert.InRange(pays.Count(), recvs.Count() / 2.0, recvs.Count() * 2.0); //Disallow completely unbalanced cubes
-                                foreach (var dataPoint in volatilityCubeData.DataPoints.Keys)
+                                var liveDataCount = viewComputationResultModel.AllLiveData.Count();
+                                if (liveDataCount > 10 && liveDataCount == i)
                                 {
-                                    var strike = volatilityCubeData.Strikes[GetStrikeKey(dataPoint)];
-                                    Assert.True(strike > 0.0);
+                                    var volatilityCubeData = (VolatilityCubeData) viewComputationResultModel.AllResults.Single().ComputedValue.Value;
+                                    Assert.InRange(volatilityCubeData.DataPoints.Count, 1, int.MaxValue);
+                                    Assert.InRange(volatilityCubeData.Strikes.Count, 1, int.MaxValue);
+                                    Assert.Empty(volatilityCubeData.OtherData.DataPoints);
+
+                                    var actual = volatilityCubeData.DataPoints.Count + volatilityCubeData.Strikes.Count;
+                                    Assert.InRange(actual, liveDataCount * 0.9, liveDataCount); //Allow 10% for PLAT-1383
+
+                                    var pays = volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike < 0);
+                                    var recvs = volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike > 0);
+                                    Assert.NotEmpty(pays);
+                                    Assert.NotEmpty(volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike == 0));
+                                    Assert.NotEmpty(recvs);
+
+                                    Assert.InRange(pays.Count(), recvs.Count() / 2.0, recvs.Count() * 2.0); //Disallow completely unbalanced cubes
+                                    foreach (var dataPoint in volatilityCubeData.DataPoints.Keys)
+                                    {
+                                        var strike = volatilityCubeData.Strikes[GetStrikeKey(dataPoint)];
+                                        Assert.True(strike > 0.0);
+                                    }
+                                    break;
                                 }
-                                break;
+                                i = liveDataCount;
                             }
-                            i = liveDataCount;
                         }
                     }
                 }
