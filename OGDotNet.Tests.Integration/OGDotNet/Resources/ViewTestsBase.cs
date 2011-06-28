@@ -31,7 +31,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "European Corporate Bond View",
                                                                       "European Corporate Bond View - test",
                                                                       "Multi-Currency Swap Test View",
-                                                                      "Simple Vanilla FX Option Test View"
+                                                                      "Simple Vanilla FX Option Test View",
+                                                                      "Random Matrix"
                                                                   };
 
         private static bool IsSlowTicking(string definitionName)
