@@ -116,6 +116,12 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(value.Value);
         }
 
+        public static void AssertSensibleValue(DoubleLabelledMatrix2D dlm)
+        {
+            Assert.NotNull(dlm);
+            //check is done in type
+        }
+
         public static void AssertSensibleValue(double value)
         {
             //Thsi is valid apparently Assert.False(Double.IsNaN(value));

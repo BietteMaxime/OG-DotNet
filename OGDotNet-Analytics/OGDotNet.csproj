@@ -62,6 +62,7 @@
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
     <Compile Include="Builders\ComputedValueBuilder.cs" />
     <Compile Include="Builders\DependencyNodeBuilder.cs" />
+    <Compile Include="Builders\DoubleLabelledMatrix2DBuilder.cs" />
     <Compile Include="Builders\ExecutionOptionsBuilder.cs" />
     <Compile Include="Builders\IdentifierBundleBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Mappedtypes\engine\View\Execution\ViewExecutionFlags.cs" />
     <Compile Include="Mappedtypes\engine\View\IDeltaComparer.cs" />
     <Compile Include="Mappedtypes\engine\View\NumberDeltaComparer.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\DoubleLabelledMatrix2D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeKey.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityPoint.cs" />
