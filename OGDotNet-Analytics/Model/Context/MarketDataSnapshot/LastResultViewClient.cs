@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.View;
@@ -37,6 +38,8 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private volatile Dictionary<string, IDependencyGraph> _graphs;
 
+        private volatile JavaException _error;
+
         private readonly object _lastResultsLock = new object();
         private Pair<Dictionary<string, IDependencyGraph>,
             Pair<IEngineResourceReference<IViewCycle>, IViewComputationResultModel>>
@@ -55,6 +58,17 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             var eventViewResultListener = new EventViewResultListener();
             eventViewResultListener.CycleCompleted += (sender, e) => Update(e.FullResult);
             eventViewResultListener.ViewDefinitionCompiled += (sender, e) => { _graphs = null; };
+
+            eventViewResultListener.ViewDefinitionCompilationFailed += (sender, e) =>
+                                                                           {
+                                                                               _error = e.Exception;
+                                                                               _haveLastResults.Set();
+                                                                           };
+            eventViewResultListener.CycleExecutionFailed += (sender, e) =>
+            {
+                _error = e.Exception;
+                _haveLastResults.Set();
+            };
             _remoteViewClient.SetResultListener(eventViewResultListener);
             _remoteViewClient.SetViewCycleAccessSupported(true);
             AttachToViewProcess(_remoteViewClient);
@@ -173,7 +187,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         public T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
         {
             _prepared.Wait(ct);
-            _haveLastResults.Wait(ct);
+            WaitForAResult(ct);
             lock (_lastResultsLock)
             {
                 return func(_lastResults.Second.First.Value, _lastResults.First, _lastResults.Second.Second);
@@ -213,6 +227,15 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 {
                     PropertyChanged -= onPropChanged;
                 }
+            }
+        }
+
+        private void WaitForAResult(CancellationToken ct)
+        {
+            _haveLastResults.Wait(ct);
+            if (_error != null)
+            {
+                throw new OpenGammaException("Failed to get results", _error.BuildException());
             }
         }
 

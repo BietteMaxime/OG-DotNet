@@ -19,5 +19,9 @@ namespace OGDotNet.Mappedtypes
         public OpenGammaException(string message) : base(message)
         {
         }
+
+        public OpenGammaException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }
