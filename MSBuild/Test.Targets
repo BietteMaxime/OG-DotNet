@@ -3,16 +3,16 @@
 
  <Import Project="Common.Targets" />
  
- <UsingTask AssemblyFile="..\lib\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
+ <UsingTask AssemblyFile="..\lib\Universal\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   <Target Name="Test" DependsOnTargets="Build">
     <MakeDir Directories="test-reports" />
     <xunit Assembly="$(OutputPath)\$(AssemblyName).dll" Xml="test-reports\$(AssemblyName).xunit.xml" ContinueOnError="true">
       <Output TaskParameter="ExitCode" ItemName="XUnitExitCodes"/>
     </xunit>
 
-    <MSBuild.Community.Tasks.Xslt Inputs="test-reports\$(AssemblyName).xunit.xml" Xsl="..\lib\NUnitXml.xslt" RootTag="" RootAttributes="" Output="test-reports\$(AssemblyName).NUnit.xml" />
+    <MSBuild.Community.Tasks.Xslt Inputs="test-reports\$(AssemblyName).xunit.xml" Xsl="..\lib\Universal\NUnitXml.xslt" RootTag="" RootAttributes="" Output="test-reports\$(AssemblyName).NUnit.xml" />
 	
-	<MSBuild.Community.Tasks.Xslt Inputs="test-reports\$(AssemblyName).xunit.xml" Xsl="..\lib\HTML.xslt" RootTag="" RootAttributes="" Output="test-reports\$(AssemblyName).html" />
+	<MSBuild.Community.Tasks.Xslt Inputs="test-reports\$(AssemblyName).xunit.xml" Xsl="..\lib\Universal\HTML.xslt" RootTag="" RootAttributes="" Output="test-reports\$(AssemblyName).html" />
     
 	<!-- 
 	Proper build system integration doesn't need this

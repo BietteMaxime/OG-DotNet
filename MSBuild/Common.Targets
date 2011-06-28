@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+  </PropertyGroup>
+  
+  
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"
   Condition="exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')"/>
   
@@ -63,7 +68,7 @@
   <!-- Search path -->
   <Target Name="SetSearchPathTarget" >
   
-    <CreateProperty  Value="$(MSBuildProjectDirectory)\..\lib\;$(AssemblySearchPaths)">  
+    <CreateProperty  Value="$(MSBuildProjectDirectory)\..\lib\$(Configuration);$(MSBuildProjectDirectory)\..\lib\Universal;$(AssemblySearchPaths)">  
 		<Output TaskParameter="Value" PropertyName="AssemblySearchPaths" />  
 	</CreateProperty>  
   </Target>
@@ -79,7 +84,7 @@
   </Target>
 
   
-  <Target Name="DeployZip" DependsOnTargets="Build" >
+  <Target Name="DeployZip" DependsOnTargets="Clean;Build" >
 	<ItemGroup>
 		<ZipFiles Include="$(OutputPath)\*.*" />
 	</ItemGroup>
