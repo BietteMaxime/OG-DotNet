@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using Fudge;
+using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Model;
 using OGDotNet.Model.Resources;
@@ -17,7 +18,7 @@ namespace OGDotNet.Builders.Streaming
 {
     internal class SecuritiesResponseStreamingBuilder : StreamingFudgeBuilderBase<SecuritiesResponse>
     {
-        protected override SecuritiesResponse Deserialize(OpenGammaFudgeContext context, IFudgeStreamReader stream)
+        protected override SecuritiesResponse Deserialize(OpenGammaFudgeContext context, IFudgeStreamReader stream, SerializationTypeMap typeMap)
         {
             var securities = new List<ISecurity>();
             while (stream.HasNext)
@@ -33,7 +34,7 @@ namespace OGDotNet.Builders.Streaming
                     case FudgeStreamElement.SubmessageFieldStart:
                         if (stream.FieldName == "security" && stream.FieldOrdinal == null)
                         {
-                            var deserializeStandard = DeserializeStandard<ISecurity>(context, stream);
+                            var deserializeStandard = DeserializeStandard<ISecurity>(context, stream, typeMap);
                             securities.Add(deserializeStandard);
                         }
                         else

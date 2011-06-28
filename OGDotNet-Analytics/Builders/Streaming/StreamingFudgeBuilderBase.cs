@@ -9,6 +9,7 @@
 using System;
 using Fudge;
 using Fudge.Encodings;
+using Fudge.Serialization;
 using OGDotNet.Model;
 
 namespace OGDotNet.Builders.Streaming
@@ -17,23 +18,24 @@ namespace OGDotNet.Builders.Streaming
     {
         public Type Type { get { return typeof(T); } }
 
-        public TReq Deserialize<TReq>(OpenGammaFudgeContext context, IFudgeStreamReader stream)
+        public TReq Deserialize<TReq>(OpenGammaFudgeContext context, IFudgeStreamReader stream, SerializationTypeMap typeMap)
         {
             if (typeof(TReq) != typeof(T))
             {
                 throw new ArgumentException(string.Format("Unexpected type {0}", typeof(TReq)));
             }
-            return (TReq) (object) Deserialize(context, stream);
+            return (TReq)(object)Deserialize(context, stream, typeMap);
         }
 
-        protected abstract T Deserialize(OpenGammaFudgeContext context, IFudgeStreamReader stream);
+        protected abstract T Deserialize(OpenGammaFudgeContext context, IFudgeStreamReader stream, SerializationTypeMap typeMap);
 
-        protected T1 DeserializeStandard<T1>(OpenGammaFudgeContext context, IFudgeStreamReader reader)
+        protected T1 DeserializeStandard<T1>(OpenGammaFudgeContext context, IFudgeStreamReader reader, SerializationTypeMap typeMap)
         {
             //Called just after SubmessageFieldStart for a field containing a T1
             //TODO: should handle T1 being stream serializable
             FudgeMsg dequeueMessage = ReadOneSubmessage(context, reader);
-            return context.GetSerializer().Deserialize<T1>(dequeueMessage);
+            var fudgeSerializer = new FudgeSerializer(context, typeMap);
+            return fudgeSerializer.Deserialize<T1>(dequeueMessage);
         }
 
         private static FudgeMsg ReadOneSubmessage(OpenGammaFudgeContext context, IFudgeStreamReader reader)

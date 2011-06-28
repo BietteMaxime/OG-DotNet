@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Fudge;
+using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Mappedtypes.engine.depgraph;
 using OGDotNet.Mappedtypes.engine.depGraph;
@@ -20,7 +21,7 @@ namespace OGDotNet.Builders.Streaming
     /// </summary>
     internal class DependencyGraphStreamingBuilder : StreamingFudgeBuilderBase<IDependencyGraph>
     {
-        protected override IDependencyGraph Deserialize(OpenGammaFudgeContext context, IFudgeStreamReader stream)
+        protected override IDependencyGraph Deserialize(OpenGammaFudgeContext context, IFudgeStreamReader stream, SerializationTypeMap typeMap)
         {
             string calcConfigName = null;
             var nodes = new List<DependencyNode>();
@@ -74,7 +75,7 @@ namespace OGDotNet.Builders.Streaming
                     case FudgeStreamElement.SubmessageFieldStart:
                         if (stream.FieldName == "dependencyNode" && stream.FieldOrdinal == null)
                         {
-                            var deserializeStandard = DeserializeStandard<DependencyNode>(context, stream);
+                            var deserializeStandard = DeserializeStandard<DependencyNode>(context, stream, typeMap);
                             nodes.Add(deserializeStandard);
                         }
                         else

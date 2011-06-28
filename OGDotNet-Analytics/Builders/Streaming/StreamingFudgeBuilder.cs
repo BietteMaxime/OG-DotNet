@@ -42,7 +42,7 @@ namespace OGDotNet.Builders.Streaming
             IStreamingFudgeBuilder builder;
             if (Builders.TryGetValue(typeof(T), out builder))
             {
-                t = builder.Deserialize<T>(_context, new FudgeEncodedStreamReader(_context, stream));
+                t = builder.Deserialize<T>(_context, new FudgeEncodedStreamReader(_context, stream), _context.GetSerializationTypeMap());
                 return true;
             }
             t = default(T);

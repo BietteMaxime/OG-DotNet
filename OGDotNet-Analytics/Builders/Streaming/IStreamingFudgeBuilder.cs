@@ -8,14 +8,14 @@
 
 using System;
 using Fudge;
-using Fudge.Encodings;
+using Fudge.Serialization;
 using OGDotNet.Model;
 
 namespace OGDotNet.Builders.Streaming
 {
     interface IStreamingFudgeBuilder
     {
-        T Deserialize<T>(OpenGammaFudgeContext context, IFudgeStreamReader stream);
+        T Deserialize<T>(OpenGammaFudgeContext context, IFudgeStreamReader stream, SerializationTypeMap typeMap);
         Type Type { get; }
     }
 }

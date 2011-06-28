@@ -56,7 +56,16 @@ namespace OGDotNet.Model
             // a. It's not thread safe
             // b. We shouldn't artificially inflate the type indexes
             // see 3c356af3736508f1c2a18146a28af6dca4bf8525
-            return new FudgeSerializer(this, new SerializationTypeMap(this, _fudgeSurrogateSelector));
+            return new FudgeSerializer(this, GetSerializationTypeMap());
+        }
+
+        /// <summary>
+        /// In general prefer <see cref="GetSerializer"/>
+        /// </summary>
+        /// <returns></returns>
+        public SerializationTypeMap GetSerializationTypeMap()
+        {
+            return new SerializationTypeMap(this, _fudgeSurrogateSelector);
         }
 
         public T DeFudgeSerialize<T>(Stream stream)
