@@ -21,6 +21,18 @@ namespace OGDotNet.Utils
             _value = value;
         }
 
+        public static ISet<T> Create(HashSet<T> values)
+        {
+            switch (values.Count)
+            {
+                case 0:
+                    throw new ArgumentOutOfRangeException();
+                case 1:
+                    return Create(values.Single());
+                default:
+                    return values;
+            }
+        }
         public static ISet<T> Create(IEnumerable<T> values)
         {
             List<T> list = values.ToList();
@@ -120,6 +132,12 @@ namespace OGDotNet.Utils
 
         public bool SetEquals(IEnumerable<T> other)
         {
+            var smallSet = other as SmallSet<T>;
+            if (smallSet != null)
+            {
+                return smallSet._value.Equals(_value);
+            }
+
             bool done = false;
             foreach (var entry in other)
             {
