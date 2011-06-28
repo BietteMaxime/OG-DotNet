@@ -5,6 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.IO;
 using Apache.NMS;
 using Apache.NMS.ActiveMQ.Commands;
@@ -22,7 +23,14 @@ namespace OGDotNet.Model.Resources
 
         public IMessage FudgeDecodeMessage(ISession session, IMessageConsumer consumer, IMessage message)
         {
-            return new ActiveMQObjectMessage { Body = DecodeObject(message) };
+            try
+            {
+                return new ActiveMQObjectMessage { Body = DecodeObject(message) };
+            }
+            catch (Exception e)
+            {
+                return new ActiveMQObjectMessage() {Body = e};
+            }
         }
 
         private object DecodeObject(IMessage message)

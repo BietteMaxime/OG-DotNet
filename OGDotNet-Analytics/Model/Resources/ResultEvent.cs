@@ -35,6 +35,8 @@ namespace OGDotNet.Model.Resources
 
             var completedCall = _msg as ProcessCompletedCall;
             var terminatedCall = _msg as ProcessTerminatedCall;
+
+            var exception = _msg as Exception;
             
             if (defnCompiled != null)
             {
@@ -59,6 +61,10 @@ namespace OGDotNet.Model.Resources
             else if (terminatedCall != null)
             {
                 resultListener.ProcessTerminated(terminatedCall.ExecutionInterrupted);
+            }
+            else if (exception != null)
+            {
+                resultListener.ViewDefinitionCompilationFailed(DateTimeOffset.Now, new JavaException(exception.GetType().ToString(), exception.Message));
             }
             else
             {
