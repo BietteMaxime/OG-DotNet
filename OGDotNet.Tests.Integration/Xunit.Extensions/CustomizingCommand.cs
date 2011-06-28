@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using Xunit.Sdk;
 
 namespace OGDotNet.Tests.Integration.Xunit.Extensions
@@ -24,7 +25,15 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
              * It also leaves the method executing, which hangs the build.
              */
 
-            return ManualTimeout.ExecuteWithTimeout(() => InnerCommand.Execute(testClass));
+            try
+            {
+                return ManualTimeout.ExecuteWithTimeout(() => InnerCommand.Execute(testClass));
+            }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
         }
     }
 }
