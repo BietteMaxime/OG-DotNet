@@ -187,6 +187,10 @@ namespace OGDotNet.Model
                     switch (response.ContentType)
                     {
                         case FudgeMimeType:
+                            if (response.ContentLength == 0)
+                            {
+                                return notFound;
+                            }
                             return action(response, buff);
                         case "":
                             return notFound;
