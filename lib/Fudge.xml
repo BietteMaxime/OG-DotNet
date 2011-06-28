@@ -2286,6 +2286,12 @@
         <member name="M:Fudge.FudgeMsg.System#Collections#IEnumerable#GetEnumerator">
             <inheritdoc />
         </member>
+        <member name="M:Fudge.FudgeMsg.GetFastFields">
+            <summary>
+            A fast version of <see cref="M:Fudge.FudgeMsg.GetEnumerator"/>, 
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Fudge.FudgeMsg.ToString">
             <summary>
             Returns a string representation of this message.
