@@ -16,3 +16,4 @@ _ReSharper.*
 *.ReSharper
 test-reports
 StyleCop.Cache
+MSBuild/Extra.Targets

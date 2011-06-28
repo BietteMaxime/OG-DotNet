@@ -4,7 +4,9 @@
  <Import Project="Common.Targets" />
  
  <UsingTask AssemblyFile="..\lib\Universal\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
-  <Target Name="Test" DependsOnTargets="Build">
+  <Target Name="Test" DependsOnTargets="Build;RunTests" />
+  
+  <Target Name="RunTests" >
     <MakeDir Directories="test-reports" />
     <xunit Assembly="$(OutputPath)\$(AssemblyName).dll" Xml="test-reports\$(AssemblyName).xunit.xml" ContinueOnError="true">
       <Output TaskParameter="ExitCode" ItemName="XUnitExitCodes"/>
@@ -20,4 +22,5 @@
 	
 	 -->
   </Target>
+  
 </Project>
