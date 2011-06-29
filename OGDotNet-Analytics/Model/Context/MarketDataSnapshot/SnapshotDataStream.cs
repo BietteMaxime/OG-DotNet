@@ -36,6 +36,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private readonly RemoteClient _remoteClient;
 
         private readonly AutoResetEvent _recompileEvent = new AutoResetEvent(true);
+        private readonly ManualResetEvent _viewDefinitionCreated = new ManualResetEvent(true);
         private readonly object _attachLock = new object();
 
         private readonly string _tempviewName;
@@ -52,6 +53,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
             _tempviewName = string.Format("{0}-{1}-{2}", typeof(SnapshotDataStream).Name, _basisViewName, Guid.NewGuid());
             _remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(new ViewDefinition(_tempviewName))); //Make sure we have something to attach to
+            _viewDefinitionCreated.Set();
 
             _liveDataStream.GraphChanged += LiveDataStreamGraphChanged;
             _liveDataStream.BasisViewNameChanged += LiveDataStreamBasisViewNameChanged;
@@ -152,6 +154,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             {
                 return;
             }
+            _viewDefinitionCreated.WaitOne();
             lock (_attachLock)
             {
                 if (remoteViewClient == null)
@@ -214,6 +217,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 _remoteClient.Dispose();
                 _recompileEvent.Dispose();
                 _remoteClient.ViewDefinitionRepository.RemoveViewDefinition(_tempviewName);
+                _viewDefinitionCreated.Dispose();
             }
         }
     }
