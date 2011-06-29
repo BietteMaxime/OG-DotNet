@@ -6,9 +6,17 @@
  <UsingTask AssemblyFile="..\lib\Universal\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   <Target Name="Test" DependsOnTargets="Build;RunTests" />
   
+  
+  <ItemGroup>
+    <TestAssemblies Include="$(OutputPath)\*.Tests*dll" />
+  </ItemGroup>
+  
   <Target Name="RunTests" >
-    <MakeDir Directories="test-reports" />
-    <xunit Assembly="$(OutputPath)\$(AssemblyName).dll" Xml="test-reports\$(AssemblyName).xunit.xml" ContinueOnError="true">
+	<MakeDir Directories="test-reports" />
+	
+	<Message Text="Running tests on @(TestAssemblies)" />
+	<Message Text="$ on $(TestAssemblies)" />
+	<xunit Assemblies="@(TestAssemblies)" Xml="test-reports\$(AssemblyName).xunit.xml" ContinueOnError="true">
       <Output TaskParameter="ExitCode" ItemName="XUnitExitCodes"/>
     </xunit>
 
