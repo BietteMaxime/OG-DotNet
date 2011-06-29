@@ -64,9 +64,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var searchResult = Context.SecurityMaster.Search("*", securityType, PagingRequest.One);
                 switch (securityType)
                 {
-                    case "FX_OPTION":
-                        Assert.Equal(0, searchResult.Paging.TotalItems);
-                        break;
                     default:
                         Assert.NotEqual(0, searchResult.Paging.TotalItems);
                         Assert.Equal(securityType, searchResult.Documents.Single().Security.SecurityType);
