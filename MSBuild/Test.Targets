@@ -7,15 +7,12 @@
   <Target Name="Test" DependsOnTargets="Build;RunTests" />
   
   
-  <ItemGroup>
-    <TestAssemblies Include="$(OutputPath)\*.Tests*dll" />
-  </ItemGroup>
-  
   <Target Name="RunTests" >
+	  <ItemGroup>
+		<TestAssemblies Include="$(OutputPath)\*.Tests*dll" />
+	  </ItemGroup>
 	<MakeDir Directories="test-reports" />
 	
-	<Message Text="Running tests on @(TestAssemblies)" />
-	<Message Text="$ on $(TestAssemblies)" />
 	<xunit Assemblies="@(TestAssemblies)" Xml="test-reports\$(AssemblyName).xunit.xml" ContinueOnError="true">
       <Output TaskParameter="ExitCode" ItemName="XUnitExitCodes"/>
     </xunit>
