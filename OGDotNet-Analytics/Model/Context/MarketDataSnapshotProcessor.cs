@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
@@ -61,6 +62,15 @@ namespace OGDotNet.Model.Context
             _liveDataStream = liveDataStream;
             _temporarySnapshotUid = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, GetShallowCloneSnapshot())).UniqueId;
             _snapshotDataStream = new SnapshotDataStream(_snapshot.BasisViewName, remoteEngineContext, _temporarySnapshotUid.ToLatest(), _liveDataStream);
+            _snapshot.PropertyChanged += SnapshotPropertyChanged;
+        }
+
+        private void SnapshotPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "BasisViewName")
+            {
+                _liveDataStream.BasisViewName = _snapshot.BasisViewName;
+            }
         }
 
         public ManageableMarketDataSnapshot Snapshot
@@ -116,6 +126,7 @@ namespace OGDotNet.Model.Context
         {
             if (disposing)
             {
+                _snapshot.PropertyChanged -= SnapshotPropertyChanged;
                 _liveDataStream.Dispose();
                 _snapshotDataStream.Dispose();
                 _marketDataSnapshotMaster.Remove(_temporarySnapshotUid.ToLatest());

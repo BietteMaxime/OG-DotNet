@@ -5,6 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Threading;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
@@ -14,11 +15,27 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
     public class LiveDataStream : LastResultViewClient
     {
-        private readonly string _basisViewName;
+        public event EventHandler BasisViewNameChanged;
+
+        private string _basisViewName;
 
         public LiveDataStream(string basisViewName, RemoteEngineContext remoteEngineContext) : base(remoteEngineContext)
         {
             _basisViewName = basisViewName;
+        }
+
+        public string BasisViewName
+        {
+            get
+            {
+                return _basisViewName;
+            }
+            set
+            {
+                _basisViewName = value;
+                Reattach(); //TODO should be on another thread
+                InvokeBasisViewNameChanged(EventArgs.Empty);
+            }
         }
 
         public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))
@@ -36,6 +53,12 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         protected override bool ShouldWaitForExtraCycle
         {
             get { return true; }
+        }
+
+        public void InvokeBasisViewNameChanged(EventArgs e)
+        {
+            EventHandler handler = BasisViewNameChanged;
+            if (handler != null) handler(this, e);
         }
     }
 }

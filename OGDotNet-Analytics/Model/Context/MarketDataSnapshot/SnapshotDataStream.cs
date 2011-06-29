@@ -31,12 +31,9 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
     public class SnapshotDataStream : LastResultViewClient
     {
         private readonly string _basisViewName;
-        private readonly RemoteEngineContext _remoteEngineContext;
         private readonly UniqueIdentifier _snapshotId;
         private readonly LiveDataStream _liveDataStream;
         private readonly RemoteClient _remoteClient;
-
-        private readonly ManualResetEventSlim _viewDefinitionCreatedEvent = new ManualResetEventSlim(false);
 
         private readonly AutoResetEvent _recompileEvent = new AutoResetEvent(true);
         private readonly object _attachLock = new object();
@@ -48,23 +45,29 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         public SnapshotDataStream(string basisViewName, RemoteEngineContext remoteEngineContext, UniqueIdentifier snapshotId, LiveDataStream liveDataStream) : base(remoteEngineContext)
         {
             _basisViewName = basisViewName;
-            _remoteEngineContext = remoteEngineContext;
             _snapshotId = snapshotId;
             _liveDataStream = liveDataStream;
 
             _remoteClient = remoteEngineContext.CreateUserClient();
-            _liveDataStream.GraphChanged += LiveDataStreamGraphChanged;
 
             _tempviewName = string.Format("{0}-{1}-{2}", typeof(SnapshotDataStream).Name, _basisViewName, Guid.NewGuid());
             _remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(new ViewDefinition(_tempviewName))); //Make sure we have something to attach to
 
-            _viewDefinitionCreatedEvent.Set();
+            _liveDataStream.GraphChanged += LiveDataStreamGraphChanged;
+            _liveDataStream.BasisViewNameChanged += LiveDataStreamBasisViewNameChanged;
+
             ThreadPool.RegisterWaitForSingleObject(_recompileEvent, Recompile, null, -1, false);
         }
 
         void LiveDataStreamGraphChanged(object sender, EventArgs e)
         {
             _recompileEvent.Set();
+        }
+
+        private void LiveDataStreamBasisViewNameChanged(object sender, EventArgs e)
+        {
+            _tempViewUid = GetNewUid();
+            _error = null;
         }
 
         private void Recompile(object state, bool timedout)
@@ -149,7 +152,6 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             {
                 return;
             }
-            _viewDefinitionCreatedEvent.Wait();
             lock (_attachLock)
             {
                 if (remoteViewClient == null)
@@ -204,6 +206,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             if (disposing)
             {
                 _liveDataStream.GraphChanged -= LiveDataStreamGraphChanged;
+                _liveDataStream.BasisViewNameChanged -= LiveDataStreamBasisViewNameChanged;
             }
             base.Dispose(disposing);
             if (disposing)
@@ -211,7 +214,6 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 _remoteClient.Dispose();
                 _recompileEvent.Dispose();
                 _remoteClient.ViewDefinitionRepository.RemoveViewDefinition(_tempviewName);
-                _viewDefinitionCreatedEvent.Dispose();
             }
         }
     }

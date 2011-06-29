@@ -71,9 +71,15 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             };
             _remoteViewClient.SetResultListener(eventViewResultListener);
             _remoteViewClient.SetViewCycleAccessSupported(true);
+            Reattach();
+        }
+
+        protected void Reattach()
+        {
             try
             {
                 AttachToViewProcess(_remoteViewClient);
+                _error = null;
             }
             catch (Exception e)
             {

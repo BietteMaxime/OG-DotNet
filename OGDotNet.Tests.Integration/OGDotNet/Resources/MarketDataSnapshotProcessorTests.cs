@@ -13,7 +13,6 @@ using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
-using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.financial.view;
@@ -277,6 +276,42 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     manageableMarketDataSnapshot.BasisViewName = ViewDefinitionName;
                     using (var dataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
                     {
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                    }
+                }
+                finally
+                {
+                    if (Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(viewDefinition.Name) != null)
+                    {
+                        remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewDefinition.Name);
+                    }
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetYieldCurveValuesAfterChangingName() //LAP-66
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            var viewDefinition = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(ViewDefinitionName);
+            using (var remoteClient = Context.CreateUserClient())
+            {
+                viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, Guid.NewGuid());
+
+                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
+                try
+                {
+                    ManageableMarketDataSnapshot manageableMarketDataSnapshot;
+                    using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition.Name))
+                    {
+                        manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                    }
+                    remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewDefinition.Name);
+                    using (var dataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
+                    {
+                        manageableMarketDataSnapshot.BasisViewName = ViewDefinitionName;
                         GetAndCheckYieldCurves(dataSnapshotProcessor);
                     }
                 }
