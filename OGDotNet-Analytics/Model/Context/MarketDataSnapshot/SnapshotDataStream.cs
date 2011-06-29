@@ -43,6 +43,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private readonly string _tempviewName;
         private volatile UniqueIdentifier _tempViewUid;
+        private volatile Exception _error;
 
         public SnapshotDataStream(string basisViewName, RemoteEngineContext remoteEngineContext, UniqueIdentifier snapshotId, LiveDataStream liveDataStream) : base(remoteEngineContext)
         {
@@ -69,21 +70,28 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private void Recompile(object state, bool timedout)
         {
             ArgumentChecker.Not(timedout, "timedOut");
-            IgnoreDisposingExceptions(() =>
+            try
             {
-                _tempViewUid = GetNewUid();
-                _liveDataStream.WithLastResults(default(CancellationToken),
-                                                (cycle, graphs, results) =>
-                                                    {
-                                                        if (IsDisposed)
-                                                        {
-                                                            return; // double check here since we might have waited for a long time
-                                                        }
-                                                        _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, GetViewDefinition(graphs, _tempViewUid)));
-                                                    });
+                IgnoreDisposingExceptions(() =>
+                {
+                    _tempViewUid = GetNewUid();
+                    _liveDataStream.WithLastResults(default(CancellationToken),
+                            (cycle, graphs, results) =>
+                                {
+                                    if (IsDisposed)
+                                    {
+                                        return; // double check here since we might have waited for a long time
+                                    }
+                                    _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, GetViewDefinition(graphs, _tempViewUid)));
+                                });
 
-                AttachToViewProcess(RemoteViewClient); //TODO: should happen magically
-            });
+                    AttachToViewProcess(RemoteViewClient); //TODO: should happen magically
+                });
+            }
+            catch (Exception e)
+            {
+                _error = e;
+            }
         }
 
         private void IgnoreDisposingExceptions(Action a)
@@ -168,6 +176,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private bool Matches(IViewComputationResultModel results, DateTimeOffset waitFor, IViewCycle cycle)
         {
+            if (_error != null)
+            {
+                throw new OpenGammaException("Failed to build snapshot view", _error);
+            }
             var viewDefinition = cycle.GetCompiledViewDefinition().ViewDefinition;
             UniqueIdentifier uniqueIdentifier = viewDefinition.UniqueID;
             if (results.ValuationTime < waitFor)

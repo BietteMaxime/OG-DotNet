@@ -38,7 +38,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private volatile Dictionary<string, IDependencyGraph> _graphs;
 
-        private volatile JavaException _error;
+        private volatile Exception _error;
 
         private readonly object _lastResultsLock = new object();
         private Pair<Dictionary<string, IDependencyGraph>,
@@ -61,17 +61,25 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
             eventViewResultListener.ViewDefinitionCompilationFailed += (sender, e) =>
                                                                            {
-                                                                               _error = e.Exception;
+                                                                               _error = e.Exception.BuildException();
                                                                                _haveLastResults.Set();
                                                                            };
             eventViewResultListener.CycleExecutionFailed += (sender, e) =>
             {
-                _error = e.Exception;
+                _error = e.Exception.BuildException();
                 _haveLastResults.Set();
             };
             _remoteViewClient.SetResultListener(eventViewResultListener);
             _remoteViewClient.SetViewCycleAccessSupported(true);
-            AttachToViewProcess(_remoteViewClient);
+            try
+            {
+                AttachToViewProcess(_remoteViewClient);
+            }
+            catch (Exception e)
+            {
+                _error = e;
+                _haveLastResults.Set();
+            }
         }
 
         protected RemoteEngineContext RemoteEngineContext
@@ -235,7 +243,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             _haveLastResults.Wait(ct);
             if (_error != null)
             {
-                throw new OpenGammaException("Failed to get results", _error.BuildException());
+                throw new OpenGammaException("Failed to get results", _error);
             }
         }
 
