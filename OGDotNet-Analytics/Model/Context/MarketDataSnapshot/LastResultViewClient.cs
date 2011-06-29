@@ -78,6 +78,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         {
             try
             {
+                if (_remoteViewClient.IsAttached)
+                {
+                    //TODO race
+                    _remoteViewClient.DetachFromViewProcess();
+                }
                 AttachToViewProcess(_remoteViewClient);
                 _error = null;
             }
