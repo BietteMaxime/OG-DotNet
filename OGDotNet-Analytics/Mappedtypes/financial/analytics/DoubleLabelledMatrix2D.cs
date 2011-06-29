@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Fudge.Serialization;
@@ -15,7 +16,7 @@ using OGDotNet.Utils;
 namespace OGDotNet.Mappedtypes.financial.analytics
 {
     [FudgeSurrogate(typeof(DoubleLabelledMatrix2DBuilder))]
-    public class DoubleLabelledMatrix2D
+    public class DoubleLabelledMatrix2D : IEnumerable<LabelledMatrixEntry>
     {
         private readonly IList<double> _xKeys;
         private readonly IList<double> _yKeys;
@@ -69,6 +70,29 @@ namespace OGDotNet.Mappedtypes.financial.analytics
         public double[][] Values
         {
             get { return _values; }
+        }
+
+        private IEnumerable<LabelledMatrixEntry> GetEntrys()
+        {
+            for (int xIndex = 0; xIndex < XLabels.Count; xIndex++)
+            {
+                var xLabel = XLabels[xIndex];
+                for (int yIndex = 0; yIndex < YLabels.Count; yIndex++)
+                {
+                    var yLabel = YLabels[yIndex];
+                    yield return new LabelledMatrixEntry(Tuple.Create(xLabel, yLabel), Values[yIndex][xIndex]);
+                }
+            }
+        }
+
+        public IEnumerator<LabelledMatrixEntry> GetEnumerator()
+        {
+            return GetEntrys().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -29,16 +30,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private readonly ColumnHeader _column;
         private readonly GridViewColumn _gridViewColumn;
 
-        private static readonly Dictionary<Type, Type> TemplateTypes = new Dictionary<Type, Type>
+        private static readonly IDictionary<Type, Type> TemplateTypes = new ConcurrentDictionary<Type, Type>(new Dictionary<Type, Type>
                                                                            {
                                                                                {typeof(YieldCurve), typeof(YieldCurveCell)},
                                                                                {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)},
                                                                                {typeof(ColumnHeader), typeof(HeaderCell)},
-
-                                                                               //TODO turn these into a predicate
-                                                                               {typeof(DoubleLabelledMatrix1D), typeof(LabelledMatrix1DCell)},
-                                                                               {typeof(LocalDateLabelledMatrix1D), typeof(LabelledMatrix1DCell)},
-                                                                           };
+                                                                               {typeof(IEnumerable<LabelledMatrixEntry>), typeof(LabelledMatrix1DCell)},
+                                                                           });
 
         private static readonly Memoizer<ColumnHeader, Type, DataTemplate> TemplateMemoizer = new Memoizer<ColumnHeader, Type, DataTemplate>(BuildIndexedTemplate);
 
@@ -106,7 +104,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         public static DataTemplate BuildTemplate(object context, Type cellType)
         {
             Type templateType;
-            if (TemplateTypes.TryGetValue(cellType, out templateType))
+            if (TryGetTemplate(cellType, out templateType))
             {
                 var comboFactory = new FrameworkElementFactory(templateType);
                 comboFactory.SetValue(FrameworkElement.DataContextProperty, context);
@@ -122,6 +120,25 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
                 return itemsTemplate;
             }
+        }
+
+        private static bool TryGetTemplate(Type cellType, out Type templateType)
+        {
+            if (TemplateTypes.TryGetValue(cellType, out templateType))
+            {
+                return templateType != null;
+            }
+            foreach (var type in TemplateTypes)
+            {
+                if (type.Key.IsAssignableFrom(cellType))
+                {
+                    TemplateTypes[cellType] = type.Value;
+                    templateType = type.Value;
+                    return true;
+                }
+            }
+            TemplateTypes[cellType] = null;
+            return false;
         }
     }
 }
