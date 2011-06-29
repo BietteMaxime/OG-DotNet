@@ -19,6 +19,7 @@ using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
+using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources

@@ -68,7 +68,6 @@
   <ItemGroup>
     <Compile Include="OGDotNet\Resources\RemoteVolatilityCubeDefinitionSourceTests.cs" />
     <Compile Include="OGDotNet\StaticAnalysisTests.cs" />
-    <Compile Include="OGDotNet\Mappedtypes\EmptyTypesWarner.cs" />
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextFactoryTests.cs" />
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextTests.cs" />
     <Compile Include="OGDotNet\Model\OpenGammaFudgeContextTests.cs" />
@@ -111,7 +110,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ValueAssertions.cs" />
-    <Compile Include="Xunit.Extensions\TypedPropertyDataAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OGDotNet-AnalyticsViewer\OGDotNet.AnalyticsViewer.csproj">

@@ -13,10 +13,11 @@ using System.Reflection;
 using OGDotNet.Mappedtypes.engine.function;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Tests.Integration.Xunit.Extensions;
+using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
+using Xunit.Extensions;
 
-namespace OGDotNet.Tests.Integration.OGDotNet.Mappedtypes
+namespace OGDotNet.Tests.OGDotNet.Mappedtypes
 {
     public class EmptyTypesWarner
     {

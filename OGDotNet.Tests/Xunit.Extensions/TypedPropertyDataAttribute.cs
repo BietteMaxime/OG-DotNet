@@ -13,7 +13,7 @@ using System.Linq;
 using System.Reflection;
 using Xunit.Extensions;
 
-namespace OGDotNet.Tests.Integration.Xunit.Extensions
+namespace OGDotNet.Tests.Xunit.Extensions
 {
     /// <summary>
     /// This is a slightly modified version of <see cref="PropertyDataAttribute"/> which allows better typing.

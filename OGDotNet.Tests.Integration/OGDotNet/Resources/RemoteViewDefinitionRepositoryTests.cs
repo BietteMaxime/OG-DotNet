@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using OGDotNet.Tests.Integration.Xunit.Extensions;
+using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources

@@ -66,10 +66,12 @@
     <Compile Include="OGDotNet\HeartbeatSenderTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Core\Common\CurrencyTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Core\marketdatasnapshot\MarketDataValueTypeTests.cs" />
+    <Compile Include="OGDotNet\Mappedtypes\EmptyTypesWarner.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Id\UniqueIdentifierTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WPFUtils\BindingUtilsTests.cs" />
     <Compile Include="Xunit.Extensions\EnumValuesDataAttribute.cs" />
+    <Compile Include="Xunit.Extensions\TypedPropertyDataAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OGDotNet-AnalyticsViewer\OGDotNet.AnalyticsViewer.csproj">

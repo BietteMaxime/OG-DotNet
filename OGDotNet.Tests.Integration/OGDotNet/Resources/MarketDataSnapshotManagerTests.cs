@@ -21,6 +21,7 @@ using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
+using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources

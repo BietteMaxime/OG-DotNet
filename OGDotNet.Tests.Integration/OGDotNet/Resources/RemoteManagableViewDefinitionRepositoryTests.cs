@@ -20,6 +20,7 @@ using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
+using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
 
