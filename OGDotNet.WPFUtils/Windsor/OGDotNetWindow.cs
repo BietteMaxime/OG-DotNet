@@ -14,7 +14,7 @@ namespace OGDotNet.WPFUtils.Windsor
 {
     public class OGDotNetWindow : Window
     {
-        protected RemoteEngineContext OGContext
+        public RemoteEngineContext OGContext
         {
             get
             {
