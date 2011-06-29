@@ -35,8 +35,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
             {
-                var viewDefinitionName = viewDefinition.Name;
-                GetAndCheckYieldCurves(dataSnapshotProcessor, viewDefinitionName);
+                GetAndCheckYieldCurves(dataSnapshotProcessor);
             }
         }
 
@@ -51,24 +50,21 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    GetAndCheckYieldCurves(dataSnapshotProcessor, ViewDefinitionName);
+                    GetAndCheckYieldCurves(dataSnapshotProcessor);
                 }
             }
         }
 
-        private static void GetAndCheckYieldCurves(MarketDataSnapshotProcessor dataSnapshotProcessor, string viewDefinitionName)
+        private static void GetAndCheckYieldCurves(MarketDataSnapshotProcessor dataSnapshotProcessor)
         {
             var valuedCurves = dataSnapshotProcessor.GetYieldCurves();
 
-            var snappedCurves = dataSnapshotProcessor.Snapshot.YieldCurves;
-            var snappedCurveCount = snappedCurves.Count;
-            var valuedCurveCount = valuedCurves.Count;
-
-            if (snappedCurveCount != valuedCurveCount)
+            var unexpectedCurves = valuedCurves.Keys.Except(dataSnapshotProcessor.Snapshot.YieldCurves.Keys);
+            if (unexpectedCurves.Any())
             {
                 Assert.False(true, string.Format(
-                    "Only found {0} curves, snapshotted {1} for view {2}.  missing curves {3}",
-                    valuedCurveCount, snappedCurveCount, viewDefinitionName, string.Join(",", snappedCurves.Where(s => !valuedCurves.Any(c => c.Key.Equals(s.Key))).Select(s => s.Key))));
+                    "Found {0} curves which weren't in snapshot",
+                    string.Join(",", unexpectedCurves)));
             }
         }
 
@@ -136,7 +132,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves[curveKey];
 
                 ValueSnapshot value = ycSnapshot.Values.Values.First().Value.First().Value;
-                double f = 1.001;
+                const double f = 1.001;
                 value.OverrideValue = value.MarketValue * f;
 
                 var afterCurves = dataSnapshotProcessor.GetYieldCurves();
@@ -234,7 +230,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             return s.Elapsed;
         }
 
-        private Tuple<int, int> GetCount(MarketDataSnapshotProcessor dataSnapshotProcessor)
+        private static Tuple<int, int> GetCount(MarketDataSnapshotProcessor dataSnapshotProcessor)
         {
             int count = dataSnapshotProcessor.Snapshot.GlobalValues.Values.Count;
             int ycCount = dataSnapshotProcessor.Snapshot.YieldCurves.First().Value.Values.Values.Count;
