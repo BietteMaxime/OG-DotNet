@@ -274,6 +274,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         GetAndCheckYieldCurves(dataSnapshotProcessor);
                     }
                     remoteClient.ViewDefinitionRepository.RemoveViewDefinition(viewDefinition.Name);
+                    manageableMarketDataSnapshot.BasisViewName = ViewDefinitionName;
                     using (var dataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
                     {
                         GetAndCheckYieldCurves(dataSnapshotProcessor);

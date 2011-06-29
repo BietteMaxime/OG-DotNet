@@ -24,12 +24,12 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 {
     public class ManageableMarketDataSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableMarketDataSnapshot>, IUniqueIdentifiable
     {
-        private readonly string _basisViewName;
-
         private readonly ManageableUnstructuredMarketDataSnapshot _globalValues;
 
         private readonly Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> _yieldCurves;
         private readonly Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> _volatilityCubes;
+
+        private string _basisViewName;
 
         private UniqueIdentifier _uniqueId;
 
@@ -65,7 +65,15 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         public string BasisViewName
         {
-            get { return _basisViewName; }
+            get
+            {
+                return _basisViewName;
+            }
+            set
+            {
+                _basisViewName = value;
+                InvokePropertyChanged(new PropertyChangedEventArgs("BasisViewName"));
+            }
         }
 
         public ManageableUnstructuredMarketDataSnapshot GlobalValues
