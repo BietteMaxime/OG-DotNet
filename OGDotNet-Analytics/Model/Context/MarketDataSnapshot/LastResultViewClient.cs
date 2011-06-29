@@ -78,6 +78,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         {
             try
             {
+                _haveLastResults.Reset();
+                _graphs = null;
+                Interlocked.Exchange(ref _lastResults, null);
+
                 if (_remoteViewClient.IsAttached)
                 {
                     //TODO race
@@ -136,7 +140,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             {
                 IEngineResourceReference<IViewCycle> resourceReference =
                     _remoteViewClient.CreateCycleReference(results.ViewCycleId);
-                
+
                 if (resourceReference == null)
                 {
                     //The engine has overtaken us.  We'll get another one soon
@@ -158,11 +162,14 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 }
                 else
                 {
-                    ThreadPool.RegisterWaitForSingleObject(_haveLastResults.WaitHandle, delegate
-                                                            {
-                                                                //Give up on the hack LAP-60
-                                                                _haveLastResults.Set();
-                                                            }, null,
+                    ThreadPool.RegisterWaitForSingleObject(_haveLastResults.WaitHandle, delegate(object state, bool timedout)
+                    {
+                        if (timedout)
+                        {
+                            //Give up on the hack LAP-60
+                            _haveLastResults.Set();
+                        }
+                    }, null,
                                                            TimeSpan.FromSeconds(10), true);
                 }
                 if (previous != null)
@@ -198,10 +205,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         public void WithLastResults(CancellationToken ct, Action<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel> action)
         {
             WithLastResults<object>(ct, (c, g, m) =>
-                                            {
-                                                action(c, g, m);
-                                                return null;
-                                            });
+            {
+                action(c, g, m);
+                return null;
+            });
         }
         public T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
         {
@@ -222,13 +229,13 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private void WaitFor(Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, bool> waitFor, CancellationToken ct)
         {
             _prepared.Wait(ct);
-             _haveLastResults.Wait(ct);
+            _haveLastResults.Wait(ct);
             using (var mre = new ManualResetEventSlim())
             {
                 PropertyChangedEventHandler onPropChanged = delegate
-                                                                {
-                                                                    mre.Set();
-                                                                };
+                {
+                    mre.Set();
+                };
                 PropertyChanged += onPropChanged;
                 try
                 {
