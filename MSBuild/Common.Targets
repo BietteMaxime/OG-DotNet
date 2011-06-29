@@ -1,51 +1,48 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-
   <ItemGroup>
     <ExtraTargets Include="Extra.Targets" />
   </ItemGroup>
+  <Import Project="Extra.Targets" Condition="exists('Extra.Targets')" />
 
-   <Import Project="Extra.Targets" Condition="exists('Extra.Targets')" />
-   
 
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
   </PropertyGroup>
-  
-  
+
+
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"
   Condition="exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')"/>
-  
+
   <PropertyGroup>
     <BuildDependsOn>SetSearchPathTarget;DontSetVersionTarget;SetVersionTarget;$(BuildDependsOn);WarnOnNoStyleCop;WarnOnConfiguration</BuildDependsOn>
   </PropertyGroup>
-  
+
   <!-- config warning -->
   <Target Name="WarnOnConfiguration" Condition="'$(Platform)'!='AnyCPU' OR '$(PlatformTarget)'!='AnyCPU'" >
-	<Warning Text="Building $(MSBuildProjectFile) for platform $(Platform) -> $(PlatformTarget). Should be AnyCPU" />
+    <Warning Text="Building $(MSBuildProjectFile) for platform $(Platform) -> $(PlatformTarget). Should be AnyCPU" />
   </Target>
-  
+
   <!-- StyleCop -->
   <PropertyGroup >
     <StyleCopTargetFile>\Microsoft\StyleCop\v4.4\Microsoft.StyleCop.targets</StyleCopTargetFile>
     <SourceAnalysisTreatErrorsAsWarnings>false</SourceAnalysisTreatErrorsAsWarnings>
   </PropertyGroup>
-  
-  
-  <Import Project="$(MSBuildExtensionsPath32)$(StyleCopTargetFile)" Condition="exists('$(MSBuildExtensionsPath32)$(StyleCopTargetFile)')" /> 
-  <Import Project="$(MSBuildExtensionsPath64)$(StyleCopTargetFile)" Condition="exists('$(MSBuildExtensionsPath64)$(StyleCopTargetFile)')" /> 
+
+
+  <Import Project="$(MSBuildExtensionsPath32)$(StyleCopTargetFile)" Condition="exists('$(MSBuildExtensionsPath32)$(StyleCopTargetFile)')" />
+  <Import Project="$(MSBuildExtensionsPath64)$(StyleCopTargetFile)" Condition="exists('$(MSBuildExtensionsPath64)$(StyleCopTargetFile)')" />
 
   <Target Name="WarnOnNoStyleCop" Condition="('$(BuildingInsideVisualStudio)'!='true') and ! exists('$(MSBuildExtensionsPath32)$(StyleCopTargetFile)') and ! exists('$(MSBuildExtensionsPath64)$(StyleCopTargetFile)')" >
-	<Warning Text="Not checking StyleCop rules due to missing Microsoft.StyleCop.targets" />
+    <Warning Text="Not checking StyleCop rules due to missing Microsoft.StyleCop.targets" />
   </Target>
-  
+
   <!-- Set version -->
-  
-  
+
+
   <Target Name="DontSetVersionTarget" Condition=" ('$(BuildingInsideVisualStudio)'!='true') and ( ! exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets') or '$(Revision)' == '' )" >
-	<Warning Text="Not setting version information from command line due to missing MSBuild.Community.Tasks.targets" Condition="! exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')" />
-	<Warning Text="Not setting version information from command line due to no revision being specified" Condition="'$(Revision)' == '' " />
+    <Warning Text="Not setting version information from command line due to missing MSBuild.Community.Tasks.targets" Condition="! exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')" />
+    <Warning Text="Not setting version information from command line due to no revision being specified" Condition="'$(Revision)' == '' " />
   </Target>
   <Target Name="SetVersionTarget" Condition=" ('$(BuildingInsideVisualStudio)'!='true') and exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets') and '$(Revision)' != ''" >
     <PropertyGroup>
@@ -53,13 +50,13 @@
       <VersionFileName>Properties\VersionInfo.cs</VersionFileName>
     </PropertyGroup>
 
-	<Message Text="Setting version information from environment to revision $(Revision)" />
+    <Message Text="Setting version information from environment to revision $(Revision)" />
 
-	<AssemblyInfo CodeLanguage="CS"
-                  OutputFile="$(VersionFileName)"
-                  AssemblyVersion="$(VersionString)"
-                  AssemblyFileVersion="$(VersionString)"
-                  AssemblyInformationalVersion="$(VersionString) $(BuildName)" 
+    <AssemblyInfo CodeLanguage="CS"
+                    OutputFile="$(VersionFileName)"
+                    AssemblyVersion="$(VersionString)"
+                    AssemblyFileVersion="$(VersionString)"
+                    AssemblyInformationalVersion="$(VersionString) $(BuildName)"
                   />
 
     <ItemGroup>
@@ -68,38 +65,39 @@
       </Compile>
     </ItemGroup>
   </Target>
-    
+
   <Target Name="AfterBuild" Condition=" '$(BuildingInsideVisualStudio)'!='true' ">
     <Delete  Files="$(VersionFileName)" />
   </Target>
-  
+
   <!-- Search path -->
   <Target Name="SetSearchPathTarget" >
-  
-    <CreateProperty  Value="$(MSBuildProjectDirectory)\..\lib\$(Configuration);$(MSBuildProjectDirectory)\..\lib\Universal;$(AssemblySearchPaths)">  
-		<Output TaskParameter="Value" PropertyName="AssemblySearchPaths" />  
-	</CreateProperty>  
-  </Target>
-  
-  
-  <!-- Build deploy zips -->
-  <Target Name="DeployZips">
-	 <ItemGroup>
-        <ConfigList Condition=" '@(ConfigList)' == '' and $(Config) != '' " Include="$(Config.Split('+'))" />
-        <ConfigList Condition=" '@(ConfigList)' == '' " Include="Debug;Release" /><!-- if no configurations were specified, default to both standard -->
-    </ItemGroup>
-	<MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=%(ConfigList.Identity)" Targets="DeployZip" />
+
+    <CreateProperty  Value="$(MSBuildProjectDirectory)\..\lib\$(Configuration);$(MSBuildProjectDirectory)\..\lib\Universal;$(AssemblySearchPaths)">
+      <Output TaskParameter="Value" PropertyName="AssemblySearchPaths" />
+    </CreateProperty>
   </Target>
 
-  
+
+  <!-- Build deploy zips -->
+  <Target Name="DeployZips">
+    <ItemGroup>
+      <ConfigList Condition=" '@(ConfigList)' == '' and $(Config) != '' " Include="$(Config.Split('+'))" />
+      <ConfigList Condition=" '@(ConfigList)' == '' " Include="Debug;Release" />
+      <!-- if no configurations were specified, default to both standard -->
+    </ItemGroup>
+    <MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=%(ConfigList.Identity)" Targets="DeployZip" />
+  </Target>
+
+
   <Target Name="DeployZip" DependsOnTargets="Clean;Build" >
-	<ItemGroup>
-		<ZipFiles Include="$(OutputPath)\*.*" />
-	</ItemGroup>
-	<MakeDir Directories="$(MSBuildProjectDirectory)\builds" Condition="!Exists('$(MSBuildProjectDirectory)\builds')" />
-	<Zip Files="@(ZipFiles)"
-       WorkingDirectory="$(OutputPath)" 
-       ZipFileName="$(MSBuildProjectDirectory)\builds\$(AssemblyName)-$(VersionString)-$(Configuration).zip"
-       ZipLevel="9" /> 
+    <ItemGroup>
+      <ZipFiles Include="$(OutputPath)\*.*" />
+    </ItemGroup>
+    <MakeDir Directories="$(MSBuildProjectDirectory)\builds" Condition="!Exists('$(MSBuildProjectDirectory)\builds')" />
+    <Zip Files="@(ZipFiles)"
+         WorkingDirectory="$(OutputPath)"
+         ZipFileName="$(MSBuildProjectDirectory)\builds\$(AssemblyName)-$(VersionString)-$(Configuration).zip"
+         ZipLevel="9" />
   </Target>
 </Project>
