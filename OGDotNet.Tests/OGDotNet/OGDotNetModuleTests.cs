@@ -15,11 +15,11 @@ using OGDotNet.Model;
 using OGDotNet.Model.Context;
 using Xunit;
 
-namespace OGDotNet.Tests.Integration.OGDotNet
+namespace OGDotNet.Tests.OGDotNet
 {
     public class OGDotNetModuleTests
     {
-        [Xunit.Extensions.Fact]
+        [Fact]
         public void CanLoadModuleExplicit()
         {
             var container = new WindsorContainer();
@@ -31,7 +31,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet
             AssertResolvable(container);
         }
 
-        [Xunit.Extensions.Fact]
+        [Fact]
         public void CanLoadModuleImplicit()
         {
             var container = new WindsorContainer();

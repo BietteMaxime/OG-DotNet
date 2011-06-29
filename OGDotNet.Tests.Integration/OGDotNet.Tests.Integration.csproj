@@ -72,7 +72,6 @@
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextTests.cs" />
     <Compile Include="OGDotNet\Model\OpenGammaFudgeContextTests.cs" />
     <Compile Include="OGDotNet\Model\OpenGammaFudgeContextTestsTypes.cs" />
-    <Compile Include="OGDotNet\OGDotNetModuleTests.cs" />
     <Compile Include="OGDotNet\Resources\CurrencyMatrixSourcingFunctionTests.cs" />
     <Compile Include="OGDotNet\Resources\InterpolatedYieldCurveDefinitionMasterTests.cs" />
     <Compile Include="OGDotNet\Resources\InterpolatedYieldCurveSpecificationBuilderTests.cs" />
@@ -95,6 +94,7 @@
     <Compile Include="OGDotNet\Resources\TestViewFactory.cs" />
     <Compile Include="OGDotNet\Resources\TestWithContextBase.cs" />
     <Compile Include="OGDotNet\Core\marketdatasnapshot\VolatilityCubeTest.cs" />
+    <Compile Include="TestsAreIntegrationTests.cs" />
     <Compile Include="Xunit.Extensions\CustomizingCommand.cs" />
     <Compile Include="Xunit.Extensions\ExceptionUtility.cs" />
     <Compile Include="Xunit.Extensions\FactAttribute.cs" />

@@ -38,6 +38,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
+    <Reference Include="Castle.Windsor, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="Fudge, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore">
       <Private>True</Private>
@@ -68,6 +70,7 @@
     <Compile Include="OGDotNet\Mappedtypes\Core\marketdatasnapshot\MarketDataValueTypeTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\EmptyTypesWarner.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Id\UniqueIdentifierTests.cs" />
+    <Compile Include="OGDotNet\OGDotNetModuleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WPFUtils\BindingUtilsTests.cs" />
     <Compile Include="Xunit.Extensions\EnumValuesDataAttribute.cs" />
