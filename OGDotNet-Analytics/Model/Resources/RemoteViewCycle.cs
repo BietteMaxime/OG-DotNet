@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using Fudge;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.View;
@@ -66,8 +67,39 @@ namespace OGDotNet.Model.Resources
 
         public long GetDurationNanos()
         {
+            //TODO duration builder
             var fudgeMsg = _location.Resolve("duration").GetFudge();
-            return fudgeMsg.GetLong("value").Value;
+            long seconds = -1;
+            long nanos = -1;
+            foreach (var field in fudgeMsg)
+            {
+                if (field.Ordinal == 0)
+                {
+                    continue;
+                }
+                switch (field.Name)
+                {
+                    case "seconds":
+                        seconds = GetLong(field);
+                        break;
+                    case "nanos":
+                        nanos = GetLong(field);
+                        break;
+                    default:
+                        throw new ArgumentException();
+                }
+            }
+            if (seconds < 0 || nanos < 0)
+            {
+                throw new ArgumentException();
+            }
+            const long nanosPerSecond = 1000000000;
+            return nanos + seconds * nanosPerSecond;
+        }
+
+        private long GetLong(IFudgeField field)
+        {
+            return ((IConvertible)field.Value).ToInt64(null);
         }
     }
 }
