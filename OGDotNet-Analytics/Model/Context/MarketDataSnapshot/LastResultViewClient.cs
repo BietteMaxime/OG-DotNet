@@ -153,36 +153,15 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                     InvokeGraphChanged();
                 }
 
-                var previous = Interlocked.Exchange(ref _lastResults,
-                                                    Pair.Create(_graphs, Pair.Create(resourceReference, results)));
-                bool ready = (!ShouldWaitForExtraCycle) || previous != null;
-                if (ready)
-                {
-                    _haveLastResults.Set();
-                }
-                else
-                {
-                    ThreadPool.RegisterWaitForSingleObject(_haveLastResults.WaitHandle, delegate(object state, bool timedout)
-                    {
-                        if (timedout)
-                        {
-                            //Give up on the hack LAP-60
-                            _haveLastResults.Set();
-                        }
-                    }, null,
-                                                           TimeSpan.FromSeconds(10), true);
-                }
+                var previous = Interlocked.Exchange(ref _lastResults, Pair.Create(_graphs, Pair.Create(resourceReference, results)));
+
+                _haveLastResults.Set();
                 if (previous != null)
                 {
                     previous.Second.First.Dispose();
                 }
             }
         }
-
-        /// <Reremarks>
-        /// TODO : this is a hack for PLAT-1325
-        /// </Reremarks>
-        protected abstract bool ShouldWaitForExtraCycle { get; }
 
         private void InvokePropertyChanged(PropertyChangedEventArgs e)
         {

@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Threading;
+using OGDotNet.Mappedtypes.engine.marketdata.spec;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Resources;
@@ -47,12 +48,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         protected override void AttachToViewProcess(RemoteViewClient remoteViewClient)
         {
-            remoteViewClient.AttachToViewProcess(_basisViewName, ExecutionOptions.RealTime);
-        }
-
-        protected override bool ShouldWaitForExtraCycle
-        {
-            get { return true; }
+            //Still want to tick on time changed because it may need a recompile
+            //Should probably deal with this ourselves
+            var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, null, new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification()));
+            remoteViewClient.AttachToViewProcess(_basisViewName, options);
         }
 
         public void InvokeBasisViewNameChanged(EventArgs e)

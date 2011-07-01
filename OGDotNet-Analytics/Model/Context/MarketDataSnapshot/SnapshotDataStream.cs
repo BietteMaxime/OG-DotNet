@@ -199,11 +199,6 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             return true;
         }
 
-        protected override bool ShouldWaitForExtraCycle
-        {
-            get { return false; }
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
