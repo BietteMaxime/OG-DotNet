@@ -17,7 +17,7 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
         /// Indicates that a computation cycle should be triggered whenever live data inputs change. For example, this could
         /// be caused by a market data tick or an alteration to a snapshot.
         /// </Summary>
-        TriggerCycleOnLiveDataChanged = 1,
+        TriggerCycleOnMarketDataChanged = 1,
 
         /// <Summary>
         /// Indicates that a computation cycle should be triggered after a certain time period has elapsed since the last
@@ -36,6 +36,10 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
         /// </Summary>
         CompileOnly = 8,
 
-        TriggersEnabled = TriggerCycleOnLiveDataChanged | TriggerCycleOnTimeElapsed
+        /// <summary>
+        ///  Indicates that all market data should be present before a cycle is allowed to run.
+        /// </summary>
+        AwaitMarketData = 16,
+        TriggersEnabled = TriggerCycleOnMarketDataChanged | TriggerCycleOnTimeElapsed
     }
 }

@@ -30,7 +30,7 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
             get { return GetSingleCycle(GetDefaultMarketDataSpec()); }
         }
 
-        private static LiveMarketDataSpecification GetDefaultMarketDataSpec()
+        public static LiveMarketDataSpecification GetDefaultMarketDataSpec()
         {
             return new LiveMarketDataSpecification();
         }

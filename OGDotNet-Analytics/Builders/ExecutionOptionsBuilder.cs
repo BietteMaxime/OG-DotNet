@@ -54,7 +54,8 @@ namespace OGDotNet.Builders
         {
             var names = new Dictionary<ViewExecutionFlags, string>
                        {
-                           {ViewExecutionFlags.TriggerCycleOnLiveDataChanged, "liveDataTriggerEnabled"},
+                           {ViewExecutionFlags.AwaitMarketData, "awaitMarketData"},
+                           {ViewExecutionFlags.TriggerCycleOnMarketDataChanged, "liveDataTriggerEnabled"},
                            {ViewExecutionFlags.TriggerCycleOnTimeElapsed, "timeElapsedTriggerEnabled"},
                            {ViewExecutionFlags.RunAsFastAsPossible, "runAsFastAsPossible"},
                            {ViewExecutionFlags.CompileOnly, "compileOnly"},
