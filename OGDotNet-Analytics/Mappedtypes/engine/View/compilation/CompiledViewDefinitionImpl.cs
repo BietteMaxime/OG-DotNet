@@ -45,7 +45,7 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
             get { return _portfolio; }
         }
 
-        public Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements
+        public Dictionary<ValueRequirement, ValueSpecification> MarketDataRequirements
         {
             get { return _compiledCalculationConfigurations.Values.Select(c => c.MarketDataRequirements).SelectMany(d => d).ToDictionary(k => k.Key, k => k.Value); }
         }

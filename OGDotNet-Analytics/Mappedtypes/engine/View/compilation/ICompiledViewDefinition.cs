@@ -20,7 +20,7 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
 
         IPortfolio Portfolio { get; }
 
-        Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements { get; }
+        Dictionary<ValueRequirement, ValueSpecification> MarketDataRequirements { get; }
 
         DateTimeOffset EarliestValidity { get; }
         DateTimeOffset LatestValidity { get; }

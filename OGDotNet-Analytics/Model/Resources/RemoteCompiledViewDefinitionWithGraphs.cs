@@ -36,9 +36,9 @@ namespace OGDotNet.Model.Resources
             get { return _rest.Resolve("portfolio").Get<IPortfolio>(); }
         }
 
-        public Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements
+        public Dictionary<ValueRequirement, ValueSpecification> MarketDataRequirements
         {
-            get { return _rest.Resolve("liveDataRequirements").Get<Dictionary<ValueRequirement, ValueSpecification>>(); }
+            get { return _rest.Resolve("marketDataRequirements").Get<Dictionary<ValueRequirement, ValueSpecification>>(); }
         }
 
         public DateTimeOffset EarliestValidity

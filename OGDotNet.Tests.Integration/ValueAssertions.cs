@@ -204,8 +204,8 @@ namespace OGDotNet.Tests.Integration
 
         public static void AssertSensibleValue(ICompiledViewDefinition viewDefin)
         {
-            Assert.NotEmpty(viewDefin.LiveDataRequirements);
-            AssertSensibleValue(viewDefin.LiveDataRequirements);
+            Assert.NotEmpty(viewDefin.MarketDataRequirements);
+            AssertSensibleValue(viewDefin.MarketDataRequirements);
 
             AssertSensibleValue(viewDefin.Portfolio);
             Assert.NotNull(viewDefin.ViewDefinition);

@@ -94,8 +94,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Equal(compiled.CompiledViewDefinition.EarliestValidity, compiledViewDefinition.EarliestValidity);
                 Assert.Equal(compiled.CompiledViewDefinition.LatestValidity, compiledViewDefinition.LatestValidity);
 
-                Assert.NotEmpty(compiledViewDefinition.LiveDataRequirements);
-                Assert.Equal(compiled.CompiledViewDefinition.LiveDataRequirements.Count, compiledViewDefinition.LiveDataRequirements.Count);
+                Assert.NotEmpty(compiledViewDefinition.MarketDataRequirements);
+                Assert.Equal(compiled.CompiledViewDefinition.MarketDataRequirements.Count, compiledViewDefinition.MarketDataRequirements.Count);
 
                 Assert.NotNull(compiledViewDefinition.Portfolio);
                 Assert.Equal(compiled.CompiledViewDefinition.Portfolio.UniqueId, compiledViewDefinition.Portfolio.UniqueId);
