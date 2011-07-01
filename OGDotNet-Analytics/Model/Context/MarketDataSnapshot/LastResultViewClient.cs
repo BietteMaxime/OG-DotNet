@@ -18,6 +18,7 @@ using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.listener;
+using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
@@ -57,7 +58,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             _remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient();
             var eventViewResultListener = new EventViewResultListener();
             eventViewResultListener.CycleCompleted += (sender, e) => Update(e.FullResult);
-            eventViewResultListener.ViewDefinitionCompiled += (sender, e) => { _graphs = null; };
+            eventViewResultListener.ViewDefinitionCompiled += (sender, e) =>
+                                                                  {
+                                                                      _graphs = null;
+                                                                  };
 
             eventViewResultListener.ViewDefinitionCompilationFailed += (sender, e) =>
                                                                            {
@@ -80,14 +84,9 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             {
                 _haveLastResults.Reset();
                 _graphs = null;
-                Interlocked.Exchange(ref _lastResults, null);
+                UpdateLastResultsField(null);
 
-                if (_remoteViewClient.IsAttached)
-                {
-                    //TODO race
-                    _remoteViewClient.DetachFromViewProcess();
-                }
-                AttachToViewProcess(_remoteViewClient);
+                ReattachImpl();
                 _error = null;
             }
             catch (Exception e)
@@ -95,6 +94,27 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 _error = e;
                 _haveLastResults.Set();
             }
+        }
+
+        private void ReattachImpl()
+        {
+            if (IsDisposed)
+            {
+                return;
+            }
+            if (_remoteViewClient == null)
+            {
+                return;
+            }
+            if (_remoteViewClient.GetState() == ViewClientState.Terminated)
+            {
+                return;
+            }
+            if (_remoteViewClient.IsAttached)
+            {
+                _remoteViewClient.DetachFromViewProcess();
+            }
+            AttachToViewProcess(_remoteViewClient);
         }
 
         protected RemoteEngineContext RemoteEngineContext
@@ -153,13 +173,19 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                     InvokeGraphChanged();
                 }
 
-                var previous = Interlocked.Exchange(ref _lastResults, Pair.Create(_graphs, Pair.Create(resourceReference, results)));
-
+                var newResults = Pair.Create(_graphs, Pair.Create(resourceReference, results));
+                UpdateLastResultsField(newResults);
                 _haveLastResults.Set();
-                if (previous != null)
-                {
-                    previous.Second.First.Dispose();
-                }
+            }
+        }
+
+        private void UpdateLastResultsField(Pair<Dictionary<string, IDependencyGraph>, Pair<IEngineResourceReference<IViewCycle>, IViewComputationResultModel>> newResults)
+        {
+            var previous = Interlocked.Exchange(ref _lastResults, newResults);
+
+            if (previous != null)
+            {
+                previous.Second.First.Dispose();
             }
         }
 
@@ -177,6 +203,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 if (_remoteViewClient != null)
                 {
                     _remoteViewClient.Dispose();
+                }
+                var lastResults = _lastResults;
+                if (lastResults != null)
+                {
+                    lastResults.Second.First.Dispose();
                 }
             }
         }
@@ -225,7 +256,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                         {
                             return;
                         }
-                        mre.Wait(ct);
+                        mre.Wait(TimeSpan.FromSeconds(15), ct);
                     }
                 }
                 finally

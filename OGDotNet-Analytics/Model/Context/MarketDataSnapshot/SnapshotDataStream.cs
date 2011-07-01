@@ -90,7 +90,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                                     _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, GetViewDefinition(graphs, _tempViewUid)));
                                 });
 
-                    AttachToViewProcess(RemoteViewClient); //TODO: should happen magically
+                    Reattach(); //TODO: should happen magically
                 });
             }
             catch (Exception e)
@@ -187,7 +187,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
             var viewDefinition = cycle.GetCompiledViewDefinition().ViewDefinition;
             UniqueIdentifier uniqueIdentifier = viewDefinition.UniqueID;
-            if (results.ValuationTime < waitFor)
+            if (results.ResultTimestamp < waitFor)
             {
                 return false;
             }
