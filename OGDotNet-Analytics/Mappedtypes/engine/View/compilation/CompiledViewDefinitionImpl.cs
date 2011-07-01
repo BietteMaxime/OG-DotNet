@@ -47,7 +47,7 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
 
         public Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements
         {
-            get { return _compiledCalculationConfigurations.Values.Select(c => c.LiveDataRequirements).SelectMany(d => d).ToDictionary(k => k.Key, k => k.Value); }
+            get { return _compiledCalculationConfigurations.Values.Select(c => c.MarketDataRequirements).SelectMany(d => d).ToDictionary(k => k.Key, k => k.Value); }
         }
 
         public Dictionary<string, ICompiledViewCalculationConfiguration> CompiledCalculationConfigurations

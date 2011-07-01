@@ -11,6 +11,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.engine.marketdata.spec;
 using OGDotNet.Model;
 
 namespace OGDotNet.Mappedtypes.engine.View.Execution
@@ -26,7 +27,7 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
 
         public static ArbitraryViewCycleExecutionSequence Of(IEnumerable<DateTimeOffset> valuationTimes)
         {
-            var executionSequence = valuationTimes.Select(t => new ViewCycleExecutionOptions(t, t));
+            var executionSequence = valuationTimes.Select(t => new ViewCycleExecutionOptions(t, new LiveMarketDataSpecification(string.Empty)));
             return new ArbitraryViewCycleExecutionSequence(executionSequence);
         }
 

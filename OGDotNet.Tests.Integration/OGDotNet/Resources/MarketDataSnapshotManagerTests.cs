@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.engine.marketdata.spec;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
@@ -321,7 +322,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             options = new ExecutionOptions(options.ExecutionSequence,
                                            options.Flags & ~ViewExecutionFlags.TriggerCycleOnTimeElapsed,
                                            options.MaxSuccessiveDeltaCycles,
-                                           options.MarketDataSnapshotIdentifier);
+                                           options.DefaultExecutionOptions);
             return options;
         }
 

@@ -8,18 +8,21 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
+using Fudge.Types;
+using OGDotNet.Mappedtypes.engine.marketdata.spec;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.engine.View.Execution
 {
     public class ViewCycleExecutionOptions
     {
         private readonly DateTimeOffset _valuationTime;
-        private readonly DateTimeOffset _inputDataTime;
+        private readonly MarketDataSpecification _marketDataSpecification;
 
-        public ViewCycleExecutionOptions(DateTimeOffset valuationTime, DateTimeOffset inputDataTime)
+        public ViewCycleExecutionOptions(DateTimeOffset valuationTime, MarketDataSpecification marketDataSpecification)
         {
             _valuationTime = valuationTime;
-            _inputDataTime = inputDataTime;
+            _marketDataSpecification = marketDataSpecification;
         }
 
         public DateTimeOffset ValuationTime
@@ -27,20 +30,28 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
             get { return _valuationTime; }
         }
 
-        public DateTimeOffset InputDataTime
+        public MarketDataSpecification MarketDataSpecification
         {
-            get { return _inputDataTime; }
+            get { return _marketDataSpecification; }
         }
 
         public static ViewCycleExecutionOptions FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new ViewCycleExecutionOptions(ffc.GetValue<DateTimeOffset>("valuation"), ffc.GetValue<DateTimeOffset>("inputData"));
+            IFudgeField mdsField = ffc.GetByName("marketDataSpecification");
+            var marketDataSpecification = mdsField  == null ? null : deserializer.FromField<MarketDataSpecification>(mdsField);
+            return new ViewCycleExecutionOptions(((FudgeDateTime) ffc.GetValue("valuation")).ToDateTimeOffsetWithDefault(), marketDataSpecification);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add("valuation", _valuationTime);
-            a.Add("inputData", _inputDataTime);
+            if (_valuationTime != default(DateTimeOffset))
+            {
+                a.Add("valuation", _valuationTime);
+            }
+            if (_marketDataSpecification != null)
+            {
+                s.WriteInline(a, "marketDataSpecification", _marketDataSpecification);
+            }
         }
     }
 }

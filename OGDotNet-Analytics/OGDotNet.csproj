@@ -66,6 +66,7 @@
     <Compile Include="Builders\ExecutionOptionsBuilder.cs" />
     <Compile Include="Builders\IdentifierBundleBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
+    <Compile Include="Builders\LiveMarketDataSpecificationBuilder.cs" />
     <Compile Include="Builders\PortfolioNodeImplBuilder.cs" />
     <Compile Include="Builders\Streaming\DependencyGraphStreamingBuilder.cs" />
     <Compile Include="Builders\Streaming\IStreamingFudgeBuilder.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityCubeData.cs" />
+    <Compile Include="Mappedtypes\engine\marketdata\spec\UserMarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\engine\View\DeltaDefinition.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\ViewExecutionFlags.cs" />
     <Compile Include="Mappedtypes\engine\View\IDeltaComparer.cs" />
@@ -86,6 +88,8 @@
     <Compile Include="Mappedtypes\financial\Security\equity\EquitySecurity.cs" />
     <Compile Include="Mappedtypes\financial\Security\option\EquityOptionSecurity.cs" />
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />
+    <Compile Include="Mappedtypes\engine\marketdata\spec\LiveMarketDataSpecification.cs" />
+    <Compile Include="Mappedtypes\engine\marketdata\spec\MarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilityCubeSnapshot.cs" />
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LastResultViewClient.cs" />
@@ -155,7 +159,7 @@
     <Compile Include="Mappedtypes\engine\View\Execution\ArbitraryViewCycleExecutionSequence.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\ExecutionOptions.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\IViewCycleExecutionSequence.cs" />
-    <Compile Include="Mappedtypes\engine\View\Execution\RealTimeViewCycleExecutionSequence.cs" />
+    <Compile Include="Mappedtypes\engine\View\Execution\InfiniteViewCycleExecutionSequence.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\ViewCycleExecutionOptions.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\IViewExecutionOptions.cs" />
     <Compile Include="Mappedtypes\engine\View\IViewComputationResultModel.cs" />

@@ -18,14 +18,14 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
     class CompiledViewCalculationConfigurationImpl : ICompiledViewCalculationConfiguration
     {
         private readonly string _name;
-        private readonly Dictionary<ValueRequirement, ValueSpecification> _liveDataRequirements;
+        private readonly Dictionary<ValueRequirement, ValueSpecification> _marketDataRequirements;
         private readonly HashSet<ComputationTarget> _computationTargets;
         private readonly HashSet<ValueSpecification> _terminalOutputSpecifications;
 
-        public CompiledViewCalculationConfigurationImpl(string name, Dictionary<ValueRequirement, ValueSpecification> liveDataRequirements, HashSet<ComputationTarget> computationTargets, HashSet<ValueSpecification> terminalOutputSpecifications)
+        public CompiledViewCalculationConfigurationImpl(string name, Dictionary<ValueRequirement, ValueSpecification> marketDataRequirements, HashSet<ComputationTarget> computationTargets, HashSet<ValueSpecification> terminalOutputSpecifications)
         {
             _name = name;
-            _liveDataRequirements = liveDataRequirements;
+            _marketDataRequirements = marketDataRequirements;
             _computationTargets = computationTargets;
             _terminalOutputSpecifications = terminalOutputSpecifications;
         }
@@ -35,9 +35,9 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
             get { return _name; }
         }
 
-        public Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements
+        public Dictionary<ValueRequirement, ValueSpecification> MarketDataRequirements
         {
-            get { return _liveDataRequirements; }
+            get { return _marketDataRequirements; }
         }
 
         public HashSet<ComputationTarget> ComputationTargets
@@ -52,7 +52,7 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
 
         public static CompiledViewCalculationConfigurationImpl FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new CompiledViewCalculationConfigurationImpl(ffc.GetString("name"), MapBuilder.FromFudgeMsg<ValueRequirement, ValueSpecification>(ffc.GetMessage("liveDataRequirements"), deserializer), new HashSet<ComputationTarget>(ffc.GetMessage("computationTargets").GetAllByOrdinal(1).Select(deserializer.FromField<ComputationTarget>)),
+            return new CompiledViewCalculationConfigurationImpl(ffc.GetString("name"), MapBuilder.FromFudgeMsg<ValueRequirement, ValueSpecification>(ffc.GetMessage("marketDataRequirements"), deserializer), new HashSet<ComputationTarget>(ffc.GetMessage("computationTargets").GetAllByOrdinal(1).Select(deserializer.FromField<ComputationTarget>)),
                 new HashSet<ValueSpecification>(ffc.GetMessage("terminalOutputSpecifications").GetAllByOrdinal(1).Select(deserializer.FromField<ValueSpecification>)));
         }
 

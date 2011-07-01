@@ -42,9 +42,9 @@ namespace OGDotNet.Builders
             {
                 a.Add("maxSuccessiveDeltaCycles", obj.MaxSuccessiveDeltaCycles);
             }
-            if (obj.MarketDataSnapshotIdentifier != null)
+            if (obj.DefaultExecutionOptions != null)
             {
-                a.Add("snapshotId", obj.MarketDataSnapshotIdentifier.ToString());
+                s.WriteInline(a, "defaultExecutionOptions", obj.DefaultExecutionOptions);
             }
         }
 

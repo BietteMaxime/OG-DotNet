@@ -9,6 +9,7 @@
 using System;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.engine.marketdata.spec;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.engine.View.Execution
@@ -20,23 +21,38 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
         {
             get
             {
-                return new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled);
+                return new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled, null, new ViewCycleExecutionOptions(default(DateTimeOffset), GetDefaultMarketDataSpec()));
             }
         }
 
         public static IViewExecutionOptions SingleCycle
         {
-            get { return GetSingleCycle(DateTimeOffset.Now); }
+            get { return GetSingleCycle(GetDefaultMarketDataSpec()); }
         }
 
-        public static IViewExecutionOptions GetSingleCycle(DateTimeOffset valuationTime)
+        private static LiveMarketDataSpecification GetDefaultMarketDataSpec()
         {
-            return Batch(ArbitraryViewCycleExecutionSequence.Of(valuationTime));
+            return new LiveMarketDataSpecification();
+        }
+
+        public static IViewExecutionOptions GetSingleCycle(MarketDataSpecification marketDataSpecification)
+        {
+            return GetSingleCycle(DateTimeOffset.Now, marketDataSpecification);
+        }
+
+        public static IViewExecutionOptions GetSingleCycle(DateTimeOffset valuationTime, MarketDataSpecification marketDataSpecification)
+        {
+            return Batch(ArbitraryViewCycleExecutionSequence.Of(valuationTime), new ViewCycleExecutionOptions(valuationTime, marketDataSpecification));
         }
 
         public static IViewExecutionOptions Batch(IViewCycleExecutionSequence cycleExecutionSequence)
         {
-            return new ExecutionOptions(cycleExecutionSequence, ViewExecutionFlags.RunAsFastAsPossible);
+            return Batch(cycleExecutionSequence, null);
+        }
+
+        public static IViewExecutionOptions Batch(IViewCycleExecutionSequence cycleExecutionSequence, ViewCycleExecutionOptions defaultCycleOptions)
+        {
+            return new ExecutionOptions(cycleExecutionSequence, ViewExecutionFlags.RunAsFastAsPossible, defaultExecutionOptions:defaultCycleOptions);
         }
 
         public static IViewExecutionOptions GetCompileOnly()
@@ -51,20 +67,20 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
 
         public static IViewExecutionOptions Snapshot(UniqueIdentifier snapshotIdentifier)
         {
-            return new ExecutionOptions(new RealTimeViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled, marketDataSnapshotIdentifier:snapshotIdentifier);
+            return new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled, defaultExecutionOptions: new ViewCycleExecutionOptions(DateTimeOffset.Now, new UserMarketDataSpecification(snapshotIdentifier)));
         }
 
         private readonly IViewCycleExecutionSequence _executionSequence;
         private readonly ViewExecutionFlags _flags;
         private readonly int? _maxSuccessiveDeltaCycles;
-        private readonly UniqueIdentifier _marketDataSnapshotIdentifier;
+        private readonly ViewCycleExecutionOptions _defaultExecutionOptions;
 
-        public ExecutionOptions(IViewCycleExecutionSequence executionSequence, ViewExecutionFlags flags, int? maxSuccessiveDeltaCycles = null, UniqueIdentifier marketDataSnapshotIdentifier = null)
+        public ExecutionOptions(IViewCycleExecutionSequence executionSequence, ViewExecutionFlags flags, int? maxSuccessiveDeltaCycles = null, ViewCycleExecutionOptions defaultExecutionOptions = null)
         {
             _executionSequence = executionSequence;
             _flags = flags;
             _maxSuccessiveDeltaCycles = maxSuccessiveDeltaCycles;
-            _marketDataSnapshotIdentifier = marketDataSnapshotIdentifier;
+            _defaultExecutionOptions = defaultExecutionOptions;
         }
 
         public IViewCycleExecutionSequence ExecutionSequence
@@ -77,14 +93,14 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
             get { return _flags; }
         }
 
+        public ViewCycleExecutionOptions DefaultExecutionOptions
+        {
+            get { return _defaultExecutionOptions; }
+        }
+
         public int? MaxSuccessiveDeltaCycles
         {
             get { return _maxSuccessiveDeltaCycles; }
-        }
-
-        public UniqueIdentifier MarketDataSnapshotIdentifier
-        {
-            get { return _marketDataSnapshotIdentifier; }
         }
     }
 }

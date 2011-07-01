@@ -14,6 +14,6 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
         IViewCycleExecutionSequence ExecutionSequence { get; }
         int? MaxSuccessiveDeltaCycles { get; }
         ViewExecutionFlags Flags { get; }
-        UniqueIdentifier MarketDataSnapshotIdentifier { get; }
+        ViewCycleExecutionOptions DefaultExecutionOptions { get; }
     }
 }

@@ -25,13 +25,14 @@ namespace OGDotNet.Builders.ViewResultModel
 
         public override T DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
+            //TODO calculationDuration
             var viewProcIdStr = msg.GetString("viewProcessId");
             UniqueIdentifier viewProcessId = UniqueIdentifier.Parse(viewProcIdStr);
             var viewCycleIdStr = msg.GetString("viewCycleId");
             UniqueIdentifier viewCycleId = UniqueIdentifier.Parse(viewCycleIdStr);
 
-            var inputDataTimestamp = msg.GetValue<DateTimeOffset>("valuationTS");
-            var resultTimestamp = msg.GetValue<DateTimeOffset>("resultTS");
+            var inputDataTimestamp = msg.GetValue<DateTimeOffset>("valuationTime");
+            var resultTimestamp = msg.GetValue<DateTimeOffset>("calculationTime");
             var configurationMap = new Dictionary<string, ViewCalculationResultModel>();
             var keys = new Queue<string>();
             var values = new Queue<ViewCalculationResultModel>();

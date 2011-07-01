@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using OGDotNet.Mappedtypes.engine.marketdata.spec;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using Xunit;
@@ -42,7 +43,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanRunSingleYesterdayCycleBatch()
         {
-            IViewExecutionOptions req = ExecutionOptions.GetSingleCycle(DateTimeOffset.Now - TimeSpan.FromDays(1));
+            IViewExecutionOptions req = ExecutionOptions.GetSingleCycle(DateTimeOffset.Now - TimeSpan.FromDays(1), new LiveMarketDataSpecification());
             var runToCompletion = RunToCompletion(req);
             Assert.Equal(1, runToCompletion.Item1.Count());
             Assert.Equal(1, runToCompletion.Item2.Count());

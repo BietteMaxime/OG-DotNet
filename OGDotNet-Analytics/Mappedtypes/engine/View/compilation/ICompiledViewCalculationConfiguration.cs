@@ -13,7 +13,7 @@ namespace OGDotNet.Mappedtypes.engine.View.compilation
     public interface ICompiledViewCalculationConfiguration
     {
         string Name { get; }
-        Dictionary<ValueRequirement, ValueSpecification> LiveDataRequirements { get; }
+        Dictionary<ValueRequirement, ValueSpecification> MarketDataRequirements { get; }
         HashSet<ComputationTarget> ComputationTargets { get; }
         HashSet<ValueSpecification> TerminalOutputSpecifications { get; }
     }
