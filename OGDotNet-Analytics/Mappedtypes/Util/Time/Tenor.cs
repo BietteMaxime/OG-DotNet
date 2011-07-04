@@ -12,7 +12,7 @@ using Fudge.Serialization;
 
 namespace OGDotNet.Mappedtypes.Util.Time
 {
-    public class Tenor : IEquatable<Tenor>, IComparable<Tenor>
+    public class Tenor : IEquatable<Tenor>, IComparable<Tenor>, IComparable
     {
         public static readonly Tenor Day = new Tenor("P1D");
         public static readonly Tenor TwoYears = new Tenor("P2Y");
@@ -37,6 +37,11 @@ namespace OGDotNet.Mappedtypes.Util.Time
         public int CompareTo(Tenor other)
         {
             return TimeSpan.CompareTo(other.TimeSpan);
+        }
+
+        public int CompareTo(object obj)
+        {
+            return CompareTo((Tenor)obj);
         }
 
         public override string ToString()
