@@ -20,7 +20,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 {
     public class ManageableVolatilityCubeSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableVolatilityCubeSnapshot>
     {
-        private readonly Dictionary<VolatilityPoint, ValueSnapshot> _values;
+        private readonly IDictionary<VolatilityPoint, ValueSnapshot> _values;
         private readonly ManageableUnstructuredMarketDataSnapshot _otherValues;
 
         public ManageableVolatilityCubeSnapshot(ManageableUnstructuredMarketDataSnapshot otherValues)
@@ -29,7 +29,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             _otherValues = otherValues;
         }
 
-        private ManageableVolatilityCubeSnapshot(Dictionary<VolatilityPoint, ValueSnapshot> values, ManageableUnstructuredMarketDataSnapshot otherValues)
+        private ManageableVolatilityCubeSnapshot(IDictionary<VolatilityPoint, ValueSnapshot> values, ManageableUnstructuredMarketDataSnapshot otherValues)
         {
             _values = values;
             _otherValues = otherValues;
@@ -100,6 +100,16 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             {
                 s._values.Add(key, new ValueSnapshot(newMarketValue));
             });
+        }
+
+        public ManageableVolatilityCubeSnapshot Clone()
+        {
+            return new ManageableVolatilityCubeSnapshot(Clone(_values), _otherValues.Clone());
+        }
+
+        public bool HaveOverrides()
+        {
+            return _otherValues.HaveOverrides() || _values.Any(v => v.Value != null && v.Value.OverrideValue != null);
         }
 
         private static IDictionary<T, ValueSnapshot> Clone<T>(IDictionary<T, ValueSnapshot> valueSnapshots)

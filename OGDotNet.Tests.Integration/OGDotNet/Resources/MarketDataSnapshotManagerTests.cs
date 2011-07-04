@@ -8,6 +8,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
@@ -169,6 +170,31 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         }
                     }
                 }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanUpdateFromOtherView()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+            using (var proc = snapshotManager.CreateFromViewDefinition("Simple Swaption Test View"))
+            {
+                Assert.NotEqual(0, proc.Snapshot.VolatilityCubes.Count);
+                Assert.NotEqual(0, proc.Snapshot.YieldCurves.Count);
+                proc.Snapshot.BasisViewName = "Primitives Only";
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                var action = proc.PrepareUpdate();
+                action.Execute(proc.Snapshot);
+
+                Assert.Equal(0, proc.Snapshot.VolatilityCubes.Count);
+                Assert.Equal(0, proc.Snapshot.YieldCurves.Count);
+
+                proc.Snapshot.BasisViewName = "Simple Swaption Test View";
+                action = proc.PrepareUpdate();
+                action.Execute(proc.Snapshot);
+
+                Assert.NotEqual(0, proc.Snapshot.VolatilityCubes.Count);
+                Assert.NotEqual(0, proc.Snapshot.YieldCurves.Count);
             }
         }
 

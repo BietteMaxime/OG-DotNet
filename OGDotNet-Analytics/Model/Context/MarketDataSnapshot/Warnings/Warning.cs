@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot.Warnings
@@ -63,6 +64,19 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot.Warnings
         public static IEnumerable<Warning> Of(YieldCurveKey key, ManageableYieldCurveSnapshot value)
         {
             return value.HaveOverrides() ? new Warning[] { new OverriddenYieldCurveDisappearingWarning(key) } : new Warning[] { };
+        }
+    }
+
+    public class OverriddenVolatilityCubeDisappearingWarning : Warning
+    {
+        private OverriddenVolatilityCubeDisappearingWarning(VolatilityCubeKey key)
+            : base(string.Format("Yield Curve {0} {1} will not be present in the new snapshot, overrides will be lost", key.Currency, key.Name))
+        {
+        }
+
+        public static IEnumerable<Warning> Of(VolatilityCubeKey key, ManageableVolatilityCubeSnapshot value)
+        {
+            return value.HaveOverrides() ? new Warning[] { new OverriddenVolatilityCubeDisappearingWarning(key) } : new Warning[] { };
         }
     }
 }

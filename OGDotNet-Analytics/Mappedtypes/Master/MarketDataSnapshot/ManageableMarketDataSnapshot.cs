@@ -107,16 +107,20 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
             var ycActions = _yieldCurves.ProjectStructure(newSnapshot._yieldCurves,
                 (k, va, vb) => va.PrepareUpdateFrom(vb).Wrap<ManageableMarketDataSnapshot>(s => s._yieldCurves[k]),
-                PrepareRemoveAction,
-                PrepareAddAction
+                PrepareCurveRemoveAction,
+                PrepareCurveAddAction
                 );
 
-            //TODO vol cubes 
+            var cubeActions = _volatilityCubes.ProjectStructure(newSnapshot._volatilityCubes,
+                (k, va, vb) => va.PrepareUpdateFrom(vb).Wrap<ManageableMarketDataSnapshot>(s => s._volatilityCubes[k]),
+                PrepareCubeRemoveAction,
+                PrepareCubeAddAction
+                );
 
-            return globalUpdate.Wrap<ManageableMarketDataSnapshot>(s => s._globalValues).Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(ycActions));
+            return globalUpdate.Wrap<ManageableMarketDataSnapshot>(s => s._globalValues).Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(ycActions)).Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(cubeActions));
         }
 
-        internal static UpdateAction<ManageableMarketDataSnapshot> PrepareRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
+        private static UpdateAction<ManageableMarketDataSnapshot> PrepareCurveRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
         {
             return new UpdateAction<ManageableMarketDataSnapshot>(
                 delegate(ManageableMarketDataSnapshot snap)
@@ -128,7 +132,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                 );
         }
 
-        private static UpdateAction<ManageableMarketDataSnapshot> PrepareAddAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
+        private static UpdateAction<ManageableMarketDataSnapshot> PrepareCurveAddAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
         {
             var manageableYieldCurveSnapshot = value.Clone();
 
@@ -137,6 +141,31 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                {
                    snap._yieldCurves.Add(key, manageableYieldCurveSnapshot.Clone());
                    snap.InvokePropertyChanged(new PropertyChangedEventArgs("YieldCurves"));
+               }
+               );
+        }
+
+        private static UpdateAction<ManageableMarketDataSnapshot> PrepareCubeRemoveAction(VolatilityCubeKey key, ManageableVolatilityCubeSnapshot value)
+        {
+            return new UpdateAction<ManageableMarketDataSnapshot>(
+                delegate(ManageableMarketDataSnapshot snap)
+                {
+                    snap._volatilityCubes.Remove(key);
+                    snap.InvokePropertyChanged(new PropertyChangedEventArgs("VolatilityCubes"));
+                },
+                    OverriddenVolatilityCubeDisappearingWarning.Of(key, value)
+                );
+        }
+
+        private static UpdateAction<ManageableMarketDataSnapshot> PrepareCubeAddAction(VolatilityCubeKey key, ManageableVolatilityCubeSnapshot value)
+        {
+            var valueClone = value.Clone();
+
+            return new UpdateAction<ManageableMarketDataSnapshot>(
+               delegate(ManageableMarketDataSnapshot snap)
+               {
+                   snap._volatilityCubes.Add(key, valueClone.Clone());
+                   snap.InvokePropertyChanged(new PropertyChangedEventArgs("VolatilityCubes"));
                }
                );
         }
