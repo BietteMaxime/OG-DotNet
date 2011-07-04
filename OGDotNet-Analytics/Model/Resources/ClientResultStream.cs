@@ -12,7 +12,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {
-    public class ClientResultStream<T> : DisposableBase
+    public class ClientResultStream : DisposableBase
     {
         private readonly MQTemplate _mqTemplate;
         private readonly FudgeMessageDecoder _fudgeMessageDecoder;

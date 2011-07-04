@@ -34,7 +34,7 @@ namespace OGDotNet.Model.Resources
 
         private readonly object _listenerLock = new object();
         private IViewResultListener _resultListener;
-        private ClientResultStream<object> _listenerResultStream;
+        private ClientResultStream _listenerResultStream;
 
         public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate)
         {
@@ -80,7 +80,7 @@ namespace OGDotNet.Model.Resources
 
         private void RemoveResultListenerInner(bool throwOnNotSet)
         {
-            ClientResultStream<object> listenerResultStream;
+            ClientResultStream listenerResultStream;
             lock (_listenerLock)
             {
                 if (_resultListener == null)
@@ -114,9 +114,9 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("shutdown").Post();
         }
 
-        private ClientResultStream<object> StartResultStream()
+        private ClientResultStream StartResultStream()
         {
-            var clientResultStream = new ClientResultStream<object>(_fudgeContext, _mqTemplate);
+            var clientResultStream = new ClientResultStream(_fudgeContext, _mqTemplate);
             try
             {
                 _rest.Resolve("startJmsResultStream").PostFudge(new FudgeMsg {{"destination", clientResultStream.QueueName}});
