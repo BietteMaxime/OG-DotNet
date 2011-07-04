@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using OGDotNet.Mappedtypes.engine.function;
+using OGDotNet.Mappedtypes.engine.marketdata.spec;
 using OGDotNet.Mappedtypes.engine.View.listener;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Xunit.Extensions;
@@ -40,6 +41,8 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes
             if (mappedType == typeof(ProcessCompletedCall))
                 return;
             if (mappedType == typeof(EmptyFunctionParameters))
+                return;
+            if (mappedType == typeof(MarketDataSpecification))
                 return;
             if (mappedType.IsInterface)
                 return;
