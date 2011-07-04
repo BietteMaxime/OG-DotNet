@@ -39,7 +39,9 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
         {
             IFudgeField mdsField = ffc.GetByName("marketDataSpecification");
             var marketDataSpecification = mdsField  == null ? null : deserializer.FromField<MarketDataSpecification>(mdsField);
-            return new ViewCycleExecutionOptions(((FudgeDateTime) ffc.GetValue("valuation")).ToDateTimeOffsetWithDefault(), marketDataSpecification);
+            var valuationValue = ffc.GetValue("valuation");
+            var valuation = (FudgeDateTime)(valuationValue == IndicatorType.Instance ? null : valuationValue);
+            return new ViewCycleExecutionOptions(valuation.ToDateTimeOffsetWithDefault(), marketDataSpecification);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
