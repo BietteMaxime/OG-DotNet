@@ -53,6 +53,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                Assert.Equal(ViewCycleState.Executed, cycle.GetState());
                var duration = cycle.GetDurationNanos();
                Assert.InRange(duration, 10, long.MaxValue);
+               Assert.InRange(cycle.GetDurationNanos(), 1, long.MaxValue);
            });
         }
 
