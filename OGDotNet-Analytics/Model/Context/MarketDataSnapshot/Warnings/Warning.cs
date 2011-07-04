@@ -70,7 +70,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot.Warnings
     public class OverriddenVolatilityCubeDisappearingWarning : Warning
     {
         private OverriddenVolatilityCubeDisappearingWarning(VolatilityCubeKey key)
-            : base(string.Format("Yield Curve {0} {1} will not be present in the new snapshot, overrides will be lost", key.Currency, key.Name))
+            : base(string.Format("Volatility Cube {0} {1} will not be present in the new snapshot, overrides will be lost", key.Currency, key.Name))
         {
         }
 
