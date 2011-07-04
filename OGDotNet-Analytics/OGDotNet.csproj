@@ -72,6 +72,7 @@
     <Compile Include="Builders\Streaming\IStreamingFudgeBuilder.cs" />
     <Compile Include="Builders\Streaming\SecuritiesResponseStreamingBuilder.cs" />
     <Compile Include="Builders\Streaming\StreamingFudgeBuilderBase.cs" />
+    <Compile Include="Builders\UserMarketDataSpecificationBuilder.cs" />
     <Compile Include="Builders\ValuePropertiesBuilder.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />

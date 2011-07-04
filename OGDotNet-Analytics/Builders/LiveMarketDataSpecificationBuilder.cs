@@ -12,23 +12,6 @@ using OGDotNet.Mappedtypes.engine.marketdata.spec;
 
 namespace OGDotNet.Builders
 {
-    class UserMarketDataSpecificationBuilder : BuilderBase<UserMarketDataSpecification>
-    {
-        public UserMarketDataSpecificationBuilder(FudgeContext context, Type type) : base(context, type)
-        {
-        }
-
-        protected override void SerializeImpl(UserMarketDataSpecification obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
-        {
-            serializer.WriteTypeHeader(msg, obj.GetType());
-            serializer.WriteInline(msg, "userSnapshotId", obj.UserSnapshotID);
-        }
-
-        public override UserMarketDataSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
-        {
-            throw new NotImplementedException();
-        }
-    }
     class LiveMarketDataSpecificationBuilder : BuilderBase<LiveMarketDataSpecification>
     {
         public LiveMarketDataSpecificationBuilder(FudgeContext context, Type type) : base(context, type)
@@ -43,7 +26,7 @@ namespace OGDotNet.Builders
 
         public override LiveMarketDataSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            throw new NotImplementedException();
+            return new LiveMarketDataSpecification(msg.GetString("dataSource"));
         }
     }
 }
