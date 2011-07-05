@@ -80,15 +80,14 @@ namespace OGDotNet.Model
             return GetSerializer().Deserialize<T>(fudgeEncodedStreamReader);
         }
 
-        public object DeFudgeSerialize(Stream stream)
-        {
-            var fudgeEncodedStreamReader = new FudgeEncodedStreamReader(this, stream);
-            return GetSerializer().Deserialize(fudgeEncodedStreamReader);
-        }
-
         public T DeFudgeSerialize<T>(FudgeMsg newMessage)
         {
             return GetSerializer().Deserialize<T>(newMessage);
+        }
+
+        public object DeFudgeSerialize(FudgeMsg newMessage)
+        {
+            return GetSerializer().Deserialize(newMessage);
         }
 
         /// <remarks>

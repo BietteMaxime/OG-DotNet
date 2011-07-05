@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.IO;
+using System.Threading;
 using Apache.NMS;
 using Apache.NMS.ActiveMQ.Commands;
 
@@ -15,6 +16,8 @@ namespace OGDotNet.Model.Resources
     public class FudgeMessageDecoder
     {
         private readonly OpenGammaFudgeContext _fudgeContext;
+
+        private long _lastSequenceNumber = -1;
 
         public FudgeMessageDecoder(OpenGammaFudgeContext fudgeContext)
         {
@@ -29,17 +32,29 @@ namespace OGDotNet.Model.Resources
             }
             catch (Exception e)
             {
-                return new ActiveMQObjectMessage() {Body = e};
+                return new ActiveMQObjectMessage {Body = e};
             }
         }
 
         private object DecodeObject(IMessage message)
         {
-            //TODO check SEQ numbers without making this 20% slower
             byte[] content = ((IBytesMessage)message).Content;
             using (var memoryStream = new MemoryStream(content))
             {
-                return _fudgeContext.DeFudgeSerialize(memoryStream);
+                var fudgeMsgEnvelope = _fudgeContext.Deserialize(memoryStream);
+
+                long? seqNumber = fudgeMsgEnvelope.Message.GetLong("#");
+                if (!seqNumber.HasValue)
+                {
+                    throw new ArgumentException("Couldn't find sequence number");
+                }
+                long expectedSeqNumber = Interlocked.Increment(ref _lastSequenceNumber);
+                if (expectedSeqNumber != seqNumber.Value)
+                {
+                    throw new ArgumentException(string.Format("Unexpected SEQ number {0} expected {1}", seqNumber, expectedSeqNumber));
+                }
+
+                return _fudgeContext.DeFudgeSerialize(fudgeMsgEnvelope.Message);
             }
         }
     }
