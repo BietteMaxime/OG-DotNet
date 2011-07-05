@@ -112,6 +112,18 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             return _otherValues.HaveOverrides() || _values.Any(v => v.Value != null && v.Value.OverrideValue != null);
         }
 
+        public void RemoveAllOverrides()
+        {
+            _otherValues.RemoveAllOverrides();
+            foreach (var valueSnapshot in Values)
+            {
+                if (valueSnapshot.Value != null && valueSnapshot.Value.OverrideValue != null)
+                {
+                    valueSnapshot.Value.OverrideValue = null;
+                }
+            }
+        }
+
         private static IDictionary<T, ValueSnapshot> Clone<T>(IDictionary<T, ValueSnapshot> valueSnapshots)
         {
             return valueSnapshots.ToDictionary(k => k.Key, k => k.Value.Clone());

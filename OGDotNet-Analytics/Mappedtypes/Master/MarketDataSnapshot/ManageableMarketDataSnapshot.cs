@@ -99,6 +99,10 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             {
                 yieldCurveSnapshot.RemoveAllOverrides();
             }
+            foreach (var volatilityCubeSnapshot in VolatilityCubes.Values)
+            {
+                volatilityCubeSnapshot.RemoveAllOverrides();
+            }
         }
 
         public UpdateAction<ManageableMarketDataSnapshot> PrepareUpdateFrom(ManageableMarketDataSnapshot newSnapshot)
