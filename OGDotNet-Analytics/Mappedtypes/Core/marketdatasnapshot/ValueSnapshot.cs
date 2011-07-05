@@ -30,8 +30,11 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
             }
             set
             {
-                InvokePropertyChanged("MarketValue");
-                _marketValue = value;
+                if (value != _marketValue)
+                {
+                    InvokePropertyChanged("MarketValue");
+                    _marketValue = value;
+                }
             }
         }
 
