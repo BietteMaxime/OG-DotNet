@@ -93,6 +93,10 @@ namespace OGDotNet.Model.Context
             {
                 ret.SetPoint(ycp.Key, new ValueSnapshot(ycp.Value));
             }
+            foreach (var strike in volatilityCubeData.Strikes)
+            {
+                ret.SetStrike(strike.Key, new ValueSnapshot(strike.Value));
+            }
             return ret;
         }
 

@@ -5,6 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,6 +14,8 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Util.Time;
+using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Utils;
 
@@ -22,17 +25,20 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
     {
         private readonly IDictionary<VolatilityPoint, ValueSnapshot> _values;
         private readonly ManageableUnstructuredMarketDataSnapshot _otherValues;
-
+        private readonly IDictionary<Pair<Tenor, Tenor>, ValueSnapshot> _strikes;
         public ManageableVolatilityCubeSnapshot(ManageableUnstructuredMarketDataSnapshot otherValues)
         {
+            ArgumentChecker.NotNull(otherValues, "otherValues");
             _values = new Dictionary<VolatilityPoint, ValueSnapshot>();
             _otherValues = otherValues;
+            _strikes = new Dictionary<Pair<Tenor, Tenor>, ValueSnapshot>();
         }
 
-        private ManageableVolatilityCubeSnapshot(IDictionary<VolatilityPoint, ValueSnapshot> values, ManageableUnstructuredMarketDataSnapshot otherValues)
+        private ManageableVolatilityCubeSnapshot(IDictionary<VolatilityPoint, ValueSnapshot> values, ManageableUnstructuredMarketDataSnapshot otherValues, IDictionary<Pair<Tenor, Tenor>, ValueSnapshot> strikes)
         {
             _values = values;
             _otherValues = otherValues;
+            _strikes = strikes;
         }
 
         public Dictionary<VolatilityPoint, ValueSnapshot> Values
@@ -45,10 +51,21 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             get { return _otherValues; }
         }
 
+        public IDictionary<Pair<Tenor, Tenor>, ValueSnapshot> Strikes
+        {
+            get { return _strikes; }
+        }
+
         public void SetPoint(VolatilityPoint point, ValueSnapshot snapshot)
         {
             _values[point] = snapshot;
             InvokePropertyChanged(new PropertyChangedEventArgs("Values"));
+        }
+
+        public void SetStrike(Pair<Tenor, Tenor> key, ValueSnapshot valueSnapshot)
+        {
+            _strikes[key] = valueSnapshot;
+            InvokePropertyChanged(new PropertyChangedEventArgs("Strikes"));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -104,18 +121,27 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         public ManageableVolatilityCubeSnapshot Clone()
         {
-            return new ManageableVolatilityCubeSnapshot(Clone(_values), _otherValues.Clone());
+            return new ManageableVolatilityCubeSnapshot(Clone(_values), _otherValues.Clone(), Clone(_strikes));
         }
 
         public bool HaveOverrides()
         {
-            return _otherValues.HaveOverrides() || _values.Any(v => v.Value != null && v.Value.OverrideValue != null);
+            return _otherValues.HaveOverrides() 
+                || _values.Any(v => v.Value != null && v.Value.OverrideValue != null)
+                || _strikes.Any(v => v.Value != null && v.Value.OverrideValue != null);
         }
 
         public void RemoveAllOverrides()
         {
             _otherValues.RemoveAllOverrides();
             foreach (var valueSnapshot in Values)
+            {
+                if (valueSnapshot.Value != null && valueSnapshot.Value.OverrideValue != null)
+                {
+                    valueSnapshot.Value.OverrideValue = null;
+                }
+            }
+            foreach (var valueSnapshot in _strikes)
             {
                 if (valueSnapshot.Value != null && valueSnapshot.Value.OverrideValue != null)
                 {
@@ -131,8 +157,34 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         public static ManageableVolatilityCubeSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new ManageableVolatilityCubeSnapshot(MapBuilder.FromFudgeMsg<VolatilityPoint, ValueSnapshot>(ffc.GetMessage("values"), deserializer),
-                deserializer.FromField<ManageableUnstructuredMarketDataSnapshot>(ffc.GetByName("otherValues")));
+            var values = MapBuilder.FromFudgeMsg<VolatilityPoint, ValueSnapshot>(ffc.GetMessage("values"), deserializer);
+            var othervalues = deserializer.FromField<ManageableUnstructuredMarketDataSnapshot>(ffc.GetByName("otherValues"));
+            var strikesMessage = ffc.GetMessage("strikes");
+
+            Dictionary<Pair<Tenor, Tenor>, ValueSnapshot> strikes;
+            if (strikesMessage == null) 
+            {
+                strikes = new Dictionary<Pair<Tenor, Tenor>, ValueSnapshot>();
+            }
+            else
+            {
+                strikes = MapBuilder.FromFudgeMsg(strikesMessage, DeserializeKey, deserializer.FromField<ValueSnapshot>);
+            }
+            return new ManageableVolatilityCubeSnapshot(values, othervalues, strikes);
+        }
+
+        private static Pair<Tenor, Tenor> DeserializeKey(IFudgeField fudgeField)
+        {
+            Tenor first = DeserializeTenor(fudgeField, "first");
+            Tenor second = DeserializeTenor(fudgeField, "second");
+            return new Pair<Tenor, Tenor>(first, second);
+        }
+
+        private static Tenor DeserializeTenor(IFudgeField fudgeField, string fieldName)
+        {
+            var fudgeFieldContainer = ((IFudgeFieldContainer) fudgeField.Value).GetMessage(fieldName);
+            var value = (string) fudgeFieldContainer.Single().Value;
+            return new Tenor(value);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
@@ -141,6 +193,8 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             var valuesMessage = MapBuilder.ToFudgeMsg(s, _values);
             a.Add("values", valuesMessage);
             s.WriteInline(a, "otherValues", _otherValues);
+            var strikesMessage = MapBuilder.ToFudgeMsg(s, _strikes);
+            a.Add("strikes", strikesMessage);
         }
     }
 }

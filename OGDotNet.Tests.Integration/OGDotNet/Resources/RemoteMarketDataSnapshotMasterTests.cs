@@ -19,6 +19,7 @@ using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.Db;
 using OGDotNet.Mappedtypes.Util.Time;
+using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
@@ -236,6 +237,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var manageableVolCubeSnapshot = new ManageableVolatilityCubeSnapshot(new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>()));
             manageableVolCubeSnapshot.SetPoint(new VolatilityPoint(Tenor.Day, Tenor.Day, -100), new ValueSnapshot(2));
             manageableVolCubeSnapshot.SetPoint(new VolatilityPoint(Tenor.Day, Tenor.Day, 100), null);
+            manageableVolCubeSnapshot.SetStrike(new Pair<Tenor, Tenor>(Tenor.Day, Tenor.Day), new ValueSnapshot(2) );
+            manageableVolCubeSnapshot.SetStrike(new Pair<Tenor, Tenor>(Tenor.Day, Tenor.TwoYears), null);
+
             return new MarketDataSnapshotDocument(null,
                 new ManageableMarketDataSnapshot("SomeView",
                     manageableUnstructuredMarketDataSnapshot,
@@ -279,6 +283,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.NotNull(a.OtherValues);
             Assert.NotNull(b.OtherValues);
             AssertEqual(a.Values, b.Values, AssertEqual);
+            AssertEqual(a.OtherValues, b.OtherValues);
+            AssertEqual(a.Strikes, b.Strikes, AssertEqual);
         }
 
         private static void AssertEqual(ManageableYieldCurveSnapshot a, ManageableYieldCurveSnapshot b)

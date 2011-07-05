@@ -61,7 +61,9 @@ namespace OGDotNet.Mappedtypes.Util.tuple
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            throw new NotImplementedException();
+            //TODO primitives
+            s.WriteInline(a, "first", First);
+            s.WriteInline(a, "second", Second);
         }
 
         public bool Equals(Pair<TFirst, TSecond> other)
