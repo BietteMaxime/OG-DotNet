@@ -32,13 +32,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private static readonly bool ToScale = Settings.Default.ShowVolatilityCurveToScale;
         static readonly Point3D Center = new Point3D(0.5, 0.5, 0.5);
 
-        const double ZRange = 100.0;
         const double GraphOffset = 0.4;
         const int ProjectedCurveSize = 400;
 
         private readonly DispatcherTimer _timer;
 
         private bool _haveInitedData;
+        double _zRange = 100.0;
 
         public VolatilitySurfaceCell()
         {
@@ -80,6 +80,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             camera.LookDirection = Center - camera.Position;
         }
 
+        public double ZRange
+        {
+            get { return _zRange; }
+            set { _zRange = value; }
+        }
+
         private void InitTableData()
         {
             if (_haveInitedData) return;
@@ -91,7 +97,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             {
                 var textBlockStyle = new Style(typeof(FrameworkElement));
                 var binding = BindingUtils.GetIndexerBinding(x.ToString());
-                binding.Converter = new ValueToColorConverter();
+                binding.Converter = new ValueToColorConverter(_zRange);
                 textBlockStyle.Setters.Add(new Setter(BackgroundProperty, binding));
 
                 detailsList.Columns.Add(new DataGridTextColumn
@@ -186,7 +192,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private CurveControl _xSliceCurveControl;
         private GeometryModel3D BuildXSliceGraphModel()
         {
-            _xSliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = ZRange, StrokeThickness = 5.0, ShowName = false };
+            _xSliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = _zRange, StrokeThickness = 5.0, ShowName = false };
             var brush = new VisualBrush(_xSliceCurveControl);
 
             var material = new DiffuseMaterial(brush);
@@ -229,7 +235,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private CurveControl _ySliceCurveControl;
         private GeometryModel3D BuildYSliceGraphModel()
         {
-            _ySliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = ZRange, StrokeThickness = 5.0, ShowName = false };
+            _ySliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = _zRange, StrokeThickness = 5.0, ShowName = false };
             var brush = new VisualBrush(_ySliceCurveControl);
 
             var material = new DiffuseMaterial(brush);
@@ -283,6 +289,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private class ValueToColorConverter : IValueConverter
         {
+            private readonly double _zRange;
+
+            public ValueToColorConverter(double zRange)
+            {
+                _zRange = zRange;
+            }
+
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 if (!(value is double))
@@ -291,7 +304,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 if (targetType == typeof(Color))
                 {
                     var colorQuotient = (double)value;
-                    return GetColor(colorQuotient / ZRange);
+                    return GetColor(colorQuotient / _zRange);
                 }
 
                 if (targetType == typeof(Brush))
@@ -319,7 +332,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private GeometryModel3D BuildSurfaceModel()
         {
-            const double zScale = 1.0 / ZRange;
+            double zScale = 1.0 / _zRange;
 
             var mesh = new MeshGeometry3D();
 
@@ -337,7 +350,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             for (int i = 0; i < bands; i++)
             {
                 var offset = i / (float)bands;
-                Color color = ValueToColorConverter.GetColor(offset * ZRange);
+                Color color = ValueToColorConverter.GetColor(offset * _zRange);
                 linearGradientBrush.GradientStops.Add(new GradientStop(color - Color.FromArgb(10, 0, 0, 0), offset));
             }
 
@@ -453,7 +466,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
 
             // Texture co-ordinates
-            const double colorScale = 1 / ZRange;
+            double colorScale = 1 / _zRange;
             for (int yi = 0; yi < yKeys.Count; yi++)
             {
                 for (int xi = 0; xi < xKeys.Count; xi++)

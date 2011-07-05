@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Charts="clr-namespace:OGDotNet.AnalyticsViewer.View.Charts" mc:Ignorable="d" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" DataContextChanged="UserControl_DataContextChanged"
-             Width="600" Height="400" 
+             MinHeight="600" MinWidth="400" 
              >
     <Grid Name="mainGrid" IsHitTestVisible="True" Background="Transparent">
         <Grid.ColumnDefinitions>
