@@ -88,7 +88,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         public bool HaveOverrides()
         {
-            return _globalValues.HaveOverrides() || _yieldCurves.Any(yc => yc.Value.HaveOverrides());
+            return _globalValues.HaveOverrides() || _yieldCurves.Any(yc => yc.Value.HaveOverrides()) || _volatilityCubes.Any(vc => vc.Value.HaveOverrides());
         }
 
         public void RemoveAllOverrides()
