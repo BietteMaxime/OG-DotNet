@@ -91,7 +91,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             if (_haveInitedData) return;
             _haveInitedData = true;
 
-            var data = (VolatilitySurfaceData)DataContext;
+            var data = (VolatilitySurfaceData<Tenor, Tenor>)DataContext;
 
             while (detailsList.Columns.Count > 1)
             {
@@ -501,15 +501,15 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             return Math.Log(t.TimeSpan.TotalDays);
         }
 
-        private VolatilitySurfaceData Surface
+        private VolatilitySurfaceData<Tenor, Tenor> Surface
         {
-            get { return (VolatilitySurfaceData)DataContext; }
+            get { return (VolatilitySurfaceData<Tenor, Tenor>)DataContext; }
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             _haveInitedData = false;
-            if (DataContext is VolatilitySurfaceData)
+            if (DataContext is VolatilitySurfaceData<Tenor, Tenor>)
             {
                 BuildModel();
             }

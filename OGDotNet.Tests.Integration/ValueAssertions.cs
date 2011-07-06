@@ -166,15 +166,15 @@ namespace OGDotNet.Tests.Integration
             Assert.NotNull(security.UniqueId);
         }
 
-        public static void AssertSensibleValue(VolatilitySurfaceData value)
+        public static void AssertSensibleValue(VolatilitySurfaceData<Tenor, Tenor> value)
         {
             Assert.NotNull(value);
 
             AssertSensibleValue(value.Xs);
             AssertSensibleValue(value.Ys);
 
-            AssertSensibleValue(value.Xs.Select(value.GetXSlice));
-            AssertSensibleValue(value.Ys.Select(value.GetYSlice));
+            AssertSensibleValue(value.Xs.Select(x => value.GetXSlice(x)));
+            AssertSensibleValue(value.Ys.Select(y => value.GetXSlice(y)));
 
             var allPoints = value.Xs.Join(value.Ys, x => 1, y => 1, (x, y) => new Tuple<Tenor, Tenor>(x, y)).ToList();
             foreach (var xy in allPoints)

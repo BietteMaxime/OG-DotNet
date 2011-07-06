@@ -57,6 +57,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\BloombergFXOptionVolatilitySurfaceInstrumentProviderFXVolQuoteTypeBuilder.cs" />
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetBuilder.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Builders\Streaming\StreamingFudgeBuilderBase.cs" />
     <Compile Include="Builders\UserMarketDataSpecificationBuilder.cs" />
     <Compile Include="Builders\ValuePropertiesBuilder.cs" />
+    <Compile Include="Builders\VolatilitySurfaceDataBuilder.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityCubeData.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeKey.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityPoint.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\sabr\SABRFittedSurfaces.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\BloombergFXOptionVolatilitySurfaceInstrumentProvider.cs" />
     <Compile Include="Mappedtypes\financial\Security\equity\EquitySecurity.cs" />
     <Compile Include="Mappedtypes\financial\Security\option\EquityOptionSecurity.cs" />
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />

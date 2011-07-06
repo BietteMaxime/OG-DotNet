@@ -16,6 +16,7 @@ using OGDotNet.AnalyticsViewer.ViewModel;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
+using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Utils;
 using OGDotNet.WPFUtils;
 
@@ -33,7 +34,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private static readonly IDictionary<Type, Type> TemplateTypes = new ConcurrentDictionary<Type, Type>(new Dictionary<Type, Type>
                                                                            {
                                                                                {typeof(YieldCurve), typeof(YieldCurveCell)},
-                                                                               {typeof(VolatilitySurfaceData), typeof(VolatilitySurfaceCell)},
+                                                                               {typeof(VolatilitySurfaceData<Tenor, Tenor>), typeof(VolatilitySurfaceCell)},
                                                                                {typeof(ColumnHeader), typeof(HeaderCell)},
                                                                                {typeof(IEnumerable<LabelledMatrixEntry>), typeof(LabelledMatrix1DCell)},
                                                                            });

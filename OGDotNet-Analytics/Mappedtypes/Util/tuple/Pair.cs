@@ -6,22 +6,68 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Linq;
+using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 
 namespace OGDotNet.Mappedtypes.Util.tuple
 {
-    public static class Pair
+    public interface IPair<out TFirst, out TSecond>
+    {
+        TFirst First { get; }
+        TSecond Second { get; }    
+    }
+
+    public abstract class Pair
     {
         public static Pair<TFirst, TSecond> Create<TFirst, TSecond>(TFirst first, TSecond second) where TFirst : class where TSecond : class
         {
             return new Pair<TFirst, TSecond>(first, second);
         }
+
+        public static Pair FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            var first = FromField(deserializer, ffc, "first");
+            var second = FromField(deserializer, ffc, "second");
+            return Build(first, second);
+        }
+
+        static readonly MethodInfo GenericBuildMethod = typeof(Pair).GetMethods().Where(m => m.Name == "Build" && m.IsGenericMethodDefinition).Single();
+
+        private static Pair Build(object first, object second)
+        {
+            return (Pair) GenericBuildMethod.MakeGenericMethod(GetType(first.GetType()), GetType(second.GetType())).Invoke(null, new[] {first, second});
+        }
+
+        private static Type GetType(Type real)
+        {
+            return real == typeof(sbyte) ? typeof(long) : real;
+        }
+
+        public static Pair<TFirst, TSecond> Build<TFirst, TSecond>(TFirst first, TSecond second)
+        {
+            return new Pair<TFirst, TSecond>(first, second);
+        }
+
+        private static object FromField(IFudgeDeserializer deserializer, IFudgeFieldContainer ffc, string fieldName)
+        {
+            var field = ffc.GetByName(fieldName);
+            if (field.Type != FudgeMsgFieldType.Instance)
+            {
+                return field.Value;
+            }
+            return deserializer.FromField(field, null);
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            throw new NotImplementedException();
+        }
     }
-    public class Pair<TFirst, TSecond> : IEquatable<Pair<TFirst, TSecond>>
-        where TFirst : class
-        where TSecond : class
+
+    public class Pair<TFirst, TSecond> : Pair, IEquatable<Pair<TFirst, TSecond>>, IPair<TFirst, TSecond>
     {
         private readonly TFirst _first;
         private readonly TSecond _second;
@@ -42,24 +88,31 @@ namespace OGDotNet.Mappedtypes.Util.tuple
             get { return _second; }
         }
 
-        public static Pair<TFirst, TSecond> FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        public static new Pair<TFirst, TSecond> FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var first = FromField<TFirst>(deserializer, ffc, "first");
             var second = FromField<TSecond>(deserializer, ffc, "second");
             return new Pair<TFirst, TSecond>(first, second);
         }
 
-        private static T FromField<T>(IFudgeDeserializer deserializer, IFudgeFieldContainer ffc, string fieldName) where T : class
+        private static T FromField<T>(IFudgeDeserializer deserializer, IFudgeFieldContainer ffc, string fieldName)
         {
             var field = ffc.GetByName(fieldName);
             if (field.Type != FudgeMsgFieldType.Instance)
             {
-                return (T)field.Value;
+                if (typeof(T) == typeof(long))
+                {
+                    return (T) (object) Convert.ToInt64(field.Value);
+                }
+                else
+                {
+                    return (T) field.Value;
+                }
             }
-            return deserializer.FromField<T>(field);
+            return (T) deserializer.FromField(field, typeof(T));
         }
 
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        public new void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             //TODO primitives
             s.WriteInline(a, "first", First);

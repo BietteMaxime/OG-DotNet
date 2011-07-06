@@ -16,7 +16,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class ViewTestsBase : TestWithContextBase
     {
-        private static readonly string InterestingView = null; // Useful for debugging
+        private static readonly string InterestingView = "Simple Vanilla FX Option Test View"; // Useful for debugging
 
         private static readonly HashSet<string> BannedViews = new HashSet<string>
                                                                   {
