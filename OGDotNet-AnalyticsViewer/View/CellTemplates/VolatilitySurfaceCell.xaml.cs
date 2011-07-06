@@ -503,6 +503,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
+            _haveInitedData = false;
             if (DataContext is VolatilitySurfaceData)
             {
                 BuildModel();
