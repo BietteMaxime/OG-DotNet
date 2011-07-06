@@ -21,11 +21,13 @@ using OGDotNet.Mappedtypes.engine.View.cache;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.sabr;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.financial.model.volatility.surface;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.math.curve;
+using OGDotNet.Mappedtypes.math.surface;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Mappedtypes.Util.Timeseries.fast.longint;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
@@ -296,13 +298,25 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(VolatilitySurface surface)
         {
             Assert.NotNull(surface);
-            Assert.NotNull(surface.Sigma);
+            AssertSensibleValue(surface.Sigma);
         }
 
-        public static void AssertSensibleValue(MissingLiveDataSentinel sentinel)
+        public static void AssertSensibleValue(ConstantDoublesSurface surface)
         {
-            Assert.Equal(MissingLiveDataSentinel.Instance, sentinel);
-            Assert.True(ReferenceEquals(MissingLiveDataSentinel.Instance, sentinel));
+            var zValue = surface.GetZValue(23, 23);
+            AssertSensibleValue(zValue);
+        }
+
+        public static void AssertSensibleValue(InterpolatedDoublesSurface surface)
+        {
+            Assert.Throws<NotImplementedException>(() => surface.GetZValue(23, 23));
+            Assert.NotEmpty(surface.XData);
+        }
+
+        public static void AssertSensibleValue(MissingMarketDataSentinel sentinel)
+        {
+            Assert.Equal(MissingMarketDataSentinel.Instance, sentinel);
+            Assert.True(ReferenceEquals(MissingMarketDataSentinel.Instance, sentinel));
         }
 
         public static void AssertSensibleValue(FastArrayLongDoubleTimeSeries series)
@@ -347,6 +361,17 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(data.DataPoints);
             AssertSensibleValue(data.Strikes);
             Assert.Empty(data.OtherData.DataPoints);
+        }
+
+        public static void AssertSensibleValue(SABRFittedSurfaces surfaces)
+        {
+            Assert.NotNull(surfaces);
+            AssertSensibleValue(surfaces.AlphaSurface);
+            AssertSensibleValue(surfaces.BetaSurface);
+            Assert.NotNull(surfaces.Currency);
+            AssertSensibleValue(surfaces.DayCountName);
+            AssertSensibleValue(surfaces.NuSurface);
+            AssertSensibleValue(surfaces.RhoSurface);
         }
     }
 }

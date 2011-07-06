@@ -12,7 +12,7 @@ using Fudge.Serialization;
 
 namespace OGDotNet.Mappedtypes.math.surface
 {
-    public class ConstantDoublesSurface
+    public class ConstantDoublesSurface : IDoublesSurface
     {
         private readonly double _z;
         private readonly string _name;
@@ -31,6 +31,26 @@ namespace OGDotNet.Mappedtypes.math.surface
         public string Name
         {
             get { return _name; }
+        }
+
+        public double[] XData
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        public double[] YData
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        public double[] ZData
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        public double GetZValue(double x, double y)
+        {
+            return Z;
         }
 
         public static ConstantDoublesSurface FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)

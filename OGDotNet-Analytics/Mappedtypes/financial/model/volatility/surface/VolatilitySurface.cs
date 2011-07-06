@@ -12,17 +12,14 @@ namespace OGDotNet.Mappedtypes.financial.model.volatility.surface
 {
     public class VolatilitySurface
     {
-        /// <summary>
-        /// TODO this could be any sort of surface
-        /// </summary>
-        private readonly ConstantDoublesSurface _sigma;
+        private readonly IDoublesSurface _sigma;
 
-        public VolatilitySurface(ConstantDoublesSurface sigma)
+        public VolatilitySurface(IDoublesSurface sigma)
         {
             _sigma = sigma;
         }
 
-        public ConstantDoublesSurface Sigma
+        public IDoublesSurface Sigma
         {
             get { return _sigma; }
         }

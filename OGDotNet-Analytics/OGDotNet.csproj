@@ -86,6 +86,7 @@
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeKey.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityPoint.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\Volatility\sabr\SABRFittedSurfaces.cs" />
     <Compile Include="Mappedtypes\financial\Security\equity\EquitySecurity.cs" />
     <Compile Include="Mappedtypes\financial\Security\option\EquityOptionSecurity.cs" />
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />
@@ -93,6 +94,8 @@
     <Compile Include="Mappedtypes\engine\marketdata\spec\MarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilityCubeSnapshot.cs" />
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
+    <Compile Include="Mappedtypes\math\surface\IDoublesSurface.cs" />
+    <Compile Include="Mappedtypes\math\surface\InterpolatedDoublesSurface.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LastResultViewClient.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LiveDataStream.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStream.cs" />
@@ -100,7 +103,7 @@
     <Compile Include="Model\Resources\RemoteVolatilityCubeDefinitionSource.cs" />
     <Compile Include="Builders\Streaming\StreamingFudgeBuilder.cs" />
     <Compile Include="Utils\SmallSet.cs" />
-    <Compile Include="Mappedtypes\engine\View\cache\MissingLiveDataSentinel.cs" />
+    <Compile Include="Mappedtypes\engine\View\cache\MissingMarketDataSentinel.cs" />
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
     <Compile Include="Builders\EnumBuilder.cs" />
     <Compile Include="Builders\EnumUtils.cs" />
