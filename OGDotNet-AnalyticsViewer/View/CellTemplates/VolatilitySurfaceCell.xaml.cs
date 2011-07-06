@@ -93,6 +93,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
             var data = (VolatilitySurfaceData)DataContext;
 
+            while (detailsList.Columns.Count > 1)
+            {
+                detailsList.Columns.RemoveAt(1);
+            }
+
             foreach (var x in data.Xs)
             {
                 var textBlockStyle = new Style(typeof(FrameworkElement));
