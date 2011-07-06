@@ -504,7 +504,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (DataContext is VolatilitySurfaceData)
+            {
                 BuildModel();
+            }
+            else
+            {
+                mainViewport.Children.Clear();
+            }
         }
 
         private void mainViewport_MouseMove(object sender, MouseEventArgs e)
