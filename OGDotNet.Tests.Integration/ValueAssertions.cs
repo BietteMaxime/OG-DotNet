@@ -47,7 +47,7 @@ namespace OGDotNet.Tests.Integration
             var matchingMethods = CandidateMethods.Where(m =>
                     m.GetParameters()[0].ParameterType.IsAssignableFrom(t)
                     ||
-                    (m.GetParameters()[0].ParameterType.IsGenericType && t.IsGenericType && m.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == t.GetGenericTypeDefinition()))
+                    (m.IsGenericMethodDefinition && m.GetParameters()[0].ParameterType.IsGenericType && t.IsGenericType && m.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == t.GetGenericTypeDefinition()))
                 .OrderByDescending(m => Preference(m.GetParameters()[0].ParameterType))
                 .ToList();
 
@@ -92,7 +92,7 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(tuple.Key);
             AssertSensibleValue(tuple.Value);
         }
-        public static void AssertSensibleValue<TKey, TValue>(Pair<TKey, TValue> tuple) where TKey : class where TValue : class
+        public static void AssertSensibleValue<TKey, TValue>(Pair<TKey, TValue> tuple)
         {
             AssertSensibleValue(tuple.First);
             AssertSensibleValue(tuple.Second);
@@ -122,6 +122,12 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(dlm);
             //check is done in type
+        }
+
+        public static void AssertSensibleValue(long value)
+        {
+            Assert.NotEqual(long.MaxValue, value);
+            Assert.NotEqual(long.MinValue, value);
         }
 
         public static void AssertSensibleValue(double value)
@@ -168,15 +174,19 @@ namespace OGDotNet.Tests.Integration
 
         public static void AssertSensibleValue(VolatilitySurfaceData<Tenor, Tenor> value)
         {
+            AssertSensibleValue<Tenor, Tenor>(value);
+            AssertSensibleValue(value.Xs.Select(x => value.GetXSlice(x)));
+            AssertSensibleValue(value.Ys.Select(y => value.GetXSlice(y)));
+        }
+
+        public static void AssertSensibleValue<TX, TY>(VolatilitySurfaceData<TX, TY> value)
+        {
             Assert.NotNull(value);
 
             AssertSensibleValue(value.Xs);
             AssertSensibleValue(value.Ys);
 
-            AssertSensibleValue(value.Xs.Select(x => value.GetXSlice(x)));
-            AssertSensibleValue(value.Ys.Select(y => value.GetXSlice(y)));
-
-            var allPoints = value.Xs.Join(value.Ys, x => 1, y => 1, (x, y) => new Tuple<Tenor, Tenor>(x, y)).ToList();
+            var allPoints = value.Xs.Join(value.Ys, x => 1, y => 1, (x, y) => new Tuple<TX, TY>(x, y)).ToList();
             foreach (var xy in allPoints)
             {
                 var x = xy.Item1;
@@ -184,6 +194,12 @@ namespace OGDotNet.Tests.Integration
                 var d = value[x, y];
                 AssertSensibleValue(d);
             }
+        }
+
+        public static void AssertSensibleValue(BloombergFXOptionVolatilitySurfaceInstrumentProvider.FXVolQuoteType type)
+        {
+            Assert.NotNull(type);
+            Assert.NotEmpty(type.Name);
         }
 
         public static void AssertSensibleValue(Tenor value)

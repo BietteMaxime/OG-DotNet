@@ -8,6 +8,7 @@
 using System;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
 {
@@ -20,6 +21,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
 
             public FXVolQuoteType(string name)
             {
+                ArgumentChecker.NotNull(name, "name");
                 _name = name;
             }
 
