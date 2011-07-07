@@ -141,5 +141,10 @@ namespace OGDotNet.Mappedtypes.Util.tuple
                 return ((_first != null ? _first.GetHashCode() : 0) * 397) ^ (_second != null ? _second.GetHashCode() : 0);
             }
         }
+
+        public override string ToString()
+        {
+            return new Tuple<TFirst, TSecond>(First, Second).ToString();
+        }
     }
 }

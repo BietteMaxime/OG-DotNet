@@ -49,6 +49,11 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
             {
                 return _name.GetHashCode();
             }
+
+            public override string ToString()
+            {
+                return Name;
+            }
         }
     }
 }
