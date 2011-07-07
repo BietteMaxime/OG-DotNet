@@ -68,7 +68,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
         }
     }
 
-    public class Pair<TFirst, TSecond> : Pair, IEquatable<Pair<TFirst, TSecond>>, IPair<TFirst, TSecond>
+    public class Pair<TFirst, TSecond> : Pair, IEquatable<Pair<TFirst, TSecond>>, IPair<TFirst, TSecond>, IComparable, IComparable<Pair<TFirst, TSecond>>
     {
         private readonly TFirst _first;
         private readonly TSecond _second;
@@ -143,9 +143,24 @@ namespace OGDotNet.Mappedtypes.Util.tuple
             }
         }
 
+        public int CompareTo(object obj)
+        {
+            return CompareTo((Pair<TFirst, TSecond>)obj);
+        }
+
+        public int CompareTo(Pair<TFirst, TSecond> other)
+        {
+            return ((IComparable)AsTuple()).CompareTo(((IComparable) other.AsTuple()));
+        }
+
         public override string ToString()
         {
-            return new Tuple<TFirst, TSecond>(First, Second).ToString();
+            return AsTuple().ToString();
+        }
+
+        private Tuple<TFirst, TSecond> AsTuple()
+        {
+            return new Tuple<TFirst, TSecond>(First, Second);
         }
     }
 }

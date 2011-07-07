@@ -31,7 +31,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             if (DataContext is VolatilitySurfaceData)
             {
                 var volatilitySurfaceData = (VolatilitySurfaceData) DataContext;
-                IEnumerable<LabelledMatrixEntry> innerValue = GetInner(volatilitySurfaceData).ToList();
+                IEnumerable<LabelledMatrixEntry2D> innerValue = GetInner(volatilitySurfaceData).ToList();
                 matrixCell.DataContext = innerValue;
             }
             else
@@ -40,18 +40,18 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
         }
 
-        private static IEnumerable<LabelledMatrixEntry> GetInner(VolatilitySurfaceData volatilitySurfaceData)
+        private static IEnumerable<LabelledMatrixEntry2D> GetInner(VolatilitySurfaceData volatilitySurfaceData)
         {
-            return GenericUtils.Call<IEnumerable<LabelledMatrixEntry>>(typeof(GenericVolatilitySurfaceCell), "GetInner", typeof(VolatilitySurfaceData<,>), volatilitySurfaceData);
+            return GenericUtils.Call<IEnumerable<LabelledMatrixEntry2D>>(typeof(GenericVolatilitySurfaceCell), "GetInner", typeof(VolatilitySurfaceData<,>), volatilitySurfaceData);
         }
 
-        public static IEnumerable<LabelledMatrixEntry> GetInner<TX, TY>(VolatilitySurfaceData<TX, TY> volatilitySurfaceData)
+        public static IEnumerable<LabelledMatrixEntry2D> GetInner<TX, TY>(VolatilitySurfaceData<TX, TY> volatilitySurfaceData)
         {
             foreach (var x in volatilitySurfaceData.Xs)
             {
                 foreach (var y in volatilitySurfaceData.Ys)
                 {
-                    yield return new LabelledMatrixEntry(Tuple.Create(x, y), volatilitySurfaceData[x, y]);
+                    yield return new LabelledMatrixEntry2D(x, y, volatilitySurfaceData[x, y]);
                 }
             }
         }

@@ -16,7 +16,7 @@ using OGDotNet.Utils;
 namespace OGDotNet.Mappedtypes.financial.analytics
 {
     [FudgeSurrogate(typeof(DoubleLabelledMatrix2DBuilder))]
-    public class DoubleLabelledMatrix2D : IEnumerable<LabelledMatrixEntry2D>, IEnumerable<LabelledMatrixEntry>
+    public class DoubleLabelledMatrix2D : IEnumerable<LabelledMatrixEntry2D>
     {
         private readonly IList<double> _xKeys;
         private readonly IList<double> _yKeys;
@@ -71,12 +71,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics
         {
             get { return _values; }
         }
-
-        private IEnumerable<LabelledMatrixEntry> GetEntrys1D()
-        {
-            return GetEntrys().Cast<LabelledMatrixEntry>();
-        }
-
+       
         private IEnumerable<LabelledMatrixEntry2D> GetEntrys()
         {
             for (int xIndex = 0; xIndex < XLabels.Count; xIndex++)
@@ -90,14 +85,9 @@ namespace OGDotNet.Mappedtypes.financial.analytics
             }
         }
 
-        IEnumerator<LabelledMatrixEntry2D> IEnumerable<LabelledMatrixEntry2D>.GetEnumerator()
+        public IEnumerator<LabelledMatrixEntry2D> GetEnumerator()
         {
             return GetEntrys().GetEnumerator();
-        }
-
-        public IEnumerator<LabelledMatrixEntry> GetEnumerator()
-        {
-            return GetEntrys1D().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

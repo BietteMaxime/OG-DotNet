@@ -5,6 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:CellTemplates="clr-namespace:OGDotNet.AnalyticsViewer.View.CellTemplates" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" DataContextChanged="UserControl_DataContextChanged">
     <Grid>
-        <CellTemplates:LabelledMatrix1DCell x:Name="matrixCell"/>
+        <CellTemplates:LabelledMatrix2DCell x:Name="matrixCell"/>
     </Grid>
 </UserControl>

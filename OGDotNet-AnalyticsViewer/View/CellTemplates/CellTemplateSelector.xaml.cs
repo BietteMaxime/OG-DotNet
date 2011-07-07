@@ -38,6 +38,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                                                {typeof(VolatilitySurfaceData<,>), typeof(GenericVolatilitySurfaceCell)},
                                                                                {typeof(ColumnHeader), typeof(HeaderCell)},
                                                                                {typeof(IEnumerable<LabelledMatrixEntry>), typeof(LabelledMatrix1DCell)},
+                                                                               {typeof(IEnumerable<LabelledMatrixEntry2D>), typeof(LabelledMatrix2DCell)},
                                                                            });
 
         private static readonly Memoizer<ColumnHeader, Type, DataTemplate> TemplateMemoizer = new Memoizer<ColumnHeader, Type, DataTemplate>(BuildIndexedTemplate);

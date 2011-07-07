@@ -43,8 +43,8 @@ namespace OGDotNet.Mappedtypes.financial.analytics
         {
             return new LabelledMatrixEntry(Tuple.Create(f.XLabel, f.YLabel), f.Value);
         }
-
     }
+
     public class LabelledMatrixEntry
     {
         private readonly object _label;

@@ -82,6 +82,9 @@
     <Compile Include="View\CellTemplates\NullCell.xaml.cs">
       <DependentUpon>NullCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CellTemplates\LabelledMatrix2DCell.xaml.cs">
+      <DependentUpon>LabelledMatrix2DCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CellTemplates\VolatilitySurfaceCell.xaml.cs">
       <DependentUpon>VolatilitySurfaceCell.xaml</DependentUpon>
     </Compile>
@@ -119,6 +122,10 @@
     <Page Include="View\CellTemplates\NullCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\CellTemplates\LabelledMatrix2DCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CellTemplates\VolatilitySurfaceCell.xaml">
       <Generator>MSBuild:Compile</Generator>
