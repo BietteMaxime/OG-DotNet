@@ -79,4 +79,17 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot.Warnings
             return value.HaveOverrides() ? new Warning[] { new OverriddenVolatilityCubeDisappearingWarning(key) } : new Warning[] { };
         }
     }
+
+    public class OverriddenVolatilitySurfaceDisappearingWarning : Warning
+    {
+        private OverriddenVolatilitySurfaceDisappearingWarning(VolatilitySurfaceKey key)
+            : base(string.Format("Volatility Surface {0} {1} will not be present in the new snapshot, overrides will be lost", key.Currency, key.Name))
+        {
+        }
+
+        public static IEnumerable<Warning> Of(VolatilitySurfaceKey key, ManageableVolatilitySurfaceSnapshot value)
+        {
+            return value.HaveOverrides() ? new Warning[] { new OverriddenVolatilitySurfaceDisappearingWarning(key) } : new Warning[] { };
+        }
+    }
 }

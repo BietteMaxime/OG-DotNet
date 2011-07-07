@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
@@ -15,6 +16,7 @@ using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Context.MarketDataSnapshot;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 {
@@ -42,7 +44,66 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         public UpdateAction<ManageableVolatilitySurfaceSnapshot> PrepareUpdateFrom(ManageableVolatilitySurfaceSnapshot newObject)
         {
-            throw new NotImplementedException();
+            var currValues = Clone(_values);
+            var newValues = Clone(newObject._values);
+
+            var valuesUpdateAction = currValues.ProjectStructure(newValues,
+                                                                PrepareUpdateFrom,
+                                                                PrepareRemoveAction,
+                                                                PrepareAddAction
+                ).Aggregate(UpdateAction<ManageableVolatilitySurfaceSnapshot>.Empty, (a, b) => a.Concat(b));
+
+            return valuesUpdateAction;
+        }
+
+        private static UpdateAction<ManageableVolatilitySurfaceSnapshot> PrepareUpdateFrom(Pair<object, object> key, ValueSnapshot currValue, ValueSnapshot newValue)
+        {
+            var newMarketValue = newValue.MarketValue;
+            return new UpdateAction<ManageableVolatilitySurfaceSnapshot>(delegate(ManageableVolatilitySurfaceSnapshot s)
+            {
+                s._values[key].MarketValue = newMarketValue;
+            });
+        }
+
+        private static UpdateAction<ManageableVolatilitySurfaceSnapshot> PrepareRemoveAction(Pair<object, object> key, ValueSnapshot currValue)
+        {
+            return new UpdateAction<ManageableVolatilitySurfaceSnapshot>(delegate(ManageableVolatilitySurfaceSnapshot s)
+            {
+                s._values.Remove(key);
+            });
+        }
+
+        private static UpdateAction<ManageableVolatilitySurfaceSnapshot> PrepareAddAction(Pair<object, object> key, ValueSnapshot newValue)
+        {
+            var newMarketValue = newValue.MarketValue;
+            return new UpdateAction<ManageableVolatilitySurfaceSnapshot>(delegate(ManageableVolatilitySurfaceSnapshot s)
+            {
+                s._values.Add(key, new ValueSnapshot(newMarketValue));
+            });
+        }
+
+        public bool HaveOverrides()
+        {
+            return _values.Any(v => v.Value.OverrideValue.HasValue);
+        }
+
+        public void RemoveAllOverrides()
+        {
+            foreach (var valueSnapshot in Values)
+            {
+                valueSnapshot.Value.OverrideValue = null;
+            }
+        }
+
+        public ManageableVolatilitySurfaceSnapshot Clone()
+        {
+            return new ManageableVolatilitySurfaceSnapshot(Clone(_values));
+        }
+
+        private static IDictionary<T, ValueSnapshot> Clone<T>(IDictionary<T, ValueSnapshot> valueSnapshots)
+        {
+            //TODO dedupe
+            return valueSnapshots.ToDictionary(k => k.Key, k => k.Value.Clone());
         }
 
         public static ManageableVolatilitySurfaceSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)

@@ -96,7 +96,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         public bool HaveOverrides()
         {
-            return _globalValues.HaveOverrides() || _yieldCurves.Any(yc => yc.Value.HaveOverrides()) || _volatilityCubes.Any(vc => vc.Value.HaveOverrides());
+            return _globalValues.HaveOverrides() || _yieldCurves.Any(yc => yc.Value.HaveOverrides()) || _volatilityCubes.Any(vc => vc.Value.HaveOverrides()) || _volatilitySurfaces.Any(vc => vc.Value.HaveOverrides());
         }
 
         public void RemoveAllOverrides()
@@ -110,6 +110,10 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             foreach (var volatilityCubeSnapshot in VolatilityCubes.Values)
             {
                 volatilityCubeSnapshot.RemoveAllOverrides();
+            }
+            foreach (var surface in VolatilitySurfaces.Values)
+            {
+                surface.RemoveAllOverrides();
             }
         }
 
@@ -129,7 +133,16 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                 PrepareCubeAddAction
                 );
 
-            return globalUpdate.Wrap<ManageableMarketDataSnapshot>(s => s._globalValues).Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(ycActions)).Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(cubeActions));
+            var surfaceActions = _volatilitySurfaces.ProjectStructure(newSnapshot._volatilitySurfaces,
+                (k, va, vb) => va.PrepareUpdateFrom(vb).Wrap<ManageableMarketDataSnapshot>(s => s._volatilitySurfaces[k]),
+                PrepareSurfaceRemoveAction,
+                PrepareSurfaceAddAction
+                );
+
+            return globalUpdate.Wrap<ManageableMarketDataSnapshot>(s => s._globalValues)
+                .Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(ycActions))
+                .Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(cubeActions))
+                .Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(surfaceActions));
         }
 
         private static UpdateAction<ManageableMarketDataSnapshot> PrepareCurveRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)
@@ -178,6 +191,31 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
                {
                    snap._volatilityCubes.Add(key, valueClone.Clone());
                    snap.InvokePropertyChanged(new PropertyChangedEventArgs("VolatilityCubes"));
+               }
+               );
+        }
+
+        private static UpdateAction<ManageableMarketDataSnapshot> PrepareSurfaceRemoveAction(VolatilitySurfaceKey volatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot manageableVolatilitySurfaceSnapshot)
+        {
+            return new UpdateAction<ManageableMarketDataSnapshot>(
+                delegate(ManageableMarketDataSnapshot snap)
+                {
+                    snap._volatilitySurfaces.Remove(volatilitySurfaceKey);
+                    snap.InvokePropertyChanged(new PropertyChangedEventArgs("VolatilitySurfaces"));
+                },
+                    OverriddenVolatilitySurfaceDisappearingWarning.Of(volatilitySurfaceKey, manageableVolatilitySurfaceSnapshot)
+                );
+        }
+
+        private static UpdateAction<ManageableMarketDataSnapshot> PrepareSurfaceAddAction(VolatilitySurfaceKey key, ManageableVolatilitySurfaceSnapshot value)
+        {
+            var valueClone = value.Clone();
+
+            return new UpdateAction<ManageableMarketDataSnapshot>(
+               delegate(ManageableMarketDataSnapshot snap)
+               {
+                   snap._volatilitySurfaces.Add(key, valueClone.Clone());
+                   snap.InvokePropertyChanged(new PropertyChangedEventArgs("VolatilitySurfaces"));
                }
                );
         }
