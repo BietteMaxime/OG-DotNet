@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyTests.cs" />
+    <Compile Include="OGDotNet\Builders\EnumBuilderTest.cs" />
     <Compile Include="OGDotNet\HeartbeatSenderTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Core\Common\CurrencyTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Core\marketdatasnapshot\MarketDataValueTypeTests.cs" />

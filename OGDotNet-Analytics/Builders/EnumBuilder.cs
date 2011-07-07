@@ -20,6 +20,7 @@ namespace OGDotNet.Builders
     {
         #region static utils
         private static readonly Memoizer<string, T> ParseTable = new Memoizer<string, T>(ParseImpl);
+        private static readonly Memoizer<T, string> JavaNamesTable = new Memoizer<T, string>(GetJavaNameImpl);
 
         public static T Parse(string str)
         {
@@ -37,9 +38,14 @@ namespace OGDotNet.Builders
 
         public static string GetJavaName(T value)
         {
+            return JavaNamesTable.Get(value);
+        }
+
+        static readonly Regex HumpExp = new Regex("([a-z])([A-Z])", RegexOptions.Compiled);
+        private static string GetJavaNameImpl(T value)
+        {
             var netName = value.ToString();
-            Regex humpExp = new Regex("([a-z])([A-Z])");
-            var javaName = humpExp.Replace(netName, "$1_$2").ToUpperInvariant();
+            var javaName = HumpExp.Replace(netName, "$1_$2").ToUpperInvariant();
             return javaName;
         }
         #endregion
