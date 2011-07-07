@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -26,6 +27,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
             detailsPopup.IsOpen = false;
+        }
+
+        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            summaryBlock.Visibility = DataContext == null ? Visibility.Hidden : Visibility.Visible;
         }
     }
 }
