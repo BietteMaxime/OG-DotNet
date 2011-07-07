@@ -39,7 +39,7 @@ namespace OGDotNet.Model.Context
     {
         private const string YieldCurveValueReqName = ValueRequirementNames.YieldCurve;
         private const string YieldCurveSpecValueReqName = ValueRequirementNames.YieldCurveSpec;
-        private const string YieldCurveInterpolatedValueReqName = ValueRequirementNames.YieldCurve;
+        private const string YieldCurveInterpolatedValueReqName = ValueRequirementNames.YieldCurveInterpolated;
         private const string MarketValueReqName = ValueRequirementNames.MarketValue;
         private const string YieldCurveMarketDataReqName = ValueRequirementNames.YieldCurveMarketData;
 
