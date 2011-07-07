@@ -11,6 +11,7 @@ using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
+using OGDotNet.Builders;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Util.tuple
@@ -18,7 +19,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
     public interface IPair<out TFirst, out TSecond>
     {
         TFirst First { get; }
-        TSecond Second { get; }    
+        TSecond Second { get; }
     }
 
     public abstract class Pair
@@ -39,7 +40,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
 
         private static Pair Build(object first, object second)
         {
-            return (Pair) GenericUtils.Call(GenericBuildMethod, new[] {GetType(first.GetType()), GetType(second.GetType())}, first, second);
+            return (Pair)GenericUtils.Call(GenericBuildMethod, new[] { GetType(first.GetType()), GetType(second.GetType()) }, first, second);
         }
 
         private static Type GetType(Type real)
@@ -103,7 +104,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
             {
                 if (typeof(T) == typeof(long))
                 {
-                    return (T) (object) Convert.ToInt64(field.Value);
+                    return (T)(object)Convert.ToInt64(field.Value);
                 }
                 else if (typeof(T) == typeof(int))
                 {
@@ -111,27 +112,31 @@ namespace OGDotNet.Mappedtypes.Util.tuple
                 }
                 else
                 {
-                    return (T) field.Value;
+                    return (T)field.Value;
                 }
             }
-            return (T) deserializer.FromField(field, typeof(T));
+            return (T)deserializer.FromField(field, typeof(T));
         }
 
         public new void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            WriteInline(a, s, "first", First);
-            WriteInline(a, s, "second", Second);
+            var fudgeSerializer = new FudgeSerializer(s.Context);
+            WriteInline(a, s, "first", First, fudgeSerializer);
+            WriteInline(a, s, "second", Second, fudgeSerializer);
         }
 
-        private static void WriteInline(IAppendingFudgeFieldContainer a, IFudgeSerializer s, string name, object o)
+        private static void WriteInline(IAppendingFudgeFieldContainer a, IFudgeSerializer s, string name, object o, FudgeSerializer fudgeSerializer)
         {
-            if (s.Context.TypeDictionary.GetByCSharpType(o.GetType()) != null)
+            var oType = o.GetType();
+            if (s.Context.TypeDictionary.GetByCSharpType(oType) != null)
             {
                 a.Add(name, o);
             }
             else
             {
-                s.WriteInline(a, name, o);
+                var serializeToMsg = fudgeSerializer.SerializeToMsg(o);
+                s.WriteTypeHeader(serializeToMsg, oType);
+                a.Add(name, serializeToMsg);
             }
         }
 
@@ -147,7 +152,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != typeof(Pair<TFirst, TSecond>)) return false;
-            return Equals((Pair<TFirst, TSecond>) obj);
+            return Equals((Pair<TFirst, TSecond>)obj);
         }
 
         public override int GetHashCode()
@@ -165,7 +170,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
 
         public int CompareTo(Pair<TFirst, TSecond> other)
         {
-            return ((IComparable)AsTuple()).CompareTo(((IComparable) other.AsTuple()));
+            return ((IComparable)AsTuple()).CompareTo(((IComparable)other.AsTuple()));
         }
 
         public override string ToString()
