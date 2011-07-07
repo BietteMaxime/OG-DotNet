@@ -37,22 +37,14 @@ namespace OGDotNet.Model.Context
     /// </summary>
     internal static class RawMarketDataSnapper
     {
-        private const string YieldCurveValueReqName = ValueRequirementNames.YieldCurve;
-        private const string YieldCurveSpecValueReqName = ValueRequirementNames.YieldCurveSpec;
-        private const string YieldCurveInterpolatedValueReqName = ValueRequirementNames.YieldCurveInterpolated;
-        private const string MarketValueReqName = ValueRequirementNames.MarketValue;
-        private const string YieldCurveMarketDataReqName = ValueRequirementNames.YieldCurveMarketData;
-
-        private const string VolatilityCubeMarketDataReqName = ValueRequirementNames.VolatilityCubeMarketData;
-        
         #region create snapshot
 
         public static ManageableMarketDataSnapshot CreateSnapshotFromCycle(IViewComputationResultModel results, IDictionary<string, IDependencyGraph> graphs, IViewCycle viewCycle, string basisViewName, RemoteEngineContext remoteEngineContext)
         {
             var globalValues = GetGlobalValues(results, graphs);
-            var yieldCurves = GetYieldCurveValues(viewCycle, graphs, YieldCurveMarketDataReqName).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[YieldCurveMarketDataReqName], results.ValuationTime));
-            var volCubeDefinitions = GetVolCubeValues(viewCycle, graphs, VolatilityCubeMarketDataReqName)
-                .ToDictionary(kvp => kvp.Key, kvp => GetVolCubeSnapshot((VolatilityCubeData)kvp.Value[VolatilityCubeMarketDataReqName], remoteEngineContext.VolatilityCubeDefinitionSource.GetDefinition(kvp.Key.Currency, kvp.Key.Name)));
+            var yieldCurves = GetYieldCurveValues(viewCycle, graphs, ValueRequirementNames.YieldCurveMarketData).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[ValueRequirementNames.YieldCurveMarketData], results.ValuationTime));
+            var volCubeDefinitions = GetVolCubeValues(viewCycle, graphs, ValueRequirementNames.VolatilityCubeMarketData)
+                .ToDictionary(kvp => kvp.Key, kvp => GetVolCubeSnapshot((VolatilityCubeData)kvp.Value[ValueRequirementNames.VolatilityCubeMarketData], remoteEngineContext.VolatilityCubeDefinitionSource.GetDefinition(kvp.Key.Currency, kvp.Key.Name)));
 
             return new ManageableMarketDataSnapshot(basisViewName, globalValues, yieldCurves, volCubeDefinitions);
         }
@@ -77,7 +69,7 @@ namespace OGDotNet.Model.Context
         {
             var data = bundle.DataPoints.ToDictionary(
                 s => new MarketDataValueSpecification(MarketDataValueType.Primitive, s.Key),
-                s => (IDictionary<string, ValueSnapshot>)new Dictionary<string, ValueSnapshot> { { MarketValueReqName, new ValueSnapshot(s.Value) } }
+                s => (IDictionary<string, ValueSnapshot>)new Dictionary<string, ValueSnapshot> { { ValueRequirementNames.MarketValue, new ValueSnapshot(s.Value) } }
                 );
             return new ManageableUnstructuredMarketDataSnapshot(data);
         }
@@ -164,11 +156,11 @@ namespace OGDotNet.Model.Context
 
         private static bool IsVolatilityCubeMarketDataSpec(ValueSpecification s)
         {
-            return s.ValueName == VolatilityCubeMarketDataReqName;
+            return s.ValueName == ValueRequirementNames.VolatilityCubeMarketData;
         }
         private static bool IsYieldCurveMarketDataSpec(ValueSpecification s)
         {
-            return s.ValueName == YieldCurveMarketDataReqName;
+            return s.ValueName == ValueRequirementNames.YieldCurveMarketData;
         }
 
         private static IDictionary<string, ValueSnapshot> GroupByValueName(IEnumerable<ComputedValue> r)
@@ -184,10 +176,11 @@ namespace OGDotNet.Model.Context
         #endregion
         public static IEnumerable<ValueSpecification> GetYieldCurveSpecs(IDictionary<string, IDependencyGraph> graphs)
         {
-            var matchingSpecifications = GetMatchingSpecifications(graphs, YieldCurveValueReqName, YieldCurveSpecValueReqName);
+            string yieldCurveValueReqName = ValueRequirementNames.YieldCurve;
+            var matchingSpecifications = GetMatchingSpecifications(graphs, yieldCurveValueReqName, ValueRequirementNames.YieldCurveSpec);
             var included = matchingSpecifications.SelectMany(s => s.Value);
-            var interpolated = included.Where(s => s.ValueName == YieldCurveValueReqName).Select(
-                sp => new ValueSpecification(YieldCurveInterpolatedValueReqName, sp.TargetSpecification, GetCurveProperties(sp)));
+            var interpolated = included.Where(s => s.ValueName == yieldCurveValueReqName).Select(
+                sp => new ValueSpecification(ValueRequirementNames.YieldCurveInterpolated, sp.TargetSpecification, GetCurveProperties(sp)));
             return included.Concat(interpolated);
         }
 
@@ -201,7 +194,7 @@ namespace OGDotNet.Model.Context
         public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> EvaluateYieldCurves(IViewComputationResultModel results)
         {
             var ycResults = results.AllResults
-                .Where(r => new[] { YieldCurveValueReqName, YieldCurveSpecValueReqName, YieldCurveInterpolatedValueReqName }.Contains(r.ComputedValue.Specification.ValueName));
+                .Where(r => new[] { ValueRequirementNames.YieldCurve, ValueRequirementNames.YieldCurveSpec, ValueRequirementNames.YieldCurveInterpolated }.Contains(r.ComputedValue.Specification.ValueName));
             var lookup = ycResults
                 .ToLookup(r => GetYieldCurveKey(r.ComputedValue.Specification));
             return lookup
@@ -211,8 +204,8 @@ namespace OGDotNet.Model.Context
 
         private static Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve> GetEvaluatedCurve(Dictionary<string, object> values)
         {
-            return Tuple.Create((YieldCurve)values[YieldCurveValueReqName],
-                (InterpolatedYieldCurveSpecificationWithSecurities) values[YieldCurveSpecValueReqName], (NodalDoublesCurve) values[YieldCurveInterpolatedValueReqName]);
+            return Tuple.Create((YieldCurve)values[ValueRequirementNames.YieldCurve],
+                (InterpolatedYieldCurveSpecificationWithSecurities) values[ValueRequirementNames.YieldCurveSpec], (NodalDoublesCurve) values[ValueRequirementNames.YieldCurveInterpolated]);
         }
 
         private static Dictionary<T, Dictionary<string, object>> GetGroupedValues<T>(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, Func<ValueSpecification, T> projecter, params string[] valueNames)
@@ -265,7 +258,7 @@ namespace OGDotNet.Model.Context
                 var specs = graph.DependencyNodes.SelectMany(n => n.OutputValues)
                     //This is a hack: the spec value will be pruned from the dep graph but will be in the computation cache,
                     //  and we know that it has exactly the some properties as the Curve value
-                    .SelectMany(v => v.ValueName == YieldCurveValueReqName ? new[] { v, new ValueSpecification(YieldCurveSpecValueReqName, v.TargetSpecification, v.Properties) } : new[] { v })
+                    .SelectMany(v => v.ValueName == ValueRequirementNames.YieldCurve ? new[] { v, new ValueSpecification(ValueRequirementNames.YieldCurveSpec, v.TargetSpecification, v.Properties) } : new[] { v })
 
                     .Where(v => specNames.Contains(v.ValueName));
                 ret.Add(config, specs.ToList());
