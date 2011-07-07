@@ -35,6 +35,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                                            {
                                                                                {typeof(YieldCurve), typeof(YieldCurveCell)},
                                                                                {typeof(VolatilitySurfaceData<Tenor, Tenor>), typeof(VolatilitySurfaceCell)},
+                                                                               {typeof(VolatilitySurfaceData<,>), typeof(GenericVolatilitySurfaceCell)},
                                                                                {typeof(ColumnHeader), typeof(HeaderCell)},
                                                                                {typeof(IEnumerable<LabelledMatrixEntry>), typeof(LabelledMatrix1DCell)},
                                                                            });
@@ -129,6 +130,19 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             {
                 return templateType != null;
             }
+
+            if (cellType.IsGenericType)
+            {
+                Type genericTypeDefinition = cellType.GetGenericTypeDefinition();
+                if (TemplateTypes.TryGetValue(genericTypeDefinition, out templateType))
+                {
+                    if (templateType != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+
             foreach (var type in TemplateTypes)
             {
                 if (type.Key.IsAssignableFrom(cellType))

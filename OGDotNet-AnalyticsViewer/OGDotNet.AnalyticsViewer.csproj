@@ -70,6 +70,9 @@
     <Compile Include="ViewModel\ColumnHeader.cs" />
     <Compile Include="ViewModel\DynamicRow.cs" />
     <Compile Include="View\CellTemplates\CellTemplateSelector.xaml.cs" />
+    <Compile Include="View\CellTemplates\GenericVolatilitySurfaceCell.xaml.cs">
+      <DependentUpon>GenericVolatilitySurfaceCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CellTemplates\HeaderCell.xaml.cs">
       <DependentUpon>HeaderCell.xaml</DependentUpon>
     </Compile>
@@ -101,6 +104,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\CellTemplates\GenericVolatilitySurfaceCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CellTemplates\HeaderCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
