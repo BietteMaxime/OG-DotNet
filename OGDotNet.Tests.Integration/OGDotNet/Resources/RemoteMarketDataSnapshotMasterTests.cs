@@ -215,7 +215,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static MarketDataSnapshotDocument GetDocument(string name)
         {
-            var manageableUnstructuredMarketDataSnapshot = new ManageableUnstructuredMarketDataSnapshot(
+            return new MarketDataSnapshotDocument(null,
+                new ManageableMarketDataSnapshot("SomeView",
+                    GetGlobal(),
+                    GetYieldCurves(GetGlobal()),
+                    GetCubes(),
+                        GetSurfaces()
+                    ) { Name = name });
+        }
+
+        private static ManageableUnstructuredMarketDataSnapshot GetGlobal()
+        {
+            return new ManageableUnstructuredMarketDataSnapshot(
                 new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>
                     {
                         {
@@ -234,24 +245,40 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                             }
                     }
                 );
+        }
+
+        private static Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> GetYieldCurves(ManageableUnstructuredMarketDataSnapshot manageableUnstructuredMarketDataSnapshot)
+        {
+            return new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>
+                       {
+                           {new YieldCurveKey(Currency.USD, "Default"), new ManageableYieldCurveSnapshot(manageableUnstructuredMarketDataSnapshot, DateTimeOffset.Now)}
+                       };
+        }
+
+        private static Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> GetCubes()
+        {
             var manageableVolCubeSnapshot = new ManageableVolatilityCubeSnapshot(new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>()));
             manageableVolCubeSnapshot.SetPoint(new VolatilityPoint(Tenor.Day, Tenor.Day, -100), new ValueSnapshot(2));
             manageableVolCubeSnapshot.SetPoint(new VolatilityPoint(Tenor.Day, Tenor.Day, 100), null);
-            manageableVolCubeSnapshot.SetStrike(new Pair<Tenor, Tenor>(Tenor.Day, Tenor.Day), new ValueSnapshot(2) );
+            manageableVolCubeSnapshot.SetStrike(new Pair<Tenor, Tenor>(Tenor.Day, Tenor.Day), new ValueSnapshot(2));
             manageableVolCubeSnapshot.SetStrike(new Pair<Tenor, Tenor>(Tenor.Day, Tenor.TwoYears), null);
+            return new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>
+                       {
+                           {new VolatilityCubeKey(Currency.USD, "Test"), manageableVolCubeSnapshot}
+                       };
+        }
 
-            return new MarketDataSnapshotDocument(null,
-                new ManageableMarketDataSnapshot("SomeView",
-                    manageableUnstructuredMarketDataSnapshot,
-                    new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>
-                        {
-                            {new YieldCurveKey(Currency.USD, "Default"), new ManageableYieldCurveSnapshot(manageableUnstructuredMarketDataSnapshot, DateTimeOffset.Now)}
-                        },
-                    new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>
-                        {
-                            {new VolatilityCubeKey(Currency.USD, "Test"), manageableVolCubeSnapshot}
-                        }
-                    ) { Name = name });
+        private static Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> GetSurfaces()
+        {
+            return new Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>()
+                       {
+                           {new VolatilitySurfaceKey(Currency.GBP, "TEST", "SOME INSTRUMENT TYPE"), new ManageableVolatilitySurfaceSnapshot(new Dictionary<Pair<object, object>, ValueSnapshot>(){
+                                                                                                                                                                                                     {
+                                                                                                                                                                                                         new Pair<object, object>("A", "B"), new ValueSnapshot(12)},
+                                                                                                                                                                                                     {new Pair<object, object>("A", "C"), new ValueSnapshot(12)}
+                                                                                                                                                                                                 }) 
+                               }
+                       };
         }
 
         private static void AssertEqual(MarketDataSnapshotDocument retDoc, MarketDataSnapshotDocument marketDataSnapshotDocument)

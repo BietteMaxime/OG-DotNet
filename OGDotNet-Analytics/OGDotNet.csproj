@@ -89,6 +89,7 @@
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeKey.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityPoint.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilitySurfaceKey.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\sabr\SABRFittedSurfaces.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\BloombergFXOptionVolatilitySurfaceInstrumentProvider.cs" />
     <Compile Include="Mappedtypes\financial\Security\equity\EquitySecurity.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Mappedtypes\engine\marketdata\spec\LiveMarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\engine\marketdata\spec\MarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilityCubeSnapshot.cs" />
+    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilitySurfaceSnapshot.cs" />
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\math\surface\IDoublesSurface.cs" />
     <Compile Include="Mappedtypes\math\surface\InterpolatedDoublesSurface.cs" />

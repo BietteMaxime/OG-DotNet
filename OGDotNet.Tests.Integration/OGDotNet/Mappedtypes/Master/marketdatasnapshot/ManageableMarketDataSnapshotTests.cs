@@ -21,7 +21,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Mappedtypes.Master.marketdatasnaps
         public void CanRemoveAllOverrides()
         {
             var manageableUnstructuredMarketDataSnapshot = new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>());
-            var manageableMarketDataSnapshot = new ManageableMarketDataSnapshot("SomeView", manageableUnstructuredMarketDataSnapshot, new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>(), new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>());
+            var manageableMarketDataSnapshot = new ManageableMarketDataSnapshot("SomeView", manageableUnstructuredMarketDataSnapshot, new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>(), new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>(), new Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>());
 
             var valueSpec = new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("ID", "1"));
             const string valueName = "Value";

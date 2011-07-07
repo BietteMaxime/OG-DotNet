@@ -115,7 +115,7 @@ namespace OGDotNet.Model.Context
 
         private ManageableMarketDataSnapshot GetShallowCloneSnapshot()
         {
-            return new ManageableMarketDataSnapshot(_snapshot.BasisViewName, _snapshot.GlobalValues, _snapshot.YieldCurves, _snapshot.VolatilityCubes, _snapshot.UniqueId)
+            return new ManageableMarketDataSnapshot(_snapshot.BasisViewName, _snapshot.GlobalValues, _snapshot.YieldCurves, _snapshot.VolatilityCubes, _snapshot.VolatilitySurfaces, _snapshot.UniqueId)
                        {
                            Name = string.Format("{0}-{1}-{2}", typeof(MarketDataSnapshotProcessor).Name, Guid.NewGuid(), _snapshot.BasisViewName),
                            UniqueId = null

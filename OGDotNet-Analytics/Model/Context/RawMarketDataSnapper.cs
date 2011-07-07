@@ -20,11 +20,15 @@ using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
+using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.math.curve;
+using OGDotNet.Mappedtypes.Util.Time;
+using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Context.MarketDataSnapshot;
+using OGDotNet.Utils;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Model.Context
@@ -46,7 +50,10 @@ namespace OGDotNet.Model.Context
             var volCubeDefinitions = GetVolCubeValues(viewCycle, graphs, ValueRequirementNames.VolatilityCubeMarketData)
                 .ToDictionary(kvp => kvp.Key, kvp => GetVolCubeSnapshot((VolatilityCubeData)kvp.Value[ValueRequirementNames.VolatilityCubeMarketData], remoteEngineContext.VolatilityCubeDefinitionSource.GetDefinition(kvp.Key.Currency, kvp.Key.Name)));
 
-            return new ManageableMarketDataSnapshot(basisViewName, globalValues, yieldCurves, volCubeDefinitions);
+            var volSurfaceDefinitions = GetVolSurfaceValues(viewCycle, graphs, ValueRequirementNames.VolatilitySurfaceData)
+                .ToDictionary(kvp => kvp.Key, kvp => GetVolSurfaceSnapshot((VolatilitySurfaceData)kvp.Value[ValueRequirementNames.VolatilitySurfaceData]));
+
+            return new ManageableMarketDataSnapshot(basisViewName, globalValues, yieldCurves, volCubeDefinitions, volSurfaceDefinitions);
         }
 
         private static YieldCurveKey GetYieldCurveKey(ValueSpecification y)
@@ -57,6 +64,11 @@ namespace OGDotNet.Model.Context
         private static VolatilityCubeKey GetVolCubeKey(ValueSpecification y)
         {
             return new VolatilityCubeKey(Currency.Create(y.TargetSpecification.Uid), y.Properties["Cube"].Single());
+        }
+
+        private static VolatilitySurfaceKey GetVolSurfaceKey(ValueSpecification y)
+        {
+            return new VolatilitySurfaceKey(Currency.Create(y.TargetSpecification.Uid), y.Properties["Surface"].Single(), y.Properties["InstrumentType"].Single());
         }
 
         private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(SnapshotDataBundle bundle, DateTimeOffset valuationTime)
@@ -74,6 +86,24 @@ namespace OGDotNet.Model.Context
             return new ManageableUnstructuredMarketDataSnapshot(data);
         }
 
+        private static ManageableVolatilitySurfaceSnapshot GetVolSurfaceSnapshot(VolatilitySurfaceData volatilitySurfaceData)
+        {
+            return GenericUtils.Call<ManageableVolatilitySurfaceSnapshot>(typeof(RawMarketDataSnapper), "GetVolSurfaceSnapshot", typeof(VolatilitySurfaceData<,>), volatilitySurfaceData);
+        }
+        public static ManageableVolatilitySurfaceSnapshot GetVolSurfaceSnapshot<TX, TY>(VolatilitySurfaceData<TX, TY> volatilitySurfaceData)
+        {
+            IDictionary<Pair<object, object>, ValueSnapshot> dict = new Dictionary<Pair<object, object>, ValueSnapshot>();
+            foreach (var x in volatilitySurfaceData.Xs)
+            {
+                foreach (var y in volatilitySurfaceData.Ys)
+                {
+                    var key = new Pair<object, object>(x, y);
+                    dict.Add(key, new ValueSnapshot(volatilitySurfaceData[x, y]));
+                }
+            }
+            
+            return new ManageableVolatilitySurfaceSnapshot(dict);
+        }
         private static ManageableVolatilityCubeSnapshot GetVolCubeSnapshot(VolatilityCubeData volatilityCubeData, VolatilityCubeDefinition volatilityCubeDefinition)
         {
             var ret = new ManageableVolatilityCubeSnapshot(GetUnstructured(volatilityCubeData.OtherData));
@@ -131,7 +161,17 @@ namespace OGDotNet.Model.Context
 
         private static bool IsStructuredMarketDataNode(DependencyNode node)
         {
-            return IsYieldCurveNode(node) || IsVolatilityCubeNode(node);
+            return IsYieldCurveNode(node) || IsVolatilityCubeNode(node) || IsVolatilitySurfaceNode(node);
+        }
+
+        private static bool IsVolatilitySurfaceNode(DependencyNode node)
+        {
+            var isSurfaceNode = node.OutputValues.Any(IsVolatilitySurfaceMarketDataSpec);
+            if (isSurfaceNode && !node.OutputValues.All(IsVolatilitySurfaceMarketDataSpec))
+            {
+                throw new ArgumentException(string.Format("Unsure how to handle node {0}", node));
+            }
+            return isSurfaceNode;
         }
 
         private static bool IsYieldCurveNode(DependencyNode node)
@@ -157,6 +197,10 @@ namespace OGDotNet.Model.Context
         private static bool IsVolatilityCubeMarketDataSpec(ValueSpecification s)
         {
             return s.ValueName == ValueRequirementNames.VolatilityCubeMarketData;
+        }
+        private static bool IsVolatilitySurfaceMarketDataSpec(ValueSpecification s)
+        {
+            return s.ValueName == ValueRequirementNames.VolatilitySurfaceData;
         }
         private static bool IsYieldCurveMarketDataSpec(ValueSpecification s)
         {
@@ -237,6 +281,12 @@ namespace OGDotNet.Model.Context
 
             return ts;
         }
+
+        private static Dictionary<VolatilitySurfaceKey, Dictionary<string, object>> GetVolSurfaceValues(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
+        {
+            return GetGroupedValues(viewCycle, dependencyGraphs, GetVolSurfaceKey, valueNames);
+        }
+
         private static Dictionary<VolatilityCubeKey, Dictionary<string, object>> GetVolCubeValues(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
         {
             return GetGroupedValues(viewCycle, dependencyGraphs, GetVolCubeKey, valueNames);
