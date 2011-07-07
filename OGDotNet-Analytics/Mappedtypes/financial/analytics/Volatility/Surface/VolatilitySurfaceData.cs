@@ -17,45 +17,21 @@ using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
 {
-    //Just here for fudge
+    //Mainly here for fudge
     [FudgeSurrogate(typeof(VolatilitySurfaceDataBuilder))]
     public class VolatilitySurfaceData
-    {
-    }
-
-    public class VolatilitySurfaceData<TX, TY>
     {
         private readonly string _definitionName;
         private readonly string _specificationName;
         private readonly Currency _currency;
         private readonly string _interpolatorName;
-        private readonly Dictionary<Tuple<TX, TY>, double> _values;
-        private readonly IList<TX> _xs;
-        private readonly IList<TY> _ys;
 
-        public VolatilitySurfaceData(string definitionName, string specificationName, Currency currency, string interpolatorName, IList<TX> xs, IList<TY> ys, Dictionary<Tuple<TX, TY>, double> values)
+        public VolatilitySurfaceData(string definitionName, string specificationName, Currency currency, string interpolatorName)
         {
-            if (values.Count != xs.Count * ys.Count)
-            {
-                throw new ArgumentException("Values not provided for all points");
-            }
-
             _definitionName = definitionName;
             _specificationName = specificationName;
             _currency = currency;
             _interpolatorName = interpolatorName;
-            _xs = xs;
-            _ys = ys;
-            _values = values;
-        }
-
-        public double this[TX x, TY y]
-        {
-            get
-            {
-                var tuple = new Tuple<TX, TY>(x, y);
-                return _values[tuple];
-            }
         }
 
         public Currency Currency
@@ -76,6 +52,34 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
         public string InterpolatorName
         {
             get { return _interpolatorName; }
+        }
+    }
+
+    public class VolatilitySurfaceData<TX, TY> : VolatilitySurfaceData
+    {
+        private readonly Dictionary<Tuple<TX, TY>, double> _values;
+        private readonly IList<TX> _xs;
+        private readonly IList<TY> _ys;
+
+        public VolatilitySurfaceData(string definitionName, string specificationName, Currency currency, string interpolatorName, IList<TX> xs, IList<TY> ys, Dictionary<Tuple<TX, TY>, double> values)
+            : base(definitionName, specificationName, currency, interpolatorName)
+        {
+            if (values.Count != xs.Count * ys.Count)
+            {
+                throw new ArgumentException("Values not provided for all points");
+            }
+            _xs = xs;
+            _ys = ys;
+            _values = values;
+        }
+
+        public double this[TX x, TY y]
+        {
+            get
+            {
+                var tuple = new Tuple<TX, TY>(x, y);
+                return _values[tuple];
+            }
         }
 
         public IList<TX> Xs

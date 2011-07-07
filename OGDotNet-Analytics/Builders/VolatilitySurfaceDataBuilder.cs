@@ -12,18 +12,17 @@ using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
-using OGDotNet.Mappedtypes.Util.Time;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Builders
 {
-    class VolatilitySurfaceDataBuilder : BuilderBase<object>
+    class VolatilitySurfaceDataBuilder : BuilderBase<VolatilitySurfaceData>
     {
         public VolatilitySurfaceDataBuilder(FudgeContext context, Type type) : base(context, type)
         {
         }
 
-        public override object DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        public override VolatilitySurfaceData DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             Currency currency = ffc.GetValue<Currency>("currency");
             string definitionName = ffc.GetValue<string>("definitionName");
@@ -51,9 +50,9 @@ namespace OGDotNet.Builders
 
         static readonly MethodInfo GenericBuildMethod = typeof(VolatilitySurfaceDataBuilder).GetMethods().Where(m => m.Name == "Build" && m.IsGenericMethodDefinition).Single();
 
-        private object Build(Type xType, Type yType, string definitionName, string specificationName, Currency currency, string interpolatorName, IList<object> xs, IList<object> ys, Dictionary<Tuple<object, object>, double> values)
+        private VolatilitySurfaceData Build(Type xType, Type yType, string definitionName, string specificationName, Currency currency, string interpolatorName, IList<object> xs, IList<object> ys, Dictionary<Tuple<object, object>, double> values)
         {
-            return GenericBuildMethod.MakeGenericMethod(new[] { xType, yType }).Invoke(this, new object[] { definitionName, specificationName, currency, interpolatorName, xs, ys, values });
+            return (VolatilitySurfaceData) GenericBuildMethod.MakeGenericMethod(new[] { xType, yType }).Invoke(this, new object[] { definitionName, specificationName, currency, interpolatorName, xs, ys, values });
         }
 
         public VolatilitySurfaceData<TX, TY> Build<TX, TY>(string definitionName, string specificationName, Currency currency, string interpolatorName, IList<object> xs, IList<object> ys, Dictionary<Tuple<object, object>, double> values)
