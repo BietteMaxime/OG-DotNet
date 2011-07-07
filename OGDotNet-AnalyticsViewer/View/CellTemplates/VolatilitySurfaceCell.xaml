@@ -13,7 +13,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
        
-        <Viewport3D Grid.Column="0" Name="mainViewport" ClipToBounds="True" MouseMove="mainViewport_MouseMove">
+        <Viewport3D Grid.Column="0" Name="mainViewport" ClipToBounds="True" MouseMove="mainViewport_MouseMove" MouseDown="mainViewport_MouseDown">
             <Viewport3D.Camera>
                 <PerspectiveCamera 	  x:Name="camera" FarPlaneDistance="100"	  LookDirection="-11,-10,-9"	  UpDirection="0,0,1"	  NearPlaneDistance="1" 	  Position="11,10,9" 	  FieldOfView="40" />
             </Viewport3D.Camera>

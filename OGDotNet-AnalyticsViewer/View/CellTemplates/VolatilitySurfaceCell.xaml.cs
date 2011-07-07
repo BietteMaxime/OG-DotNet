@@ -195,6 +195,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         }
 
         private CurveControl _xSliceCurveControl;
+        private GeometryModel3D _xSliceModel;
+
         private GeometryModel3D BuildXSliceGraphModel()
         {
             _xSliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = _zRange, StrokeThickness = 5.0, ShowName = false };
@@ -233,11 +235,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                                  new Point(ProjectedCurveSize, 0), 
                                                         }
             };
-
-            return new GeometryModel3D(mesh, material) { BackMaterial = material };
+            _xSliceModel = new GeometryModel3D(mesh, material) { BackMaterial = material };
+            return _xSliceModel;
         }
 
         private CurveControl _ySliceCurveControl;
+        private GeometryModel3D _ySliceModel;
+
         private GeometryModel3D BuildYSliceGraphModel()
         {
             _ySliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = _zRange, StrokeThickness = 5.0, ShowName = false };
@@ -277,7 +281,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                         }
                            };
 
-            return new GeometryModel3D(mesh, material) { BackMaterial = material };
+            _ySliceModel = new GeometryModel3D(mesh, material) { BackMaterial = material };
+            return _ySliceModel;
         }
 
         private static GeometryModel3D BuildBaseModel(GeometryModel3D buildSurfaceModel)
@@ -526,6 +531,40 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             UpdateToolTip(position);
         }
 
+        private Tuple<Point3D, MeshGeometry3D> GetHit(Point position)
+        {
+            HitTestResult hitTestResult = VisualTreeHelper.HitTest(mainViewport, position);
+            if (hitTestResult != null && hitTestResult.VisualHit != null)
+            {
+                if (!(hitTestResult is RayMeshGeometry3DHitTestResult))
+                    throw new ArgumentException();
+                var result = (RayMeshGeometry3DHitTestResult) hitTestResult;
+
+                return Tuple.Create(result.PointHit, result.MeshHit);
+            }
+            return default(Tuple<Point3D, MeshGeometry3D>);
+        }
+        private void mainViewport_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Point position = e.GetPosition(mainViewport);
+            var hit = GetHit(position);
+            var mesh = hit.Item2;
+            if (mesh == _xSliceModel.Geometry || mesh == _ySliceModel.Geometry)
+            {
+                if (_xSliceModel.Transform == Transform3D.Identity)
+                {
+                    const double offset = GraphOffset * 2 + 1;
+                    _xSliceModel.Transform = new TranslateTransform3D(offset, 0, 0);
+                    _ySliceModel.Transform = new TranslateTransform3D(0, offset, 0);
+                }
+                else
+                {
+                    _xSliceModel.Transform = Transform3D.Identity;
+                    _ySliceModel.Transform = Transform3D.Identity;
+                }
+            }
+        }
+
         private void UpdateToolTip(Point position)
         {
             if (Surface == null || ToScale)
@@ -541,19 +580,14 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             double xScale = 1.0 / (xs.Count - 1);
             double yScale = 1.0 / (ys.Count - 1);
 
-            HitTestResult hitTestResult = VisualTreeHelper.HitTest(mainViewport, position);
-            if (hitTestResult != null && hitTestResult.VisualHit != null)
+            var hit = GetHit(position);
+            if (hit != default(Tuple<Point3D, MeshGeometry3D>))
             {
-                if (!(hitTestResult is RayMeshGeometry3DHitTestResult))
-                    throw new ArgumentException();
-                var result = (RayMeshGeometry3DHitTestResult)hitTestResult;
-
-                var point = result.PointHit;
-
+                var point = hit.Item1;
                 var yFloor = (int)Math.Round(point.Y / yScale);
                 var xFloor = (int)Math.Round(point.X / xScale);
 
-                if (xFloor < 0 || yFloor < 0)
+                if (xFloor < 0 || yFloor < 0 || xFloor >= xs.Count || yFloor >= ys.Count)
                 {// The graph slices
                     toolTip.IsOpen = false;
                     return;
