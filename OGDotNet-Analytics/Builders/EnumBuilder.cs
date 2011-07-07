@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="EnumBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -8,13 +8,19 @@
 
 using System;
 using System.Text.RegularExpressions;
+using Fudge;
+using Fudge.Serialization;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
 {
-    public static class EnumBuilder<T> where T : struct
+    public class EnumBuilder<T> : 
+        //NOTE: we don't implement BuilderBase<T> because then boxing would bite us
+        BuilderBase<object> where T : struct
     {
+        #region static utils
         private static readonly Memoizer<string, T> ParseTable = new Memoizer<string, T>(ParseImpl);
+
         public static T Parse(string str)
         {
             return ParseTable.Get(str);
@@ -36,5 +42,25 @@ namespace OGDotNet.Builders
             var javaName = humpExp.Replace(netName, "$1_$2").ToUpperInvariant();
             return javaName;
         }
+        #endregion
+
+        #region BuilderBase
+        public EnumBuilder(FudgeContext context, Type type)
+            : base(context, type)
+        {
+        }
+
+        public override object DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
+        {
+            return Parse(msg.GetString(1));
+        }
+
+        protected override void SerializeImpl(object obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
+        {
+            serializer.WriteTypeHeader(msg, typeof(T));
+            msg.Add(1, GetJavaName((T) obj));
+        }
+
+        #endregion
     }
 }

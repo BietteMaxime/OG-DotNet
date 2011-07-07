@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Security;
@@ -199,7 +200,7 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(BloombergFXOptionVolatilitySurfaceInstrumentProvider.FXVolQuoteType type)
         {
             Assert.NotNull(type);
-            Assert.NotEmpty(type.Name);
+            Assert.True(EnumUtils.EnumValues<BloombergFXOptionVolatilitySurfaceInstrumentProvider.FXVolQuoteType>().Contains(type));
         }
 
         public static void AssertSensibleValue(Tenor value)

@@ -57,7 +57,6 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Builders\BloombergFXOptionVolatilitySurfaceInstrumentProviderFXVolQuoteTypeBuilder.cs" />
     <Compile Include="Builders\BuilderBase.xaml.cs" />
     <Compile Include="Builders\ComputationTargetBuilder.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
