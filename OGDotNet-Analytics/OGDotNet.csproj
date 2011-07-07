@@ -79,6 +79,7 @@
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityCubeData.cs" />
     <Compile Include="Mappedtypes\engine\marketdata\spec\UserMarketDataSpecification.cs" />
+    <Compile Include="Mappedtypes\engine\value\ValueRequirementNames.cs" />
     <Compile Include="Mappedtypes\engine\View\DeltaDefinition.cs" />
     <Compile Include="Mappedtypes\engine\View\Execution\ViewExecutionFlags.cs" />
     <Compile Include="Mappedtypes\engine\View\IDeltaComparer.cs" />

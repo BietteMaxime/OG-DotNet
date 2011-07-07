@@ -37,13 +37,13 @@ namespace OGDotNet.Model.Context
     /// </summary>
     internal static class RawMarketDataSnapper
     {
-        private const string YieldCurveValueReqName = "YieldCurve";
-        private const string YieldCurveSpecValueReqName = "YieldCurveSpec";
-        private const string YieldCurveInterpolatedValueReqName = "YieldCurveInterpolated";
-        private const string MarketValueReqName = "Market_Value";
-        private const string YieldCurveMarketDataReqName = "YieldCurveMarketData";
+        private const string YieldCurveValueReqName = ValueRequirementNames.YieldCurve;
+        private const string YieldCurveSpecValueReqName = ValueRequirementNames.YieldCurveSpec;
+        private const string YieldCurveInterpolatedValueReqName = ValueRequirementNames.YieldCurve;
+        private const string MarketValueReqName = ValueRequirementNames.MarketValue;
+        private const string YieldCurveMarketDataReqName = ValueRequirementNames.YieldCurveMarketData;
 
-        private const string VolatilityCubeMarketDataReqName = "VolatilityCubeMarketData";
+        private const string VolatilityCubeMarketDataReqName = ValueRequirementNames.VolatilityCubeMarketData;
         
         #region create snapshot
 
