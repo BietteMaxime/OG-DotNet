@@ -9,6 +9,7 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.Util.Time
 {
@@ -31,6 +32,7 @@ namespace OGDotNet.Mappedtypes.Util.Time
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
+            s.WriteTypeHeader(a, typeof(Tenor) );
             a.Add("tenor", _period);
         }
 

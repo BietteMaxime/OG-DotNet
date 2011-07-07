@@ -74,6 +74,7 @@
     <Compile Include="OGDotNet\Mappedtypes\Id\UniqueIdentifierTests.cs" />
     <Compile Include="OGDotNet\OGDotNetModuleTests.cs" />
     <Compile Include="OGDotNet\Utils\GenericUtilsTest.cs" />
+    <Compile Include="OGDotNet\Utils\Tuple\PairTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WPFUtils\BindingUtilsTests.cs" />
     <Compile Include="Xunit.Extensions\EnumValuesDataAttribute.cs" />

@@ -23,7 +23,7 @@ namespace OGDotNet.Mappedtypes.Util.tuple
 
     public abstract class Pair
     {
-        public static Pair<TFirst, TSecond> Create<TFirst, TSecond>(TFirst first, TSecond second) where TFirst : class where TSecond : class
+        public static Pair<TFirst, TSecond> Create<TFirst, TSecond>(TFirst first, TSecond second)
         {
             return new Pair<TFirst, TSecond>(first, second);
         }
@@ -105,6 +105,10 @@ namespace OGDotNet.Mappedtypes.Util.tuple
                 {
                     return (T) (object) Convert.ToInt64(field.Value);
                 }
+                else if (typeof(T) == typeof(int))
+                {
+                    return (T)(object)Convert.ToInt32(field.Value);
+                }
                 else
                 {
                     return (T) field.Value;
@@ -115,9 +119,20 @@ namespace OGDotNet.Mappedtypes.Util.tuple
 
         public new void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            //TODO primitives
-            s.WriteInline(a, "first", First);
-            s.WriteInline(a, "second", Second);
+            WriteInline(a, s, "first", First);
+            WriteInline(a, s, "second", Second);
+        }
+
+        private static void WriteInline(IAppendingFudgeFieldContainer a, IFudgeSerializer s, string name, object o)
+        {
+            if (s.Context.TypeDictionary.GetByCSharpType(o.GetType()) != null)
+            {
+                a.Add(name, o);
+            }
+            else
+            {
+                s.WriteInline(a, name, o);
+            }
         }
 
         public bool Equals(Pair<TFirst, TSecond> other)
