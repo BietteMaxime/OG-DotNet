@@ -81,7 +81,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             var updateAction = otherValuesAction.Wrap<ManageableVolatilityCubeSnapshot>(y => y._otherValues);
 
             var currValues = Clone(_values);
-            var newValues = Clone(_values);
+            var newValues = Clone(newObject._values);
 
             var valuesUpdateAction = currValues.ProjectStructure(newValues,
                                                                 PrepareUpdateFrom,
@@ -89,6 +89,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                                                                 PrepareAddAction
                 ).Aggregate(UpdateAction<ManageableVolatilityCubeSnapshot>.Empty, (a, b) => a.Concat(b));
 
+            //TODO strikes
             return valuesUpdateAction.Concat(updateAction);
         }
 
