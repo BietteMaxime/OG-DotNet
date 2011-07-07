@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.ComponentModel;
 using Fudge;
 using Fudge.Serialization;
@@ -87,6 +88,11 @@ namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, e);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[ValueSnapshot {0} {1}", _marketValue, _overrideValue);
         }
     }
 }
