@@ -25,7 +25,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             InitializeComponent();
         }
 
-        private void UserControl_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             grid.Columns.Clear();
 
