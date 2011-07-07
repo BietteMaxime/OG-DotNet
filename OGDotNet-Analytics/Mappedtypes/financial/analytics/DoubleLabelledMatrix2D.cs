@@ -16,7 +16,7 @@ using OGDotNet.Utils;
 namespace OGDotNet.Mappedtypes.financial.analytics
 {
     [FudgeSurrogate(typeof(DoubleLabelledMatrix2DBuilder))]
-    public class DoubleLabelledMatrix2D : IEnumerable<LabelledMatrixEntry>
+    public class DoubleLabelledMatrix2D : IEnumerable<LabelledMatrixEntry2D>, IEnumerable<LabelledMatrixEntry>
     {
         private readonly IList<double> _xKeys;
         private readonly IList<double> _yKeys;
@@ -72,7 +72,12 @@ namespace OGDotNet.Mappedtypes.financial.analytics
             get { return _values; }
         }
 
-        private IEnumerable<LabelledMatrixEntry> GetEntrys()
+        private IEnumerable<LabelledMatrixEntry> GetEntrys1D()
+        {
+            return GetEntrys().Cast<LabelledMatrixEntry>();
+        }
+
+        private IEnumerable<LabelledMatrixEntry2D> GetEntrys()
         {
             for (int xIndex = 0; xIndex < XLabels.Count; xIndex++)
             {
@@ -80,14 +85,19 @@ namespace OGDotNet.Mappedtypes.financial.analytics
                 for (int yIndex = 0; yIndex < YLabels.Count; yIndex++)
                 {
                     var yLabel = YLabels[yIndex];
-                    yield return new LabelledMatrixEntry(Tuple.Create(xLabel, yLabel), Values[yIndex][xIndex]);
+                    yield return new LabelledMatrixEntry2D(xLabel, yLabel, Values[yIndex][xIndex]);
                 }
             }
         }
 
-        public IEnumerator<LabelledMatrixEntry> GetEnumerator()
+        IEnumerator<LabelledMatrixEntry2D> IEnumerable<LabelledMatrixEntry2D>.GetEnumerator()
         {
             return GetEntrys().GetEnumerator();
+        }
+
+        public IEnumerator<LabelledMatrixEntry> GetEnumerator()
+        {
+            return GetEntrys1D().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
