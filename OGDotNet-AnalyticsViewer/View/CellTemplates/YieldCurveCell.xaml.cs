@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Windows.Controls;
 using System.Windows.Input;
 using OGDotNet.AnalyticsViewer.View.Charts;
@@ -16,7 +15,7 @@ using OGDotNet.Mappedtypes.math.curve;
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {
     /// <summary>
-    /// Interaction logic for UserControl1.xaml
+    /// Interaction logic for YieldCurveCell.xaml
     /// </summary>
     public partial class YieldCurveCell : UserControl
     {
