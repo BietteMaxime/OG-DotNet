@@ -183,7 +183,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         private static Tenor DeserializeTenor(IFudgeField fudgeField, string fieldName)
         {
             var fudgeFieldContainer = ((IFudgeFieldContainer) fudgeField.Value).GetMessage(fieldName);
-            var value = (string) fudgeFieldContainer.Single().Value;
+            var value = fudgeFieldContainer.GetString("tenor");
             return new Tenor(value);
         }
 
