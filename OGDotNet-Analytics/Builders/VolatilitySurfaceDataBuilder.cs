@@ -12,6 +12,7 @@ using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
+using OGDotNet.Utils;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Builders
@@ -48,14 +49,14 @@ namespace OGDotNet.Builders
             return Build(xType, yType, definitionName, specificationName, currency, interpolatorName, xs, ys, values);
         }
 
-        static readonly MethodInfo GenericBuildMethod = typeof(VolatilitySurfaceDataBuilder).GetMethods().Where(m => m.Name == "Build" && m.IsGenericMethodDefinition).Single();
+        static readonly MethodInfo GenericBuildMethod = GenericUtils.GetGenericMethod(typeof(VolatilitySurfaceDataBuilder), "Build");
 
-        private VolatilitySurfaceData Build(Type xType, Type yType, string definitionName, string specificationName, Currency currency, string interpolatorName, IList<object> xs, IList<object> ys, Dictionary<Tuple<object, object>, double> values)
+        private static VolatilitySurfaceData Build(Type xType, Type yType, string definitionName, string specificationName, Currency currency, string interpolatorName, IList<object> xs, IList<object> ys, Dictionary<Tuple<object, object>, double> values)
         {
-            return (VolatilitySurfaceData) GenericBuildMethod.MakeGenericMethod(new[] { xType, yType }).Invoke(this, new object[] { definitionName, specificationName, currency, interpolatorName, xs, ys, values });
+            return (VolatilitySurfaceData) GenericUtils.Call(GenericBuildMethod, new[] { xType, yType }, new object[] { definitionName, specificationName, currency, interpolatorName, xs, ys, values });
         }
 
-        public VolatilitySurfaceData<TX, TY> Build<TX, TY>(string definitionName, string specificationName, Currency currency, string interpolatorName, IList<object> xs, IList<object> ys, Dictionary<Tuple<object, object>, double> values)
+        public static VolatilitySurfaceData<TX, TY> Build<TX, TY>(string definitionName, string specificationName, Currency currency, string interpolatorName, IList<object> xs, IList<object> ys, Dictionary<Tuple<object, object>, double> values)
         {
             return new VolatilitySurfaceData<TX, TY>(definitionName, specificationName, currency, interpolatorName, xs.Cast<TX>().ToList(), ys.Cast<TY>().ToList(),
                 values.ToDictionary(kvp => Tuple.Create((TX)kvp.Key.Item1, (TY)kvp.Key.Item2), kvp => kvp.Value)

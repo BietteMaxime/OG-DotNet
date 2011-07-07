@@ -11,6 +11,7 @@ using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Util.tuple
 {
@@ -34,11 +35,11 @@ namespace OGDotNet.Mappedtypes.Util.tuple
             return Build(first, second);
         }
 
-        static readonly MethodInfo GenericBuildMethod = typeof(Pair).GetMethods().Where(m => m.Name == "Build" && m.IsGenericMethodDefinition).Single();
+        static readonly MethodInfo GenericBuildMethod = GenericUtils.GetGenericMethod(typeof(Pair), "Build");
 
         private static Pair Build(object first, object second)
         {
-            return (Pair) GenericBuildMethod.MakeGenericMethod(GetType(first.GetType()), GetType(second.GetType())).Invoke(null, new[] {first, second});
+            return (Pair) GenericUtils.Call(GenericBuildMethod, new[] {GetType(first.GetType()), GetType(second.GetType())}, first, second);
         }
 
         private static Type GetType(Type real)
