@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="VolatilitySurfaceCell.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //     Please see distribution for license.
@@ -18,6 +18,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using OGDotNet.AnalyticsViewer.Properties;
 using OGDotNet.AnalyticsViewer.View.Charts;
+using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.WPFUtils;

@@ -306,7 +306,7 @@
     <Compile Include="Mappedtypes\math\curve\InterpolatedDoublesCurve.cs" />
     <Compile Include="Mappedtypes\engine\View\ResultModelDefinition.xaml.cs" />
     <Compile Include="Mappedtypes\Util\Time\Tenor.cs" />
-    <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\VolatilitySurfaceData.cs" />
+    <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilitySurfaceData.cs" />
     <Compile Include="Mappedtypes\financial\model\interestrate\curve\YieldCurve.cs" />
     <Compile Include="Mappedtypes\engine\View\ViewDefinition.cs" />
     <Compile Include="Mappedtypes\engine\View\IViewTargetResultModel.cs" />

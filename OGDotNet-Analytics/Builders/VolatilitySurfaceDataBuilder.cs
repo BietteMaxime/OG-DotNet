@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
+using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Utils;
 using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 

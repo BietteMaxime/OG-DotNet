@@ -11,11 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.Util.Time;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
+namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {
     //Mainly here for fudge
     [FudgeSurrogate(typeof(VolatilitySurfaceDataBuilder))]

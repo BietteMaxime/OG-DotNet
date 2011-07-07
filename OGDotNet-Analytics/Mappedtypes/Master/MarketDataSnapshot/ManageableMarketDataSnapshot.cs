@@ -197,7 +197,7 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
             }
             else
             {
-                surfaces = MapBuilder.FromFudgeMsg<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>(surfaceMessage,deserializer);
+                surfaces = MapBuilder.FromFudgeMsg<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>(surfaceMessage, deserializer);
             }
             var manageableMarketDataSnapshot = new ManageableMarketDataSnapshot(
                 ffc.GetString("basisViewName"),
