@@ -41,6 +41,15 @@ namespace OGDotNet.Model.Resources
             catch (WebException e)
             {
                 var httpWebResponse = (HttpWebResponse)e.Response;
+                if (httpWebResponse == null)
+                {
+                    if (e.Status == WebExceptionStatus.ConnectFailure)
+                    {
+                        //LAP-71
+                        return;
+                    }
+                    throw;
+                }
                 switch (httpWebResponse.StatusCode)
                 {
                     case HttpStatusCode.NotFound:
