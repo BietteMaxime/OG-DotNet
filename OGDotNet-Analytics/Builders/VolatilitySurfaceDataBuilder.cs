@@ -67,7 +67,7 @@ namespace OGDotNet.Builders
         {
             if (! os.Any())
             {
-                throw new ArgumentException();
+                return typeof(object);
             }
             Type tSeed = os.First().GetType();
             return os.Aggregate(tSeed, (t, o) => GetParent(t, o.GetType()));
