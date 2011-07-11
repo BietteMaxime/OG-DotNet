@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -26,25 +27,25 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
     {
         private readonly ManageableUnstructuredMarketDataSnapshot _globalValues;
 
-        private readonly Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> _yieldCurves;
-        private readonly Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> _volatilityCubes;
-        private readonly Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> _volatilitySurfaces;
+        private readonly IDictionary<YieldCurveKey, ManageableYieldCurveSnapshot> _yieldCurves;
+        private readonly IDictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> _volatilityCubes;
+        private readonly IDictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> _volatilitySurfaces;
 
         private string _basisViewName;
 
         private UniqueIdentifier _uniqueId;
 
         public ManageableMarketDataSnapshot(string basisViewName, ManageableUnstructuredMarketDataSnapshot globalValues,
-                                            Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurves,
-                                            Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> volatilityCubes,
-                                            Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> volatilitySurfaces,
+                                            IDictionary<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurves,
+                                            IDictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> volatilityCubes,
+                                            IDictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> volatilitySurfaces,
                                             UniqueIdentifier uniqueId = null)
         {
             _basisViewName = basisViewName;
             _globalValues = globalValues;
-            _yieldCurves = yieldCurves;
-            _volatilityCubes = volatilityCubes;
-            _volatilitySurfaces = volatilitySurfaces;
+            _yieldCurves = new ConcurrentDictionary<YieldCurveKey, ManageableYieldCurveSnapshot>(yieldCurves);
+            _volatilityCubes = new ConcurrentDictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>(volatilityCubes);
+            _volatilitySurfaces = new ConcurrentDictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>(volatilitySurfaces);
             _uniqueId = uniqueId;
         }
 
@@ -56,17 +57,17 @@ namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
 
         public string Name { get; set; }
 
-        public Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot> YieldCurves
+        public IDictionary<YieldCurveKey, ManageableYieldCurveSnapshot> YieldCurves
         {
             get { return _yieldCurves; }
         }
 
-        public Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> VolatilityCubes
+        public IDictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> VolatilityCubes
         {
             get { return _volatilityCubes; }
         }
 
-        public Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> VolatilitySurfaces
+        public IDictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> VolatilitySurfaces
         {
             get { return _volatilitySurfaces; }
         }

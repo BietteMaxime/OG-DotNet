@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
 
         public ManageableUnstructuredMarketDataSnapshot(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> values)
         {
-            _values = values;
+            _values = new ConcurrentDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(values);
         }
 
         public IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> Values
@@ -124,24 +125,24 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         {
             var actions = currValues.ProjectStructure(newValues,
                                                 (k, a, b) =>
+                                                {
+                                                    var newMarketValue = b.MarketValue;
+                                                    return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(delegate(ManageableUnstructuredMarketDataSnapshot s)
                                                     {
-                                                        var newMarketValue = b.MarketValue;
-                                                        return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(delegate(ManageableUnstructuredMarketDataSnapshot s)
-                                                                    {
-                                                                        s._values[currSpec][k].MarketValue = newMarketValue;
-                                                                    });
-                                                    },
+                                                        s._values[currSpec][k].MarketValue = newMarketValue;
+                                                    });
+                                                },
                                                 (k, v) => PrepareRemoveAction(currSpec, k, v),
                                                 (k, v) =>
-                                                    {
-                                                        var valueSnapshot = v.Clone();
-                                                        return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(
-                                                                delegate(ManageableUnstructuredMarketDataSnapshot s)
-                                                                    {
-                                                                        s._values[currSpec].Add(k, valueSnapshot.Clone());
-                                                                        s.InvokePropertyChanged("Values");
-                                                                    });
-                                                    });
+                                                {
+                                                    var valueSnapshot = v.Clone();
+                                                    return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(
+                                                            delegate(ManageableUnstructuredMarketDataSnapshot s)
+                                                            {
+                                                                s._values[currSpec].Add(k, valueSnapshot.Clone());
+                                                                s.InvokePropertyChanged("Values");
+                                                            });
+                                                });
 
             UpdateAction<ManageableUnstructuredMarketDataSnapshot> ret = UpdateAction<ManageableUnstructuredMarketDataSnapshot>.Of(actions);
 
@@ -163,13 +164,13 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         private static UpdateAction<ManageableUnstructuredMarketDataSnapshot> PrepareRemoveAction(MarketDataValueSpecification spec, string k, ValueSnapshot v)
         {
             Action<ManageableUnstructuredMarketDataSnapshot> updateAction = delegate(ManageableUnstructuredMarketDataSnapshot s)
-                                      {
-                                          if (! s._values[spec].Remove(k))
-                                          {
-                                            throw new InvalidOperationException("Unexpected missing key");   
-                                          }
-                                          s.InvokePropertyChanged("Values");
-                                      };
+            {
+                if (!s._values[spec].Remove(k))
+                {
+                    throw new InvalidOperationException("Unexpected missing key");
+                }
+                s.InvokePropertyChanged("Values");
+            };
             return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(updateAction, OverriddenValueDisappearingWarning.Of(spec, k, v));
         }
 
@@ -183,7 +184,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             var dictionary = new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>();
             foreach (var entryField in ffc.GetAllByOrdinal(1))
             {
-                var entryMsg = (IFudgeFieldContainer) entryField.Value;
+                var entryMsg = (IFudgeFieldContainer)entryField.Value;
                 MarketDataValueSpecification valueSpec = null;
                 string valueName = null;
                 ValueSnapshot value = null;
@@ -196,14 +197,14 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
                             valueSpec = deserializer.FromField<MarketDataValueSpecification>(field);
                             break;
                         case "valueName":
-                            valueName = (string) field.Value;
+                            valueName = (string)field.Value;
                             break;
                         case "value":
                             value = deserializer.FromField<ValueSnapshot>(field);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
-                    }          
+                    }
                 }
 
                 IDictionary<string, ValueSnapshot> innerDict;
@@ -225,7 +226,7 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             {
                 foreach (var valueSnapshot in value.Value)
                 {
-                    var openGammaFudgeContext = (OpenGammaFudgeContext) s.Context;
+                    var openGammaFudgeContext = (OpenGammaFudgeContext)s.Context;
                     var newMessage = s.Context.NewMessage();
                     newMessage.Add("valueSpec", openGammaFudgeContext.GetSerializer().SerializeToMsg(value.Key));
                     newMessage.Add("valueName", valueSnapshot.Key);
