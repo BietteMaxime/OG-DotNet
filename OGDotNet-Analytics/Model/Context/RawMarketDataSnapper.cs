@@ -15,6 +15,7 @@ using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.depgraph;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.compilation;
@@ -56,7 +57,15 @@ namespace OGDotNet.Model.Context
 
         private static YieldCurveKey GetYieldCurveKey(ValueSpecification y)
         {
-            return new YieldCurveKey(Currency.Create(y.TargetSpecification.Uid), y.Properties["Curve"].Single());
+            var computationTargetSpecification = y.TargetSpecification;
+
+            var valueProperties = y.Properties;
+            return GetYieldCurveKey(computationTargetSpecification, valueProperties);
+        }
+
+        private static YieldCurveKey GetYieldCurveKey(ComputationTargetSpecification computationTargetSpecification, ValueProperties valueProperties)
+        {
+            return new YieldCurveKey(Currency.Create(computationTargetSpecification.Uid), valueProperties["Curve"].Single());
         }
 
         private static VolatilityCubeKey GetVolCubeKey(ValueSpecification y)
@@ -218,7 +227,7 @@ namespace OGDotNet.Model.Context
         #endregion
         public static IEnumerable<ValueSpecification> GetYieldCurveSpecs(IDictionary<string, IDependencyGraph> graphs)
         {
-            string yieldCurveValueReqName = ValueRequirementNames.YieldCurve;
+            const string yieldCurveValueReqName = ValueRequirementNames.YieldCurve;
             var matchingSpecifications = GetMatchingSpecifications(graphs, yieldCurveValueReqName, ValueRequirementNames.YieldCurveSpec);
             var included = matchingSpecifications.SelectMany(s => s.Value);
             var interpolated = included.Where(s => s.ValueName == yieldCurveValueReqName).Select(
@@ -229,25 +238,34 @@ namespace OGDotNet.Model.Context
         private static ValueProperties GetCurveProperties(ValueSpecification sp)
         {
             return ValueProperties.Create(
-                new Dictionary<string, ISet<string>> {{"Curve", new HashSet<string>(sp.Properties["Curve"])}},
+                new Dictionary<string, ISet<string>> { { "Curve", new HashSet<string>(sp.Properties["Curve"]) } },
                 new HashSet<string>());
         }
 
-        public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> EvaluateYieldCurves(IViewComputationResultModel results)
+        public static Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> EvaluateYieldCurves(IViewComputationResultModel results, ViewDefinition viewDefinition)
         {
             var ycResults = results.AllResults
                 .Where(r => new[] { ValueRequirementNames.YieldCurve, ValueRequirementNames.YieldCurveSpec, ValueRequirementNames.YieldCurveInterpolated }.Contains(r.ComputedValue.Specification.ValueName));
             var lookup = ycResults
                 .ToLookup(r => GetYieldCurveKey(r.ComputedValue.Specification));
-            return lookup
+
+            var requested = viewDefinition.CalculationConfigurationsByName.Single().Value.SpecificRequirements.ToLookup(
+                r => GetYieldCurveKey(r.TargetSpecification, r.Constraints));
+            var ret = lookup
                 .ToDictionary(g => g.Key,
                               g => GetEvaluatedCurve(g.ToDictionary(e => e.ComputedValue.Specification.ValueName, e => e.ComputedValue.Value)));
+            var got = new HashSet<YieldCurveKey>(ret.Keys);
+            foreach (var missing in requested.Select(g => g.Key).Except(got))
+            {
+                ret.Add(missing, default(Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>));
+            }
+            return ret;
         }
 
         private static Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve> GetEvaluatedCurve(Dictionary<string, object> values)
         {
             return Tuple.Create((YieldCurve)values[ValueRequirementNames.YieldCurve],
-                (InterpolatedYieldCurveSpecificationWithSecurities) values[ValueRequirementNames.YieldCurveSpec], (NodalDoublesCurve) values[ValueRequirementNames.YieldCurveInterpolated]);
+                (InterpolatedYieldCurveSpecificationWithSecurities)values[ValueRequirementNames.YieldCurveSpec], (NodalDoublesCurve)values[ValueRequirementNames.YieldCurveInterpolated]);
         }
 
         private static Dictionary<T, Dictionary<string, object>> GetGroupedValues<T>(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, Func<ValueSpecification, T> projecter, params string[] valueNames)

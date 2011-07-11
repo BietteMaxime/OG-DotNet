@@ -42,8 +42,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private readonly string _tempviewName;
         private volatile UniqueIdentifier _tempViewUid;
         private volatile Exception _error;
+        private ViewDefinition _viewDefinition;
 
-        public SnapshotDataStream(string basisViewName, RemoteEngineContext remoteEngineContext, UniqueIdentifier snapshotId, LiveDataStream liveDataStream) : base(remoteEngineContext)
+        public SnapshotDataStream(string basisViewName, RemoteEngineContext remoteEngineContext, UniqueIdentifier snapshotId, LiveDataStream liveDataStream)
+            : base(remoteEngineContext)
         {
             _basisViewName = basisViewName;
             _snapshotId = snapshotId;
@@ -82,13 +84,14 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                     _tempViewUid = GetNewUid();
                     _liveDataStream.WithLastResults(default(CancellationToken),
                             (cycle, graphs, results) =>
+                            {
+                                if (IsDisposed)
                                 {
-                                    if (IsDisposed)
-                                    {
-                                        return; // double check here since we might have waited for a long time
-                                    }
-                                    _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, GetViewDefinition(graphs, _tempViewUid)));
-                                });
+                                    return; // double check here since we might have waited for a long time
+                                }
+                                _viewDefinition = GetViewDefinition(graphs, _tempViewUid);
+                                _remoteClient.ViewDefinitionRepository.UpdateViewDefinition(new UpdateViewDefinitionRequest(_tempviewName, _viewDefinition));
+                            });
 
                     Reattach(); //TODO: should happen magically
                 });
@@ -175,8 +178,8 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> GetYieldCurves(DateTimeOffset waitFor, CancellationToken ct)
         {
-            return WithLastResults((cycle, graphs, results) => Matches(results, waitFor, cycle), 
-                ct, (cycle, graphs, results) => RawMarketDataSnapper.EvaluateYieldCurves(results));
+            return WithLastResults((cycle, graphs, results) => Matches(results, waitFor, cycle),
+                ct, (cycle, graphs, results) => RawMarketDataSnapper.EvaluateYieldCurves(results, _viewDefinition));
         }
 
         private bool Matches(IViewComputationResultModel results, DateTimeOffset waitFor, IViewCycle cycle)
