@@ -109,6 +109,11 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("resume").Post();
         }
 
+        public void TriggerCycle()
+        {
+            _rest.Resolve("triggerCycle").Post();
+        }
+
         private void Shutdown()
         {
             _rest.Resolve("shutdown").Post();
