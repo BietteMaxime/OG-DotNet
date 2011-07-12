@@ -104,9 +104,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 if (viewDefinition.Name == "Equity Option Test View 1")
                 {
                     Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
-                    var yieldCurveSnapshot =
-                        manageableMarketDataSnapshot.YieldCurves[new YieldCurveKey(Currency.USD, "SINGLE")];
+                    var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves.Single();
                     Assert.NotNull(yieldCurveSnapshot);
+                    Assert.NotEmpty(yieldCurveSnapshot.Value.Values.Values);
                 }
                 foreach (var curve in manageableMarketDataSnapshot.YieldCurves.Values)
                 {
@@ -143,6 +143,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     value.PropertyChanged += delegate { seenUpdate = true; };
                 }
 
+                Thread.Sleep(TimeSpan.FromSeconds(10));
                 var action = proc.PrepareUpdate();
                 Assert.Empty(action.Warnings);
                 Assert.False(seenUpdate);
