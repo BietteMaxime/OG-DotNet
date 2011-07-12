@@ -19,7 +19,6 @@ using System.Windows.Threading;
 using OGDotNet.AnalyticsViewer.Properties;
 using OGDotNet.AnalyticsViewer.View.Charts;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.WPFUtils;
 
@@ -171,13 +170,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                 new DirectionalLight(Colors.White, new Vector3D(-1, -1, -1)), 
                                 BuildBaseModel(surfaceModel), 
                                 BuildGraphModel(), 
-                                surfaceModel, 
+                                surfaceModel
                             };
 
-            var groupModel = new ModelVisual3D { Content = new Model3DGroup { Children = models } };
+            _groupModel = new ModelVisual3D { Content = new Model3DGroup { Children = models } };
 
             mainViewport.Children.Clear();
-            mainViewport.Children.Add(groupModel);
+            mainViewport.Children.Add(_groupModel);
         }
 
         /// <summary>
@@ -522,6 +521,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             else
             {
                 mainViewport.Children.Clear();
+                _groupModel = null;
             }
         }
 
@@ -530,21 +530,50 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             _timer.IsEnabled = false;
             Point position = e.GetPosition(mainViewport);
             UpdateToolTip(position);
-        }
 
-        private Tuple<Point3D, MeshGeometry3D> GetHit(Point position)
-        {
-            HitTestResult hitTestResult = VisualTreeHelper.HitTest(mainViewport, position);
-            if (hitTestResult != null && hitTestResult.VisualHit != null)
+            if (IsDragging(e) && _dragStart != null)
             {
-                if (!(hitTestResult is RayMeshGeometry3DHitTestResult))
-                    throw new ArgumentException();
-                var result = (RayMeshGeometry3DHitTestResult) hitTestResult;
-
-                return Tuple.Create(result.PointHit, result.MeshHit);
+                Drag(_dragStart, position);
             }
-            return default(Tuple<Point3D, MeshGeometry3D>);
         }
+
+        private void Drag(Tuple<Point, Point3D> startTuple, Point position)
+        {
+            var transform3DGroup = (Transform3DGroup)_groupModel.Transform;
+
+            var hits = GetHits(_ => HitTestFilterBehavior.Continue, position);
+            var dragObjectHit = hits.Cast<RayMeshGeometry3DHitTestResult>().Where(h => h.MeshHit == _dragObject).FirstOrDefault();
+            if (dragObjectHit == null)
+            {
+                return;
+            }
+            Point3D start = startTuple.Item2;
+            Point3D end = transform3DGroup.Transform(dragObjectHit.PointHit);
+
+            Point3D origin = Center; // new Point3D();
+
+            Vector3D startVector = start - origin;
+            Vector3D endVector = end - origin;
+            var axis = Vector3D.CrossProduct(startVector, endVector);
+            var cosAngle = Vector3D.DotProduct(startVector, endVector) / (startVector.Length * endVector.Length);
+            var angleRads = Math.Acos(cosAngle);
+
+            axis.Normalize();
+            var r = new QuaternionRotation3D(new Quaternion(axis, RadianToDegree(angleRads)));
+
+            transform3DGroup.Children.RemoveAt(transform3DGroup.Children.Count - 1);
+            transform3DGroup.Children.Add(new RotateTransform3D(r, origin));
+        }
+
+        private static double RadianToDegree(double angle)
+        {
+            return angle * (180.0 / Math.PI);
+        }
+
+        private Tuple<Point, Point3D> _dragStart = null;
+        private ModelVisual3D _groupModel;
+        private MeshGeometry3D _dragObject;
+
         private void mainViewport_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Point position = e.GetPosition(mainViewport);
@@ -564,6 +593,60 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                     _ySliceModel.Transform = Transform3D.Identity;
                 }
             }
+            else
+            {
+                if (IsDragging(e))
+                {
+                    _dragStart = Tuple.Create(position, _groupModel.Transform.Transform(hit.Item1));
+                    _dragObject = hit.Item2;
+                    if (_groupModel.Transform is MatrixTransform3D && ((MatrixTransform3D)_groupModel.Transform).Matrix.IsIdentity)
+                    {
+                        _groupModel.Transform = new Transform3DGroup();
+                    }
+                    ((Transform3DGroup)_groupModel.Transform).Children.Add(new MatrixTransform3D(Matrix3D.Identity));
+                }
+            }
+        }
+
+        private static bool IsDragging(MouseEventArgs e)
+        {
+            return e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Released && e.MiddleButton == MouseButtonState.Released;
+        }
+
+        private void mainViewport_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _dragStart = null;
+        }
+
+        private Tuple<Point3D, MeshGeometry3D> GetHit(Point position)
+        {
+            HitTestFilterCallback htrcb = potentialHitTestTarget => HitTestFilterBehavior.Continue;
+
+            IEnumerable<HitTestResult> results = GetHits(htrcb, position);
+            var hitTestResult = results.FirstOrDefault();
+            if (hitTestResult != null && hitTestResult.VisualHit != null)
+            {
+                if (!(hitTestResult is RayMeshGeometry3DHitTestResult))
+                    throw new ArgumentException();
+                var result = (RayMeshGeometry3DHitTestResult)hitTestResult;
+
+                return Tuple.Create(result.PointHit, result.MeshHit);
+            }
+            return default(Tuple<Point3D, MeshGeometry3D>);
+        }
+
+        private IEnumerable<HitTestResult> GetHits(HitTestFilterCallback htrcb, Point position)
+        {
+            var results = new List<HitTestResult>();
+
+            HitTestResultCallback cb = delegate(HitTestResult result)
+            {
+                results.Add(result);
+                return HitTestResultBehavior.Continue;
+            };
+
+            VisualTreeHelper.HitTest(mainViewport, htrcb, cb, new PointHitTestParameters(position));
+            return results;
         }
 
         private void UpdateToolTip(Point position)
