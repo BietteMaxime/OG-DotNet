@@ -46,6 +46,11 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes
                 return;
             if (mappedType.IsInterface)
                 return;
+            if (mappedType.GetNestedTypes().Any())
+                return;
+            const TypeAttributes staticTypeAttributes = TypeAttributes.Abstract | TypeAttributes.Sealed;
+            if ((mappedType.Attributes & staticTypeAttributes) == staticTypeAttributes)
+                return;
             Assert.True(GetUsefuleness(mappedType)  > LeastUseful, string.Format("Useless mapped type {0}", mappedType.FullName));
         }
 
