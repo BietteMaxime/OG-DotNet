@@ -102,35 +102,6 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-        private void IgnoreDisposingExceptions(Action a)
-        {
-            if (IsDisposed)
-            {
-                return;
-            }
-            try
-            {
-                a();
-            }
-            catch (DataNotFoundException)
-            {
-                if (IsDisposed)
-                {
-                    return;
-                }
-
-                throw;
-            }
-            catch (InvalidOperationException)
-            {
-                if (IsDisposed)
-                {
-                    return;
-                }
-
-                throw;
-            }
-        }
         private ViewDefinition GetViewDefinition(IDictionary<string, IDependencyGraph> graphs, UniqueIdentifier uid)
         {
             IEnumerable<ValueSpecification> specs = RawMarketDataSnapper.GetYieldCurveSpecs(graphs);

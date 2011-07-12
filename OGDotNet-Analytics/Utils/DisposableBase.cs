@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using OGDotNet.Mappedtypes;
 
 namespace OGDotNet.Utils
 {
@@ -43,5 +44,35 @@ namespace OGDotNet.Utils
         }
 
         protected abstract void Dispose(bool disposing);
+
+        protected void IgnoreDisposingExceptions(Action a)
+        {
+            if (IsDisposed)
+            {
+                return;
+            }
+            try
+            {
+                a();
+            }
+            catch (DataNotFoundException)
+            {
+                if (IsDisposed)
+                {
+                    return;
+                }
+
+                throw;
+            }
+            catch (InvalidOperationException)
+            {
+                if (IsDisposed)
+                {
+                    return;
+                }
+
+                throw;
+            }
+        }
     }
 }

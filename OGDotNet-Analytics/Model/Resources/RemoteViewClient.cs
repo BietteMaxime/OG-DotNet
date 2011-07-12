@@ -247,8 +247,11 @@ namespace OGDotNet.Model.Resources
         protected override void Dispose(bool disposing)
         {
             _heartbeatSender.Dispose();
-            RemoveResultListenerInner(false);
-            Shutdown();
+            IgnoreDisposingExceptions(delegate
+            {
+                RemoveResultListenerInner(false);
+                Shutdown();
+            });
         }
     }
 }
