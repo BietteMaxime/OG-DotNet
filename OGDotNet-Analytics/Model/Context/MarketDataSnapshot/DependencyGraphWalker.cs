@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.engine.depgraph;
 using OGDotNet.Mappedtypes.engine.depGraph;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
@@ -23,6 +24,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         /// <returns>See <paramref name="nodesToExcludeWithDependencies"/></returns>
         public static IEnumerable<DependencyNode> GetNodesExcludingDependencies(IDependencyGraph graph, Predicate<DependencyNode> nodesToExcludeWithDependencies)
         {
+            ArgumentChecker.NotNull(graph, "graph");
             var ret = new HashSet<DependencyNode>();
             foreach (var dependencyNode in graph.DependencyNodes)
             {
