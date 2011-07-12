@@ -52,7 +52,7 @@ namespace OGDotNet.Mappedtypes.engine.View.Execution
 
         public static IViewExecutionOptions Batch(IViewCycleExecutionSequence cycleExecutionSequence, ViewCycleExecutionOptions defaultCycleOptions)
         {
-            return new ExecutionOptions(cycleExecutionSequence, ViewExecutionFlags.RunAsFastAsPossible, defaultExecutionOptions:defaultCycleOptions);
+            return new ExecutionOptions(cycleExecutionSequence, ViewExecutionFlags.RunAsFastAsPossible | ViewExecutionFlags.AwaitMarketData, defaultExecutionOptions:defaultCycleOptions);
         }
 
         public static IViewExecutionOptions GetCompileOnly()
