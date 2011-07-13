@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
@@ -36,7 +37,8 @@ namespace OGDotNet.Builders
 
             if (valueSpecification.ValueName == "YieldCurveJacobian")
             {//TODO I hope this gets a better type one day?
-                return deserializer.FromField<List<double[]>>(valueField);
+                return
+                    ((IFudgeFieldContainer) valueField.Value).Where(f=>! f.Ordinal.HasValue).Select(f => (double[]) f.Value).ToList();
             }
 
             return deserializer.FromField(valueField, null);
