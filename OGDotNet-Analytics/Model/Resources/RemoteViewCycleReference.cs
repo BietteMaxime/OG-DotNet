@@ -20,7 +20,7 @@ namespace OGDotNet.Model.Resources
         public RemoteViewCycleReference(RestTarget location)
         {
             _location = location;
-            _heartbeatSender = new HeartbeatSender(TimeSpan.FromSeconds(5), _location);
+            _heartbeatSender = new HeartbeatSender(TimeSpan.FromSeconds(2.5), _location);
         }
 
         public IViewCycle Value
