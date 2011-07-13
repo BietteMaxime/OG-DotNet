@@ -16,6 +16,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
         Future,
         Swap,
         TenorSwap,
-        BasisSwap
+        BasisSwap,
+        OisSwap
     }
 }
