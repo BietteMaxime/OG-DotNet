@@ -542,7 +542,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             var transform3DGroup = (Transform3DGroup)_groupModel.Transform;
 
             var hits = GetHits(_ => HitTestFilterBehavior.Continue, position);
-            var dragObjectHit = hits.Cast<RayMeshGeometry3DHitTestResult>().Where(h => h.MeshHit == _dragObject).FirstOrDefault();
+            var meshHits = hits.Cast<RayMeshGeometry3DHitTestResult>().Where(h => h.MeshHit == _dragObject);
+            var dragObjectHit = meshHits.OrderBy(h => (h.PointHit - startTuple.Item2).LengthSquared).FirstOrDefault();
             if (dragObjectHit == null)
             {
                 return;
