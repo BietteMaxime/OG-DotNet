@@ -38,7 +38,7 @@ namespace OGDotNet.Builders
             if (valueSpecification.ValueName == "YieldCurveJacobian")
             {//TODO I hope this gets a better type one day?
                 return
-                    ((IFudgeFieldContainer) valueField.Value).Where(f=>! f.Ordinal.HasValue).Select(f => (double[]) f.Value).ToList();
+                    ((IFudgeFieldContainer)valueField.Value).Where(f => !f.Ordinal.HasValue).Select(f => (double[])f.Value).ToList();
             }
 
             return deserializer.FromField(valueField, null);
