@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.Util.Time;
 
@@ -53,7 +54,8 @@ namespace OGDotNet.Builders
                         labelTypes.Enqueue((string)field.Value);
                         break;
                     case KeyOrdinal:
-                        keys.Add((TKey)field.Value);
+                        TKey key = GetKey(field);
+                        keys.Add(key);
                         break;
                     case LabelOrdinal:
                         labelValues.Enqueue(field);
@@ -80,6 +82,11 @@ namespace OGDotNet.Builders
                         string period = (string)labelValue.Value;
                         labels.Add(new Tenor(period));
                     }
+                    else if (labelTypeName == "com.opengamma.util.money.Currency")
+                    {
+                        string iso = (string) labelValue.Value;
+                        labels.Add(Currency.Create(iso));
+                    }
                     else
                     {//TODO work out whether this is right (and fast enough) in the general case
                         var typeMapper = (IFudgeTypeMappingStrategy)Context.GetProperty(ContextProperties.TypeMappingStrategyProperty);
@@ -98,6 +105,11 @@ namespace OGDotNet.Builders
                                                                          typeof(IList<double>)
                                                                      });
             return (TMatrix)constructorInfo.Invoke(new object[] { keys, labels, values });
+        }
+
+        protected virtual TKey GetKey(IFudgeField field)
+        {
+            return (TKey)field.Value;
         }
     }
 }

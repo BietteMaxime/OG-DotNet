@@ -62,6 +62,7 @@
     <Compile Include="Builders\ComputationTargetBuilder.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
     <Compile Include="Builders\ComputedValueBuilder.cs" />
+    <Compile Include="Builders\CurrencyLabelledMatrix1DBuilder.cs" />
     <Compile Include="Builders\DependencyNodeBuilder.cs" />
     <Compile Include="Builders\DoubleLabelledMatrix2DBuilder.cs" />
     <Compile Include="Builders\ExecutionOptionsBuilder.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilitySurfaceKey.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\sabr\SABRFittedSurfaces.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\BloombergFXOptionVolatilitySurfaceInstrumentProvider.cs" />
+    <Compile Include="Mappedtypes\financial\interestrate\PresentValueSensitivity.cs" />
     <Compile Include="Mappedtypes\financial\Security\equity\EquitySecurity.cs" />
     <Compile Include="Mappedtypes\financial\Security\option\EquityOptionSecurity.cs" />
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />
@@ -105,6 +107,7 @@
     <Compile Include="Mappedtypes\math\surface\IDoublesSurface.cs" />
     <Compile Include="Mappedtypes\math\surface\InterpolatedDoublesSurface.cs" />
     <Compile Include="Mappedtypes\Util\money\CurrencyAmount.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\CurrencyLabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\Util\money\MultipleCurrencyAmount.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LastResultViewClient.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LiveDataStream.cs" />
@@ -342,6 +345,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mappedtypes\financial\marketdatasnapshot\rest\" />
+    <Folder Include="Mappedtypes\javax\time\calendar\" />
+    <Folder Include="Mappedtypes\NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
