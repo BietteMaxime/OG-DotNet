@@ -30,8 +30,10 @@ namespace OGDotNet.Builders
             string specificationName = ffc.GetValue<string>("specificationName");
             string interpolatorName = ffc.GetValue<string>("interpolatorName");
 
-            IList<object> xs = ffc.GetAllByName("xs").Select(deserializer.FromField<object>).ToList();
-            IList<object> ys = ffc.GetAllByName("ys").Select(deserializer.FromField<object>).ToList();
+            bool xWrapped;
+            IList<object> xs = ReadAllAsObjectList(ffc, "xs", deserializer, out xWrapped);
+            bool yWrapped;
+            IList<object> ys = ReadAllAsObjectList(ffc, "ys", deserializer, out yWrapped);
 
             Type xType = GetType(xs);
             Type yType = GetType(ys);
@@ -40,13 +42,64 @@ namespace OGDotNet.Builders
             foreach (var valueField in valuesFields)
             {
                 var subMessage = (IFudgeFieldContainer)valueField.Value;
-                object x = deserializer.FromField(subMessage.GetByName("x"), xType);
-                object y = deserializer.FromField(subMessage.GetByName("y"), yType);
+                var xField = subMessage.GetByName("x");
+                var yField = subMessage.GetByName("y");
+                object x = xWrapped ? GetWrappedPrimitive(xField) : deserializer.FromField(xField, xType);
+                object y = yWrapped ? GetWrappedPrimitive(yField) : deserializer.FromField(yField, yType);
                 double value = subMessage.GetValue<double>("value");
                 values.Add(new Tuple<object, object>(x, y), value);
             }
 
             return Build(xType, yType, definitionName, specificationName, currency, interpolatorName, xs, ys, values);
+        }
+
+        private static IList<object> ReadAllAsObjectList(IFudgeFieldContainer ffc, string name, IFudgeDeserializer deserializer, out bool wrappedPrimitive)
+        {
+            var fields = ffc.GetAllByName(name);
+            if (IsWrappedPrimitive(fields[0]))
+            {
+                wrappedPrimitive = true;
+                return fields.Select(GetWrappedPrimitive).ToList();    
+            }
+            wrappedPrimitive = false;
+            return fields.Select(deserializer.FromField<object>).ToList();
+        }
+
+        private static object GetWrappedPrimitive(IFudgeField fudgeField)
+        {
+            return ((IFudgeFieldContainer) fudgeField.Value).GetByName("value").Value;
+        }
+        private static bool IsWrappedPrimitive(IFudgeField fudgeField)
+        {
+            var ffc = fudgeField.Value as IFudgeFieldContainer;
+            if (ffc == null)
+            {
+                return false;
+            }
+            var valueFields = ffc.GetAllByName("value");
+            if (valueFields.Count != 1)
+            {
+                return false;
+            }
+            var allByOrdinal = ffc.GetAllByOrdinal(0);
+            if (allByOrdinal.Count == 0)
+            {
+                return false;
+            }
+
+            if (valueFields.Count + allByOrdinal.Count != ffc.Count())
+            {
+                return false;
+            }
+            if (valueFields.Count != 1)
+            {
+                return false;
+            }
+            if (valueFields.Single().Value is IFudgeFieldContainer)
+            {
+                return false;
+            }
+            return true;
         }
 
         static readonly MethodInfo GenericBuildMethod = GenericUtils.GetGenericMethod(typeof(VolatilitySurfaceDataBuilder), "Build");
