@@ -32,7 +32,7 @@ namespace OGDotNet.Mappedtypes.javax.time.calendar
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            throw new NotImplementedException();
+            a.Add("date", _date.ToString("yyyy'-'MM'-'dd"));
         }
 
         public bool Equals(LocalDate other)
