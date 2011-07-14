@@ -105,7 +105,15 @@ namespace OGDotNet.Model.Context
                 foreach (var y in volatilitySurfaceData.Ys)
                 {
                     var key = new Pair<object, object>(x, y);
-                    dict.Add(key, new ValueSnapshot(volatilitySurfaceData[x, y]));
+                    double value;
+                    if (volatilitySurfaceData.TryGet(x, y, out value))
+                    {
+                        dict.Add(key, new ValueSnapshot(value));
+                    }
+                    else
+                    {
+                        dict.Add(key, new ValueSnapshot(null));
+                    }
                 }
             }
             

@@ -192,8 +192,11 @@ namespace OGDotNet.Tests.Integration
             {
                 var x = xy.Item1;
                 var y = xy.Item2;
-                var d = value[x, y];
-                AssertSensibleValue(d);
+                double d;
+                if (value.TryGet(x, y, out d))
+                {
+                    AssertSensibleValue(d);    
+                }
             }
         }
 

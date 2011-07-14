@@ -51,7 +51,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             {
                 foreach (var y in volatilitySurfaceData.Ys)
                 {
-                    yield return new LabelledMatrixEntry2D(x, y, volatilitySurfaceData[x, y]);
+                    double value;
+                    if (volatilitySurfaceData.TryGet(x, y, out value))
+                    {
+                        yield return new LabelledMatrixEntry2D(x, y, value);
+                    }
                 }
             }
         }
