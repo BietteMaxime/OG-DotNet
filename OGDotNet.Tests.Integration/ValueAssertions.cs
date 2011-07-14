@@ -29,6 +29,7 @@ using OGDotNet.Mappedtypes.financial.model.volatility.surface;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.math.surface;
+using OGDotNet.Mappedtypes.Util.money;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Mappedtypes.Util.Timeseries.fast.longint;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
@@ -392,6 +393,11 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(surfaces.DayCountName);
             AssertSensibleValue(surfaces.NuSurface);
             AssertSensibleValue(surfaces.RhoSurface);
+        }
+        public static void AssertSensibleValue(CurrencyAmount amount)
+        {
+            Assert.NotNull(amount.Currency);
+            AssertSensibleValue(amount.Amount);
         }
     }
 }
