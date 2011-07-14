@@ -12,6 +12,7 @@ using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine;
 using OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph;
+using OGDotNet.Mappedtypes.engine.marketdata.spec;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
@@ -29,19 +30,19 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Core.marketdatasnapshot
     public class VolatilityCubeTest : TestWithContextBase
     {
         [Xunit.Extensions.Theory]
-        [InlineData("DEFAULT")]
-        [InlineData("BLOOMBERG")]
-        public void CanGetUSDVolatilityCube(string cubeName)
+        [InlineData("USD")]
+        public void CanGetUSDVolatilityCube(string currencyName)
         {
+            const string cubeName = "BLOOMBERG";
             var valueProperties = ValueProperties.Create(new Dictionary<string, ISet<string>> { { "Cube", new HashSet<string> { cubeName } } }, new HashSet<string>());
 
             var viewCalculationConfiguration = new ViewCalculationConfiguration("Default",
                 new[]
                     {
-                        new ValueRequirement("VolatilityCubeMarketData", new ComputationTargetSpecification(ComputationTargetType.Primitive, Currency.USD.UniqueId), valueProperties)
+                        new ValueRequirement("VolatilityCubeMarketData", new ComputationTargetSpecification(ComputationTargetType.Primitive, Currency.Create(currencyName).UniqueId), valueProperties)
                     }, new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>());
             
-            var vdName = TestUtils.GetUniqueName() + cubeName;
+            var vdName = string.Join("-", TestUtils.GetUniqueName(), cubeName, currencyName);
 
             var defn = new ViewDefinition(vdName, new ResultModelDefinition(ResultOutputMode.TerminalOutputs),
                                calculationConfigurationsByName:
@@ -53,7 +54,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Core.marketdatasnapshot
                 {
                     using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                     {
-                        var viewComputationResultModels = remoteViewClient.GetResults(defn.Name, ExecutionOptions.RealTime);
+                        var viewComputationResultModels = remoteViewClient.GetResults(defn.Name, new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.AwaitMarketData | ViewExecutionFlags.TriggersEnabled, null, new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification())));
                         int i = 0;
 
                         foreach (var viewComputationResultModel in viewComputationResultModels)
@@ -68,16 +69,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Core.marketdatasnapshot
                                     Assert.InRange(volatilityCubeData.Strikes.Count, 1, int.MaxValue);
                                     Assert.Empty(volatilityCubeData.OtherData.DataPoints);
 
-                                    var actual = volatilityCubeData.DataPoints.Count + volatilityCubeData.Strikes.Count;
-                                    Assert.InRange(actual, liveDataCount * 0.9, liveDataCount); //Allow 10% for PLAT-1383
+                                    var actual = volatilityCubeData.DataPoints.Count + volatilityCubeData.OtherData.DataPoints.Count + volatilityCubeData.Strikes.Count;
+                                    Assert.InRange(actual, liveDataCount * 0.5, liveDataCount); //Allow 50% for PLAT-1383
 
                                     var pays = volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike < 0);
                                     var recvs = volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike > 0);
                                     Assert.NotEmpty(pays);
                                     Assert.NotEmpty(volatilityCubeData.DataPoints.Where(k => k.Key.RelativeStrike == 0));
                                     Assert.NotEmpty(recvs);
-
-                                    Assert.InRange(pays.Count(), recvs.Count() / 2.0, recvs.Count() * 2.0); //Disallow completely unbalanced cubes
+                                    
                                     foreach (var dataPoint in volatilityCubeData.DataPoints.Keys)
                                     {
                                         var strike = volatilityCubeData.Strikes[GetStrikeKey(dataPoint)];
