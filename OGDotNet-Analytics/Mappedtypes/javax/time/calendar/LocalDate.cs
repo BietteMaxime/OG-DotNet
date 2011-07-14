@@ -8,6 +8,8 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
+using Fudge.Types;
+using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.javax.time.calendar
 {
@@ -32,7 +34,8 @@ namespace OGDotNet.Mappedtypes.javax.time.calendar
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add("date", _date.ToString("yyyy'-'MM'-'dd"));
+            s.WriteTypeHeader(a, typeof(LocalDate));
+            a.Add("date", new FudgeDate(_date));
         }
 
         public bool Equals(LocalDate other)
