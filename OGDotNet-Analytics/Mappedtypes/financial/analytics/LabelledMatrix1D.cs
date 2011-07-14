@@ -19,7 +19,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics
         private readonly IList<object> _labels;
         private readonly IList<double> _values;
 
-        protected LabelledMatrix1D(IList<TKey> keys, IList<object> labels, IList<double> values)
+        public LabelledMatrix1D(IList<TKey> keys, IList<object> labels, IList<double> values)
         {
             if (keys == null) throw new ArgumentNullException("keys");
             if (labels == null) throw new ArgumentNullException("labels");

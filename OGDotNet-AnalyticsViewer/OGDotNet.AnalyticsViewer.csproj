@@ -79,6 +79,9 @@
     <Compile Include="View\CellTemplates\LabelledMatrix1DCell.xaml.cs">
       <DependentUpon>LabelledMatrix1DCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CellTemplates\MultipleCurrencyAmountCell.xaml.cs">
+      <DependentUpon>MultipleCurrencyAmountCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CellTemplates\NullCell.xaml.cs">
       <DependentUpon>NullCell.xaml</DependentUpon>
     </Compile>
@@ -118,6 +121,10 @@
     <Page Include="View\CellTemplates\LabelledMatrix1DCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\CellTemplates\MultipleCurrencyAmountCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CellTemplates\NullCell.xaml">
       <Generator>MSBuild:Compile</Generator>
