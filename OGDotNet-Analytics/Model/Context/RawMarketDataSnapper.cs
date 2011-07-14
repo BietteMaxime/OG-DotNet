@@ -75,7 +75,7 @@ namespace OGDotNet.Model.Context
 
         private static VolatilitySurfaceKey GetVolSurfaceKey(ValueSpecification y)
         {
-            return new VolatilitySurfaceKey(Currency.Create(y.TargetSpecification.Uid), y.Properties["Surface"].Single(), y.Properties["InstrumentType"].Single());
+            return new VolatilitySurfaceKey(y.TargetSpecification.Uid, y.Properties["Surface"].Single(), y.Properties["InstrumentType"].Single());
         }
 
         private static ManageableYieldCurveSnapshot GetYieldCurveSnapshot(SnapshotDataBundle bundle, DateTimeOffset valuationTime)

@@ -8,26 +8,26 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Core.Common;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
 {
     public class VolatilitySurfaceKey : IComparable<VolatilitySurfaceKey>
     {
-        private readonly Currency _currency;
+        private readonly UniqueIdentifier _target;
         private readonly string _name;
         private readonly string _instrumentType;
 
-        public VolatilitySurfaceKey(Currency currency, string name, string instrumentType)
+        public VolatilitySurfaceKey(UniqueIdentifier target, string name, string instrumentType)
         {
-            _currency = currency;
+            _target = target;
             _name = name;
             _instrumentType = instrumentType;
         }
 
-        public Currency Currency
+        public UniqueIdentifier Target
         {
-            get { return _currency; }
+            get { return _target; }
         }
 
         public string Name
@@ -42,33 +42,36 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
 
         public override string ToString()
         {
-            return string.Format("[VolatilitySurfaceKey {0} {1} {2}]", _currency.ISOCode, _name, _instrumentType);
+            return string.Format("[VolatilitySurfaceKey {0} {1} {2}]", _target.Value, _name, _instrumentType);
         }
         public static VolatilitySurfaceKey FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new VolatilitySurfaceKey(ffc.GetValue<Currency>("currency"), ffc.GetString("name"), ffc.GetString("instrumentType"));
+            return new VolatilitySurfaceKey(UniqueIdentifier.Parse(ffc.GetString("target")), ffc.GetString("name"), ffc.GetString("instrumentType"));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            a.Add("currency", Currency);
+            a.Add("target", Target.ToString());
             a.Add("name", Name);
             a.Add("instrumentType", InstrumentType);
         }
 
         public int CompareTo(VolatilitySurfaceKey other)
         {
-            int ret = _currency.ISOCode.CompareTo(other._currency.ISOCode);
+            int ret = _target.CompareTo(other._target);
             if (ret != 0)
                 return ret;
-            return _name.CompareTo(other._name);
+            ret = _name.CompareTo(other._name);
+            if (ret != 0)
+                return ret;
+            return _instrumentType.CompareTo(other._instrumentType);
         }
 
         public bool Equals(VolatilitySurfaceKey other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other._currency, _currency) && Equals(other._name, _name) && Equals(other._instrumentType, _instrumentType);
+            return Equals(other._target, _target) && Equals(other._name, _name) && Equals(other._instrumentType, _instrumentType);
         }
 
         public override bool Equals(object obj)
@@ -83,7 +86,7 @@ namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
         {
             unchecked
             {
-                return ((_currency != null ? _currency.GetHashCode() : 0) * 397) ^ (_name != null ? _name.GetHashCode() : 0);
+                return ((_target != null ? _target.GetHashCode() : 0) * 397) ^ (_name != null ? _name.GetHashCode() : 0);
             }
         }
     }

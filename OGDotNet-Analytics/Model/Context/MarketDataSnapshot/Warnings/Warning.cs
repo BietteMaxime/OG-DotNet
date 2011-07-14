@@ -83,7 +83,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot.Warnings
     public class OverriddenVolatilitySurfaceDisappearingWarning : Warning
     {
         private OverriddenVolatilitySurfaceDisappearingWarning(VolatilitySurfaceKey key)
-            : base(string.Format("Volatility Surface {0} {1} will not be present in the new snapshot, overrides will be lost", key.Currency, key.Name))
+            : base(string.Format("Volatility Surface {0} will not be present in the new snapshot, overrides will be lost", key))
         {
         }
 
