@@ -25,7 +25,7 @@ namespace OGDotNet.Builders
 
         public override string GetName(Type type)
         {
-            if (type.FullName.StartsWith(_dotNetPrefix+".javax"))
+            if (type.FullName.StartsWith(_dotNetPrefix + ".javax"))
             {
                 return type.FullName.Substring(_dotNetPrefix.Length + 1);
             }
