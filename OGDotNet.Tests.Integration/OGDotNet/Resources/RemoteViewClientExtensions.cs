@@ -35,17 +35,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         public static IEnumerable<CycleCompletedArgs> GetCycles(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
         {
-            using (var resultQueue = new BlockingCollection<CycleCompletedArgs>(new ConcurrentQueue<CycleCompletedArgs>()))
+            using (var resultQueue = new BlockingCollection<object>(new ConcurrentQueue<object>()))
             using (var otherQueue = new BlockingCollection<object>(new ConcurrentQueue<object>()))
             {
                 var resultListener = new EventViewResultListener();
                 resultListener.CycleCompleted += (sender, e) => resultQueue.Add(e);
 
                 resultListener.CycleExecutionFailed += (s, e) => otherQueue.Add(e);
-                resultListener.ProcessCompleted += (s, e) => otherQueue.Add(e);
                 resultListener.ProcessTerminated += (s, e) => otherQueue.Add(e);
                 resultListener.ViewDefinitionCompilationFailed += (s, e) => otherQueue.Add(e);
-                resultListener.ViewDefinitionCompiled += (s, e) => otherQueue.Add(e);
 
                 client.SetResultListener(resultListener);
 
@@ -57,16 +55,25 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     while (true)
                     {
-                        CycleCompletedArgs ret;
-                        if (resultQueue.TryTake(out ret, (int)timeout.TotalMilliseconds))
+                        object next;
+                        var index = BlockingCollection<object>.TryTakeFromAny(new[] { resultQueue, otherQueue }, out next, timeout);
+                        if (index == 0)
                         {
-                            yield return ret;
+                            yield return (CycleCompletedArgs)next;
                         }
                         else
                         {
-                            throw new TimeoutException(string.Format("No results received for {0} after {1}\n{2}\n state {3} is completed {4}", viewDefinitionName, timeout,
-                                string.Join(",", otherQueue.Select(o => o.ToString())),
-                                client.GetState(), client.IsCompleted));
+                            var detailMessage = string.Format("for {0} after {1}\n state {2} is completed {3}", viewDefinitionName, timeout, client.GetState(), client.IsCompleted);
+                            switch (index)
+                            {
+                                case 0:
+                                    throw new ArgumentException("index");
+                                case 1:
+                                    throw new Exception(string.Format("Error occured whilst getting results {0}\n{1}", next, detailMessage));
+                                default:
+
+                                    throw new TimeoutException("No results received " + detailMessage);
+                            }
                         }
                     }
                 }
