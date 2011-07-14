@@ -104,6 +104,8 @@
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\math\surface\IDoublesSurface.cs" />
     <Compile Include="Mappedtypes\math\surface\InterpolatedDoublesSurface.cs" />
+    <Compile Include="Mappedtypes\Util\money\CurrencyAmount.cs" />
+    <Compile Include="Mappedtypes\Util\money\MultipleCurrencyAmount.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LastResultViewClient.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LiveDataStream.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStream.cs" />
