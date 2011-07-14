@@ -101,6 +101,7 @@
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />
     <Compile Include="Mappedtypes\engine\marketdata\spec\LiveMarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\engine\marketdata\spec\MarketDataSpecification.cs" />
+    <Compile Include="Mappedtypes\javax\time\calendar\LocalDate.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilityCubeSnapshot.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilitySurfaceSnapshot.cs" />
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
@@ -345,7 +346,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mappedtypes\financial\marketdatasnapshot\rest\" />
-    <Folder Include="Mappedtypes\javax\time\calendar\" />
     <Folder Include="Mappedtypes\NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
