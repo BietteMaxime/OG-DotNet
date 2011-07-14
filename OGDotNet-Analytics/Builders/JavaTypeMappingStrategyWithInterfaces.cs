@@ -14,16 +14,23 @@ namespace OGDotNet.Builders
 {
     class JavaTypeMappingStrategyWithInterfaces : JavaTypeMappingStrategy
     {
+        private readonly string _dotNetPrefix;
         readonly ConcurrentDictionary<string, Type> _getTypeCache = new ConcurrentDictionary<string, Type>();
 
         public JavaTypeMappingStrategyWithInterfaces(string dotNetPrefix, string javaPrefix)
             : base(dotNetPrefix, javaPrefix)
         {
+            _dotNetPrefix = dotNetPrefix;
         }
 
         public override string GetName(Type type)
         {
+            if (type.FullName.StartsWith(_dotNetPrefix+".javax"))
+            {
+                return type.FullName.Substring(_dotNetPrefix.Length + 1);
+            }
             var javaName = base.GetName(type);
+            
             if (type.IsInterface && type.Name.Length > 2 && type.Name[0] == 'I' && char.IsUpper(type.Name[1]))
             {
                 var dotIndex = javaName.LastIndexOf('.');
