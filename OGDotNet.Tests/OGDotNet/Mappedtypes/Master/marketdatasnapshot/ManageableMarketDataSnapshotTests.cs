@@ -13,11 +13,11 @@ using OGDotNet.Mappedtypes.master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using Xunit;
 
-namespace OGDotNet.Tests.Integration.OGDotNet.Mappedtypes.Master.marketdatasnapshot
+namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
 {
     public class ManageableMarketDataSnapshotTests
     {
-        [Xunit.Extensions.Fact]
+        [Fact]
         public void CanRemoveAllOverrides()
         {
             var manageableUnstructuredMarketDataSnapshot = new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>());

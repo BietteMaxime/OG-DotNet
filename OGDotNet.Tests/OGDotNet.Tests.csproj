@@ -72,6 +72,7 @@
     <Compile Include="OGDotNet\Mappedtypes\EmptyTypesWarner.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Id\IdentifierTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Id\UniqueIdentifierTests.cs" />
+    <Compile Include="OGDotNet\Mappedtypes\Master\marketdatasnapshot\ManageableMarketDataSnapshotTests.cs" />
     <Compile Include="OGDotNet\OGDotNetModuleTests.cs" />
     <Compile Include="OGDotNet\Utils\GenericUtilsTest.cs" />
     <Compile Include="OGDotNet\Utils\Tuple\PairTests.cs" />
