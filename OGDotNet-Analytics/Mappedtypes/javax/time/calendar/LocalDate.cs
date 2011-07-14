@@ -11,7 +11,7 @@ using Fudge.Serialization;
 
 namespace OGDotNet.Mappedtypes.javax.time.calendar
 {
-    public class LocalDate : IEquatable<LocalDate>
+    public class LocalDate : IEquatable<LocalDate>, IComparable<LocalDate>, IComparable
     {
         private readonly DateTime _date;
 
@@ -42,6 +42,11 @@ namespace OGDotNet.Mappedtypes.javax.time.calendar
             return other._date.Equals(_date);
         }
 
+        public int CompareTo(LocalDate other)
+        {
+            return _date.CompareTo(other._date);
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -53,6 +58,16 @@ namespace OGDotNet.Mappedtypes.javax.time.calendar
         public override int GetHashCode()
         {
             return _date.GetHashCode();
+        }
+
+        public int CompareTo(object obj)
+        {
+            return CompareTo((LocalDate) obj);
+        }
+
+        public override string ToString()
+        {
+            return _date.ToShortDateString();
         }
     }
 }
