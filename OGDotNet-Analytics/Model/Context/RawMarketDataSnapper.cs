@@ -40,17 +40,29 @@ namespace OGDotNet.Model.Context
     /// </summary>
     internal static class RawMarketDataSnapper
     {
+        static readonly StructuredSnapper<YieldCurveKey, SnapshotDataBundle, ManageableYieldCurveSnapshot> YieldCurveSnapper = new StructuredSnapper<YieldCurveKey, SnapshotDataBundle, ManageableYieldCurveSnapshot>(
+            ValueRequirementNames.YieldCurveMarketData, GetYieldCurveKey, (remoteEngineContext, results, k, o) => GetYieldCurveSnapshot(o, results.ValuationTime)
+            );
+
+        static readonly StructuredSnapper<VolatilitySurfaceKey, VolatilitySurfaceData, ManageableVolatilitySurfaceSnapshot> SurfaceSnapper = new StructuredSnapper<VolatilitySurfaceKey, VolatilitySurfaceData, ManageableVolatilitySurfaceSnapshot>(
+            ValueRequirementNames.VolatilitySurfaceData, GetVolSurfaceKey, (remoteEngineContext, results, k, o) => GetVolSurfaceSnapshot(o)
+            );
+
+        static readonly StructuredSnapper<VolatilityCubeKey, VolatilityCubeData, ManageableVolatilityCubeSnapshot> CubeSnapper = new StructuredSnapper<VolatilityCubeKey, VolatilityCubeData, ManageableVolatilityCubeSnapshot>(
+            ValueRequirementNames.VolatilityCubeMarketData, GetVolCubeKey, (remoteEngineContext, results, k, o) => GetVolCubeSnapshot(o, remoteEngineContext.VolatilityCubeDefinitionSource.GetDefinition(k.Currency, k.Name))
+            );
+
+        static readonly StructuredSnapper[] Snappers = new StructuredSnapper[] { CubeSnapper, SurfaceSnapper, YieldCurveSnapper };
+
         #region create snapshot
 
         public static ManageableMarketDataSnapshot CreateSnapshotFromCycle(IViewComputationResultModel results, IDictionary<string, IDependencyGraph> graphs, IViewCycle viewCycle, string basisViewName, RemoteEngineContext remoteEngineContext)
         {
             var globalValues = GetGlobalValues(results, graphs);
-            var yieldCurves = GetYieldCurveValues(viewCycle, graphs, ValueRequirementNames.YieldCurveMarketData).ToDictionary(yieldCurve => yieldCurve.Key, yieldCurve => GetYieldCurveSnapshot((SnapshotDataBundle) yieldCurve.Value[ValueRequirementNames.YieldCurveMarketData], results.ValuationTime));
-            var volCubeDefinitions = GetVolCubeValues(viewCycle, graphs, ValueRequirementNames.VolatilityCubeMarketData)
-                .ToDictionary(kvp => kvp.Key, kvp => GetVolCubeSnapshot((VolatilityCubeData)kvp.Value[ValueRequirementNames.VolatilityCubeMarketData], remoteEngineContext.VolatilityCubeDefinitionSource.GetDefinition(kvp.Key.Currency, kvp.Key.Name)));
-
-            var volSurfaceDefinitions = GetVolSurfaceValues(viewCycle, graphs, ValueRequirementNames.VolatilitySurfaceData)
-                .ToDictionary(kvp => kvp.Key, kvp => GetVolSurfaceSnapshot((VolatilitySurfaceData)kvp.Value[ValueRequirementNames.VolatilitySurfaceData]));
+            
+            var yieldCurves = YieldCurveSnapper.GetValues(results, graphs, viewCycle, remoteEngineContext);
+            var volCubeDefinitions = CubeSnapper.GetValues(results, graphs, viewCycle, remoteEngineContext);
+            var volSurfaceDefinitions = SurfaceSnapper.GetValues(results, graphs, viewCycle, remoteEngineContext);
 
             return new ManageableMarketDataSnapshot(basisViewName, globalValues, yieldCurves, volCubeDefinitions, volSurfaceDefinitions);
         }
@@ -176,50 +188,18 @@ namespace OGDotNet.Model.Context
 
         private static bool IsStructuredMarketDataNode(DependencyNode node)
         {
-            return IsYieldCurveNode(node) || IsVolatilityCubeNode(node) || IsVolatilitySurfaceNode(node);
+            return Snappers.Any(s => IsStructuredMarketDataNode(node, s));
         }
 
-        private static bool IsVolatilitySurfaceNode(DependencyNode node)
+        private static bool IsStructuredMarketDataNode(DependencyNode node, StructuredSnapper snapper)
         {
-            var isSurfaceNode = node.OutputValues.Any(IsVolatilitySurfaceMarketDataSpec);
-            if (isSurfaceNode && !node.OutputValues.All(IsVolatilitySurfaceMarketDataSpec))
+            Func<ValueSpecification, bool> snapperReqPredicate = v => v.ValueName == snapper.RequirementName;
+            var isStructuredNode = node.OutputValues.Any(snapperReqPredicate);
+            if (isStructuredNode && !node.OutputValues.All(snapperReqPredicate))
             {
                 throw new ArgumentException(string.Format("Unsure how to handle node {0}", node));
             }
-            return isSurfaceNode;
-        }
-
-        private static bool IsYieldCurveNode(DependencyNode node)
-        {
-            var isYieldCurveNode = node.InputValues.Any(IsYieldCurveMarketDataSpec);
-            if (isYieldCurveNode && !node.InputValues.All(IsYieldCurveMarketDataSpec))
-            {
-                throw new ArgumentException(string.Format("Unsure how to handle node {0}", node));
-            }
-            return isYieldCurveNode;
-        }
-
-        private static bool IsVolatilityCubeNode(DependencyNode node)
-        {
-            var isVolCubeNode = node.OutputValues.Any(IsVolatilityCubeMarketDataSpec);
-            if (isVolCubeNode && !node.OutputValues.All(IsVolatilityCubeMarketDataSpec))
-            {
-                throw new ArgumentException(string.Format("Unsure how to handle node {0}", node));
-            }
-            return isVolCubeNode;
-        }
-
-        private static bool IsVolatilityCubeMarketDataSpec(ValueSpecification s)
-        {
-            return s.ValueName == ValueRequirementNames.VolatilityCubeMarketData;
-        }
-        private static bool IsVolatilitySurfaceMarketDataSpec(ValueSpecification s)
-        {
-            return s.ValueName == ValueRequirementNames.VolatilitySurfaceData;
-        }
-        private static bool IsYieldCurveMarketDataSpec(ValueSpecification s)
-        {
-            return s.ValueName == ValueRequirementNames.YieldCurveMarketData;
+            return isStructuredNode;
         }
 
         private static IDictionary<string, ValueSnapshot> GroupByValueName(IEnumerable<ComputedValue> r)
@@ -235,12 +215,32 @@ namespace OGDotNet.Model.Context
         #endregion
         public static IEnumerable<ValueSpecification> GetYieldCurveSpecs(IDictionary<string, IDependencyGraph> graphs)
         {
-            const string yieldCurveValueReqName = ValueRequirementNames.YieldCurve;
-            var matchingSpecifications = GetMatchingSpecifications(graphs, yieldCurveValueReqName, ValueRequirementNames.YieldCurveSpec);
+            var matchingSpecifications = GetYieldCurveSpecifications(graphs, ValueRequirementNames.YieldCurve, ValueRequirementNames.YieldCurveSpec);
             var included = matchingSpecifications.SelectMany(s => s.Value);
-            var interpolated = included.Where(s => s.ValueName == yieldCurveValueReqName).Select(
+            var interpolated = included.Where(s => s.ValueName == ValueRequirementNames.YieldCurve).Select(
                 sp => new ValueSpecification(ValueRequirementNames.YieldCurveInterpolated, sp.TargetSpecification, GetCurveProperties(sp)));
             return included.Concat(interpolated);
+        }
+
+        private static Dictionary<string, IEnumerable<ValueSpecification>> GetYieldCurveSpecifications(IDictionary<string, IDependencyGraph> graphs, params string[] specNames)
+        {
+            var ret = new Dictionary<string, IEnumerable<ValueSpecification>>();
+
+            foreach (var kvp in graphs)
+            {
+                var config = kvp.Key;
+                var graph = kvp.Value;
+
+                var specs = graph.DependencyNodes.SelectMany(n => n.OutputValues)
+                    //This is a hack: the spec value will be pruned from the dep graph but will be in the computation cache,
+                    //  and we know that it has exactly the some properties as the Curve value
+                    .SelectMany(v => v.ValueName == ValueRequirementNames.YieldCurve ? new[] { v, new ValueSpecification(ValueRequirementNames.YieldCurveSpec, v.TargetSpecification, v.Properties) } : new[] { v })
+
+                    .Where(v => specNames.Contains(v.ValueName));
+                ret.Add(config, specs.ToList());
+            }
+
+            return ret;
         }
 
         private static ValueProperties GetCurveProperties(ValueSpecification sp)
@@ -274,71 +274,6 @@ namespace OGDotNet.Model.Context
         {
             return Tuple.Create((YieldCurve)values[ValueRequirementNames.YieldCurve],
                 (InterpolatedYieldCurveSpecificationWithSecurities)values[ValueRequirementNames.YieldCurveSpec], (NodalDoublesCurve)values[ValueRequirementNames.YieldCurveInterpolated]);
-        }
-
-        private static Dictionary<T, Dictionary<string, object>> GetGroupedValues<T>(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, Func<ValueSpecification, T> projecter, params string[] valueNames)
-        {
-            var values = GetMatchingSpecifications(dependencyGraphs, valueNames);
-            var ts = new Dictionary<T, Dictionary<string, object>>();
-
-            foreach (var yieldCurveSpecReq in values)
-            {
-                var requiredSpecs = yieldCurveSpecReq.Value.Where(r => !ts.ContainsKey(projecter(r)));
-                if (!requiredSpecs.Any())
-                {
-                    continue;
-                }
-                var computationCacheResponse =
-                    viewCycle.QueryComputationCaches(new ComputationCacheQuery(yieldCurveSpecReq.Key, requiredSpecs));
-
-                if (computationCacheResponse.Results.Count != requiredSpecs.Count())
-                {
-                    //TODO LOG throw new ArgumentException("Failed to get all results");
-                }
-
-                var infos = computationCacheResponse.Results.ToLookup(r => projecter(r.First));
-                foreach (var result in infos)
-                {
-                    ts.Add(result.Key, result.ToDictionary(r => r.First.ValueName, r => r.Second));
-                }
-            }
-
-            return ts;
-        }
-
-        private static Dictionary<VolatilitySurfaceKey, Dictionary<string, object>> GetVolSurfaceValues(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
-        {
-            return GetGroupedValues(viewCycle, dependencyGraphs, GetVolSurfaceKey, valueNames);
-        }
-
-        private static Dictionary<VolatilityCubeKey, Dictionary<string, object>> GetVolCubeValues(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
-        {
-            return GetGroupedValues(viewCycle, dependencyGraphs, GetVolCubeKey, valueNames);
-        }
-        private static Dictionary<YieldCurveKey, Dictionary<string, object>> GetYieldCurveValues(IViewCycle viewCycle, IDictionary<string, IDependencyGraph> dependencyGraphs, params string[] valueNames)
-        {
-            return GetGroupedValues(viewCycle, dependencyGraphs, GetYieldCurveKey, valueNames);
-        }
-
-        private static Dictionary<string, IEnumerable<ValueSpecification>> GetMatchingSpecifications(IDictionary<string, IDependencyGraph> graphs, params string[] specNames)
-        {
-            var ret = new Dictionary<string, IEnumerable<ValueSpecification>>();
-
-            foreach (var kvp in graphs)
-            {
-                var config = kvp.Key;
-                var graph = kvp.Value;
-
-                var specs = graph.DependencyNodes.SelectMany(n => n.OutputValues)
-                    //This is a hack: the spec value will be pruned from the dep graph but will be in the computation cache,
-                    //  and we know that it has exactly the some properties as the Curve value
-                    .SelectMany(v => v.ValueName == ValueRequirementNames.YieldCurve ? new[] { v, new ValueSpecification(ValueRequirementNames.YieldCurveSpec, v.TargetSpecification, v.Properties) } : new[] { v })
-
-                    .Where(v => specNames.Contains(v.ValueName));
-                ret.Add(config, specs.ToList());
-            }
-
-            return ret;
         }
 
         public static Dictionary<string, IDependencyGraph> GetGraphs(ICompiledViewDefinitionWithGraphs compiledViewDefinitionWithGraphs)
