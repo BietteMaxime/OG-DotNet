@@ -47,10 +47,6 @@ namespace OGDotNet.Utils
 
         protected void IgnoreDisposingExceptions(Action a)
         {
-            if (IsDisposed)
-            {
-                return;
-            }
             try
             {
                 a();

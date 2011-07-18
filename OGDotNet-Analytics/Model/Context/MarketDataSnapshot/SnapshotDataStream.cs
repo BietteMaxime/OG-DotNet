@@ -79,6 +79,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             ArgumentChecker.Not(timedout, "timedOut");
             try
             {
+                if (IsDisposed)
+                {
+                    return;
+                }
                 IgnoreDisposingExceptions(() =>
                 {
                     _tempViewUid = GetNewUid();
