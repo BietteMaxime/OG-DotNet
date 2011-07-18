@@ -27,6 +27,7 @@ using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.financial.model.volatility.surface;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.javax.time.calendar;
 using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Mappedtypes.math.surface;
 using OGDotNet.Mappedtypes.Util.money;
@@ -132,6 +133,12 @@ namespace OGDotNet.Tests.Integration
             Assert.NotEqual(long.MinValue, value);
         }
 
+        public static void AssertSensibleValue(sbyte value)
+        {
+            Assert.NotEqual(sbyte.MaxValue, value);
+            Assert.NotEqual(sbyte.MinValue, value);
+        }
+
         public static void AssertSensibleValue(double value)
         {
             //Thsi is valid apparently Assert.False(Double.IsNaN(value));
@@ -177,8 +184,33 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(VolatilitySurfaceData<Tenor, Tenor> value)
         {
             AssertSensibleValue<Tenor, Tenor>(value);
-            AssertSensibleValue(value.Xs.Select(x => value.GetXSlice(x)));
-            AssertSensibleValue(value.Ys.Select(y => value.GetXSlice(y)));
+            bool anyXSlice = false;
+            foreach (var x in value.Xs)
+            {
+                try
+                {
+                    AssertSensibleValue(value.GetXSlice(x));
+                    anyXSlice = true;
+                }
+                catch (KeyNotFoundException)
+                {
+                }
+            }
+            Assert.True(anyXSlice, "No x slices could be got");
+
+            bool anyYSlice = false;
+            foreach (var y in value.Ys)
+            {
+                try
+                {
+                    AssertSensibleValue(value.GetYSlice(y));
+                    anyYSlice = true;
+                }
+                catch (KeyNotFoundException)
+                {
+                }
+            }
+            Assert.True(anyYSlice, "No y slices could be got");
         }
 
         public static void AssertSensibleValue<TX, TY>(VolatilitySurfaceData<TX, TY> value)
@@ -363,7 +395,11 @@ namespace OGDotNet.Tests.Integration
         {
             AssertSensibleValue(dateTime.ToUniversalTime().DateTime);
         }
-
+        public static void AssertSensibleValue(LocalDate date)
+        {
+            Assert.Equal(date.Date, date.Date.Date);
+            AssertSensibleValue(date.Date);
+        }
         public static void AssertSensibleValue(VolatilityCubeDefinition defn)
         {
             Assert.NotNull(defn);
