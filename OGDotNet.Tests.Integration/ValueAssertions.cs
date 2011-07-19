@@ -262,7 +262,10 @@ namespace OGDotNet.Tests.Integration
             Assert.NotEmpty(viewDefin.MarketDataRequirements);
             AssertSensibleValue(viewDefin.MarketDataRequirements);
 
-            AssertSensibleValue(viewDefin.Portfolio);
+            if (viewDefin.Portfolio != null)
+            {
+                AssertSensibleValue(viewDefin.Portfolio);
+            }
             Assert.NotNull(viewDefin.ViewDefinition);
             AssertSensibleValue(viewDefin.ViewDefinition.CalculationConfigurationsByName);
 
