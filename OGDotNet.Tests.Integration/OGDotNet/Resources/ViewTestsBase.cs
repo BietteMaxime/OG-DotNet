@@ -35,6 +35,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "European Corporate Bond View - test",
                                                                       "Multi-Currency Swap Test View",
                                                                       "Simple Vanilla FX Option Test View",
+                                                                      "Simple IR Future Option Test View",
                                                                       "Random Matrix",
                                                                       "Jon Mixed Portfolio View" //PLAT-1418
                                                                   };
