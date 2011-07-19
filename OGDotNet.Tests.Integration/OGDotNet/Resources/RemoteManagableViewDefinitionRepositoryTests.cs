@@ -219,7 +219,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             public bool Equals(ValueRequirement a, ValueRequirement b)
             {
-                return a.Constraints.Properties.Count == b.Constraints.Properties.Count &&
+                return a.Constraints.Equals(b.Constraints) &&
                        a.TargetSpecification.Equals(b.TargetSpecification)
                        &&
                        a.ValueName.Equals(b.ValueName);
