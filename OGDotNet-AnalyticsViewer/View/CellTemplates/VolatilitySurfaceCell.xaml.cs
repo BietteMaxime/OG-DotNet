@@ -29,6 +29,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
     /// </summary>
     public partial class VolatilitySurfaceCell : UserControl
     {
+        const double labelHeight = 0.2;
+
         private static readonly bool ToScale = Settings.Default.ShowVolatilityCurveToScale;
         static readonly Point3D Center = new Point3D(0.5, 0.5, 0.5);
 
@@ -54,22 +56,22 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             _timer.Start();
 
             _timer.Tick += delegate
-                               {
-                                   if (t > maxT)
-                                   {
-                                       speed = -Math.Abs(speed);
-                                   }
+            {
+                if (t > maxT)
+                {
+                    speed = -Math.Abs(speed);
+                }
 
-                                   if (t < minT)
-                                   {
-                                       speed = Math.Abs(speed);
-                                   }
+                if (t < minT)
+                {
+                    speed = Math.Abs(speed);
+                }
 
-                                   t += speed;
+                t += speed;
 
-                                   SetCamera(t);
-                                   UpdateToolTip(Mouse.GetPosition(mainViewport));
-                               };
+                SetCamera(t);
+                UpdateToolTip(Mouse.GetPosition(mainViewport));
+            };
         }
 
         private void SetCamera(double t)
@@ -106,12 +108,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 textBlockStyle.Setters.Add(new Setter(BackgroundProperty, binding));
 
                 detailsList.Columns.Add(new DataGridTextColumn
-                                     {
-                                         Width = 60,
-                                         Header = x,
-                                         CellStyle = textBlockStyle,
-                                         Binding = BindingUtils.GetIndexerBinding(x.ToString())
-                                     });
+                {
+                    Width = 60,
+                    Header = x,
+                    CellStyle = textBlockStyle,
+                    Binding = BindingUtils.GetIndexerBinding(x.ToString())
+                });
             }
 
             var rows = new List<Dictionary<string, object>>();
@@ -126,7 +128,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                     double value;
                     if (data.TryGet(x, y, out value))
                     {
-                        row[x.ToString()] = value;                        
+                        row[x.ToString()] = value;
                     }
                 }
 
@@ -189,19 +191,30 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         private Model3DGroup BuildGraphModel()
         {
             return new Model3DGroup
-                       {
-                           Children = new Model3DCollection
+            {
+                Children = new Model3DCollection
                                         {
-                                            BuildXSliceGraphModel(), 
-                                            BuildYSliceGraphModel(), 
+                                            BuildXSliceModel(), 
+                                            BuildYSliceModel(), 
                                         }
-                       };
+            };
+        }
+
+        private Model3DGroup BuildXSliceModel()
+        {
+            Model3DGroup labelModel = BuildXSliceLabel();
+
+            BuildXSliceGraphModel();
+            var ret = new Model3DGroup();
+            ret.Children.Add(_xSliceModel);
+            ret.Children.Add(labelModel);
+            return ret;
         }
 
         private CurveControl _xSliceCurveControl;
         private GeometryModel3D _xSliceModel;
 
-        private GeometryModel3D BuildXSliceGraphModel()
+        private void BuildXSliceGraphModel()
         {
             _xSliceCurveControl = new CurveControl { Width = ProjectedCurveSize, Height = ProjectedCurveSize, YMin = 0, YMax = _zRange, StrokeThickness = 5.0, ShowName = false };
             var brush = new VisualBrush(_xSliceCurveControl);
@@ -233,18 +246,96 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                      },
                 TextureCoordinates = new PointCollection
                                                         {
-                                                                 new Point(0, ProjectedCurveSize), 
-                                                                 new Point(ProjectedCurveSize, ProjectedCurveSize), 
-                                                                 new Point(0, 0), 
-                                                                 new Point(ProjectedCurveSize, 0), 
+                                                            new Point(0, ProjectedCurveSize), 
+                                                            new Point(ProjectedCurveSize, ProjectedCurveSize), 
+                                                            new Point(0, 0), 
+                                                            new Point(ProjectedCurveSize, 0), 
                                                         }
             };
             _xSliceModel = new GeometryModel3D(mesh, material) { BackMaterial = material };
-            return _xSliceModel;
+        }
+
+        private static Model3DGroup BuildYSliceLabel()
+        {
+            Model3DGroup ret = GetUnitLitText("<- Swap Length");
+
+            var transform3Ds = new Transform3D[]
+                                   {
+                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), -90)),
+                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 180)),
+                                       new ScaleTransform3D(1.0, 1.0, labelHeight), 
+                                       new TranslateTransform3D(1, -GraphOffset, 1 + labelHeight)
+                                   };
+            ret.Transform = new Transform3DGroup() { Children = new Transform3DCollection(transform3Ds) };
+            return ret;
+        }
+
+        private static Model3DGroup BuildXSliceLabel()
+        {
+            Model3DGroup ret = GetUnitLitText("Option Expiry ->");
+
+            var transform3Ds = new Transform3D[]
+                                   {
+                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), -90)),
+                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 90)),
+                                       new ScaleTransform3D(1.0, 1.0, labelHeight), 
+                                       new TranslateTransform3D(-GraphOffset, 0, 1 + labelHeight)
+                                   };
+            ret.Transform = new Transform3DGroup() { Children = new Transform3DCollection(transform3Ds) };
+            return ret;
+        }
+
+        private static Model3DGroup GetUnitLitText(string text)
+        {
+            GeometryModel3D textModel = GetUnitText(text);
+            var lightModel = new AmbientLight(Colors.White);
+            return new Model3DGroup()
+            {
+                Children = new Model3DCollection(new Model3D[] { textModel, lightModel })
+            };
+        }
+
+        /// <param name="text">The text to put on the label</param>
+        /// <returns>a text model with z=0, of unit size</returns>
+        private static GeometryModel3D GetUnitText(string text)
+        {
+            TextBlock b = new TextBlock
+            {
+                Text = text,
+                Background = new SolidColorBrush(Colors.White),
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+            DiffuseMaterial materialWithLabel = new DiffuseMaterial();
+            materialWithLabel.Brush = new VisualBrush(b);
+            materialWithLabel.Brush = new VisualBrush(b);
+
+            var cuboid = new MeshGeometry3D();
+            cuboid.Positions = new Point3DCollection(
+                new[] { new Point3D(0, 0, 0), new Point3D(1, 0, 0), new Point3D(0, 1, 0), new Point3D(1, 1, 0), });
+            cuboid.TextureCoordinates = new PointCollection(cuboid.Positions.Select(p => new Point(p.X, p.Y)));
+
+            cuboid.TriangleIndices = new Int32Collection(new int[] { 0, 1, 2, 1, 3, 2 });
+
+            return new GeometryModel3D(cuboid, materialWithLabel)
+            {
+                BackMaterial = materialWithLabel
+            };
         }
 
         private CurveControl _ySliceCurveControl;
         private GeometryModel3D _ySliceModel;
+
+        private Model3DGroup BuildYSliceModel()
+        {
+            Model3DGroup labelModel = BuildYSliceLabel();
+
+            var graphModel = BuildYSliceGraphModel();
+            var ret = new Model3DGroup();
+            ret.Children.Add(graphModel);
+            ret.Children.Add(labelModel);
+            return ret;
+        }
 
         private GeometryModel3D BuildYSliceGraphModel()
         {
@@ -256,34 +347,34 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             var normal = new Vector3D(0, -1, 0);
 
             var mesh = new MeshGeometry3D
-                           {
-                               Positions = new Point3DCollection
+            {
+                Positions = new Point3DCollection
                                                {
                                                    new Point3D(0, -GraphOffset, 0), 
                                                    new Point3D(1, -GraphOffset, 0), 
                                                    new Point3D(0, -GraphOffset, 1), 
                                                    new Point3D(1, -GraphOffset, 1)
                                                },
-                               Normals = new Vector3DCollection
+                Normals = new Vector3DCollection
                                              {
                                                  normal, 
                                                  normal, 
                                                  normal, 
                                                  normal
                                              },
-                               TriangleIndices = new Int32Collection
+                TriangleIndices = new Int32Collection
                                                      {
                                                          0, 1, 3, 
                                                          0, 3, 2
                                                      },
-                               TextureCoordinates = new PointCollection
+                TextureCoordinates = new PointCollection
                                                         {
-                                                                 new Point(0, ProjectedCurveSize), 
-                                                                 new Point(ProjectedCurveSize, ProjectedCurveSize), 
-                                                                 new Point(0, 0), 
-                                                                 new Point(ProjectedCurveSize, 0), 
+                                                            new Point(0, ProjectedCurveSize), 
+                                                            new Point(ProjectedCurveSize, ProjectedCurveSize), 
+                                                            new Point(0, 0), 
+                                                            new Point(ProjectedCurveSize, 0), 
                                                         }
-                           };
+            };
 
             _ySliceModel = new GeometryModel3D(mesh, material) { BackMaterial = material };
             return _ySliceModel;
@@ -356,10 +447,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
             // TODO this should really be a texture generated by interpolating the surface
             var linearGradientBrush = new LinearGradientBrush
-                                          {
-                                              StartPoint = new Point(0, 0),
-                                              EndPoint = new Point(1, 0)
-                                          };
+            {
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(1, 0)
+            };
 
             const int bands = 2;
             for (int i = 0; i < bands; i++)
@@ -372,22 +463,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             var diffuseMaterial = new DiffuseMaterial(linearGradientBrush);
 
             // Points
+            Matrix3D scaleMatrix = GetScaleMatrix(xKeys, yKeys);
             if (ToScale)
             {
-                var xMax = xKeys.Select(GetScaledValue).Max();
-                var xMin = xKeys.Select(GetScaledValue).Min();
-                double xScale = 1.0 / (xMax - xMin);
-                var yMax = yKeys.Select(GetScaledValue).Max();
-                var yMin = yKeys.Select(GetScaledValue).Min();
-                double yScale = 1.0 / (yMax - yMin);
-
-                var scaleMatrix = new Matrix3D(
-                    xScale, 0, 0, 0,
-                    0, yScale, 0, 0,
-                    0, 0, zScale, 0,
-
-                    -xMin * xScale, -yMin * yScale, 0, 1);
-
                 foreach (Tenor yKey in yKeys)
                 {
                     foreach (Tenor xKey in xKeys)
@@ -403,16 +481,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
             else
             {
-                double xScale = 1.0 / (xKeys.Count - 1);
-                double yScale = 1.0 / (yKeys.Count - 1);
-
-                var scaleMatrix = new Matrix3D(
-                    xScale, 0, 0, 0,
-                    0, yScale, 0, 0,
-                    0, 0, zScale, 0,
-
-                    0, 0, 0, 1);
-
                 for (int yi = 0; yi < yKeys.Count; yi++)
                 {
                     for (int xi = 0; xi < xKeys.Count; xi++)
@@ -497,6 +565,41 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
 
             return new GeometryModel3D(mesh, diffuseMaterial) { BackMaterial = diffuseMaterial };
+        }
+
+        private Matrix3D GetScaleMatrix(List<Tenor> xKeys, List<Tenor> yKeys)
+        {
+            double zScale = 1.0 / _zRange;
+            Matrix3D scaleMatrix;
+            if (ToScale)
+            {
+                var xMax = xKeys.Select(GetScaledValue).Max();
+                var xMin = xKeys.Select(GetScaledValue).Min();
+                double xScale = 1.0 / (xMax - xMin);
+                var yMax = yKeys.Select(GetScaledValue).Max();
+                var yMin = yKeys.Select(GetScaledValue).Min();
+                double yScale = 1.0 / (yMax - yMin);
+
+                scaleMatrix = new Matrix3D(
+                    xScale, 0, 0, 0,
+                    0, yScale, 0, 0,
+                    0, 0, zScale, 0,
+
+                    -xMin * xScale, -yMin * yScale, 0, 1);
+            }
+            else
+            {
+                double xScale = 1.0 / (xKeys.Count - 1);
+                double yScale = 1.0 / (yKeys.Count - 1);
+
+                scaleMatrix = new Matrix3D(
+                    xScale, 0, 0, 0,
+                    0, yScale, 0, 0,
+                    0, 0, zScale, 0,
+
+                    0, 0, 0, 1);
+            }
+            return scaleMatrix;
         }
 
         private Tuple<List<Tenor>, List<Tenor>> GetSurfaceKeys()
