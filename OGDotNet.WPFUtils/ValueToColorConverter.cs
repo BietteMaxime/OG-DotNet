@@ -23,11 +23,13 @@ namespace OGDotNet.WPFUtils
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is double))
+            if (value != null && !(value is double))
                 throw new NotImplementedException();
 
             if (targetType == typeof(Color))
             {
+                if (value == null)
+                    return Colors.White;
                 var colorQuotient = (double)value;
                 return GetColor(colorQuotient / _range);
             }
