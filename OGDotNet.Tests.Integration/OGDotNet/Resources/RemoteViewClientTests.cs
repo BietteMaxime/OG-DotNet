@@ -409,7 +409,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var specifics = compiledDefinition.ViewDefinition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.SpecificRequirements.Count());
             int rows = CountRows(compiledDefinition.Portfolio);
-            var values = rows * compiledDefinition.ViewDefinition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.PortfolioRequirementsBySecurityType.Single().Value.Count);
+            var values = rows * compiledDefinition.ViewDefinition.CalculationConfigurationsByName.Sum(kvp => kvp.Value.PortfolioRequirementsBySecurityType.Sum(r => r.Value.Count));
             return specifics + values;
         }
 
