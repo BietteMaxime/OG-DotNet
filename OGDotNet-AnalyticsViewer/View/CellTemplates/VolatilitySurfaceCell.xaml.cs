@@ -392,49 +392,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             return geometryModel3D;
         }
 
-        private class ValueToColorConverter : IValueConverter
-        {
-            private readonly double _zRange;
-
-            public ValueToColorConverter(double zRange)
-            {
-                _zRange = zRange;
-            }
-
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                if (!(value is double))
-                    throw new NotImplementedException();
-
-                if (targetType == typeof(Color))
-                {
-                    var colorQuotient = (double)value;
-                    return GetColor(colorQuotient / _zRange);
-                }
-
-                if (targetType == typeof(Brush))
-                {
-                    var color = (Color)Convert(value, typeof(Color), parameter, culture);
-                    return new SolidColorBrush(color);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            public static Color GetColor(double colorQuotientDouble)
-            {
-                var colorQuotient = (float)colorQuotientDouble;
-                return Colors.Yellow * (1 - colorQuotient) + Colors.Red * colorQuotient;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         private GeometryModel3D BuildSurfaceModel()
         {
             double zScale = 1.0 / _zRange;
