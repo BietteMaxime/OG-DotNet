@@ -134,9 +134,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves[curveKey];
 
-                ValueSnapshot value = ycSnapshot.Values.Values.First().Value.First().Value;
                 const double f = 1.001;
-                value.OverrideValue = value.MarketValue * f;
+
+                foreach (var value1 in ycSnapshot.Values.Values)
+                {
+                    foreach (var valueSnapshot in value1.Value.Values)
+                    {
+                        valueSnapshot.OverrideValue = valueSnapshot.MarketValue * f;
+                    }
+                }
 
                 var afterCurves = dataSnapshotProcessor.GetYieldCurves();
                 Assert.NotEmpty(afterCurves);
@@ -151,7 +157,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var diffs = beforeCurve.YData.Zip(afterCurve.YData, DiffProportion).ToList();
                 Assert.NotEmpty(diffs.Where(d => d > 0.001).ToList());
 
-                value.OverrideValue = null;
+                foreach (var value1 in ycSnapshot.Values.Values)
+                {
+                    foreach (var valueSnapshot in value1.Value.Values)
+                    {
+                        valueSnapshot.OverrideValue = null;
+                    }
+                }
 
                 Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> timedCurves = null;
 
