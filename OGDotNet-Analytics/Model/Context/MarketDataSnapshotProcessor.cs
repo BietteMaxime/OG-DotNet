@@ -88,16 +88,17 @@ namespace OGDotNet.Model.Context
         {
             CheckDisposed();
 
+            DateTimeOffset waitFor;
+            ManageableMarketDataSnapshot shallowClone = GetShallowCloneSnapshot();
             lock (_snapshotUidLock)
             {
-                ManageableMarketDataSnapshot shallowClone = GetShallowCloneSnapshot();
                 shallowClone.UniqueId = _temporarySnapshotUid;
                 var snapshot = _marketDataSnapshotMaster.Update(new MarketDataSnapshotDocument(_temporarySnapshotUid, shallowClone));
                 _temporarySnapshotUid = snapshot.UniqueId;
 
-                var waitFor = _marketDataSnapshotMaster.Get(_temporarySnapshotUid).CorrectionFromInstant;
-                return _snapshotDataStream.With(ct, s => s.GetYieldCurves(waitFor, ct));
+                waitFor = _marketDataSnapshotMaster.Get(_temporarySnapshotUid).CorrectionFromInstant;
             }
+            return _snapshotDataStream.With(ct, s => s.GetYieldCurves(waitFor, ct));
         }
 
         private ManageableMarketDataSnapshot GetShallowCloneSnapshot()
