@@ -89,8 +89,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
-            var remoteSecurityMaster = Context.SecurityMaster;
-            var searchResult = remoteSecurityMaster.Search("*", "EQUITY", new PagingRequest(1, 10));
+            var searchResult = GetSomeEquities();
             foreach (var securityDocument in searchResult.Documents)
             {
                 var identifierBundle = securityDocument.Security.Identifiers;
@@ -107,7 +106,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static SearchResult<SecurityDocument> GetSomeEquities()
         {
             var remoteSecurityMaster = Context.SecurityMaster;
-            return remoteSecurityMaster.Search("*", "EQUITY", new PagingRequest(1, 10));
+            return remoteSecurityMaster.Search("*", "EQUITY", new PagingRequest(1, 3));
         }
 
         private static void AssertSane(Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> result)
