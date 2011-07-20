@@ -10,8 +10,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using OGDotNet.Mappedtypes.Core.Common;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
@@ -29,6 +28,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class MarketDataSnapshotManagerTests : ViewTestsBase
     {
+        [global::Xunit.Fact]
+        public void CantCreateFromBrokenView()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+            Assert.Throws<OpenGammaException>(() => snapshotManager.CreateFromViewDefinition("OvernightBatchTestView"));
+        }
+
         [Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanCreateAndRunFromView(ViewDefinition vd)
