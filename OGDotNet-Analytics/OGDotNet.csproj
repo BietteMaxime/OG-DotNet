@@ -110,9 +110,12 @@
     <Compile Include="Mappedtypes\Util\money\CurrencyAmount.cs" />
     <Compile Include="Mappedtypes\financial\analytics\CurrencyLabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\Util\money\MultipleCurrencyAmount.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\Invalidater.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LastResultViewClient.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\LiveDataStream.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStream.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStreamInvalidater.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\SnapshotLiveDataStreamInvalidater.cs" />
     <Compile Include="Model\Context\StructuredSnapper.cs" />
     <Compile Include="Model\Resources\FudgeMessageDecoder.cs" />
     <Compile Include="Model\Resources\RemoteVolatilityCubeDefinitionSource.cs" />

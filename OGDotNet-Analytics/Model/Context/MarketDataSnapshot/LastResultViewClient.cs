@@ -7,44 +7,37 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using OGDotNet.Mappedtypes;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.calc;
 using OGDotNet.Mappedtypes.engine.View.listener;
-using OGDotNet.Mappedtypes.util.PublicAPI;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
-    public abstract class LastResultViewClient : DisposableBase, INotifyPropertyChanged
+    public abstract class LastResultViewClient : DisposableBase
     {
         public event EventHandler GraphChanged;
 
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly Task _prepared;
-        private readonly ManualResetEventSlim _haveLastResults = new ManualResetEventSlim(false);
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private RemoteViewClient _remoteViewClient;
-
-        private volatile Dictionary<string, IDependencyGraph> _graphs;
-
-        private volatile Exception _error;
+        private readonly ManualResetEventSlim _haveResults = new ManualResetEventSlim(false);
 
         private readonly object _lastResultsLock = new object();
         private Pair<Dictionary<string, IDependencyGraph>,
             Pair<IEngineResourceReference<IViewCycle>, IViewComputationResultModel>>
             _lastResults;
+
+        private RemoteViewClient _remoteViewClient;
+
+        private Dictionary<string, IDependencyGraph> _graphs;
+
+        private volatile Exception _error; //TODO: combine multiple exceptions
 
         protected LastResultViewClient(RemoteEngineContext remoteEngineContext)
         {
@@ -55,66 +48,40 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private void Prepare()
         {
-            _remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient();
-            var eventViewResultListener = new EventViewResultListener();
-            eventViewResultListener.CycleCompleted += (sender, e) => Update(e.FullResult);
-            eventViewResultListener.ViewDefinitionCompiled += (sender, e) =>
-                                                                  {
-                                                                      _graphs = null;
-                                                                  };
-
-            eventViewResultListener.ViewDefinitionCompilationFailed += (sender, e) =>
-                                                                           {
-                                                                               _error = e.Exception.BuildException();
-                                                                               _haveLastResults.Set();
-                                                                           };
-            eventViewResultListener.CycleExecutionFailed += (sender, e) =>
-            {
-                _error = e.Exception.BuildException();
-                _haveLastResults.Set();
-            };
-            _remoteViewClient.SetResultListener(eventViewResultListener);
-            _remoteViewClient.SetViewCycleAccessSupported(true);
-            Reattach();
-        }
-
-        protected void Reattach()
-        {
             try
             {
-                _haveLastResults.Reset();
-                _graphs = null;
-                UpdateLastResultsField(null);
+                CheckDisposed();
+                _remoteViewClient = _remoteEngineContext.ViewProcessor.CreateClient();
+                CheckDisposed();
 
-                ReattachImpl();
-                _error = null;
+                var eventViewResultListener = new EventViewResultListener();
+                eventViewResultListener.CycleCompleted += (sender, e) => Update(e.FullResult);
+                eventViewResultListener.ViewDefinitionCompilationFailed += (sender, e) => SetError(e.Exception);
+                eventViewResultListener.CycleExecutionFailed += (sender, e) => SetError(e.Exception);
+                _remoteViewClient.SetResultListener(eventViewResultListener);
+                _remoteViewClient.SetViewCycleAccessSupported(true);
+
+                CheckDisposed();
+                AttachToViewProcess(_remoteViewClient);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _error = e;
-                _haveLastResults.Set();
+                SetError(ex);
             }
         }
 
-        private void ReattachImpl()
+        private void SetError(JavaException javaException)
         {
-            if (IsDisposed)
-            {
-                return;
-            }
-            if (_remoteViewClient == null)
-            {
-                return;
-            }
-            if (_remoteViewClient.GetState() == ViewClientState.Terminated)
-            {
-                return;
-            }
-            if (_remoteViewClient.IsAttached)
-            {
-                _remoteViewClient.DetachFromViewProcess();
-            }
-            AttachToViewProcess(_remoteViewClient);
+            Exception buildException = javaException.BuildException();
+            SetError(buildException);
+        }
+
+        private void SetError(Exception buildException)
+        {
+            //TODO combine errors
+            _error = buildException;
+            _haveResults.Set();
+            InvokeGraphChanged();
         }
 
         protected RemoteEngineContext RemoteEngineContext
@@ -122,42 +89,15 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             get { return _remoteEngineContext; }
         }
 
-        protected RemoteViewClient RemoteViewClient
-        {
-            get { return _remoteViewClient; }
-        }
-
         protected abstract void AttachToViewProcess(RemoteViewClient remoteViewClient);
-
-        [IndexerName("Item")]
-        public double? this[MarketDataValueSpecification spec, string valueName]
-        {
-            get
-            {
-                var lastResults = _lastResults;
-                //TODO index this
-                var result = lastResults.Second.Second.AllLiveData.FirstOrDefault(
-                    d =>
-                    d.Specification.TargetSpecification.Uid == spec.UniqueId &&
-                    d.Specification.ValueName == valueName);
-                if (result == null)
-                {
-                    return null;
-                }
-                return (double?)result.Value;
-            }
-        }
 
         private void Update(IViewComputationResultModel results)
         {
-            UpdateLastResults(results);
-            InvokePropertyChanged(new PropertyChangedEventArgs("Item[]"));
-        }
-
-        private void UpdateLastResults(IViewComputationResultModel results)
-        {
             lock (_lastResultsLock)
             {
+                CheckDisposed();
+                Monitor.PulseAll(_lastResultsLock);
+
                 IEngineResourceReference<IViewCycle> resourceReference =
                     _remoteViewClient.CreateCycleReference(results.ViewCycleId);
 
@@ -174,25 +114,15 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 }
 
                 var newResults = Pair.Create(_graphs, Pair.Create(resourceReference, results));
-                UpdateLastResultsField(newResults);
-                _haveLastResults.Set();
+                var previous = Interlocked.Exchange(ref _lastResults, newResults);
+
+                _haveResults.Set();
+
+                if (previous != null)
+                {
+                    previous.Second.First.Dispose();
+                }
             }
-        }
-
-        private void UpdateLastResultsField(Pair<Dictionary<string, IDependencyGraph>, Pair<IEngineResourceReference<IViewCycle>, IViewComputationResultModel>> newResults)
-        {
-            var previous = Interlocked.Exchange(ref _lastResults, newResults);
-
-            if (previous != null)
-            {
-                previous.Second.First.Dispose();
-            }
-        }
-
-        private void InvokePropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, e);
         }
 
         protected override void Dispose(bool disposing)
@@ -204,10 +134,16 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 {
                     _remoteViewClient.Dispose();
                 }
-                var lastResults = _lastResults;
-                if (lastResults != null)
+                lock (_lastResultsLock)
                 {
-                    lastResults.Second.First.Dispose();
+                    var lastResults = _lastResults;
+                    _lastResults = null;
+                    if (lastResults != null)
+                    {
+                        //NOTE: the engine would clean this up anyway
+                        lastResults.Second.First.Dispose();
+                    }
+                    Monitor.PulseAll(_lastResultsLock);
                 }
             }
         }
@@ -220,12 +156,13 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 return null;
             });
         }
-        public T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
+
+        protected T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
         {
-            _prepared.Wait(ct);
             WaitForAResult(ct);
             lock (_lastResultsLock)
             {
+                CheckDisposed();
                 return func(_lastResults.Second.First.Value, _lastResults.First, _lastResults.Second.Second);
             }
         }
@@ -238,37 +175,25 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private void WaitFor(Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, bool> waitFor, CancellationToken ct)
         {
-            _prepared.Wait(ct);
-            _haveLastResults.Wait(ct);
-            using (var mre = new ManualResetEventSlim())
+            WaitForAResult(ct);
+            lock (_lastResultsLock)
             {
-                PropertyChangedEventHandler onPropChanged = delegate
+                while (true)
                 {
-                    mre.Set();
-                };
-                PropertyChanged += onPropChanged;
-                try
-                {
-                    while (true)
+                    CheckDisposed();
+                    if (WithLastResults(ct, waitFor))
                     {
-                        mre.Reset();
-                        if (WithLastResults(ct, waitFor))
-                        {
-                            return;
-                        }
-                        mre.Wait(TimeSpan.FromSeconds(15), ct);
+                        return;
                     }
-                }
-                finally
-                {
-                    PropertyChanged -= onPropChanged;
+                    Monitor.Wait(_lastResultsLock);
                 }
             }
         }
 
         private void WaitForAResult(CancellationToken ct)
         {
-            _haveLastResults.Wait(ct);
+            _prepared.Wait(ct); //Make sure we see any errors here
+            _haveResults.Wait(ct);
             if (_error != null)
             {
                 throw new OpenGammaException("Failed to get results", _error);

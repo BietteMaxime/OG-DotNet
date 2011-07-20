@@ -16,27 +16,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
     public class LiveDataStream : LastResultViewClient
     {
-        public event EventHandler BasisViewNameChanged;
-
-        private string _basisViewName;
+        private readonly string _basisViewName;
 
         public LiveDataStream(string basisViewName, RemoteEngineContext remoteEngineContext) : base(remoteEngineContext)
         {
             _basisViewName = basisViewName;
-        }
-
-        public string BasisViewName
-        {
-            get
-            {
-                return _basisViewName;
-            }
-            set
-            {
-                _basisViewName = value;
-                Reattach(); //TODO should be on another thread
-                InvokeBasisViewNameChanged(EventArgs.Empty);
-            }
         }
 
         public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))
@@ -52,12 +36,6 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             //Should probably deal with this ourselves
             var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, null, new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification()));
             remoteViewClient.AttachToViewProcess(_basisViewName, options);
-        }
-
-        public void InvokeBasisViewNameChanged(EventArgs e)
-        {
-            EventHandler handler = BasisViewNameChanged;
-            if (handler != null) handler(this, e);
         }
     }
 }

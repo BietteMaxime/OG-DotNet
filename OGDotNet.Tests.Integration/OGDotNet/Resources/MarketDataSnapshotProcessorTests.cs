@@ -180,35 +180,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         [Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
-        public void CanGetLiveDataStream(ViewDefinition viewDefinition)
-        {
-            var snapshotManager = Context.MarketDataSnapshotManager;
-
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
-            {
-                using (var art = new AutoResetEvent(false))
-                {
-                    LiveDataStream liveDataStream = dataSnapshotProcessor.LiveDataStream;
-                    liveDataStream.PropertyChanged += delegate { art.Set(); };
-
-                    TimeSpan timeout = TimeSpan.FromSeconds(30);
-                    art.Reset();
-                    Assert.True(art.WaitOne(timeout));
-
-                    foreach (var set in dataSnapshotProcessor.Snapshot.GlobalValues.Values)
-                    {
-                        foreach (var entry in set.Value)
-                        {
-                            Assert.NotNull(liveDataStream[set.Key, entry.Key]);
-                        }
-                    }
-                    Assert.True(art.WaitOne(timeout));
-                }
-            }
-        }
-
-        [Theory]
-        [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanUpdateFromLiveDataStream(ViewDefinition viewDefinition)
         {
             var snapshotManager = Context.MarketDataSnapshotManager;

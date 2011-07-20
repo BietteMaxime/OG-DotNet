@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.engine.view;
@@ -34,8 +33,8 @@ namespace OGDotNet.Model.Context
     {
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster;
-        private readonly LiveDataStream _liveDataStream;
-        private readonly SnapshotDataStream _snapshotDataStream;
+        private readonly SnapshotLiveDataStreamInvalidater _liveDataStream;
+        private readonly SnapshotDataStreamInvalidater _snapshotDataStream;
 
         private readonly object _snapshotUidLock = new object();
         private readonly RemoteClient _remoteClient;
@@ -43,34 +42,27 @@ namespace OGDotNet.Model.Context
 
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, CancellationToken ct)
         {
-            var liveDataStream = new LiveDataStream(definition.Name, context);
-            var snapshot = liveDataStream.GetNewSnapshotForUpdate(ct);
-            
-            return new MarketDataSnapshotProcessor(snapshot, context, liveDataStream);
+            using (var liveDataStream = new LiveDataStream(definition.Name, context))
+            {
+                ManageableMarketDataSnapshot snapshot = liveDataStream.GetNewSnapshotForUpdate(ct);
+                //NOTE: we could consider reusing the LiveDataStream, but server side will share the processer
+                return new MarketDataSnapshotProcessor(context, snapshot);
+            }
         }
 
         internal MarketDataSnapshotProcessor(RemoteEngineContext remoteEngineContext, ManageableMarketDataSnapshot snapshot)
-            : this(snapshot, remoteEngineContext, new LiveDataStream(snapshot.BasisViewName, remoteEngineContext))
+            : this(snapshot, remoteEngineContext, new SnapshotLiveDataStreamInvalidater(snapshot, remoteEngineContext))
         {
         }
 
-        private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RemoteEngineContext remoteEngineContext, LiveDataStream liveDataStream)
+        private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RemoteEngineContext remoteEngineContext, SnapshotLiveDataStreamInvalidater liveDataStream)
         {
             _snapshot = snapshot;
             _remoteClient = remoteEngineContext.CreateUserClient();
             _marketDataSnapshotMaster = _remoteClient.MarketDataSnapshotMaster;
             _liveDataStream = liveDataStream;
             _temporarySnapshotUid = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, GetShallowCloneSnapshot())).UniqueId;
-            _snapshotDataStream = new SnapshotDataStream(_snapshot.BasisViewName, remoteEngineContext, _temporarySnapshotUid.ToLatest(), _liveDataStream);
-            _snapshot.PropertyChanged += SnapshotPropertyChanged;
-        }
-
-        private void SnapshotPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "BasisViewName")
-            {
-                _liveDataStream.BasisViewName = _snapshot.BasisViewName;
-            }
+            _snapshotDataStream = new SnapshotDataStreamInvalidater(_liveDataStream, remoteEngineContext, _temporarySnapshotUid);
         }
 
         public ManageableMarketDataSnapshot Snapshot
@@ -89,12 +81,7 @@ namespace OGDotNet.Model.Context
 
         public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))
         {
-            return _liveDataStream.GetNewSnapshotForUpdate(ct);
-        }
-
-        public LiveDataStream LiveDataStream
-        {
-            get { return _liveDataStream; }
+            return _liveDataStream.With(ct, l => l.GetNewSnapshotForUpdate(ct));
         }
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> GetYieldCurves(CancellationToken ct = default(CancellationToken))
@@ -109,7 +96,7 @@ namespace OGDotNet.Model.Context
                 _temporarySnapshotUid = snapshot.UniqueId;
 
                 var waitFor = _marketDataSnapshotMaster.Get(_temporarySnapshotUid).CorrectionFromInstant;
-                return _snapshotDataStream.GetYieldCurves(waitFor, ct);
+                return _snapshotDataStream.With(ct, s => s.GetYieldCurves(waitFor, ct));
             }
         }
 
@@ -126,9 +113,8 @@ namespace OGDotNet.Model.Context
         {
             if (disposing)
             {
-                _snapshot.PropertyChanged -= SnapshotPropertyChanged;
-                _liveDataStream.Dispose();
                 _snapshotDataStream.Dispose();
+                _liveDataStream.Dispose();
                 _marketDataSnapshotMaster.Remove(_temporarySnapshotUid.ToLatest());
                 _remoteClient.Dispose();
             }
