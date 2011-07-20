@@ -37,6 +37,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Simple Vanilla FX Option Test View",
                                                                       "Simple IR Future Option Test View",
                                                                       "Random Matrix",
+                                                                      "Simple Cash Test View",
                                                                       "Jon Mixed Portfolio View" //PLAT-1418
                                                                   };
 
