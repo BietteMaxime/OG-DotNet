@@ -61,6 +61,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var valuedCurves = dataSnapshotProcessor.GetYieldCurves();
 
+            CheckYieldCurves(dataSnapshotProcessor, valuedCurves);
+        }
+
+        private static void CheckYieldCurves(MarketDataSnapshotProcessor dataSnapshotProcessor, Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> valuedCurves)
+        {
             var unexpectedCurves = valuedCurves.Keys.Except(dataSnapshotProcessor.Snapshot.YieldCurves.Keys);
             if (unexpectedCurves.Any())
             {
@@ -96,6 +101,44 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var diffs = beforeCurve.YData.Zip(afterCurve.YData, DiffProportion).ToList();
                 Assert.NotEmpty(diffs.Where(d => d > 0.001).ToList());
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanCancelGettingYieldCurves()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                using (var cts = new CancellationTokenSource())
+                {
+                    var yieldCurves = dataSnapshotProcessor.GetYieldCurves(cts.Token);
+                    CheckYieldCurves(dataSnapshotProcessor, yieldCurves);
+
+                    cts.Cancel();
+                    Assert.Throws<OperationCanceledException>(() => dataSnapshotProcessor.GetYieldCurves(cts.Token));
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanCancelGettingYieldCurvesAfterStart()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                using (var cts = new CancellationTokenSource())
+                {
+                    TimeSpan when = TimeSpan.FromSeconds(0.2);
+                    ThreadPool.QueueUserWorkItem(delegate
+                                                     {
+                                                         Thread.Sleep(when);
+                                                         cts.Cancel();
+                                                     });
+                    Assert.Throws<OperationCanceledException>(() => dataSnapshotProcessor.GetYieldCurves(cts.Token));
+                }
             }
         }
 
