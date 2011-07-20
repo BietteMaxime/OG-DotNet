@@ -61,7 +61,8 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
                 var old = _current;
                 Monitor.PulseAll(_currentLock);
-                ScheduleDispose(old);
+
+                Dispose(old);
 
                 try
                 {
@@ -77,14 +78,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-        private static void ScheduleDispose(T old)
+        private static void Dispose(T old)
         {
             if (old != null)
             {
-                ThreadPool.QueueUserWorkItem(delegate
-                {
                 old.Dispose();
-                });
             }
         }
 
@@ -134,16 +132,12 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         protected override void Dispose(bool disposing)
         {
+            //Serialize
             lock (_currentLock)
             {
-                //Serialize
-                if (_current != null)
-                {
-                    ScheduleDispose(_current);
-                    _current = null;
-                }
+                Dispose(_current);
+                _current = null;
             }
-            //TODO: wait for disposes to finish
         }
     }
 }
