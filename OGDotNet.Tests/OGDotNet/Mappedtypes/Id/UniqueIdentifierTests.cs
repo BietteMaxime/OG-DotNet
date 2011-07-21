@@ -6,9 +6,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
+using Xunit.Extensions;
 
 namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
 {
@@ -57,12 +59,29 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
         }
 
         [Fact]
-        public void EqualsCodeBehavesAsExpected()
+        public void EquatableEqualsCodeBehavesAsExpected()
         {
-            foreach (var uniqueIdentifier in ExpectedOrder)
+            EqualsCodeBehavesAsExpected((a, b) => a.Equals(b));
+        }
+
+        [Fact]
+        public void ObjectEqualsCodeBehavesAsExpected()
+        {
+            EqualsCodeBehavesAsExpected((a, b) => a.Equals((object)b));
+        }
+
+        [Fact]
+        public void OperatorEqualsCodeBehavesAsExpected()
+        {
+            EqualsCodeBehavesAsExpected((a, b) => a == b);
+        }
+
+        private static void EqualsCodeBehavesAsExpected(Func<UniqueIdentifier, UniqueIdentifier, bool> equals)
+        {
+            foreach (var id in ExpectedOrder)
             {
-                Assert.Equal(1, ExpectedOrder.Where(e => e.Equals(uniqueIdentifier)).Count());
-                Assert.Equal(uniqueIdentifier, UniqueIdentifier.Of(uniqueIdentifier.Scheme, uniqueIdentifier.Value, uniqueIdentifier.Version));
+                Assert.Equal(1, ExpectedOrder.Where(e => equals(e, id)).Count());
+                Assert.True(equals(id, UniqueIdentifier.Of(id.Scheme, id.Value, id.Version)));
             }
         }
 
@@ -73,6 +92,14 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             {
                 Assert.Equal(uniqueIdentifier, UniqueIdentifier.Parse(uniqueIdentifier.ToString()));
             }
+        }
+
+        [Theory]
+        [InlineData("A")]
+        [InlineData("A~B~C~D~E")]
+        public void WrongNumberOfSeparatorsFails(string uid)
+        {
+            Assert.Throws<ArgumentException>(() => UniqueIdentifier.Parse(uid));
         }
     }
 }

@@ -6,9 +6,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
+using Xunit.Extensions;
 
 namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
 {
@@ -20,6 +22,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
                                         Identifier.Of("A", "2"),
                                         Identifier.Of("B", "1"),
                                         Identifier.Of("B", "2"),
+                                        Identifier.Of("B", "2~3"),
                                     };
 
         [Fact]
@@ -52,12 +55,29 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
         }
 
         [Fact]
-        public void EqualsCodeBehavesAsExpected()
+        public void EquatableEqualsCodeBehavesAsExpected()
         {
-            foreach (var identifier in ExpectedOrder)
+            EqualsCodeBehavesAsExpected((a, b) => a.Equals(b));
+        }
+
+        [Fact]
+        public void ObjectEqualsCodeBehavesAsExpected()
+        {
+            EqualsCodeBehavesAsExpected((a, b) => a.Equals((object)b));
+        }
+
+        [Fact]
+        public void OperatorEqualsCodeBehavesAsExpected()
+        {
+            EqualsCodeBehavesAsExpected((a, b) => a == b);
+        }
+
+        private static void EqualsCodeBehavesAsExpected(Func<Identifier, Identifier, bool> equals)
+        {
+            foreach (var id in ExpectedOrder)
             {
-                Assert.Equal(1, ExpectedOrder.Where(e => e.Equals(identifier)).Count());
-                Assert.Equal(identifier, Identifier.Of(identifier.Scheme, identifier.Value));
+                Assert.Equal(1, ExpectedOrder.Where(e => equals(e, id)).Count());
+                Assert.True(equals(id, Identifier.Of(id.Scheme, id.Value)));
             }
         }
 
@@ -68,6 +88,13 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             {
                 Assert.Equal(identifier, Identifier.Parse(identifier.ToString()));
             }
+        }
+
+        [Theory]
+        [InlineData("A")]
+        public void WrongNumberOfSeparatorsFails(string uid)
+        {
+            Assert.Throws<ArgumentException>(() => Identifier.Parse(uid));
         }
     }
 }
