@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using OGDotNet.Mappedtypes.engine.depgraph;
 using OGDotNet.Mappedtypes.engine.depGraph;
 using OGDotNet.Mappedtypes.engine.value;
@@ -294,9 +295,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 ViewDefinitionCompiledArgs compiled = null;
-
+                CycleCompletedArgs cycle = null;
                 var listener = new EventViewResultListener();
                 listener.ProcessCompleted += delegate { executedMre.Set(); };
+                listener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
+                                               {
+                                                   cycle = e;
+                                                   executedMre.Set();
+                                               };
                 listener.ViewDefinitionCompiled += delegate(object sender, ViewDefinitionCompiledArgs e) { compiled = e; };
 
                 remoteViewClient.SetResultListener(listener);
@@ -306,6 +312,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 executedMre.Wait(TimeSpan.FromMinutes(1));
                 Assert.NotNull(compiled);
+                Assert.NotNull(cycle);
 
                 using (var engineResourceReference = remoteViewClient.CreateLatestCycleReference())
                 {
