@@ -7,9 +7,12 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Xunit.Sdk;
 
 namespace OGDotNet.Tests.Integration.Xunit.Extensions
@@ -25,8 +28,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
         private readonly List<ITestCommand> _innerCommands = new List<ITestCommand>();
         private readonly IList<ParallelCommand> _wrappedCommands;
 
-        private readonly Dictionary<ITestCommand, Func<MethodResult>> _actions = new Dictionary<ITestCommand, Func<MethodResult>>();
-        private readonly Dictionary<ITestCommand, IAsyncResult> _results = new Dictionary<ITestCommand, IAsyncResult>();
+        private readonly Dictionary<ITestCommand, Task<MethodResult>> _tasks = new Dictionary<ITestCommand, Task<MethodResult>>();
 
         private ParallelCommandGroup(IEnumerable<ITestCommand> commands)
         {
@@ -43,7 +45,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
 
         private MethodResult Execute(ITestCommand inner)
         {
-            if (! _actions.Any())
+            if (! _tasks.Any())
             {
                 foreach (var testCommand in _innerCommands)
                 {
@@ -56,12 +58,35 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                             return new LifetimeCommand(command, innerCommand).Execute(null);
                         };
 
-                    _actions.Add(testCommand, action);
-                    _results.Add(testCommand, action.BeginInvoke(null, null));
+                    var task = new Task<MethodResult>(action);
+                    _tasks.Add(testCommand, task);
                 }
+
+                StartAllTasks(_tasks.Values);
             }
 
-            return _actions[inner].EndInvoke(_results[inner]);
+            return _tasks[inner].Result;
+        }
+
+        private static void StartAllTasks(IEnumerable<Task<MethodResult>> values)
+        {
+            const int concurrentTasks = 4; //Seems to be fairly fast and not stress things too much
+
+            var taskQueue = new ConcurrentQueue<Task>(values);
+            for (int i = 0; i < concurrentTasks; i++)
+            {
+                StartOne(taskQueue);
+            }
+        }
+
+        private static void StartOne(ConcurrentQueue<Task> taskQueue)
+        {
+            Task next;
+            if (taskQueue.TryDequeue(out next))
+            {
+                next.ContinueWith(t => StartOne(taskQueue));
+                next.Start();
+            }
         }
 
         private class ParallelCommand : DelegatingTestCommand, ITestCommand
