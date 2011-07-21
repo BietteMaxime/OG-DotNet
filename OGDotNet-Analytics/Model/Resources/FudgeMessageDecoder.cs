@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading;
 using Apache.NMS;
 using Apache.NMS.ActiveMQ.Commands;
+using Fudge;
 
 namespace OGDotNet.Model.Resources
 {
@@ -38,23 +39,27 @@ namespace OGDotNet.Model.Resources
 
         private object DecodeObject(IMessage message)
         {
+            FudgeMsgEnvelope fudgeMsgEnvelope = GetMessage(message);
+            long? seqNumber = fudgeMsgEnvelope.Message.GetLong("#");
+            if (!seqNumber.HasValue)
+            {
+                throw new ArgumentException("Couldn't find sequence number");
+            }
+            long expectedSeqNumber = Interlocked.Increment(ref _lastSequenceNumber);
+            if (expectedSeqNumber != seqNumber.Value)
+            {
+                throw new ArgumentException(string.Format("Unexpected SEQ number {0} expected {1}", seqNumber, expectedSeqNumber));
+            }
+
+            return _fudgeContext.DeFudgeSerialize(fudgeMsgEnvelope.Message);
+        }
+
+        private FudgeMsgEnvelope GetMessage(IMessage message)
+        {
             byte[] content = ((IBytesMessage)message).Content;
             using (var memoryStream = new MemoryStream(content))
             {
-                var fudgeMsgEnvelope = _fudgeContext.Deserialize(memoryStream);
-
-                long? seqNumber = fudgeMsgEnvelope.Message.GetLong("#");
-                if (!seqNumber.HasValue)
-                {
-                    throw new ArgumentException("Couldn't find sequence number");
-                }
-                long expectedSeqNumber = Interlocked.Increment(ref _lastSequenceNumber);
-                if (expectedSeqNumber != seqNumber.Value)
-                {
-                    throw new ArgumentException(string.Format("Unexpected SEQ number {0} expected {1}", seqNumber, expectedSeqNumber));
-                }
-
-                return _fudgeContext.DeFudgeSerialize(fudgeMsgEnvelope.Message);
+                return _fudgeContext.Deserialize(memoryStream);
             }
         }
     }
