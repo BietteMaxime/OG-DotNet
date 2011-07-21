@@ -21,6 +21,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
     public class SnapshotDataStreamInvalidater : Invalidater<SnapshotDataStream>
     {
+        private readonly ManualResetEventSlim _constructedEvent = new ManualResetEventSlim(false);
         private readonly SnapshotLiveDataStreamInvalidater _liveStream;
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly UniqueIdentifier _snapshotId;
@@ -33,10 +34,14 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             _snapshotId = snapshotId;
             _remoteClient = remoteEngineContext.CreateUserClient();
             _liveStream.GraphChanged += OnGraphChanged;
+            
+            _constructedEvent.Set();
         }
 
         protected override SnapshotDataStream Build(CancellationToken ct)
         {
+            _constructedEvent.Wait(ct);
+
             ViewDefinition viewDefinition = null;
             _liveStream.With(ct, liveDataStream => liveDataStream.WithLastResults(ct,
                                                                     (cycle, graphs, results) =>

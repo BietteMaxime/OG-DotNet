@@ -15,6 +15,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
     public class SnapshotLiveDataStreamInvalidater : Invalidater<LiveDataStream>
     {
+        private readonly ManualResetEventSlim _constructedEvent = new ManualResetEventSlim(false);
         public event EventHandler GraphChanged;
 
         private readonly ManageableMarketDataSnapshot _snapshot;
@@ -25,6 +26,8 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             _snapshot = snapshot;
             _remoteEngineContext = remoteEngineContext;
             snapshot.PropertyChanged += PropertyChanged; //TODO: weak ref
+
+            _constructedEvent.Set();
         }
 
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -38,6 +41,8 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         protected override LiveDataStream Build(CancellationToken ct)
         {
+            _constructedEvent.Wait(ct);
+
             var liveDataStream = new LiveDataStream(_snapshot.BasisViewName, _remoteEngineContext);
             liveDataStream.GraphChanged += (sender, e) => InvokeGraphChanged(e);
             return liveDataStream;
