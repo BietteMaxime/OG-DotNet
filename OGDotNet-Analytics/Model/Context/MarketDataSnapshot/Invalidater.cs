@@ -104,6 +104,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         public TRet With<TRet>(CancellationToken ct, Func<T, TRet> action)
         {
+            ArgumentChecker.NotNull(action, "action");
             lock (_currentLock)
             {
                 while (true)
