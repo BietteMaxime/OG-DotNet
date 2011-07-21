@@ -130,10 +130,6 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             if (disposing)
             {
                 _prepared.Wait();
-                if (_remoteViewClient != null)
-                {
-                    _remoteViewClient.Dispose();
-                }
                 lock (_lastResultsLock)
                 {
                     var lastResults = _lastResults;
@@ -144,6 +140,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                         lastResults.Second.First.Dispose();
                     }
                     Monitor.PulseAll(_lastResultsLock);
+                }
+
+                if (_remoteViewClient != null)
+                {
+                    _remoteViewClient.Dispose();
                 }
             }
         }
