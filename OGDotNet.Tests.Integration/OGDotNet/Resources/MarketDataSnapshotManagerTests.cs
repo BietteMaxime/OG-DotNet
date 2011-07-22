@@ -7,6 +7,8 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -195,12 +197,19 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Equal(0, proc.Snapshot.VolatilityCubes.Count);
                 Assert.Equal(0, proc.Snapshot.YieldCurves.Count);
 
+                var changedPropertys = new HashSet<string>();
+                proc.Snapshot.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+                                                     { changedPropertys.Add(e.PropertyName); };
                 proc.Snapshot.BasisViewName = "Simple Swaption Test View";
                 action = proc.PrepareUpdate();
                 action.Execute(proc.Snapshot);
 
                 Assert.NotEqual(0, proc.Snapshot.VolatilityCubes.Count);
                 Assert.NotEqual(0, proc.Snapshot.YieldCurves.Count);
+                Assert.Contains("VolatilityCubes", changedPropertys);
+                Assert.Contains("YieldCurves", changedPropertys);
+                Assert.Contains("BasisViewName", changedPropertys);
+                Assert.Equal(3, changedPropertys.Count());
             }
         }
 
