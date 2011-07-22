@@ -65,7 +65,23 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                 StartAllTasks(_tasks.Values);
             }
 
-            return _tasks[inner].Result;
+            try
+            {
+                return _tasks[inner].Result;
+            }
+            catch (AggregateException e)
+            {
+                if (e.InnerExceptions.Count == 1)
+                {
+                    //This looks better in nunit
+                    ExceptionUtility.RethrowWithNoStackTraceLoss(e.InnerException);
+                    throw;
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         private static void StartAllTasks(IEnumerable<Task<MethodResult>> values)
