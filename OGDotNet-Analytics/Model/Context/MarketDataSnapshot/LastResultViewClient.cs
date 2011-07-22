@@ -35,6 +35,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         private RemoteViewClient _remoteViewClient;
 
+        private bool _graphsOutOfDate;
         private Dictionary<string, IDependencyGraph> _graphs;
 
         private volatile Exception _error; //TODO: combine multiple exceptions
@@ -57,6 +58,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 var eventViewResultListener = new EventViewResultListener();
                 eventViewResultListener.CycleCompleted += (sender, e) => Update(e.FullResult);
                 eventViewResultListener.ViewDefinitionCompilationFailed += (sender, e) => SetError(e.Exception);
+                eventViewResultListener.ViewDefinitionCompiled += delegate
+                                                                      {
+                                                                          _graphsOutOfDate = true;
+                                                                      };
                 eventViewResultListener.CycleExecutionFailed += (sender, e) => SetError(e.Exception);
                 _remoteViewClient.SetResultListener(eventViewResultListener);
                 _remoteViewClient.SetViewCycleAccessSupported(true);
@@ -107,8 +112,9 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                     // -- In theory this can live lock if the view is very fast
                     return;
                 }
-                if (_graphs == null)
+                if (_graphsOutOfDate)
                 {
+                    _graphsOutOfDate = false; //NOTE: this is safe because our result message are serialized with our compiled notifications
                     _graphs = RawMarketDataSnapper.GetGraphs(resourceReference.Value.GetCompiledViewDefinition());
                     InvokeGraphChanged();
                 }
