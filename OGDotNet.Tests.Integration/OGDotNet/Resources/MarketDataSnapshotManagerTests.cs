@@ -151,7 +151,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     value.PropertyChanged += delegate { seenUpdate = true; };
                 }
 
-                Thread.Sleep(TimeSpan.FromSeconds(10));
+                Thread.Sleep(TimeSpan.FromSeconds(30));
                 var action = proc.PrepareUpdate();
                 Assert.Empty(action.Warnings);
                 Assert.False(seenUpdate);
