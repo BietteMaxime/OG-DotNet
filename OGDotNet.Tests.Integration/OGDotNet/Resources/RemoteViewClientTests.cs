@@ -323,7 +323,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanReAttach()
         {
-            var timeout = TimeSpan.FromSeconds(10);
+            var timeout = TimeSpan.FromMinutes(0.5);
 
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
