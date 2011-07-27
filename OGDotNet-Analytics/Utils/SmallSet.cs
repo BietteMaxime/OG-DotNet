@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace OGDotNet.Utils
 {
-    internal class SmallSet<T> : ISet<T>
+    public class SmallSet<T> : ISet<T>
     {
         private readonly T _value;
 
