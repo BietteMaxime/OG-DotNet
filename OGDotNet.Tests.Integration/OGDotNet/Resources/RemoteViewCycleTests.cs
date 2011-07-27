@@ -180,6 +180,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         .ToLookup(s => s.ValueName).Select(g => g.First());
                     var specs = new HashSet<ValueSpecification>(distinctKindsOfSpec);
 
+                    if (! specs.Any())
+                    {
+                        continue;
+                    }
                     var computationCacheResponse = cycle.QueryComputationCaches(new ComputationCacheQuery(viewCalculationConfiguration, specs));
                     Assert.InRange(computationCacheResponse.Results.Count, 0, specs.Count());
                     foreach (var result in computationCacheResponse.Results)
