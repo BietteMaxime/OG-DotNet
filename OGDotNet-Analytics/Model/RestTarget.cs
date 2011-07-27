@@ -127,26 +127,6 @@ namespace OGDotNet.Model
             return FudgeRequestImpl("POST", reqMsg);
         }
 
-        public void Post(string obj)
-        {
-            RestExceptionMapping.DoWithExceptionMapping(delegate
-            {
-                HttpWebRequest request = GetBasicRequest();
-                request.Method = "POST";
-
-                request.ContentType = null;
-                using (var requestStream = request.GetRequestStream())
-                using (var sw = new StreamWriter(requestStream))
-                {
-                    sw.Write(obj);
-                }
-
-                using (request.GetResponse())
-                {
-                }
-            });
-        }
-
         public void Delete()
         {
             RequestImpl("DELETE").Close();
