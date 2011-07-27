@@ -21,11 +21,6 @@ namespace OGDotNet.Model.Resources
             _msg = msg;
         }
 
-        public object Msg
-        {
-            get { return _msg; }
-        }
-
         public void ApplyTo(IViewResultListener resultListener)
         {
             var defnCompiled = _msg as ViewDefinitionCompiledCall;

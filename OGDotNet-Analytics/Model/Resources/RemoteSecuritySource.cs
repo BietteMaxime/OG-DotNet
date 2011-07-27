@@ -76,15 +76,5 @@ namespace OGDotNet.Model.Resources
         {
             get { return _securities; }
         }
-
-        public static SecuritiesResponse FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            return new SecuritiesResponse(ffc.GetAllByName("security").Select(deserializer.FromField<ISecurity>).ToList());
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
