@@ -22,13 +22,14 @@ namespace OGDotNet.Builders
 
         public override ITrade DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
+            //TODO: the rest of this
             var uniqueIdentifier = UniqueIdentifier.Parse(ffc.GetString("uniqueId"));
 
             var tradeDate = ffc.GetValue<DateTimeOffset>("tradeDate");
 
             var securityKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
 
-            var counterPartyIdentifier = Identifier.Parse(ffc.GetString("counterparty"));
+            var counterPartyIdentifier = Identifier.Parse(ffc.GetString("counterpartyKey"));
             var quant = ffc.GetValue<long>("quantity");
             return new TradeImpl(uniqueIdentifier, tradeDate, securityKey, new CounterpartyImpl(counterPartyIdentifier), quant);
         }
