@@ -37,6 +37,7 @@ using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Utils;
 using Xunit;
+using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
 
 namespace OGDotNet.Tests.Integration
 {
@@ -113,6 +114,11 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(string value)
         {
             Assert.NotNull(value);
+        }
+
+        public static void AssertSensibleValue(Currency currency)
+        {
+            Assert.NotNull(currency);
         }
 
         public static void AssertSensibleValue(LabelledMatrixEntry value)
