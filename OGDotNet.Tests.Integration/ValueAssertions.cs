@@ -130,7 +130,12 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(DoubleLabelledMatrix2D dlm)
         {
             Assert.NotNull(dlm);
-            //check is done in type
+            foreach (var entry in dlm)
+            {
+                Assert.Contains(entry.XLabel, dlm.XLabels);
+                Assert.Contains(entry.YLabel, dlm.YLabels);
+            }
+            //other checks are done in type
         }
 
         public static void AssertSensibleValue(long value)
