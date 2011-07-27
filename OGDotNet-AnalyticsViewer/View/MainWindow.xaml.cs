@@ -201,7 +201,7 @@ namespace OGDotNet.AnalyticsViewer.View
 
         private static string GetMessage(IViewResultModel results, ref int count)
         {
-            return string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, (results.ResultTimestamp.ToUniversalTime() - results.ValuationTime.ToUniversalTime()).TotalMilliseconds, ++count);
+            return string.Format("calculated {0} in {1} ms. ({2})", results.ValuationTime, results.CalculationDuration.TotalMilliseconds, ++count);
         }
 
         private void SetStatus(string msg, bool isError = false)

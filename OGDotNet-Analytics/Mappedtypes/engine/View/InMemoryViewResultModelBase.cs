@@ -20,18 +20,21 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly DateTimeOffset _inputDataTimestamp;
         private readonly DateTimeOffset _resultTimestamp;
         private readonly IDictionary<string, ViewCalculationResultModel> _configurationMap;
+        private readonly TimeSpan _calculationDuration;
 
-        protected InMemoryViewResultModelBase(UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap)
+        protected InMemoryViewResultModelBase(UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, TimeSpan calculationDuration)
         {
             _viewProcessId = viewProcessId;
             _viewCycleId = viewCycleId;
             _inputDataTimestamp = inputDataTimestamp;
             _resultTimestamp = resultTimestamp;
             _configurationMap = configurationMap;
+            _calculationDuration = calculationDuration;
         }
 
         public DateTimeOffset ValuationTime { get { return _inputDataTimestamp; } }
         public DateTimeOffset ResultTimestamp { get { return _resultTimestamp; } }
+        public TimeSpan CalculationDuration { get { return _calculationDuration; } }
 
         public UniqueIdentifier ViewProcessId
         {

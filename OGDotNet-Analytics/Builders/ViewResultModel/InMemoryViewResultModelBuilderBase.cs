@@ -25,7 +25,6 @@ namespace OGDotNet.Builders.ViewResultModel
 
         public override T DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            //TODO calculationDuration
             var viewProcIdStr = msg.GetString("viewProcessId");
             UniqueIdentifier viewProcessId = UniqueIdentifier.Parse(viewProcIdStr);
             var viewCycleIdStr = msg.GetString("viewCycleId");
@@ -33,6 +32,7 @@ namespace OGDotNet.Builders.ViewResultModel
 
             var inputDataTimestamp = msg.GetValue<DateTimeOffset>("valuationTime");
             var resultTimestamp = msg.GetValue<DateTimeOffset>("calculationTime");
+            TimeSpan calculationDuration = DurationBuilder.Build(msg.GetMessage("calculationDuration"));
             var configurationMap = new Dictionary<string, ViewCalculationResultModel>();
             var keys = new Queue<string>();
             var values = new Queue<ViewCalculationResultModel>();
@@ -87,9 +87,9 @@ namespace OGDotNet.Builders.ViewResultModel
                 }
             }
 
-            return BuildObject(msg, deserializer, configurationMap, viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp);
+            return BuildObject(msg, deserializer, configurationMap, viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, calculationDuration);
         }
 
-        protected abstract T BuildObject(IFudgeFieldContainer msg, IFudgeDeserializer deserializer, Dictionary<string, ViewCalculationResultModel> configurationMap, UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp);
+        protected abstract T BuildObject(IFudgeFieldContainer msg, IFudgeDeserializer deserializer, Dictionary<string, ViewCalculationResultModel> configurationMap, UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, TimeSpan calculationDuration);
     }
 }

@@ -15,7 +15,8 @@ namespace OGDotNet.Mappedtypes.engine.View
     {
         private readonly DateTimeOffset _previousResultTimestamp;
 
-        public InMemoryViewDeltaResultModel(UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, DateTimeOffset previousResultTimestamp) : base(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap)
+        public InMemoryViewDeltaResultModel(UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, DateTimeOffset previousResultTimestamp, TimeSpan calculationDuration) 
+            : base(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap, calculationDuration)
         {
             _previousResultTimestamp = previousResultTimestamp;
         }

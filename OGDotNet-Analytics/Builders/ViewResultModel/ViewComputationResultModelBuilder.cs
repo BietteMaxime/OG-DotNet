@@ -24,11 +24,11 @@ namespace OGDotNet.Builders.ViewResultModel
         {
         }
 
-        protected override InMemoryViewComputationResultModel BuildObject(IFudgeFieldContainer msg, IFudgeDeserializer deserializer, Dictionary<string, ViewCalculationResultModel> configurationMap, UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp)
+        protected override InMemoryViewComputationResultModel BuildObject(IFudgeFieldContainer msg, IFudgeDeserializer deserializer, Dictionary<string, ViewCalculationResultModel> configurationMap, UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, TimeSpan calculationDuration)
         {
             var liveDataMsg = msg.GetMessage("liveData");
             List<ComputedValue> liveData = liveDataMsg == null ? null : liveDataMsg.GetAllByOrdinal(1).Select(deserializer.FromField<ComputedValue>).ToList();
-            return new InMemoryViewComputationResultModel(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap, liveData);
+            return new InMemoryViewComputationResultModel(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap, liveData, calculationDuration);
         }
     }
 }
