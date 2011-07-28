@@ -20,6 +20,7 @@ namespace OGDotNet.Mappedtypes.engine.value
     [FudgeSurrogate(typeof(ValuePropertiesBuilder))]
     public abstract class ValueProperties : IEquatable<ValueProperties>
     {
+        public static readonly ValueProperties All = InfiniteValueProperties.Instance;
         //TODO the rest of this interface
         public abstract ISet<string> Properties { get; }
         public abstract bool IsEmpty { get; }
@@ -35,6 +36,10 @@ namespace OGDotNet.Mappedtypes.engine.value
         public static ValueProperties Create(Dictionary<string, ISet<string>> propertyValues, HashSet<string> optionalProperties)
         {
             return new FiniteValueProperties(propertyValues, optionalProperties);
+        }
+        public static ValueProperties WithoutAny(params string[] properties)
+        {
+            return new NearlyInfiniteValueProperties(new HashSet<string>(properties));
         }
 
         internal class EmptyValueProperties : ValueProperties
@@ -264,6 +269,7 @@ namespace OGDotNet.Mappedtypes.engine.value
 
             public NearlyInfiniteValueProperties(ISet<string> without)
             {
+                ArgumentChecker.NotEmpty(without, "without");
                 Without = without;
             }
 

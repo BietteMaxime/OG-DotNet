@@ -58,8 +58,16 @@ namespace OGDotNet.Builders
             var withoutMessage = ffc.GetMessage("without");
             if (withoutMessage != null)
             {
-                var without = SmallSet<string>.Create(withoutMessage.GetAllFields().Select(f => f.Value).Cast<string>());
-                return without.Any() ? (ValueProperties)new NearlyInfiniteValueProperties(without) : InfiniteValueProperties.Instance;
+                if (withoutMessage.Any())
+                {
+                    var without = withoutMessage.GetAllFields().Select(f => f.Value).Cast<string>();
+                    var withoutSet = SmallSet<string>.Create(without);
+                    return new NearlyInfiniteValueProperties(withoutSet);
+                }
+                else
+                {
+                    return InfiniteValueProperties.Instance;
+                }
             }
 
             var withMessage = ffc.GetMessage("with");
