@@ -24,11 +24,13 @@ using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.sabr;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
+using OGDotNet.Mappedtypes.financial.interestrate;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.financial.model.volatility.surface;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.javax.time.calendar;
 using OGDotNet.Mappedtypes.math.curve;
+using OGDotNet.Mappedtypes.math.matrix;
 using OGDotNet.Mappedtypes.math.surface;
 using OGDotNet.Mappedtypes.Util.money;
 using OGDotNet.Mappedtypes.Util.Time;
@@ -448,6 +450,14 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(amount.Currency);
             AssertSensibleValue(amount.Amount);
+        }
+        public static void AssertSensibleValue(DoubleMatrix1D matrix)
+        {
+            AssertSensibleValue(matrix.Data);
+        }
+        public static void AssertSensibleValue(PresentValueSensitivity sensitivity)
+        {
+            AssertSensibleValue(sensitivity.Sensitivities);
         }
     }
 }

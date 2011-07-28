@@ -106,6 +106,7 @@
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilityCubeSnapshot.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\ManageableVolatilitySurfaceSnapshot.cs" />
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
+    <Compile Include="Mappedtypes\math\matrix\DoubleMatrix1D.cs" />
     <Compile Include="Mappedtypes\math\surface\IDoublesSurface.cs" />
     <Compile Include="Mappedtypes\math\surface\InterpolatedDoublesSurface.cs" />
     <Compile Include="Mappedtypes\Util\money\CurrencyAmount.cs" />
