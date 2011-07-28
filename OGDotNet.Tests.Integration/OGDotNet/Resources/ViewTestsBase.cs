@@ -39,6 +39,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Random Matrix",
                                                                       "Simple Cash Test View",
                                                                       "Laplace View 2",
+                                                                      "Funding Curve Only",
                                                                       "Jon Mixed Portfolio View" //PLAT-1418
                                                                   };
 
