@@ -9,6 +9,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Text;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
 {
@@ -36,7 +38,7 @@ namespace OGDotNet.Builders
                 var dotIndex = javaName.LastIndexOf('.');
                 var stringBuilder = new StringBuilder(javaName);
                 stringBuilder.Remove(dotIndex + 1, 1);
-                stringBuilder[dotIndex + 1] = char.ToLowerInvariant(stringBuilder[dotIndex + 1]);
+                return stringBuilder.ToString();
             }
             return javaName;
         }
@@ -64,6 +66,10 @@ namespace OGDotNet.Builders
                 var interfaceName = new StringBuilder(name);
                 interfaceName.Insert(name.LastIndexOf(".") + 1, 'I');
                 ret = base.GetType(interfaceName.ToString());
+            }
+            if (ret != null && GetName(ret) != name)
+            {
+                throw new OpenGammaException("Type cannot be roundtripped");
             }
             return ret;
         }
