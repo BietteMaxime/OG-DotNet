@@ -18,7 +18,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
     {
         private static readonly string InterestingView = null; // Useful for debugging
 
-        private static readonly HashSet<string> BannedViews = new HashSet<string>
+        protected static readonly HashSet<string> BannedViews = new HashSet<string>
                                                                   {
                                                                       // Slow
                                                                       "10K Swap Test View",

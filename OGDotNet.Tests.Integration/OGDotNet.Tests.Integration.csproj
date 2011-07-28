@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OGDotNet\Resources\RemoteVolatilityCubeDefinitionSourceTests.cs" />
+    <Compile Include="OGDotNet\Resources\ViewTestsBaseTests.cs" />
     <Compile Include="OGDotNet\StaticAnalysisTests.cs" />
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextFactoryTests.cs" />
     <Compile Include="OGDotNet\Model\Context\RemoteEngineContextTests.cs" />
