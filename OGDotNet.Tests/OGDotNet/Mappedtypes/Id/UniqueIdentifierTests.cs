@@ -68,6 +68,8 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
         public void ObjectEqualsCodeBehavesAsExpected()
         {
             EqualsCodeBehavesAsExpected((a, b) => a.Equals((object)b));
+            Assert.Throws<ArgumentException>(() => ExpectedOrder.First().CompareTo("SomeOtherType"));
+            Assert.False(ExpectedOrder.First().Equals("SomeOtherType"));
         }
 
         [Fact]
