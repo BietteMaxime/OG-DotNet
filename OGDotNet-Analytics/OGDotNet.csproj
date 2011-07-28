@@ -168,7 +168,6 @@
     <Compile Include="Mappedtypes\engine\View\calc\IViewCycle.cs" />
     <Compile Include="Mappedtypes\engine\View\calc\ViewCycleState.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewCalculationConfigurationImpl.cs" />
-    <Compile Include="Mappedtypes\engine\View\compilation\CompiledViewDefinitionExtensions.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\ICompiledViewCalculationConfiguration.cs" />
     <Compile Include="Mappedtypes\engine\View\compilation\ICompiledViewDefinitionWithGraphs.cs" />
     <Compile Include="Mappedtypes\engine\View\InMemoryViewDeltaResultModel.cs" />
