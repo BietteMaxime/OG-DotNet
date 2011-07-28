@@ -386,22 +386,19 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                 valueSpecification.TargetSpecification.Uid
                                 && req.TargetSpecification.Type == valueSpecification.TargetSpecification.Type
                                 && req.ValueName == valueSpecification.ValueName)
-                                && req.Constraints.IsSatisfiedBy(valueSpecification.Properties);
+                               && req.Constraints.IsSatisfiedBy(valueSpecification.Properties);
 
                 if (matches)
                     return;
             }
 
             var reqsByType = configuration.PortfolioRequirementsBySecurityType;
-            foreach (var valuePropertiese in reqsByType)
+            if (!reqsByType.Any(r => r.Value.Any(t => t.Item1 == valueSpecification.ValueName)))
             {
-                var hashSet = valuePropertiese.Value;
-                if (!hashSet.Any(t => t.Item1 == valueSpecification.ValueName))
-                {
-                    Assert.True(false, string.Format("Unmatched requirement {0},{1},{2} on {3}", valueSpecification.ValueName,
-                                                     valueSpecification.TargetSpecification.Type,
-                                                     valueSpecification.TargetSpecification.Uid, viewDefinition.Name));
-                }
+                Assert.True(false,
+                            string.Format("Unmatched requirement {0},{1},{2} on {3}", valueSpecification.ValueName,
+                                          valueSpecification.TargetSpecification.Type,
+                                          valueSpecification.TargetSpecification.Uid, viewDefinition.Name));
             }
         }
 
