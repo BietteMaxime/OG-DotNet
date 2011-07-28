@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OGDotNet.Mappedtypes;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
@@ -59,6 +60,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var withCount = CountResults(withSnapshot);
                     if (withoutCount != withCount)
                     {
+                        var withSpecs = new HashSet<ValueSpecification>(withSnapshot.AllResults.Select(r => r.ComputedValue.Specification));
+                        var withoutSpecs = new HashSet<ValueSpecification>(withoutSnapshot.AllResults.Select(r => r.ComputedValue.Specification));
+                        withoutSpecs.SymmetricExceptWith(withSpecs);
                         Assert.True(false, string.Format("Running snapshot of {0} only had {1}, live had {2}", vd.Name, withCount, withoutCount));
                     }
 
@@ -127,7 +131,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static int ExpectedYieldCurves(ViewDefinition viewDefinition)
         {
             var yieldCurvesPerConfiguration = viewDefinition.CalculationConfigurationsByName.Select(
-                c => c.Value.SpecificRequirements.Where(r => r.ValueName.Contains("YieldCurve")).Count());
+                c => c.Value.SpecificRequirements.Where(r => r.ValueName.Contains("YieldCurve") && r.ValueName != ValueRequirementNames.YieldCurveJacobian).Count());
             return
                 yieldCurvesPerConfiguration.Distinct().Max();
         }

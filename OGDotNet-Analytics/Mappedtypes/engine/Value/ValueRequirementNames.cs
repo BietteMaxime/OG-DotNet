@@ -16,6 +16,7 @@ namespace OGDotNet.Mappedtypes.engine.value
         public const string YieldCurveSpec = "YieldCurveSpec";
         public const string YieldCurveInterpolated = "YieldCurveInterpolated";
         public const string YieldCurveMarketData = "YieldCurveMarketData";
+        public const string YieldCurveJacobian = "YieldCurveJacobian";
 
         public const string VolatilitySurfaceData = "VolatilitySurfaceData";
 
