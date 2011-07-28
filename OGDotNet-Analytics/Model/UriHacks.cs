@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="UriHacks.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Model
 {
@@ -35,10 +36,7 @@ namespace OGDotNet.Model
         public static void LeaveDotsAndSlashesEscaped(Uri uri)
         {
             //This is grim http://connect.microsoft.com/VisualStudio/feedback/details/94109/system-uri-constructor-evaluates-escaped-slashes-and-removes-double-slashes
-            if (uri == null)
-            {
-                throw new ArgumentNullException("uri");
-            }
+            ArgumentChecker.NotNull(uri, "uri");
 
             object uriParser = SyntaxField.GetValue(uri);
 

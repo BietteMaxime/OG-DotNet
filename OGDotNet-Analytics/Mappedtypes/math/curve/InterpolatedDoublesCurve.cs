@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.math.curve
 {
@@ -22,15 +23,9 @@ namespace OGDotNet.Mappedtypes.math.curve
         public InterpolatedDoublesCurve(string name, double[] xData, double[] yData)
             : base(name)
         {
-            if (xData == null) throw new ArgumentNullException("xData");
-            if (!xData.Any()) throw new ArgumentNullException("xData");
-            if (yData == null) throw new ArgumentNullException("yData");
-            if (!yData.Any()) throw new ArgumentNullException("yData");
-
-            if (xData.Length != yData.Length)
-            {
-                throw new ArgumentException("Graph is not square");
-            }
+            ArgumentChecker.NotEmpty(xData, "xData");
+            ArgumentChecker.NotEmpty(yData, "yData");
+            ArgumentChecker.Not(xData.Length != yData.Length, "Graph is not square");
 
             _xData = xData;
             _yData = yData;

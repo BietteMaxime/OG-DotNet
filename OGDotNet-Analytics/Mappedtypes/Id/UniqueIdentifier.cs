@@ -119,10 +119,7 @@ namespace OGDotNet.Mappedtypes.Id
 
         public int CompareTo(object obj)
         {
-            if (obj == null)
-            {
-                throw new ArgumentNullException("obj");
-            }
+            ArgumentChecker.NotNull(obj, "obj");
             var uniqueIdentifier = obj as UniqueIdentifier;
             if (uniqueIdentifier == null)
             {
