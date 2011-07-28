@@ -66,10 +66,10 @@ namespace OGDotNet.Builders
                 var interfaceName = new StringBuilder(name);
                 interfaceName.Insert(name.LastIndexOf(".") + 1, 'I');
                 ret = base.GetType(interfaceName.ToString());
-            }
-            if (ret != null && GetName(ret) != name)
-            {
-                throw new OpenGammaException("Type cannot be roundtripped");
+                if (ret != null && GetName(ret) != name)
+                {
+                    throw new OpenGammaException("Type cannot be roundtripped");
+                }
             }
             return ret;
         }
