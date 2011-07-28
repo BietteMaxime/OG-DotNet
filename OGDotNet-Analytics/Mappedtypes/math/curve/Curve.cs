@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="Curve.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using Fudge;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.math.curve
 {
@@ -18,7 +19,7 @@ namespace OGDotNet.Mappedtypes.math.curve
 
         protected Curve(string name)
         {
-            if (name == null) throw new ArgumentNullException("name");
+            ArgumentChecker.NotNull(name, "name");
             _name = name;
         }
 
