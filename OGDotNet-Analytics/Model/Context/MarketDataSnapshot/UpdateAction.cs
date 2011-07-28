@@ -71,15 +71,5 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         {
             return new UpdateAction<TOuter>(_updateActions.Select<Action<T>, Action<TOuter>>(a => (o => a(projecter(o)))), Warnings);
         }
-
-        private static Action<T> Wrap<TInner>(Action<TInner> action, Func<T, TInner> projecter)
-        {
-            return t => action(projecter(t));
-        }
-
-        private static UpdateAction<T> Wrap<TInner>(UpdateAction<TInner> r, Func<T, TInner> projecter)
-        {
-            return new UpdateAction<T>(r._updateActions.Select(a => Wrap(a, projecter)), r.Warnings);
-        }
     }
 }
