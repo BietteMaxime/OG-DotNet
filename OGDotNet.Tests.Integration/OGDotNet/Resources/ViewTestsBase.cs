@@ -24,7 +24,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "10K Swap Test View",
 
                                                                       // Broken
-                                                                      "TestDefinition",
                                                                       "Primitives Only",
                                                                       "OvernightBatchTestView",
                                                                       "GlobeOp Bond View",
@@ -33,14 +32,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Cash Equity Test View",
                                                                       "European Corporate Bond View",
                                                                       "European Corporate Bond View - test",
-                                                                      "Multi-Currency Swap Test View",
-                                                                      "Simple Vanilla FX Option Test View",
-                                                                      "Simple IR Future Option Test View",
                                                                       "Random Matrix",
                                                                       "Simple Cash Test View",
                                                                       "Laplace View 2",
-                                                                      "Funding Curve Only",
-                                                                      "Jon Mixed Portfolio View" //PLAT-1418
+                                                                      "Funding Curve Only"
                                                                   };
 
         private static bool IsSlowTicking(string definitionName)
