@@ -21,7 +21,6 @@ namespace OGDotNet.Mappedtypes.engine.View
         IEnumerable<ViewResultEntry> AllResults { get; }
         TimeSpan CalculationDuration { get; }
         ComputedValue this[string calculationConfiguration, ValueRequirement valueRequirement] { get; }
-        bool TryGetValue(string calculationConfiguration, ValueRequirement valueRequirement, out object result);
         bool TryGetComputedValue(string calculationConfiguration, ValueRequirement valueRequirement, out ComputedValue result);
     }
 }

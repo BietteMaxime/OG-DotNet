@@ -59,18 +59,6 @@ namespace OGDotNet.Mappedtypes.engine.View
             }
         }
 
-        public bool TryGetValue(string calculationConfiguration, ValueRequirement valueRequirement, out object result)
-        {
-            ComputedValue compValue;
-            if (!TryGetComputedValue(calculationConfiguration, valueRequirement, out compValue))
-            {
-                result = null;
-                return false;
-            }
-            result = compValue.Value;
-            return true;
-        }
-
         public bool TryGetComputedValue(string calculationConfiguration, ValueRequirement valueRequirement, out ComputedValue result)
         {
             result = null;
