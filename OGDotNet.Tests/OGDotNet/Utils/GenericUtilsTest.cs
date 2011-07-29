@@ -5,6 +5,8 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Utils;
 using Xunit;
 
@@ -12,6 +14,41 @@ namespace OGDotNet.Tests.OGDotNet.Utils
 {
     public class GenericUtilsTest
     {
+        public class EquatableType : IEquatable<EquatableType>
+        {
+            private readonly string _id;
+
+            public EquatableType(string id)
+            {
+                _id = id;
+            }
+
+            public string ID
+            {
+                get { return _id; }
+            }
+
+            public bool Equals(EquatableType other)
+            {
+                if (ReferenceEquals(null, other)) return false;
+                if (ReferenceEquals(this, other)) return true;
+                return Equals(other._id, _id);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != typeof(EquatableType)) return false;
+                return Equals((EquatableType) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                return _id != null ? _id.GetHashCode() : 0;
+            }
+        }
+
         public class GenericOneArgType<TA>
         {
             private readonly TA _a;
@@ -91,6 +128,30 @@ namespace OGDotNet.Tests.OGDotNet.Utils
         }
 
         public static GenericOneArgType<T> GenericMethodOneArg<T>(GenericOneArgType<T> a)
+        {
+            return a;
+        }
+
+        [Fact]
+        public void CallEquatable()
+        {
+            var x = new EquatableType("x");
+            var obj = GenericUtils.Call(typeof(GenericUtilsTest), "EquatableMethod", typeof(IEquatable<>), x);
+            Assert.IsType(typeof(EquatableType), obj);
+            var y = (EquatableType)obj;
+            Assert.Equal(x.ID, y.ID);
+        }
+
+        [Fact]
+        public void CallEquatableVP()
+        {
+            var x = ValueProperties.All;
+            var obj = GenericUtils.Call(typeof(GenericUtilsTest), "EquatableMethod", typeof(IEquatable<>), x);
+            var y = (ValueProperties)obj;
+            Assert.Equal(x, y);
+        }
+
+        public static IEquatable<T> EquatableMethod<T>(IEquatable<T> a)
         {
             return a;
         }

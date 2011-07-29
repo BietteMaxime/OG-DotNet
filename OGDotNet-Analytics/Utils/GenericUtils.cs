@@ -14,7 +14,7 @@ namespace OGDotNet.Utils
     public static class GenericUtils
     {
         static readonly Memoizer<Type, string, MethodInfo> GenericMethod = new Memoizer<Type, string, MethodInfo>(GetGenericMethodImpl);
-        static readonly Memoizer<Type, Type[]> GenericArgs = new Memoizer<Type, Type[]>(GetGenericArgs);
+        static readonly Memoizer<Type, Type, Type[]> GenericArgs = new Memoizer<Type, Type, Type[]>(GetGenericArgs);
         static readonly Memoizer<MethodInfo, Type[], MethodInfo> GenericMethodMaker = new Memoizer<MethodInfo, Type[], MethodInfo>(MakeGenericMethod);
 
         public static MethodInfo GetGenericMethod(Type genericMethodContainingType, string genericMethodName)
@@ -37,10 +37,33 @@ namespace OGDotNet.Utils
             return Call(genericMethodDefinition, genericTypeDefinition, args);
         }
 
-        private static Type[] GetGenericArgs(Type genericType)
+        private static Type[] GetGenericArgs(Type genericTypeDefinition, Type genericType)
         {
-            ArgumentChecker.Not(!genericType.IsGenericType, "First argument is not generic type");
-            return genericType.GetGenericArguments();
+            ArgumentChecker.NotNull(genericType, "genericType");
+            if (genericType == typeof(object))
+            {
+                throw new ArgumentException(string.Format("{0} doesn't provide {1}", genericType, genericTypeDefinition), "genericType");
+            }
+            if (genericType.IsGenericType && genericType.GetGenericTypeDefinition() == genericTypeDefinition)
+            {
+                return genericType.GetGenericArguments();
+            }
+            foreach (var i in genericType.GetInterfaces().Concat(new[] { genericType.BaseType }))
+            {
+                if ( i == genericType)
+                {
+                    continue;
+                }
+                try
+                {
+                    Type[] args = GetGenericArgs(genericTypeDefinition, i);
+                    return args;
+                }
+                catch (ArgumentException)
+                {
+                }
+            }
+            throw new ArgumentException(string.Format("{0} doesn't provide {1}", genericType, genericTypeDefinition), "genericType");
         }
 
         public static object Call(MethodInfo genericMethodDefinition, Type genericTypeDefinition, params object[] args)
@@ -48,7 +71,7 @@ namespace OGDotNet.Utils
             ArgumentChecker.Not(!genericTypeDefinition.IsGenericTypeDefinition, "genericTypeDefinition");
             ArgumentChecker.NotEmpty(args, "args");
             var genericType = args[0].GetType();
-            var genericArguments = GenericArgs.Get(genericType);
+            var genericArguments = GenericArgs.Get(genericTypeDefinition, genericType);
             
             return Call(genericMethodDefinition, genericArguments, args);
         }
