@@ -120,7 +120,7 @@ namespace OGDotNet.Tests.OGDotNet.Utils
         public void CallTwoArg()
         {
             var x = new GenericTwoArgType<string, int>("X", 1);
-            var obj = GenericUtils.Call(typeof(GenericUtilsTest), "GenericMethodTwoArg", typeof(GenericOneArgType<>), x);
+            var obj = GenericUtils.Call(typeof(GenericUtilsTest), "GenericMethodTwoArg", typeof(GenericTwoArgType<,>), x);
             Assert.IsType(typeof(GenericTwoArgType<string, int>), obj);
             var y = (GenericTwoArgType<string, int>)obj;
             Assert.Equal(x.A, y.A);
