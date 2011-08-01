@@ -73,6 +73,7 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
 
             using (var process = new Process())
             {
+                Console.Error.WriteLine(@"Starting process {0} {1}", processStartInfo.FileName, processStartInfo.Arguments);
                 process.StartInfo = processStartInfo;
                 process.Start();
                 process.WaitForExit();
