@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using OGDotNet.Mappedtypes.Core.Common;
+using OGDotNet.Mappedtypes.Util.Money;
 
 namespace OGDotNet.Mappedtypes.Util.money
 {

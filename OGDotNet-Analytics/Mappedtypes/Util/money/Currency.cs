@@ -11,7 +11,7 @@ using System.Globalization;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Core.Common
+namespace OGDotNet.Mappedtypes.Util.Money
 {
     public class Currency : IEquatable<Currency>, IUniqueIdentifiable
     {

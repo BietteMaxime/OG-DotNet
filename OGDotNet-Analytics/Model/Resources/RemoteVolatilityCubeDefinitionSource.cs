@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 namespace OGDotNet.Model.Resources
 {
     public class RemoteVolatilityCubeDefinitionSource

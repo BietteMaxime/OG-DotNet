@@ -12,8 +12,8 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Util.Money;
 
 namespace OGDotNet.Mappedtypes.financial.currency
 {

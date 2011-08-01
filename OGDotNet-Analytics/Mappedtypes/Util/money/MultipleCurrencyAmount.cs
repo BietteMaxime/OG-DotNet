@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Core.Common;
+using OGDotNet.Mappedtypes.Util.Money;
 
 namespace OGDotNet.Mappedtypes.Util.money
 {

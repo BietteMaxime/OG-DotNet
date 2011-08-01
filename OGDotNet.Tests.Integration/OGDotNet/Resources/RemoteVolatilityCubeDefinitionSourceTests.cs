@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using OGDotNet.Mappedtypes.Core.Common;
+using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources

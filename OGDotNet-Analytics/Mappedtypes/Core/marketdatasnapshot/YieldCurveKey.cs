@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="YieldCurveKey.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -9,7 +9,7 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
 namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
 {

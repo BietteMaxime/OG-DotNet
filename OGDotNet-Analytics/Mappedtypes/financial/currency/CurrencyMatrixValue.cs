@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="CurrencyMatrixValue.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -9,8 +9,8 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Util.Money;
 
 namespace OGDotNet.Mappedtypes.financial.currency
 {

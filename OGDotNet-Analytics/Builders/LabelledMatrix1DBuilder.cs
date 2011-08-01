@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="LabelledMatrix1DBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -10,8 +10,8 @@ using System;
 using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;
 
 namespace OGDotNet.Builders

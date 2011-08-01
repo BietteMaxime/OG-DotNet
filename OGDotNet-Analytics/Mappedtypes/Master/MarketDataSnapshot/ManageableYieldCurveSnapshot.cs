@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ManageableYieldCurveSnapshot.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -10,10 +10,9 @@ using System;
 using System.ComponentModel;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 
-namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
     public class ManageableYieldCurveSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableYieldCurveSnapshot>
     {
@@ -42,10 +41,10 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             var otherValTime = other.ValuationTime;
 
             var timeAction = new UpdateAction<ManageableYieldCurveSnapshot>(delegate(ManageableYieldCurveSnapshot snap)
-                                 {
-                                     snap._valuationTime = otherValTime;
-                                     snap.InvokePropertyChanged(new PropertyChangedEventArgs("ValuationTime"));
-                                 });
+                                                                                {
+                                                                                    snap._valuationTime = otherValTime;
+                                                                                    snap.InvokePropertyChanged(new PropertyChangedEventArgs("ValuationTime"));
+                                                                                });
             return valuesAction.Wrap<ManageableYieldCurveSnapshot>(y => y._values).Concat(timeAction);
         }
 

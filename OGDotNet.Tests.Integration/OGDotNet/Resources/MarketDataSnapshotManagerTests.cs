@@ -18,8 +18,6 @@ using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.Execution;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.master.marketdatasnapshot;
-using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Context;
 using OGDotNet.Model.Context.MarketDataSnapshot;

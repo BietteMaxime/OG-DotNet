@@ -8,7 +8,7 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
 {

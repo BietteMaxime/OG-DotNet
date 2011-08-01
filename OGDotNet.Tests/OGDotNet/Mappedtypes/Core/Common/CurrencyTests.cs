@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="CurrencyTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -7,8 +7,8 @@
 //-----------------------------------------------------------------------
 
 using System;
-using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Util.Money;
 using Xunit;
 
 namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common

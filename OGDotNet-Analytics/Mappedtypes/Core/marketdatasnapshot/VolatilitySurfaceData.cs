@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="VolatilitySurfaceData.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.math.curve;
+using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;
 
 namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot

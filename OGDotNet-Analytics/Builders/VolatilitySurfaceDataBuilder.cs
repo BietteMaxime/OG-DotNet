@@ -13,7 +13,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Utils;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
 namespace OGDotNet.Builders
 {

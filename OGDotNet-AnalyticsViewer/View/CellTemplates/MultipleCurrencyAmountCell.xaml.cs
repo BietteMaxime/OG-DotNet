@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.Util.money;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {

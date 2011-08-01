@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ManageableUnstructuredMarketDataSnapshot.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -15,13 +15,12 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Model;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
     public class ManageableUnstructuredMarketDataSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableUnstructuredMarketDataSnapshot>
     {
@@ -56,9 +55,9 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             var newValues = GetUpdateDictionary(newSnapshot.Values);
 
             return currValues.ProjectStructure(newValues,
-                                     PrepareUpdateFrom,
-                                     PrepareRemoveAction,
-                                     PrepareAddAction
+                                               PrepareUpdateFrom,
+                                               PrepareRemoveAction,
+                                               PrepareAddAction
                 ).Aggregate(UpdateAction<ManageableUnstructuredMarketDataSnapshot>.Empty, (a, b) => a.Concat(b));
         }
 
@@ -97,10 +96,10 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             var clonedValues = Clone(valueSnapshots);
             return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(
                 delegate(ManageableUnstructuredMarketDataSnapshot snap)
-                {
-                    snap.Values.Add(marketDataValueSpecification, Clone(clonedValues));
-                    snap.InvokePropertyChanged("Values");
-                }
+                    {
+                        snap.Values.Add(marketDataValueSpecification, Clone(clonedValues));
+                        snap.InvokePropertyChanged("Values");
+                    }
                 );
         }
 
@@ -113,10 +112,10 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         {
             return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(
                 delegate(ManageableUnstructuredMarketDataSnapshot snap)
-                {
-                    snap.Values.Remove(marketDataValueSpecification);
-                    snap.InvokePropertyChanged("Values");
-                },
+                    {
+                        snap.Values.Remove(marketDataValueSpecification);
+                        snap.InvokePropertyChanged("Values");
+                    },
                 OverriddenSecurityDisappearingWarning.Of(marketDataValueSpecification, valueSnapshots)
                 );
         }
@@ -124,25 +123,25 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         private static UpdateAction<ManageableUnstructuredMarketDataSnapshot> PrepareUpdateFrom(MarketDataValueSpecification currSpec, IDictionary<string, ValueSnapshot> currValues, MarketDataValueSpecification newSpec, IDictionary<string, ValueSnapshot> newValues)
         {
             var actions = currValues.ProjectStructure(newValues,
-                                                (k, a, b) =>
-                                                {
-                                                    var newMarketValue = b.MarketValue;
-                                                    return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(delegate(ManageableUnstructuredMarketDataSnapshot s)
-                                                    {
-                                                        s._values[currSpec][k].MarketValue = newMarketValue;
-                                                    });
-                                                },
-                                                (k, v) => PrepareRemoveAction(currSpec, k, v),
-                                                (k, v) =>
-                                                {
-                                                    var valueSnapshot = v.Clone();
-                                                    return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(
-                                                            delegate(ManageableUnstructuredMarketDataSnapshot s)
-                                                            {
-                                                                s._values[currSpec].Add(k, valueSnapshot.Clone());
-                                                                s.InvokePropertyChanged("Values");
-                                                            });
-                                                });
+                                                      (k, a, b) =>
+                                                          {
+                                                              var newMarketValue = b.MarketValue;
+                                                              return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(delegate(ManageableUnstructuredMarketDataSnapshot s)
+                                                                                                                                    {
+                                                                                                                                        s._values[currSpec][k].MarketValue = newMarketValue;
+                                                                                                                                    });
+                                                          },
+                                                      (k, v) => PrepareRemoveAction(currSpec, k, v),
+                                                      (k, v) =>
+                                                          {
+                                                              var valueSnapshot = v.Clone();
+                                                              return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(
+                                                                  delegate(ManageableUnstructuredMarketDataSnapshot s)
+                                                                      {
+                                                                          s._values[currSpec].Add(k, valueSnapshot.Clone());
+                                                                          s.InvokePropertyChanged("Values");
+                                                                      });
+                                                          });
 
             UpdateAction<ManageableUnstructuredMarketDataSnapshot> ret = UpdateAction<ManageableUnstructuredMarketDataSnapshot>.Of(actions);
 
@@ -150,11 +149,11 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             {//we need to update the key, since we used a non standard comparer
                 ret = ret.Concat(
                     new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(delegate(ManageableUnstructuredMarketDataSnapshot s)
-                    {
-                        var prevValue = s._values[currSpec];
-                        s.Values[newSpec] = prevValue;
-                        s.InvokePropertyChanged("Values");
-                    })
+                                                                                   {
+                                                                                       var prevValue = s._values[currSpec];
+                                                                                       s.Values[newSpec] = prevValue;
+                                                                                       s.InvokePropertyChanged("Values");
+                                                                                   })
                     );
             }
 
@@ -164,13 +163,13 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         private static UpdateAction<ManageableUnstructuredMarketDataSnapshot> PrepareRemoveAction(MarketDataValueSpecification spec, string k, ValueSnapshot v)
         {
             Action<ManageableUnstructuredMarketDataSnapshot> updateAction = delegate(ManageableUnstructuredMarketDataSnapshot s)
-            {
-                if (!s._values[spec].Remove(k))
-                {
-                    throw new InvalidOperationException("Unexpected missing key");
-                }
-                s.InvokePropertyChanged("Values");
-            };
+                                                                                {
+                                                                                    if (!s._values[spec].Remove(k))
+                                                                                    {
+                                                                                        throw new InvalidOperationException("Unexpected missing key");
+                                                                                    }
+                                                                                    s.InvokePropertyChanged("Values");
+                                                                                };
             return new UpdateAction<ManageableUnstructuredMarketDataSnapshot>(updateAction, OverriddenValueDisappearingWarning.Of(spec, k, v));
         }
 

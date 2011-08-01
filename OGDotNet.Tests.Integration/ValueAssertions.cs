@@ -40,7 +40,7 @@ using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Utils;
 using Xunit;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
 namespace OGDotNet.Tests.Integration
 {
@@ -473,6 +473,12 @@ namespace OGDotNet.Tests.Integration
             //These securities are weird AssertSensibleValue(strip.Security);
             Assert.NotNull(strip.Security);
             AssertSensibleValue(strip.Tenor);
+        }
+
+        public static void AssertSensibleValue(FuturePriceCurveData data)
+        {
+            Assert.NotNull(data.DefinitionName);
+            Assert.NotNull(data.SpecificationName);
         }
     }
 }

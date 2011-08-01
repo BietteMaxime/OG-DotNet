@@ -14,7 +14,6 @@ using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.math.curve;
 using OGDotNet.Model.Context.MarketDataSnapshot;

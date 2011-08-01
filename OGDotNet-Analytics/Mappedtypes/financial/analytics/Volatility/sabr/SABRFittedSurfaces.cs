@@ -9,7 +9,7 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.financial.model.volatility.surface;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
 namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.sabr
 {

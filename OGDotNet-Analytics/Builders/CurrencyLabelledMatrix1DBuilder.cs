@@ -7,8 +7,8 @@
 //-----------------------------------------------------------------------
 using System;
 using Fudge;
-using OGDotNet.Mappedtypes.Core.Common;
 using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.Util.Money;
 
 namespace OGDotNet.Builders
 {

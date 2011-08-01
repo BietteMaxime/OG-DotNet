@@ -8,7 +8,7 @@
 
 using OGDotNet.Model.Context.MarketDataSnapshot;
 
-namespace OGDotNet.Mappedtypes.Master.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
     public interface IUpdatableFrom<T>
     {

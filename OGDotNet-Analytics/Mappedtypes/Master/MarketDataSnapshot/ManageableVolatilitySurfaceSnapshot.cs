@@ -5,7 +5,6 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,12 +12,11 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.Master.marketdatasnapshot;
 using OGDotNet.Mappedtypes.Util.tuple;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
     public class ManageableVolatilitySurfaceSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableVolatilitySurfaceSnapshot>
     {
@@ -48,9 +46,9 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
             var newValues = Clone(newObject._values);
 
             var valuesUpdateAction = currValues.ProjectStructure(newValues,
-                                                                PrepareUpdateFrom,
-                                                                PrepareRemoveAction,
-                                                                PrepareAddAction
+                                                                 PrepareUpdateFrom,
+                                                                 PrepareRemoveAction,
+                                                                 PrepareAddAction
                 ).Aggregate(UpdateAction<ManageableVolatilitySurfaceSnapshot>.Empty, (a, b) => a.Concat(b));
 
             return valuesUpdateAction;
@@ -60,26 +58,26 @@ namespace OGDotNet.Mappedtypes.master.marketdatasnapshot
         {
             var newMarketValue = newValue.MarketValue;
             return new UpdateAction<ManageableVolatilitySurfaceSnapshot>(delegate(ManageableVolatilitySurfaceSnapshot s)
-            {
-                s._values[key].MarketValue = newMarketValue;
-            });
+                                                                             {
+                                                                                 s._values[key].MarketValue = newMarketValue;
+                                                                             });
         }
 
         private static UpdateAction<ManageableVolatilitySurfaceSnapshot> PrepareRemoveAction(Pair<object, object> key, ValueSnapshot currValue)
         {
             return new UpdateAction<ManageableVolatilitySurfaceSnapshot>(delegate(ManageableVolatilitySurfaceSnapshot s)
-            {
-                s._values.Remove(key);
-            });
+                                                                             {
+                                                                                 s._values.Remove(key);
+                                                                             });
         }
 
         private static UpdateAction<ManageableVolatilitySurfaceSnapshot> PrepareAddAction(Pair<object, object> key, ValueSnapshot newValue)
         {
             var newMarketValue = newValue.MarketValue;
             return new UpdateAction<ManageableVolatilitySurfaceSnapshot>(delegate(ManageableVolatilitySurfaceSnapshot s)
-            {
-                s._values.Add(key, new ValueSnapshot(newMarketValue));
-            });
+                                                                             {
+                                                                                 s._values.Add(key, new ValueSnapshot(newMarketValue));
+                                                                             });
         }
 
         public bool HaveOverrides()

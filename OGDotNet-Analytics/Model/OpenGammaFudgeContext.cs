@@ -18,7 +18,7 @@ using Fudge.Types;
 using OGDotNet.Builders;
 using OGDotNet.Builders.Streaming;
 using OGDotNet.Utils;
-using Currency = OGDotNet.Mappedtypes.Core.Common.Currency;
+using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
 namespace OGDotNet.Model
 {
