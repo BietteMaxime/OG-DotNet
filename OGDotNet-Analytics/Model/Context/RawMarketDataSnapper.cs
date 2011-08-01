@@ -261,7 +261,7 @@ namespace OGDotNet.Model.Context
                 r => GetYieldCurveKey(r.TargetSpecification, r.Constraints));
             var ret = lookup
                 .ToDictionary(g => g.Key,
-                              g => GetEvaluatedCurve(g.ToDictionary(e => e.ComputedValue.Specification.ValueName, e => e.ComputedValue.Value)));
+                              g => GetEvaluatedCurve(g.ToDictionaryDiscardingDuplicates(e => e.ComputedValue.Specification.ValueName, e => e.ComputedValue.Value)));
             var got = new HashSet<YieldCurveKey>(ret.Keys);
             foreach (var missing in requested.Select(g => g.Key).Except(got))
             {

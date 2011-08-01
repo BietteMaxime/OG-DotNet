@@ -70,6 +70,11 @@ namespace OGDotNet.Utils
             throw new ArgumentException("Couldn't find comparer automagically");
         }
 
+        public static Dictionary<TKey, TValue> ToDictionaryDiscardingDuplicates<TSource, TKey, TValue>(this IEnumerable<TSource> source, Func<TSource, TKey> keyProjector, Func<TSource, TValue> valueProjector)
+        {
+            return source.ToLookup(keyProjector, valueProjector).ToDictionary(g => g.Key, g => g.First());
+        }
+
         private static class ConcDictionaryHandler<TKey, TValue>
         {
             static readonly FieldInfo ComparerField = typeof(ConcurrentDictionary<TKey, TValue>).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
