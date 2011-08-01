@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
@@ -54,8 +55,8 @@ namespace OGDotNet.Mappedtypes.engine.value
             ValueProperties constraints = deserializer.FromField<ValueProperties>(ffc.GetByName("constraints")) ?? ValueProperties.Create();
 
             var computationTargetType = ffc.GetValue<string>("computationTargetType");
-            var computationTargetIdentifier = ffc.GetValue<string>("computationTargetIdentifier");
-            var targetSpec = new ComputationTargetSpecification(EnumBuilder<ComputationTargetType>.Parse(computationTargetType), UniqueIdentifier.Parse(computationTargetIdentifier));
+            var computationTargetIdentifier = GetUniqueIdentifier(ffc, deserializer, "computationTargetIdentifier");
+            var targetSpec = new ComputationTargetSpecification(EnumBuilder<ComputationTargetType>.Parse(computationTargetType), computationTargetIdentifier);
             var valueName = ffc.GetValue<string>("valueName");
 
             return new ValueRequirement(valueName, targetSpec, constraints);
@@ -66,6 +67,32 @@ namespace OGDotNet.Mappedtypes.engine.value
             msg.Add("valueName", ValueName);
             ComputationTargetSpecificationBuilder.AddMessageFields(s, msg, TargetSpecification);
             s.WriteInline(msg, "constraints", Constraints);
+        }
+
+        public static UniqueIdentifier GetUniqueIdentifier(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer, string fieldName)
+        {
+            UniqueIdentifier portfolioIdentifier;
+            IFudgeField idField = ffc.GetByName(fieldName);
+            if (idField != null)
+            {
+                if (idField.Value is string)
+                {
+                    portfolioIdentifier = UniqueIdentifier.Parse((string) idField.Value);
+                }
+                else if (idField.Value is IFudgeFieldContainer)
+                {
+                    portfolioIdentifier = deserializer.FromField<UniqueIdentifier>(idField);
+                }
+                else
+                {
+                    throw new ArgumentException(String.Format("Couldn't read UID {0}", idField.Value));
+                }
+            }
+            else
+            {
+                portfolioIdentifier = null;
+            }
+            return portfolioIdentifier;
         }
     }
 }

@@ -81,6 +81,9 @@
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityCubeData.cs" />
+    <Compile Include="Mappedtypes\engine\function\resolver\IdentityResolutionRuleTransform.cs" />
+    <Compile Include="Mappedtypes\engine\function\resolver\IResolutionRuleTransform.cs" />
+    <Compile Include="Mappedtypes\engine\function\resolver\SimpleResolutionRuleTransform.cs" />
     <Compile Include="Mappedtypes\engine\marketdata\spec\CombinedMarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\engine\marketdata\spec\UserMarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\engine\value\ValueRequirementNames.cs" />

@@ -13,6 +13,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Common;
+using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
@@ -126,7 +127,8 @@ namespace OGDotNet.Mappedtypes.engine.view
             var uniqueId = uniqueIdString == null ? null : UniqueIdentifier.Parse(uniqueIdString);
 
             var resultModelDefinition = deserializer.FromField<ResultModelDefinition>(ffc.GetByName("resultModelDefinition"));
-            var portfolioIdentifier = ffc.GetAllByName("identifier").Any() ? UniqueIdentifier.Parse(ffc.GetValue<string>("identifier")) : null;
+
+            UniqueIdentifier portfolioIdentifier = ValueRequirement.GetUniqueIdentifier(ffc, deserializer, "identifier");
             var user = deserializer.FromField<UserPrincipal>(ffc.GetByName("user"));
 
             var currency = ffc.GetValue<Currency>("currency");

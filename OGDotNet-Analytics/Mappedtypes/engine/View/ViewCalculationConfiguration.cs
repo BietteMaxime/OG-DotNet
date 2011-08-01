@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.engine.function.resolver;
 using OGDotNet.Mappedtypes.engine.value;
 using OGDotNet.Mappedtypes.engine.view;
 using OGDotNet.Utils;
@@ -23,6 +24,7 @@ namespace OGDotNet.Mappedtypes.engine.View
         private readonly IEnumerable<ValueRequirement> _specificRequirements;
         private readonly Dictionary<string, HashSet<Tuple<string, ValueProperties>>> _portfolioRequirementsBySecurityType;
         private readonly ValueProperties _defaultProperties;
+        private readonly IResolutionRuleTransform _resolutionRuleTransform;
         private readonly DeltaDefinition _deltaDefinition;
 
         public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType)
@@ -31,16 +33,17 @@ namespace OGDotNet.Mappedtypes.engine.View
         }
 
         public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, DeltaDefinition deltaDefinition)
-            : this(name, specificRequirements, portfolioRequirementsBySecurityType, deltaDefinition, ValueProperties.Create())
+            : this(name, specificRequirements, portfolioRequirementsBySecurityType, deltaDefinition, ValueProperties.Create(), null)
         {
         }
-        public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, DeltaDefinition deltaDefinition, ValueProperties defaultProperties)
+        public ViewCalculationConfiguration(string name, IEnumerable<ValueRequirement> specificRequirements, Dictionary<string, HashSet<Tuple<string, ValueProperties>>> portfolioRequirementsBySecurityType, DeltaDefinition deltaDefinition, ValueProperties defaultProperties, IResolutionRuleTransform resolutionRuleTransform)
         {
             ArgumentChecker.NotNull(deltaDefinition, "deltaDefinition");
             _name = name;
             _specificRequirements = specificRequirements;
             _portfolioRequirementsBySecurityType = portfolioRequirementsBySecurityType;
             _defaultProperties = defaultProperties;
+            _resolutionRuleTransform = resolutionRuleTransform;
             _deltaDefinition = deltaDefinition;
         }
 
@@ -69,6 +72,11 @@ namespace OGDotNet.Mappedtypes.engine.View
             get { return _deltaDefinition; }
         }
 
+        public IResolutionRuleTransform ResolutionRuleTransform
+        {
+            get { return _resolutionRuleTransform; }
+        }
+
         public static ViewCalculationConfiguration FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var name = ffc.GetValue<string>("name");
@@ -90,7 +98,14 @@ namespace OGDotNet.Mappedtypes.engine.View
             var defaultProperties = deserializer.FromField<ValueProperties>(ffc.GetByName("defaultProperties"));
             var deltaDefinition = deserializer.FromField<DeltaDefinition>(ffc.GetByName("deltaDefinition"));
 
-            return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType, deltaDefinition, defaultProperties);
+            IResolutionRuleTransform transform = null;
+            IFudgeField transformField = ffc.GetByName("resolutionRuleTransform");
+            if (transformField != null)
+            {
+                transform = deserializer.FromField<IResolutionRuleTransform>(transformField);
+            }
+
+            return new ViewCalculationConfiguration(name, specificRequirements, portfolioRequirementsBySecurityType, deltaDefinition, defaultProperties, transform);
         }
 
         private static Tuple<string, ValueProperties> GetReqPair(IFudgeField field, IFudgeDeserializer deserializer)
@@ -139,6 +154,12 @@ namespace OGDotNet.Mappedtypes.engine.View
 
             var deltaDefnMessage = fudgeSerializer.SerializeToMsg(_deltaDefinition);
             calcConfigMsg.Add("deltaDefinition", deltaDefnMessage);
+
+            if (ResolutionRuleTransform != null)
+            {
+                var transformMessage = fudgeSerializer.SerializeToMsg(ResolutionRuleTransform);
+                calcConfigMsg.Add("resolutionRuleTransform", transformMessage);
+            }
         }
     }
 }
