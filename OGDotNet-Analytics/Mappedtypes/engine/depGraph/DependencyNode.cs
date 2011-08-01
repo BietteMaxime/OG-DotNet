@@ -8,10 +8,10 @@
 using System.Collections.Generic;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.engine.function;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.function;
+using OGDotNet.Mappedtypes.Engine.value;
 
-namespace OGDotNet.Mappedtypes.engine.depgraph
+namespace OGDotNet.Mappedtypes.Engine.DepGraph
 {
     [FudgeSurrogate(typeof(DependencyNodeBuilder))]
     public class DependencyNode

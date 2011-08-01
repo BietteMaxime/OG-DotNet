@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph
+namespace OGDotNet.Mappedtypes.Engine.DepGraph.dependencyGraph
 {
     public enum ResultOutputMode
     {

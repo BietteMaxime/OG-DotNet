@@ -11,9 +11,9 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 
-namespace OGDotNet.Mappedtypes.engine.View.compilation
+namespace OGDotNet.Mappedtypes.Engine.View.compilation
 {
     class CompiledViewCalculationConfigurationImpl : ICompiledViewCalculationConfiguration
     {

@@ -8,7 +8,7 @@
 
 using System;
 
-namespace OGDotNet.Mappedtypes.engine.View.Execution
+namespace OGDotNet.Mappedtypes.Engine.View.Execution
 {
     [Flags]
     public enum ViewExecutionFlags

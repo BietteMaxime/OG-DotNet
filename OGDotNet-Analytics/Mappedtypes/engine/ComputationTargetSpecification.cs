@@ -11,7 +11,7 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.engine
+namespace OGDotNet.Mappedtypes.Engine
 {
     [FudgeSurrogate(typeof(ComputationTargetSpecificationBuilder))]
     public class ComputationTargetSpecification : IEquatable<ComputationTargetSpecification>

@@ -11,10 +11,10 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.engine.marketdata.spec;
+using OGDotNet.Mappedtypes.Engine.marketdata.spec;
 using OGDotNet.Model;
 
-namespace OGDotNet.Mappedtypes.engine.View.Execution
+namespace OGDotNet.Mappedtypes.Engine.View.Execution
 {
     public class ArbitraryViewCycleExecutionSequence : IViewCycleExecutionSequence
     {

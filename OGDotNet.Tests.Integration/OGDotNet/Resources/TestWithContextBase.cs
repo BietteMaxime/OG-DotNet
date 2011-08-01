@@ -7,8 +7,8 @@
 //-----------------------------------------------------------------------
 
 using System;
-using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Model.Context;
 using OGDotNet.Tests.Integration.OGDotNet.Model.Context;
 using Xunit;

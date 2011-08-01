@@ -10,8 +10,7 @@ using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.engine.depgraph;
-using OGDotNet.Mappedtypes.engine.depGraph;
+using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Model;
 
 namespace OGDotNet.Builders.Streaming

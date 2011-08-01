@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace OGDotNet.Mappedtypes.engine.function
+namespace OGDotNet.Mappedtypes.Engine.function
 {
     public class EmptyFunctionParameters : IFunctionParameters
     {

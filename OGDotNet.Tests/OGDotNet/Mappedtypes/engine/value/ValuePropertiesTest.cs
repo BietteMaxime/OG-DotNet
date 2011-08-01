@@ -6,11 +6,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.Collections.Generic;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 using OGDotNet.Model;
 using Xunit;
 
-namespace OGDotNet.Tests.OGDotNet.Mappedtypes.engine.value
+namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Engine.value
 {
     public class ValuePropertiesTest
     {

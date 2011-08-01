@@ -12,13 +12,13 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 using OGDotNet.Utils;
 
-using EmptyValueProperties = OGDotNet.Mappedtypes.engine.value.ValueProperties.EmptyValueProperties;
-using FiniteValueProperties = OGDotNet.Mappedtypes.engine.value.ValueProperties.FiniteValueProperties;
-using InfiniteValueProperties = OGDotNet.Mappedtypes.engine.value.ValueProperties.InfiniteValueProperties;
-using NearlyInfiniteValueProperties = OGDotNet.Mappedtypes.engine.value.ValueProperties.NearlyInfiniteValueProperties;
+using EmptyValueProperties = OGDotNet.Mappedtypes.Engine.value.ValueProperties.EmptyValueProperties;
+using FiniteValueProperties = OGDotNet.Mappedtypes.Engine.value.ValueProperties.FiniteValueProperties;
+using InfiniteValueProperties = OGDotNet.Mappedtypes.Engine.value.ValueProperties.InfiniteValueProperties;
+using NearlyInfiniteValueProperties = OGDotNet.Mappedtypes.Engine.value.ValueProperties.NearlyInfiniteValueProperties;
 
 namespace OGDotNet.Builders
 {

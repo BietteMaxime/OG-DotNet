@@ -5,8 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Engine.View;
 
 namespace OGDotNet.Mappedtypes.financial.view
 {

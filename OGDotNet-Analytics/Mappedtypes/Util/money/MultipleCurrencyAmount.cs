@@ -13,7 +13,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Util.Money;
 
-namespace OGDotNet.Mappedtypes.Util.money
+namespace OGDotNet.Mappedtypes.Util.Money
 {
     public class MultipleCurrencyAmount : IEnumerable<CurrencyAmount>
     {

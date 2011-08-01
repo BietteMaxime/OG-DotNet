@@ -11,10 +11,10 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 using OGDotNet.Mappedtypes.Util.tuple;
 
-namespace OGDotNet.Mappedtypes.engine.View.calc
+namespace OGDotNet.Mappedtypes.Engine.View.calc
 {
     public class ComputationCacheResponse
     {

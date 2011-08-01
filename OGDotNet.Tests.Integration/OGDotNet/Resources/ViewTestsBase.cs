@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources

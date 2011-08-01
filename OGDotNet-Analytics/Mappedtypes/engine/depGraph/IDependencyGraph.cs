@@ -6,9 +6,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.Collections.Generic;
-using OGDotNet.Mappedtypes.engine.depgraph;
+using OGDotNet.Mappedtypes.Engine.DepGraph;
 
-namespace OGDotNet.Mappedtypes.engine.depGraph
+namespace OGDotNet.Mappedtypes.Engine.DepGraph
 {
     public interface IDependencyGraph
     {

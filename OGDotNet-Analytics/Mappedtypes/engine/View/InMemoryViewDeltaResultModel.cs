@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     public class InMemoryViewDeltaResultModel : InMemoryViewResultModelBase, IViewDeltaResultModel
     {

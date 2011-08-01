@@ -11,10 +11,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 using OGDotNet.Model;
 
-namespace OGDotNet.Mappedtypes.engine.View.calc
+namespace OGDotNet.Mappedtypes.Engine.View.calc
 {
     public class ComputationCacheQuery
     {

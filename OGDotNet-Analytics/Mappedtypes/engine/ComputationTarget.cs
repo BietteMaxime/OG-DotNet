@@ -9,7 +9,7 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.engine
+namespace OGDotNet.Mappedtypes.Engine
 {
     [FudgeSurrogate(typeof(ComputationTargetBuilder))]
     public class ComputationTarget

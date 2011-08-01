@@ -17,7 +17,7 @@ using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
 using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
-using OGDotNet.Mappedtypes.Util.money;
+using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Utils;
 using OGDotNet.WPFUtils;

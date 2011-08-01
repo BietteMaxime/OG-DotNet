@@ -8,10 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.engine.depGraph;
-using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Mappedtypes.engine.View.calc;
+using OGDotNet.Mappedtypes.Engine.DepGraph;
+using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.View;
+using OGDotNet.Mappedtypes.Engine.View.calc;
 
 namespace OGDotNet.Model.Context
 {

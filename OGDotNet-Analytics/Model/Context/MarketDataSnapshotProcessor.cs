@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Id;

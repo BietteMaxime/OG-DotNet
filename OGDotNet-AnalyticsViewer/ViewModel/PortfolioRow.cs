@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 
 using OGDotNet.Mappedtypes.Core.Security;
-using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.Engine;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {

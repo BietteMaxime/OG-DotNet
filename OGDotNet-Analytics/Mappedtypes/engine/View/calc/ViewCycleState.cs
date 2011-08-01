@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.engine.View.calc
+namespace OGDotNet.Mappedtypes.Engine.View.calc
 {
     public enum ViewCycleState
     {

@@ -14,7 +14,7 @@ using System.Reflection;
 using Fudge;
 using Fudge.Encodings;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.engine.View.calc;
+using OGDotNet.Mappedtypes.Engine.View.calc;
 
 namespace OGDotNet.Model
 {

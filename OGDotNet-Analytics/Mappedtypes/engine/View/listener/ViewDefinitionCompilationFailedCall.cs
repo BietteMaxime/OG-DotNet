@@ -10,7 +10,7 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.engine.View.listener
+namespace OGDotNet.Mappedtypes.Engine.View.listener
 {
     public class ViewDefinitionCompilationFailedCall
     {

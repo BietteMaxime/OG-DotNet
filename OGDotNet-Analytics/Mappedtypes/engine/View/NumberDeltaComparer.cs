@@ -9,7 +9,7 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.engine.view
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     public class NumberDeltaComparer : IDeltaComparer<double>, IEquatable<IDeltaComparer<double>>
     {

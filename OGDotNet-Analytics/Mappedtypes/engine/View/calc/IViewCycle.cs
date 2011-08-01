@@ -6,10 +6,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.engine.View.compilation;
+using OGDotNet.Mappedtypes.Engine.View.compilation;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.engine.View.calc
+namespace OGDotNet.Mappedtypes.Engine.View.calc
 {
     public interface IViewCycle : IUniqueIdentifiable
     {

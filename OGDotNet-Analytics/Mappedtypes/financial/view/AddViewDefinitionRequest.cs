@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="AddViewDefinitionRequest.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Engine.View;
 
 namespace OGDotNet.Mappedtypes.financial.view
 {

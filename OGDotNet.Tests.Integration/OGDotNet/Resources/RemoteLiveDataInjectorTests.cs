@@ -8,12 +8,11 @@
 
 using System.Linq;
 using System.Threading;
-using OGDotNet.Mappedtypes.engine;
-using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.view;
-using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Mappedtypes.engine.View.Execution;
-using OGDotNet.Mappedtypes.engine.View.listener;
+using OGDotNet.Mappedtypes.Engine;
+using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.View;
+using OGDotNet.Mappedtypes.Engine.View.Execution;
+using OGDotNet.Mappedtypes.Engine.View.listener;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;

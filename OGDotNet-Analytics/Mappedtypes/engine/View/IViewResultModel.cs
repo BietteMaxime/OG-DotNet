@@ -7,10 +7,10 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     public interface IViewResultModel
     {

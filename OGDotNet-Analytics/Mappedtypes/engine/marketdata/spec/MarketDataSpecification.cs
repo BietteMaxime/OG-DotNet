@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace OGDotNet.Mappedtypes.engine.marketdata.spec
+namespace OGDotNet.Mappedtypes.Engine.marketdata.spec
 {
     public class MarketDataSpecification
     {

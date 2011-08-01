@@ -9,7 +9,7 @@ using System;
 using Fudge.Serialization;
 using OGDotNet.Builders.ViewResultModel;
 
-namespace OGDotNet.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     [FudgeSurrogate(typeof(InMemoryViewDeltaResultModelBuilder))]
     public interface IViewDeltaResultModel : IViewResultModel

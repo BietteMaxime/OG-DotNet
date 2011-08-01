@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-namespace OGDotNet.Mappedtypes.engine.View.Execution
+namespace OGDotNet.Mappedtypes.Engine.View.Execution
 {
     public interface IViewCycleExecutionSequence
     {

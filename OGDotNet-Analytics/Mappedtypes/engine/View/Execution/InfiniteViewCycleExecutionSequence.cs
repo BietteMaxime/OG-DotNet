@@ -10,7 +10,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.engine.View.Execution
+namespace OGDotNet.Mappedtypes.Engine.View.Execution
 {
     public class InfiniteViewCycleExecutionSequence : IViewCycleExecutionSequence
     {

@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.engine.value
+namespace OGDotNet.Mappedtypes.Engine.value
 {
     public static class ValueRequirementNames
     {

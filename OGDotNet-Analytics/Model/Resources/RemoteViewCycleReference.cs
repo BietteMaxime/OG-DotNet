@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Net;
-using OGDotNet.Mappedtypes.engine.View.calc;
+using OGDotNet.Mappedtypes.Engine.View.calc;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources

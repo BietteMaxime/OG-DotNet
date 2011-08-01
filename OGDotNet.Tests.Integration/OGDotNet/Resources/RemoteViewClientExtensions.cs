@@ -9,9 +9,9 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.engine.View;
-using OGDotNet.Mappedtypes.engine.View.Execution;
-using OGDotNet.Mappedtypes.engine.View.listener;
+using OGDotNet.Mappedtypes.Engine.View;
+using OGDotNet.Mappedtypes.Engine.View.Execution;
+using OGDotNet.Mappedtypes.Engine.View.listener;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources

@@ -8,8 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.engine.depgraph;
-using OGDotNet.Mappedtypes.engine.depGraph;
+using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot

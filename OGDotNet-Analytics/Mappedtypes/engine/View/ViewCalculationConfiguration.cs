@@ -11,12 +11,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.engine.function.resolver;
-using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Engine.function.resolver;
+using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     public class ViewCalculationConfiguration
     {

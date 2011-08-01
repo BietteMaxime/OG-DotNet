@@ -10,7 +10,7 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Builders

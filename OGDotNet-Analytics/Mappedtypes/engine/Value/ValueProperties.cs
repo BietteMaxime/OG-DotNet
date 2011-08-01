@@ -15,7 +15,7 @@ using Fudge.Types;
 using OGDotNet.Builders;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.engine.value
+namespace OGDotNet.Mappedtypes.Engine.value
 {
     [FudgeSurrogate(typeof(ValuePropertiesBuilder))]
     public abstract class ValueProperties : IEquatable<ValueProperties>

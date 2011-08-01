@@ -8,7 +8,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Engine.View;
 
 namespace OGDotNet.Model.Resources
 {

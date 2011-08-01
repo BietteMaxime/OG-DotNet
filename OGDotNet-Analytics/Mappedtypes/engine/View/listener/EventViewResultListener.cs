@@ -7,10 +7,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using OGDotNet.Mappedtypes.engine.View.compilation;
-using OGDotNet.Mappedtypes.engine.View.Execution;
+using OGDotNet.Mappedtypes.Engine.View.compilation;
+using OGDotNet.Mappedtypes.Engine.View.Execution;
 
-namespace OGDotNet.Mappedtypes.engine.View.listener
+namespace OGDotNet.Mappedtypes.Engine.View.listener
 {
     /// <summary>
     /// This class converts <see cref="IViewResultListener"/> into an event based model

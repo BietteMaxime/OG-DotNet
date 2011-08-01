@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 

@@ -7,9 +7,9 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 
-namespace OGDotNet.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     public interface IViewTargetResultModel
     {

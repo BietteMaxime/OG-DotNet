@@ -11,9 +11,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using OGDotNet.Mappedtypes.engine.marketdata.spec;
-using OGDotNet.Mappedtypes.engine.View.Execution;
-using OGDotNet.Mappedtypes.engine.View.listener;
+using OGDotNet.Mappedtypes.Engine.marketdata.spec;
+using OGDotNet.Mappedtypes.Engine.View.Execution;
+using OGDotNet.Mappedtypes.Engine.View.listener;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources

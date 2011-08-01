@@ -7,7 +7,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.engine.View.Execution
+namespace OGDotNet.Mappedtypes.Engine.View.Execution
 {
     public interface IViewExecutionOptions
     {

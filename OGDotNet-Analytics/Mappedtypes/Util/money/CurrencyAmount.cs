@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using OGDotNet.Mappedtypes.Util.Money;
 
-namespace OGDotNet.Mappedtypes.Util.money
+namespace OGDotNet.Mappedtypes.Util.Money
 {
     public class CurrencyAmount
     {

@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
 namespace OGDotNet.Mappedtypes.financial.currency

@@ -9,10 +9,10 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.engine.marketdata.spec;
+using OGDotNet.Mappedtypes.Engine.marketdata.spec;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.engine.View.Execution
+namespace OGDotNet.Mappedtypes.Engine.View.Execution
 {
     public class ViewCycleExecutionOptions
     {

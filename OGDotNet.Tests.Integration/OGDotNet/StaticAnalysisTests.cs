@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
@@ -74,6 +74,26 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                 if (name[0] != 'I' || !char.IsUpper(name[1]))
                 {
                     Assert.Equal(name, "ISomething");
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void NamespaceCasingConsistent()
+        {
+            var nameSpaces = new HashSet<string>();
+
+            foreach (var type in Types)
+            {
+                //TODO add parents
+                nameSpaces.Add(type.Namespace);
+            }
+
+            foreach (var g in nameSpaces.ToLookup(s => s.ToUpperInvariant()))
+            {
+                if (g.Count() > 1)
+                {
+                    throw new Exception(string.Format("Found many casings {0}: {1}", g.Key, string.Join(",", g)));
                 }
             }
         }

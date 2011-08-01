@@ -5,9 +5,9 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 
-namespace OGDotNet.Mappedtypes.engine.depGraph
+namespace OGDotNet.Mappedtypes.Engine.DepGraph
 {
     public interface IDependencyGraphExplorer
     {

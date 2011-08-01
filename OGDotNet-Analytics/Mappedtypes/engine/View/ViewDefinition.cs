@@ -12,13 +12,13 @@ using System.Diagnostics;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
 using OGDotNet.Mappedtypes.Util.Money;
 
-namespace OGDotNet.Mappedtypes.engine.view
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     public class ViewDefinition
     {
@@ -140,8 +140,8 @@ namespace OGDotNet.Mappedtypes.engine.view
             var maxFullCalcPeriod = ReadNullableTimeSpanField(ffc, "maxFullCalcPeriod");
 
             var calculationConfigurationsByName = ffc.GetAllByName("calculationConfiguration")
-                                                    .Select(deserializer.FromField<ViewCalculationConfiguration>)
-                                                    .ToDictionary(vcc => vcc.Name);
+                .Select(deserializer.FromField<ViewCalculationConfiguration>)
+                .ToDictionary(vcc => vcc.Name);
 
             return new ViewDefinition(name, resultModelDefinition, portfolioIdentifier, user, currency, minDeltaCalcPeriod, maxDeltaCalcPeriod, minFullCalcPeriod, maxFullCalcPeriod, calculationConfigurationsByName, uniqueId);
         }

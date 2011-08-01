@@ -11,9 +11,9 @@ using System.Linq;
 using System.Text;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.engine.View.Execution;
+using OGDotNet.Mappedtypes.Engine.View.Execution;
 
-namespace OGDotNet.Mappedtypes.engine.View.listener
+namespace OGDotNet.Mappedtypes.Engine.View.listener
 {
     public class CycleExecutionFailedCall
     {

@@ -12,7 +12,7 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.engine.value
+namespace OGDotNet.Mappedtypes.Engine.value
 {
     public class ValueRequirement
     {

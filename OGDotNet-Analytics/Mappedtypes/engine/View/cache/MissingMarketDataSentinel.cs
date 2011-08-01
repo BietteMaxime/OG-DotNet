@@ -9,7 +9,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.engine.View.cache
+namespace OGDotNet.Mappedtypes.Engine.View.cache
 {
     public class MissingMarketDataSentinel
     {

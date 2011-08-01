@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.engine
+namespace OGDotNet.Mappedtypes.Engine
 {
     public enum ComputationTargetType
     {

@@ -12,11 +12,11 @@ using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Mappedtypes.Core.Position;
-using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.engine.View.compilation
+namespace OGDotNet.Mappedtypes.Engine.View.compilation
 {
     public class CompiledViewDefinitionImpl : ICompiledViewDefinition
     {

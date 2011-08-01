@@ -6,8 +6,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using OGDotNet.Mappedtypes.engine.depGraph;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.DepGraph;
+using OGDotNet.Mappedtypes.Engine.value;
 
 namespace OGDotNet.Model.Resources
 {

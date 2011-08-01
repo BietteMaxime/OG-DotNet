@@ -6,10 +6,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 using System;
-using OGDotNet.Mappedtypes.engine.View.compilation;
-using OGDotNet.Mappedtypes.engine.View.Execution;
+using OGDotNet.Mappedtypes.Engine.View.compilation;
+using OGDotNet.Mappedtypes.Engine.View.Execution;
 
-namespace OGDotNet.Mappedtypes.engine.View.listener
+namespace OGDotNet.Mappedtypes.Engine.View.listener
 {
     /// <summary>
     /// A listener to the output of a view process. Calls to the listener are always made in

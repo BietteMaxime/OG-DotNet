@@ -6,11 +6,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Threading;
-using OGDotNet.Mappedtypes.engine.view;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
-using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context
 {

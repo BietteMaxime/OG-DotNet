@@ -8,9 +8,9 @@
 using System.Collections.Generic;
 using Fudge.Serialization;
 using OGDotNet.Builders.ViewResultModel;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 
-namespace OGDotNet.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     [FudgeSurrogate(typeof(InMemoryViewComputationResultModelBuilder))]
     public interface IViewComputationResultModel : IViewResultModel

@@ -9,9 +9,9 @@
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.engine.depGraph.DependencyGraph;
+using OGDotNet.Mappedtypes.Engine.DepGraph.dependencyGraph;
 
-namespace OGDotNet.Mappedtypes.engine.View
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     public class ResultModelDefinition
     {

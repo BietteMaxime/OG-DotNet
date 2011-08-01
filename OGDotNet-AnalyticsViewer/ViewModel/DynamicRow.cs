@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Data;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine.value;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {

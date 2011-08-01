@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace OGDotNet.Mappedtypes.engine.view
+namespace OGDotNet.Mappedtypes.Engine.View
 {
     public class DeltaDefinition
     {

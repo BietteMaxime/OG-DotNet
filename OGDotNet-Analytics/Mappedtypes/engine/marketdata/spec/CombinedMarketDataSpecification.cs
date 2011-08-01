@@ -8,7 +8,7 @@
 using Fudge.Serialization;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.engine.marketdata.spec
+namespace OGDotNet.Mappedtypes.Engine.marketdata.spec
 {
     [FudgeSurrogate(typeof(CombinedMarketDataSpecificationBuilder))]
     public class CombinedMarketDataSpecification : MarketDataSpecification

@@ -8,7 +8,7 @@
 
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.engine;
+using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;

@@ -9,10 +9,10 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.engine;
-using OGDotNet.Mappedtypes.engine.depgraph;
-using OGDotNet.Mappedtypes.engine.function;
-using OGDotNet.Mappedtypes.engine.value;
+using OGDotNet.Mappedtypes.Engine;
+using OGDotNet.Mappedtypes.Engine.DepGraph;
+using OGDotNet.Mappedtypes.Engine.function;
+using OGDotNet.Mappedtypes.Engine.value;
 
 namespace OGDotNet.Builders
 {

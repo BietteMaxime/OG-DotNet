@@ -5,9 +5,9 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using OGDotNet.Mappedtypes.engine.depGraph;
+using OGDotNet.Mappedtypes.Engine.DepGraph;
 
-namespace OGDotNet.Mappedtypes.engine.View.compilation
+namespace OGDotNet.Mappedtypes.Engine.View.compilation
 {
     public interface ICompiledViewDefinitionWithGraphs : ICompiledViewDefinition
     {

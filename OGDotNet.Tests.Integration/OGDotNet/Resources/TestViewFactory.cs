@@ -9,9 +9,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using OGDotNet.Mappedtypes.engine.value;
-using OGDotNet.Mappedtypes.engine.view;
-using OGDotNet.Mappedtypes.engine.View;
+using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.financial.view;
 using OGDotNet.Model.Context;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
