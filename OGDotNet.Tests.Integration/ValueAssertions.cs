@@ -21,6 +21,7 @@ using OGDotNet.Mappedtypes.engine.View;
 using OGDotNet.Mappedtypes.engine.View.cache;
 using OGDotNet.Mappedtypes.engine.View.compilation;
 using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.financial.analytics.ircurve;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.sabr;
 using OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface;
@@ -458,6 +459,20 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(PresentValueSensitivity sensitivity)
         {
             AssertSensibleValue(sensitivity.Sensitivities);
+        }
+        public static void AssertSensibleValue(InterpolatedYieldCurveSpecificationWithSecurities spec)
+        {
+            AssertSensibleValue(spec.Name);
+            AssertSensibleValue(spec.Currency);
+            AssertSensibleValue(spec.CurveDate);
+            AssertSensibleValue(spec.Strips);
+        }
+        public static void AssertSensibleValue(FixedIncomeStripWithSecurity strip)
+        {
+            AssertSensibleValue(strip.SecurityIdentifier);
+            //These securities are weird AssertSensibleValue(strip.Security);
+            Assert.NotNull(strip.Security);
+            AssertSensibleValue(strip.Tenor);
         }
     }
 }
