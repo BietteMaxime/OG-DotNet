@@ -43,6 +43,16 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.engine.value
           }, new HashSet<string> { "Three" }));
         }
 
+        [Fact]
+        public void TestOptionalValues()
+        {
+            AssertEncodeDecodeCycle(
+                ValueProperties.Create(new Dictionary<string, ISet<string>>
+                                     {{"OptAny", new HashSet<string>()}, 
+          {"OptSome", new HashSet<string>{"a"}},
+          }, new HashSet<string> { "OptAny", "OptSome" }));
+        }
+
         private static void AssertEncodeDecodeCycle<T>(T obj)
         {
             var openGammaFudgeContext = new OpenGammaFudgeContext();

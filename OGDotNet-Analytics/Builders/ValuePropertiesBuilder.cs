@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
@@ -86,34 +87,44 @@ namespace OGDotNet.Builders
             {
                 var name = string.Intern(field.Name); // Should be a small static set
 
-                if (field.Value is string)
+                if (Equals(field.Type, IndicatorFieldType.Instance))
                 {
-                    string value = (string)field.Value;
-
-                    properties.Add(name, SmallSet<string>.Create(value));
-                }
-                else if (field.Type == IndicatorFieldType.Instance)
-                {
+                    //withAny
                     properties.Add(name, new HashSet<string>());
                 }
-                else
+                else if (Equals(field.Type, StringFieldType.Instance))
+                {
+                    var value = (string)field.Value;
+                    properties.Add(name, SmallSet<string>.Create(value));
+                }
+                else if (Equals(field.Type, FudgeMsgFieldType.Instance))
                 {
                     var propMessage = (IFudgeFieldContainer)field.Value;
 
                     IList<IFudgeField> fudgeFields = propMessage.GetAllFields();
-                    if (fudgeFields.Count == 1 && fudgeFields[0].Type == IndicatorFieldType.Instance)
-                    {
-                        optional = optional ?? new HashSet<string>();
-                        optional.Add(name);
-                    }
-                    else
                     {
                         var hashSet = new HashSet<string>();
                         foreach (var fudgeField in fudgeFields)
                         {
-                            hashSet.Add((string)fudgeField.Value);
+                            if (fudgeField.Value == IndicatorType.Instance)
+                            {
+                                if (fudgeField.Name != "optional")
+                                {
+                                    throw new ArgumentException();
+                                }
+                                optional = optional ?? new HashSet<string>();
+                                optional.Add(name);
+                            }
+                            else
+                            {
+                                string value = (string)fudgeField.Value;
+                                hashSet.Add(value);
+                            }
                         }
-                        properties.Add(name, hashSet);
+                        if (hashSet.Any())
+                        {
+                            properties.Add(name, hashSet);
+                        }
                     }
                 }
             }
