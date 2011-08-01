@@ -85,15 +85,21 @@ namespace OGDotNet.Tests.Integration.OGDotNet
 
             foreach (var type in Types)
             {
-                //TODO add parents
                 nameSpaces.Add(type.Namespace);
-            }
-
-            foreach (var g in nameSpaces.ToLookup(s => s.ToUpperInvariant()))
-            {
-                if (g.Count() > 1)
+                for (int i = 0; i < type.Namespace.Length; i++)
                 {
-                    throw new Exception(string.Format("Found many casings {0}: {1}", g.Key, string.Join(",", g)));
+                    if (type.Namespace[i] == '.')
+                    {
+                        nameSpaces.Add(type.Namespace.Substring(0, i));
+                    }
+                }
+
+                foreach (var g in nameSpaces.ToLookup(s => s.ToUpperInvariant()))
+                {
+                    if (g.Count() > 1)
+                    {
+                        throw new Exception(string.Format("Found many casings {0}: {1}", g.Key, string.Join(",", g)));
+                    }
                 }
             }
         }

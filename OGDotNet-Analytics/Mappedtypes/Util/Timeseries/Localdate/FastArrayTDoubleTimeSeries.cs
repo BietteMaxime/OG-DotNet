@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.util.timeseries.fast.integer
+namespace OGDotNet.Mappedtypes.Util.Timeseries.fast.integer
 {
     public abstract class FastArrayTDoubleTimeSeries<T>
     {

@@ -17,7 +17,7 @@ using OGDotNet.Mappedtypes.Engine.View.client;
 using OGDotNet.Mappedtypes.Engine.View.compilation;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Engine.View.listener;
-using OGDotNet.Mappedtypes.util.PublicAPI;
+using OGDotNet.Mappedtypes.Util.PublicAPI;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
 using OGDotNet.Utils;

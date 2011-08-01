@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.util.PublicAPI
+namespace OGDotNet.Mappedtypes.Util.PublicAPI
 {
     public enum ViewClientState
     {

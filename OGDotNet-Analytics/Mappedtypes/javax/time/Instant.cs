@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using OGDotNet.Mappedtypes.util.timeseries.fast;
+using OGDotNet.Mappedtypes.Util.Timeseries.fast;
 
 namespace OGDotNet.Mappedtypes.javax.time
 {

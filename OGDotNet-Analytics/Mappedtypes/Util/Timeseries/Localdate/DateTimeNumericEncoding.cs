@@ -11,7 +11,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.util.timeseries.fast
+namespace OGDotNet.Mappedtypes.Util.Timeseries.fast
 {
     public class DateTimeNumericEncoding
     {

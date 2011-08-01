@@ -16,7 +16,7 @@ using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Engine.View.listener;
 using OGDotNet.Mappedtypes.financial.view.rest;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.util.PublicAPI;
+using OGDotNet.Mappedtypes.Util.PublicAPI;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
