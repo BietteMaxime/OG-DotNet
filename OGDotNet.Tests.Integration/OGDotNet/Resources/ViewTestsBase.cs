@@ -34,7 +34,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "European Corporate Bond View - test",
                                                                       "Random Matrix",
                                                                       "Simple Cash Test View",
-                                                                      "Laplace View 2",
                                                                       "Funding Curve Only"
                                                                   };
 
