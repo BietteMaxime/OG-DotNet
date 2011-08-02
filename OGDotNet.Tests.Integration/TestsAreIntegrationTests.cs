@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using OGDotNet.Tests.Integration.OGDotNet;
 using OGDotNet.Tests.Integration.OGDotNet.Model;
 using OGDotNet.Tests.Integration.OGDotNet.Model.Context;
 using OGDotNet.Tests.Integration.OGDotNet.Resources;
@@ -24,6 +25,7 @@ namespace OGDotNet.Tests.Integration
                                                           typeof(RemoteEngineContextTests),
                                                           typeof(RemoteEngineContextFactoryTests),
                                                           typeof(TestsAreIntegrationTests),
+                                                          typeof(StaticAnalysisTests),
 
                                                           typeof(OpenGammaFudgeContextTests), //Here because it is slow
                                                      };
