@@ -106,7 +106,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     }
                 }
 
-                if (viewDefinition.Name != "GlobeOp Bond View Implied")
+                if (viewDefinition.Name != "GlobeOp Bond View Implied" /* LAP-38 */ && viewDefinition.Name != "Simple Cash Test View 2" /* LAP-82 */)
                 {
                     Assert.InRange(manageableMarketDataSnapshot.YieldCurves.Count, ExpectedYieldCurves(viewDefinition), int.MaxValue);
                 }
