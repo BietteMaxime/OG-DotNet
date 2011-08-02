@@ -202,12 +202,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private Model3DGroup BuildXSliceModel()
         {
-            Model3DGroup labelModel = BuildXSliceLabel();
+            //LAP-85 Model3DGroup labelModel = BuildXSliceLabel();
 
             BuildXSliceGraphModel();
             var ret = new Model3DGroup();
             ret.Children.Add(_xSliceModel);
-            ret.Children.Add(labelModel);
+            //LAP-85 ret.Children.Add(labelModel);
             return ret;
         }
 
@@ -328,12 +328,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private Model3DGroup BuildYSliceModel()
         {
-            Model3DGroup labelModel = BuildYSliceLabel();
+            //LAP-85 Model3DGroup labelModel = BuildYSliceLabel();
 
             var graphModel = BuildYSliceGraphModel();
             var ret = new Model3DGroup();
             ret.Children.Add(graphModel);
-            ret.Children.Add(labelModel);
+            //LAP-85 ret.Children.Add(labelModel);
             return ret;
         }
 
