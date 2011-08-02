@@ -23,11 +23,11 @@ namespace OGDotNet.Builders
 
         public override IPosition DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var id = ffc.GetValue<string>("identifier");
+            var id = ffc.GetValue<string>("uniqueId");
             var secKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
             var quant = ffc.GetValue<string>("quantity");
             var trades = deserializer.FromField<IList<ITrade>>(ffc.GetByName("trades")) ?? new List<ITrade>();
-            return new PositionImpl(UniqueIdentifier.Parse(id), long.Parse(quant), secKey, trades);
+            return new PositionImpl(id == null ? null : UniqueIdentifier.Parse(id), long.Parse(quant), secKey, trades);
         }
     }
 }
