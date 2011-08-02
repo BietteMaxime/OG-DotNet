@@ -246,7 +246,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
             {
                 var fromStream = Time(() => dataSnapshotProcessor.PrepareUpdate());
-                Assert.InRange(fromStream, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+                Assert.InRange(fromStream, TimeSpan.Zero, TimeSpan.FromSeconds(2));
                 //TODO check that we have actually updated
             }
         }
