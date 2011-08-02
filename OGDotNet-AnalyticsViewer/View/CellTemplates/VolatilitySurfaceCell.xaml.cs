@@ -392,10 +392,22 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             return geometryModel3D;
         }
 
+        private Color _minSurfaceColor = Colors.Yellow;
+        public Color MinSurfaceColor
+        {
+            get { return _minSurfaceColor; }
+            set { _minSurfaceColor = value; }
+        }
+
+        private Color _maxSurfaceColor = Colors.Red;
+        public Color MaxSurfaceColor
+        {
+            get { return _maxSurfaceColor; }
+            set { _maxSurfaceColor = value; }
+        }
+
         private GeometryModel3D BuildSurfaceModel()
         {
-            double zScale = 1.0 / _zRange;
-
             var mesh = new MeshGeometry3D();
 
             var keys = GetSurfaceKeys();
@@ -413,7 +425,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             for (int i = 0; i < bands; i++)
             {
                 var offset = i / (float)bands;
-                Color color = ValueToColorConverter.GetColor(offset * _zRange);
+                Color color = ValueToColorConverter.GetColor(offset * _zRange, MinSurfaceColor, MaxSurfaceColor);
                 linearGradientBrush.GradientStops.Add(new GradientStop(color - Color.FromArgb(10, 0, 0, 0), offset));
             }
 
