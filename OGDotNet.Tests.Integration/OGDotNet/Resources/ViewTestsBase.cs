@@ -79,7 +79,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static bool IsNotBanned(string n)
         {
-            return !BannedViews.Contains(n) && !TestUtils.ContainsGuid(n) && !n.Contains("web form test");
+            return !BannedViews.Contains(n) && !TestUtils.ContainsGuid(n) && !n.Contains("web form test") && !n.Contains("web test");
         }
 
         public static IEnumerable<ViewDefinition> FastTickingViewDefinitions
