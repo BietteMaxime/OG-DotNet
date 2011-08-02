@@ -22,6 +22,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                   {
                                                                       // Slow
                                                                       "10K Swap Test View",
+                                                                      "10K USD Swap Test View",
 
                                                                       // Broken
                                                                       "Primitives Only",
