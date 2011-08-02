@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.Financial.Analytics;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;
 

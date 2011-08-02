@@ -6,9 +6,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using OGDotNet.Mappedtypes.Util.Timeseries.fast;
+using OGDotNet.Mappedtypes.Util.Timeseries.Fast;
 
-namespace OGDotNet.Mappedtypes.javax.time
+namespace OGDotNet.Mappedtypes.JavaX.Time
 {
     public class Instant
     {

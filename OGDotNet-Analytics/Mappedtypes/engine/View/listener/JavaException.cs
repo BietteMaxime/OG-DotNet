@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Fudge;
-using OGDotNet.Mappedtypes.Engine.View.permission;
+using OGDotNet.Mappedtypes.Engine.View.Permission;
 
-namespace OGDotNet.Mappedtypes.Engine.View.listener
+namespace OGDotNet.Mappedtypes.Engine.View.Listener
 {
     public class JavaException
     {

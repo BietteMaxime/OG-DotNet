@@ -9,12 +9,12 @@ using System;
 using System.Collections.Generic;
 using Fudge;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.Engine.View.calc;
-using OGDotNet.Mappedtypes.Engine.View.compilation;
+using OGDotNet.Mappedtypes.Engine.View.Calc;
+using OGDotNet.Mappedtypes.Engine.View.Compilation;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.Util.tuple;
+using OGDotNet.Mappedtypes.Util.Tuple;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources

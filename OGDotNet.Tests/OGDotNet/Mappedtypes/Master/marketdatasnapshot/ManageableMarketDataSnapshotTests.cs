@@ -8,12 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
-using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
+using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.Money;
-using OGDotNet.Mappedtypes.Util.tuple;
+using OGDotNet.Mappedtypes.Util.Tuple;
 using Xunit;
 
 namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot

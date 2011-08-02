@@ -8,7 +8,7 @@
 
 using System;
 
-namespace OGDotNet.Mappedtypes.Engine.View.permission
+namespace OGDotNet.Mappedtypes.Engine.View.Permission
 {
     public class ViewPermissionException : Exception
     {

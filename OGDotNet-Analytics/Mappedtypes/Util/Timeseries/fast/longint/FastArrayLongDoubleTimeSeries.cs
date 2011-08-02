@@ -11,10 +11,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Util.Timeseries.fast;
-using OGDotNet.Mappedtypes.Util.Timeseries.fast.integer;
+using OGDotNet.Mappedtypes.Util.Timeseries.Fast;
+using OGDotNet.Mappedtypes.Util.Timeseries.Fast.Integer;
 
-namespace OGDotNet.Mappedtypes.Util.Timeseries.fast.longint
+namespace OGDotNet.Mappedtypes.Util.Timeseries.Fast.LongInt
 {
     public class FastArrayLongDoubleTimeSeries : FastArrayTDoubleTimeSeries<long>
     {

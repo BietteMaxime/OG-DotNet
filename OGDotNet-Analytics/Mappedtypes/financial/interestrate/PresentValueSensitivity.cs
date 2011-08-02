@@ -12,7 +12,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.financial.interestrate
+namespace OGDotNet.Mappedtypes.Financial.InterestRate
 {
     public class PresentValueSensitivity
     {

@@ -14,7 +14,7 @@ using Fudge.Types;
 using OGDotNet.Builders;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Util.tuple
+namespace OGDotNet.Mappedtypes.Util.Tuple
 {
     public interface IPair<out TFirst, out TSecond>
     {

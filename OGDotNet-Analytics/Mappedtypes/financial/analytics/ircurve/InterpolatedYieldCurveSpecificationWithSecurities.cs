@@ -14,7 +14,7 @@ using Fudge.Serialization;
 using Fudge.Types;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
+namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 {
     public class InterpolatedYieldCurveSpecificationWithSecurities
     {

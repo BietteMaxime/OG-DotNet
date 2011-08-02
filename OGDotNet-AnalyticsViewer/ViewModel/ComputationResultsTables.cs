@@ -13,8 +13,8 @@ using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.Engine.View.compilation;
-using OGDotNet.Mappedtypes.Engine.View.listener;
+using OGDotNet.Mappedtypes.Engine.View.Compilation;
+using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 

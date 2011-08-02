@@ -11,7 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.Financial.Analytics;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {

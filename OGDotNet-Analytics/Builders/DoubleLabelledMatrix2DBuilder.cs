@@ -11,7 +11,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.Financial.Analytics;
 
 namespace OGDotNet.Builders
 {

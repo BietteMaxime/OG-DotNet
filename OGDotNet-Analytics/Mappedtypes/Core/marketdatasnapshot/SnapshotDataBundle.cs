@@ -13,7 +13,7 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
 {
     public class SnapshotDataBundle
     {

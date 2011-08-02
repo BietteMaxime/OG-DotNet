@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.Engine.View.calc;
-using OGDotNet.Mappedtypes.Engine.View.listener;
-using OGDotNet.Mappedtypes.Util.tuple;
+using OGDotNet.Mappedtypes.Engine.View.Calc;
+using OGDotNet.Mappedtypes.Engine.View.Listener;
+using OGDotNet.Mappedtypes.Util.Tuple;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
 

@@ -6,9 +6,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.Engine.View.compilation;
+using OGDotNet.Mappedtypes.Engine.View.Compilation;
 
-namespace OGDotNet.Mappedtypes.Engine.View.listener
+namespace OGDotNet.Mappedtypes.Engine.View.Listener
 {
     public class ViewDefinitionCompiledCall
     {

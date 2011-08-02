@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using OGDotNet.Mappedtypes.math.curve;
+using OGDotNet.Mappedtypes.Math.Curve;
 
 namespace OGDotNet.AnalyticsViewer.View.Charts
 {

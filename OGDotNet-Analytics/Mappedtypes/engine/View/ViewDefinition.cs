@@ -12,7 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;

@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace OGDotNet.Mappedtypes.Engine.function
+namespace OGDotNet.Mappedtypes.Engine.Function
 {
     public interface IFunctionDefinition
     {

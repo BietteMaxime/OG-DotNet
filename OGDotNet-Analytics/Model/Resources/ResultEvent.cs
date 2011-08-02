@@ -7,8 +7,8 @@
 //-----------------------------------------------------------------------
 
 using System;
-using OGDotNet.Mappedtypes.Engine.View.client;
-using OGDotNet.Mappedtypes.Engine.View.listener;
+using OGDotNet.Mappedtypes.Engine.View.Client;
+using OGDotNet.Mappedtypes.Engine.View.Listener;
 
 namespace OGDotNet.Model.Resources
 {

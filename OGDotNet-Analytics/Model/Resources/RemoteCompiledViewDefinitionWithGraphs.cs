@@ -10,10 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Engine.DepGraph;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.Engine.View.compilation;
-using OGDotNet.Mappedtypes.javax.time;
+using OGDotNet.Mappedtypes.Engine.View.Compilation;
+using OGDotNet.Mappedtypes.JavaX.Time;
 
 namespace OGDotNet.Model.Resources
 {

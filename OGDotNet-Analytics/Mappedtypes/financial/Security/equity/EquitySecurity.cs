@@ -8,7 +8,7 @@
 
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.financial.Security.equity
+namespace OGDotNet.Mappedtypes.Financial.Security.Equity
 {
     /// <summary>
     /// TODO: kill these with the .proto replacement

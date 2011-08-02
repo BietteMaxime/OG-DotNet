@@ -9,8 +9,8 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using OGDotNet.AnalyticsViewer.View.Charts;
-using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
-using OGDotNet.Mappedtypes.math.curve;
+using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
+using OGDotNet.Mappedtypes.Math.Curve;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {

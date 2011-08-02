@@ -9,7 +9,7 @@
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Time;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
+namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 {
     public class FixedIncomeStripWithIdentifier 
     {

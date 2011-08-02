@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.financial.model.interestrate;
+using OGDotNet.Mappedtypes.Financial.Model.Interestrate;
 
-namespace OGDotNet.Mappedtypes.math.curve
+namespace OGDotNet.Mappedtypes.Math.Curve
 {
     public class FunctionalDoublesCurve : Curve
     {

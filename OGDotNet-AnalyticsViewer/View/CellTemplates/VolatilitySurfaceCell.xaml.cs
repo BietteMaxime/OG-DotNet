@@ -18,7 +18,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using OGDotNet.AnalyticsViewer.Properties;
 using OGDotNet.AnalyticsViewer.View.Charts;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.WPFUtils;
 

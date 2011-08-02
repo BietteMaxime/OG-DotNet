@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -26,7 +26,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet
             {
                 var mappedTypes = typeof(UniqueIdentifier).Assembly.GetTypes().ToList();
                 Assert.NotEmpty(mappedTypes);
-                return mappedTypes;
+                return mappedTypes.OrderBy(t => t.FullName);
             }
         }
 
@@ -74,6 +74,33 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                 if (name[0] != 'I' || !char.IsUpper(name[1]))
                 {
                     Assert.Equal(name, "ISomething");
+                }
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("Types")]
+        public void NamespacesStartWithUppercase(Type type)
+        {
+            for (int i = 0; i < type.Namespace.Length; i++)
+            {
+                if (type.Namespace[i] == '.')
+                {
+                    if (!char.IsUpper(type.Namespace[i + 1]))
+                    {
+                        string nextNameSpace = type.Namespace.Substring(i + 1).Split('.')[0];
+                        if (Types.Any(t => string.Equals(t.Name, nextNameSpace, StringComparison.InvariantCultureIgnoreCase)))
+                        {
+                            Assert.True(nextNameSpace.All(c => char.IsLower(c)));
+                            //Irritating conflict due to C#s casing convention
+                            continue;
+                        }
+                        else
+                        {
+                            throw new ArgumentException(string.Format("Namespace starts with lower case letter {0}",
+                                                                      type.Namespace));
+                        }
+                    }
                 }
             }
         }

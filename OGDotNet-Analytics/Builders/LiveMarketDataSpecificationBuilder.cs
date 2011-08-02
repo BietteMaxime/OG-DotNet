@@ -8,7 +8,7 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Engine.marketdata.spec;
+using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 
 namespace OGDotNet.Builders
 {

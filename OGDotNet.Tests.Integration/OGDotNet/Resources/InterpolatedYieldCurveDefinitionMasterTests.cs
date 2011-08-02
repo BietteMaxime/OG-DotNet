@@ -8,7 +8,7 @@
 
 using System;
 using System.Linq;
-using OGDotNet.Mappedtypes.financial.analytics.ircurve;
+using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Model.Resources;

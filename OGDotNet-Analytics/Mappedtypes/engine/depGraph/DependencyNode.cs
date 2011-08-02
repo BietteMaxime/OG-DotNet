@@ -8,8 +8,8 @@
 using System.Collections.Generic;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Engine.function;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Function;
+using OGDotNet.Mappedtypes.Engine.Value;
 
 namespace OGDotNet.Mappedtypes.Engine.DepGraph
 {

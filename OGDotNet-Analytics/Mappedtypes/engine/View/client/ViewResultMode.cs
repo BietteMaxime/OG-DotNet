@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.Engine.View.client
+namespace OGDotNet.Mappedtypes.Engine.View.Client
 {
     public enum ViewResultMode
     {

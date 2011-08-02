@@ -8,7 +8,7 @@
 
 using System;
 
-namespace OGDotNet.Mappedtypes.financial.model.interestrate
+namespace OGDotNet.Mappedtypes.Financial.Model.Interestrate
 {
     /// <summary>
     /// TODO: this

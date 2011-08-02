@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using OGDotNet.Mappedtypes.financial.analytics.ircurve;
+using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Model.Resources

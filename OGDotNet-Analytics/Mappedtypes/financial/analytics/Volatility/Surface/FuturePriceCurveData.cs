@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
+namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface
 {
     /// <summary>
     /// TODO: the rest of this

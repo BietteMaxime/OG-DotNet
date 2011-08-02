@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
 {
     public enum MarketDataValueType
     {

@@ -9,7 +9,7 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Engine.marketdata.spec
+namespace OGDotNet.Mappedtypes.Engine.MarketData.Spec
 {
     [FudgeSurrogate(typeof(LiveMarketDataSpecificationBuilder))]
     public class LiveMarketDataSpecification : MarketDataSpecification

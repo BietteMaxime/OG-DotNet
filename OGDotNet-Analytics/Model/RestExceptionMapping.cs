@@ -8,7 +8,7 @@
 
 using System;
 using System.Net;
-using OGDotNet.Mappedtypes.Engine.View.listener;
+using OGDotNet.Mappedtypes.Engine.View.Listener;
 
 namespace OGDotNet.Model
 {

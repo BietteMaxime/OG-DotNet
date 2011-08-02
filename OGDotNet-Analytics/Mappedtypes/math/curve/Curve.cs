@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using Fudge;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.math.curve
+namespace OGDotNet.Mappedtypes.Math.Curve
 {
     public abstract class Curve
     {

@@ -8,7 +8,7 @@
 
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.financial.Security.bond
+namespace OGDotNet.Mappedtypes.Financial.Security.Bond
 {
     /// <summary>
     /// TODO DOTNET-5: kill these with the .proto replacement

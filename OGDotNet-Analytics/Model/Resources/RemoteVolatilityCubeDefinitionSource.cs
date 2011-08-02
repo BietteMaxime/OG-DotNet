@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using OGDotNet.Mappedtypes.financial.analytics.Volatility.cube;
+using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 namespace OGDotNet.Model.Resources
 {

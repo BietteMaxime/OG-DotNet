@@ -9,10 +9,10 @@
 using System;
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Core.Position;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 
-namespace OGDotNet.Mappedtypes.Engine.View.compilation
+namespace OGDotNet.Mappedtypes.Engine.View.Compilation
 {
     public interface ICompiledViewDefinition
     {

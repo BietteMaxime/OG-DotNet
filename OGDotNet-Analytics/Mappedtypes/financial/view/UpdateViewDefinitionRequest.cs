@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using OGDotNet.Mappedtypes.Engine.View;
 
-namespace OGDotNet.Mappedtypes.financial.view
+namespace OGDotNet.Mappedtypes.Financial.View
 {
     public class UpdateViewDefinitionRequest
     {

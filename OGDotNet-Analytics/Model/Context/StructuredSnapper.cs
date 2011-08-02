@@ -9,9 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.Engine.DepGraph;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.Engine.View.calc;
+using OGDotNet.Mappedtypes.Engine.View.Calc;
 
 namespace OGDotNet.Model.Context
 {

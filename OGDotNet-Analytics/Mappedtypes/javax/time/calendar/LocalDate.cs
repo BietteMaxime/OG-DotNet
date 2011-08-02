@@ -11,7 +11,7 @@ using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.javax.time.calendar
+namespace OGDotNet.Mappedtypes.JavaX.Time.Calendar
 {
     public class LocalDate : IEquatable<LocalDate>, IComparable<LocalDate>, IComparable
     {

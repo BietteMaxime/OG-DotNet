@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Engine.function.resolver;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Function.Resolver;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Utils;
 

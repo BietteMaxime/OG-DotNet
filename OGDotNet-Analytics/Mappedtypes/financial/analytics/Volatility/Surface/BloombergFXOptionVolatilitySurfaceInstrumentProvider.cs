@@ -8,7 +8,7 @@
 using Fudge.Serialization;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.Surface
+namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface
 {
     public static class BloombergFXOptionVolatilitySurfaceInstrumentProvider
     {

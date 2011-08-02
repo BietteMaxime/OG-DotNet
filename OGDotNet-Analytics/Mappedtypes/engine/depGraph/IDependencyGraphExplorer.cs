@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 
 namespace OGDotNet.Mappedtypes.Engine.DepGraph
 {

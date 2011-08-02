@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.financial.currency;
+using OGDotNet.Mappedtypes.Financial.currency;
 
 namespace OGDotNet.Model.Resources
 {

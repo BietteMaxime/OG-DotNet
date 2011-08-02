@@ -11,9 +11,9 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.Time;
-using OGDotNet.Mappedtypes.Util.tuple;
+using OGDotNet.Mappedtypes.Util.Tuple;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Utils;
 

@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Utils;
 using Xunit;
 

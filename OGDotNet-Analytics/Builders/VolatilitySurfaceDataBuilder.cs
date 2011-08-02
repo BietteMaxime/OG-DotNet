@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Utils;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 

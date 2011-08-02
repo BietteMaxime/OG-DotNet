@@ -6,20 +6,17 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using OGDotNet.Mappedtypes.math.curve;
-
-namespace OGDotNet.Mappedtypes.financial.model.interestrate.curve
+namespace OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve
 {
     public class YieldCurve
     {
-        private readonly Curve _curve;
-        public Curve Curve
+        private readonly Math.Curve.Curve _curve;
+        public Math.Curve.Curve Curve
         {
             get { return _curve; }
         }
 
-        public YieldCurve(Curve curve)
+        public YieldCurve(Math.Curve.Curve curve)
         {
             _curve = curve;
         }
@@ -31,7 +28,7 @@ namespace OGDotNet.Mappedtypes.financial.model.interestrate.curve
 
         public double GetDiscountFactor(double t)
         {
-            return Math.Exp(-t * GetInterestRate(t));
+            return System.Math.Exp(-t * GetInterestRate(t));
         }
     }
 }

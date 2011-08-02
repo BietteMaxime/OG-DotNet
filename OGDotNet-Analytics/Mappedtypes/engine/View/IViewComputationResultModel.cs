@@ -8,7 +8,7 @@
 using System.Collections.Generic;
 using Fudge.Serialization;
 using OGDotNet.Builders.ViewResultModel;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 
 namespace OGDotNet.Mappedtypes.Engine.View
 {

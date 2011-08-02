@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Util.Timeseries.fast.integer;
+using OGDotNet.Mappedtypes.Util.Timeseries.Fast.Integer;
 
 namespace OGDotNet.Mappedtypes.Util.Timeseries.Localdate
 {

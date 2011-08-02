@@ -7,10 +7,10 @@
 //-----------------------------------------------------------------------
 
 using System;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
-namespace OGDotNet.Mappedtypes.financial.currency
+namespace OGDotNet.Mappedtypes.Financial.currency
 {
     public class CurrencyMatrixSourcingFunction
     {

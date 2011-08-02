@@ -13,7 +13,7 @@ using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.Engine.value
+namespace OGDotNet.Mappedtypes.Engine.Value
 {
     [FudgeSurrogate(typeof(ComputedValueBuilder))]
     public class ComputedValue

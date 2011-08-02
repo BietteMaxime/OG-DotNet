@@ -16,7 +16,7 @@ using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
+namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 {
     /// <summary>
     /// TODO interpolator

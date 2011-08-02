@@ -8,7 +8,7 @@
 
 using System;
 
-namespace OGDotNet.Mappedtypes.Engine.View.listener
+namespace OGDotNet.Mappedtypes.Engine.View.Listener
 {
     internal class CycleCompletedCall
     {

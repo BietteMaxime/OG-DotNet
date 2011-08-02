@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.Util.Timeseries.fast.integer
+namespace OGDotNet.Mappedtypes.Util.Timeseries.Fast.Integer
 {
     public abstract class FastArrayTDoubleTimeSeries<T>
     {
@@ -36,7 +36,7 @@ namespace OGDotNet.Mappedtypes.Util.Timeseries.fast.integer
             var times = ffc.GetValue<T[]>(2);
             var values = ffc.GetValue<double[]>(3);
 
-            return Tuple.Create(encoding, times, values);
+            return System.Tuple.Create(encoding, times, values);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

@@ -11,7 +11,7 @@ using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.financial.analytics
+namespace OGDotNet.Mappedtypes.Financial.Analytics
 {
     [FudgeSurrogate(typeof(LabelledMatrix1DBuilder<FudgeDate, LocalDateLabelledMatrix1D>))]
     public class LocalDateLabelledMatrix1D : LabelledMatrix1D<FudgeDate>

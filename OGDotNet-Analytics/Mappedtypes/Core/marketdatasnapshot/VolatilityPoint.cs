@@ -11,7 +11,7 @@ using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
 {
     public class VolatilityPoint : IEquatable<VolatilityPoint>
     {

@@ -10,7 +10,7 @@ using Fudge;
 using Fudge.Serialization;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
+namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube
 {
     public class VolatilityCubeKey : IComparable<VolatilityCubeKey>
     {

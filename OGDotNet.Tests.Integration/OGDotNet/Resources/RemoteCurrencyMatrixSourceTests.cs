@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.financial.currency;
+using OGDotNet.Mappedtypes.Financial.currency;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;

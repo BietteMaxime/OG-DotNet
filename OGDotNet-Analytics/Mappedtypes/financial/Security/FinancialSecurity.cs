@@ -9,7 +9,7 @@
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.Security;
 
-namespace OGDotNet.Mappedtypes.financial.Security
+namespace OGDotNet.Mappedtypes.Financial.Security
 {
     /// <summary>
     /// TODO: kill these with the .proto replacement

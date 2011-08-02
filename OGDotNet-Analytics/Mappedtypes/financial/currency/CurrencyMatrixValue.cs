@@ -9,10 +9,10 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Util.Money;
 
-namespace OGDotNet.Mappedtypes.financial.currency
+namespace OGDotNet.Mappedtypes.Financial.currency
 {
     public abstract class CurrencyMatrixValue : IEquatable<CurrencyMatrixValue>
     {

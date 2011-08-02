@@ -10,10 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.Time;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
+namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube
 {
     public class VolatilityCubeDefinition
     {

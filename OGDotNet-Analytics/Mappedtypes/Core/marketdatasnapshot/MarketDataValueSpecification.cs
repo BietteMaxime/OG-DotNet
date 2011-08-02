@@ -12,7 +12,7 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
 {
     public class MarketDataValueSpecification : IEquatable<MarketDataValueSpecification>
     {

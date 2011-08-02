@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Engine.DepGraph;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.financial.view;
+using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 

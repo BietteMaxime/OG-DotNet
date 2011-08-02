@@ -5,10 +5,10 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.financial.livedata.rest
+namespace OGDotNet.Mappedtypes.Financial.LiveData.Rest
 {
     public class RemoveValueRequest
     {

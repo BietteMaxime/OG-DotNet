@@ -12,7 +12,7 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Util.Time;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
+namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 {
     public class FixedIncomeStrip : IComparable<FixedIncomeStrip>
     {

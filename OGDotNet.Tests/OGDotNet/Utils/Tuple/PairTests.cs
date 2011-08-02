@@ -10,7 +10,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Util.Time;
-using OGDotNet.Mappedtypes.Util.tuple;
+using OGDotNet.Mappedtypes.Util.Tuple;
 using OGDotNet.Model;
 using Xunit;
 

@@ -6,7 +6,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.Engine.View.listener
+namespace OGDotNet.Mappedtypes.Engine.View.Listener
 {
     public class ProcessCompletedCall
     {

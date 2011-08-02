@@ -8,7 +8,7 @@
 
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.financial.analytics
+namespace OGDotNet.Mappedtypes.Financial.Analytics
 {
     public class LabelledMatrixEntry
     {

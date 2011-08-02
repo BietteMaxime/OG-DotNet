@@ -10,7 +10,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.Volatility.cube
+namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube
 {
     public class VolatilitySurfaceKey : IComparable<VolatilitySurfaceKey>
     {

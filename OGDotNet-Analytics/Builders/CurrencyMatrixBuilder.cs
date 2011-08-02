@@ -9,7 +9,7 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.financial.currency;
+using OGDotNet.Mappedtypes.Financial.currency;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Builders

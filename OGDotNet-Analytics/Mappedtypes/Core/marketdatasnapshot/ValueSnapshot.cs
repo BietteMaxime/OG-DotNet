@@ -11,7 +11,7 @@ using System.ComponentModel;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
 {
     public class ValueSnapshot : INotifyPropertyChanged
     {

@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.Engine.function
+namespace OGDotNet.Mappedtypes.Engine.Function
 {
     public class ParameterizedFunction
     {

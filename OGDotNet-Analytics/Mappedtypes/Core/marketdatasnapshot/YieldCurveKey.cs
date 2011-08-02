@@ -11,7 +11,7 @@ using Fudge;
 using Fudge.Serialization;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
-namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
 {
     public class YieldCurveKey : IComparable<YieldCurveKey>
     {

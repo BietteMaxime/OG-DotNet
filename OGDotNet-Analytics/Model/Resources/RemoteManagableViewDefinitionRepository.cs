@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.financial.view;
+using OGDotNet.Mappedtypes.Financial.View;
 
 namespace OGDotNet.Model.Resources
 {

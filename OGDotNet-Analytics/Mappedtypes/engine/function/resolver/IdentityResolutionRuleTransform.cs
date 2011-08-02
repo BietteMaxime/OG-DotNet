@@ -9,7 +9,7 @@
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.Engine.function.resolver
+namespace OGDotNet.Mappedtypes.Engine.Function.Resolver
 {
     public class IdentityResolutionRuleTransform : IResolutionRuleTransform
     {

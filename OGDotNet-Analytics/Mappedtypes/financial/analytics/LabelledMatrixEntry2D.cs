@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 
-namespace OGDotNet.Mappedtypes.financial.analytics
+namespace OGDotNet.Mappedtypes.Financial.Analytics
 {
     public class LabelledMatrixEntry2D
     {

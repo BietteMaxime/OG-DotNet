@@ -9,7 +9,7 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.math.surface
+namespace OGDotNet.Mappedtypes.Math.Surface
 {
     public class InterpolatedDoublesSurface : IDoublesSurface
     {

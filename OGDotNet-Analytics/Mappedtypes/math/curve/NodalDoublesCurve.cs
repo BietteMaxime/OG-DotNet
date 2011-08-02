@@ -11,7 +11,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.math.curve
+namespace OGDotNet.Mappedtypes.Math.Curve
 {
     public class NodalDoublesCurve : Curve
     {

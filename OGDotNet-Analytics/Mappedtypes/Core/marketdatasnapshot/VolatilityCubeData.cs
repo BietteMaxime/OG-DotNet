@@ -12,9 +12,9 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Util.Time;
-using OGDotNet.Mappedtypes.Util.tuple;
+using OGDotNet.Mappedtypes.Util.Tuple;
 
-namespace OGDotNet.Mappedtypes.Core.marketdatasnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
 {
     public class VolatilityCubeData
     {

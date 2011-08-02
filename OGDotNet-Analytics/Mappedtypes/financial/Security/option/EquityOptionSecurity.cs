@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using OGDotNet.Mappedtypes.Id;
 
-namespace OGDotNet.Mappedtypes.financial.Security.option
+namespace OGDotNet.Mappedtypes.Financial.Security.Option
 {
     /// <summary>
     /// TODO: kill these with the .proto replacement

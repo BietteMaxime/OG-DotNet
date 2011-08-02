@@ -6,8 +6,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.Engine.value;
-using OGDotNet.Mappedtypes.financial.livedata.rest;
+using OGDotNet.Mappedtypes.Engine.Value;
+using OGDotNet.Mappedtypes.Financial.LiveData.Rest;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
 

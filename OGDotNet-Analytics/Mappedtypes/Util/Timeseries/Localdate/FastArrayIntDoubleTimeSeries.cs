@@ -12,7 +12,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.Util.Timeseries.fast.integer
+namespace OGDotNet.Mappedtypes.Util.Timeseries.Fast.Integer
 {
     public class FastArrayIntDoubleTimeSeries : FastArrayTDoubleTimeSeries<int>
     {

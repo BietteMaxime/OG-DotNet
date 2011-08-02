@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 
-namespace OGDotNet.Mappedtypes.Engine.View.calc
+namespace OGDotNet.Mappedtypes.Engine.View.Calc
 {
     public interface IEngineResourceReference<out T> : IDisposable
     {

@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.math.matrix
+namespace OGDotNet.Mappedtypes.Math.Matrix
 {
     public class DoubleMatrix1D
     {

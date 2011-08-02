@@ -12,7 +12,7 @@ using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 
-namespace OGDotNet.Mappedtypes.financial.analytics.ircurve
+namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 {
     public class YieldCurveDefinitionDocument : AbstractDocument
     {

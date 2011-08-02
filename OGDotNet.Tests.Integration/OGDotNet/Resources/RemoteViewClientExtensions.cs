@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
-using OGDotNet.Mappedtypes.Engine.View.listener;
+using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources

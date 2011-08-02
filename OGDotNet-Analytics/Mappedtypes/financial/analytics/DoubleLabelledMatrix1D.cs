@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.financial.analytics
+namespace OGDotNet.Mappedtypes.Financial.Analytics
 {
     [FudgeSurrogate(typeof(LabelledMatrix1DBuilder<double, DoubleLabelledMatrix1D>))]
     public class DoubleLabelledMatrix1D : LabelledMatrix1D<double>

@@ -9,7 +9,7 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.Engine.marketdata.spec;
+using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Engine.View.Execution

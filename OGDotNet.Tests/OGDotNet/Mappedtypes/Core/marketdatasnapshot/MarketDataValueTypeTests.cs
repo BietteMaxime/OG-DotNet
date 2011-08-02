@@ -7,13 +7,13 @@
 //-----------------------------------------------------------------------
 
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
 
-namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.marketdatasnapshot
+namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.MarketDataSnapshot
 {
     public class MarketDataValueTypeTests
     {

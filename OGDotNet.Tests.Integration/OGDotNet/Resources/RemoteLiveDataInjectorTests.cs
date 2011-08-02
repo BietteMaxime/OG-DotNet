@@ -9,10 +9,10 @@
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Engine;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
-using OGDotNet.Mappedtypes.Engine.View.listener;
+using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;

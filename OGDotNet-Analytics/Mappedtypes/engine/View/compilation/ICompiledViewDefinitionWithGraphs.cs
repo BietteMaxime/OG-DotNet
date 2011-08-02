@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using OGDotNet.Mappedtypes.Engine.DepGraph;
 
-namespace OGDotNet.Mappedtypes.Engine.View.compilation
+namespace OGDotNet.Mappedtypes.Engine.View.Compilation
 {
     public interface ICompiledViewDefinitionWithGraphs : ICompiledViewDefinition
     {

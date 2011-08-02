@@ -13,7 +13,7 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 
-namespace OGDotNet.Mappedtypes.Engine.View.listener
+namespace OGDotNet.Mappedtypes.Engine.View.Listener
 {
     public class CycleExecutionFailedCall
     {

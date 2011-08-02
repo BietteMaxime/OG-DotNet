@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.math.surface
+namespace OGDotNet.Mappedtypes.Math.Surface
 {
     public interface IDoublesSurface
     {

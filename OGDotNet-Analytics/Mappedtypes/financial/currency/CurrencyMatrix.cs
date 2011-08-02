@@ -15,7 +15,7 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Money;
 
-namespace OGDotNet.Mappedtypes.financial.currency
+namespace OGDotNet.Mappedtypes.Financial.currency
 {
     [FudgeSurrogate(typeof(CurrencyMatrixBuilder))]
     internal class CurrencyMatrix : ICurrencyMatrix

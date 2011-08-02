@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 
-namespace OGDotNet.Mappedtypes.financial.view.rest
+namespace OGDotNet.Mappedtypes.Financial.View.Rest
 {
     class AttachToViewProcessRequest
     {

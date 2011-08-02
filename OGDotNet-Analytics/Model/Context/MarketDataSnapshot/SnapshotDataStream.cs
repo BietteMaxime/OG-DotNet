@@ -8,13 +8,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using OGDotNet.Mappedtypes.Core.marketdatasnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
-using OGDotNet.Mappedtypes.financial.analytics.ircurve;
-using OGDotNet.Mappedtypes.financial.model.interestrate.curve;
+using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
+using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.math.curve;
+using OGDotNet.Mappedtypes.Math.Curve;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;
 

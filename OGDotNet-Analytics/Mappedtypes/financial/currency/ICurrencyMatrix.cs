@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Id;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
-namespace OGDotNet.Mappedtypes.financial.currency
+namespace OGDotNet.Mappedtypes.Financial.currency
 {
     public interface ICurrencyMatrix : IUniqueIdentifiable
     {

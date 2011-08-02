@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace OGDotNet.Mappedtypes.Engine.function.resolver
+namespace OGDotNet.Mappedtypes.Engine.Function.Resolver
 {
     /// <summary>
     /// TODO: this

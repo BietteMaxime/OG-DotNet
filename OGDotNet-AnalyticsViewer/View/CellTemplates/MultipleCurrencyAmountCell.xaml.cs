@@ -8,7 +8,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.Financial.Analytics;
 using OGDotNet.Mappedtypes.Util.Money;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 

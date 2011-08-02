@@ -10,7 +10,7 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Util.Money;
 
-namespace OGDotNet.Mappedtypes.financial.analytics
+namespace OGDotNet.Mappedtypes.Financial.Analytics
 {
     [FudgeSurrogate(typeof(CurrencyLabelledMatrix1DBuilder))]
     public class CurrencyLabelledMatrix1D : LabelledMatrix1D<Currency>

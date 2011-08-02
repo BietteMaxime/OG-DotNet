@@ -11,7 +11,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
-using OGDotNet.Mappedtypes.Engine.value;
+using OGDotNet.Mappedtypes.Engine.Value;
 
 namespace OGDotNet.Builders
 {

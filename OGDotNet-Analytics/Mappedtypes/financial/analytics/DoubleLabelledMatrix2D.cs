@@ -13,7 +13,7 @@ using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.financial.analytics
+namespace OGDotNet.Mappedtypes.Financial.Analytics
 {
     [FudgeSurrogate(typeof(DoubleLabelledMatrix2DBuilder))]
     public class DoubleLabelledMatrix2D : IEnumerable<LabelledMatrixEntry2D>

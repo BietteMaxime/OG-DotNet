@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OGDotNet.Mappedtypes.math.curve
+namespace OGDotNet.Mappedtypes.Math.Curve
 {
     public static class CurveExtensionMethods
     {

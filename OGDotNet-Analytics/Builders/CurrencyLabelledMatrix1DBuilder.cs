@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using Fudge;
-using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.Financial.Analytics;
 using OGDotNet.Mappedtypes.Util.Money;
 
 namespace OGDotNet.Builders
