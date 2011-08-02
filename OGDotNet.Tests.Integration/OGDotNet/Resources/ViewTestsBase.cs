@@ -34,7 +34,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "European Corporate Bond View - test",
                                                                       "Random Matrix",
                                                                       "Simple Cash Test View",
-                                                                      "Funding Curve Only"
+                                                                      "Funding Curve Only",
+                                                                      "Simple IR Future Option Test View" //PLAT-1459
                                                                   };
 
         private static bool IsSlowTicking(string definitionName)
