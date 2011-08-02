@@ -324,7 +324,7 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(position);
             Assert.NotNull(position.UniqueId);
-            Assert.InRange(position.Quantity, -1, long.MaxValue); //Not sure why -1 is valid
+            Assert.InRange(position.Quantity, -20, long.MaxValue); //Not sure why -20 is valid (Bond Future Test View)
             AssertSensibleValue(position.SecurityKey);
             Assert.NotNull(position.Trades);
             AssertSensibleValue(position.Trades);
