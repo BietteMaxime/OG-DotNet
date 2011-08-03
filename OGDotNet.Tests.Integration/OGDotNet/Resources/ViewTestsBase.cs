@@ -32,7 +32,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "European Corporate Bond View",
                                                                       "European Corporate Bond View - test",
                                                                       "Random Matrix",
-                                                                      "Simple Cash Test View",
                                                                       "Funding Curve Only",
                                                                       "Simple IR Future Option Test View" //PLAT-1459
                                                                   };
