@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
+using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Client;
 using OGDotNet.Mappedtypes.Engine.View.Compilation;
@@ -125,6 +126,26 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var results = resultsEnum.Take(5).ToList();
                 Assert.True(results.All(r => r != null));
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void NumberOfResultsIsConsistent(ViewDefinition viewDefinition)
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, defaultExecutionOptions:new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification()));
+                var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
+
+                var results = resultsEnum.Take(20).ToList();
+                Assert.True(results.All(r => r != null));
+                var counts = results.Select(r => r.AllResults.Count());
+                if (counts.Distinct().Count() != 1)
+                {
+                    throw new Exception(string.Format("Inconsistent number of results for {0} {1}", viewDefinition.Name, string.Join(",", counts.Select(c => c.ToString()))));
+                }
+                Assert.Equal(1, counts.Distinct().Count());
             }
         }
 
