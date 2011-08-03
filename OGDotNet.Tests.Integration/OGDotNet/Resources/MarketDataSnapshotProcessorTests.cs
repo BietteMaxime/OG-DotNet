@@ -402,7 +402,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static Tuple<int, int> GetCount(MarketDataSnapshotProcessor dataSnapshotProcessor)
         {
             int count = dataSnapshotProcessor.Snapshot.GlobalValues.Values.Count;
-            int ycCount = dataSnapshotProcessor.Snapshot.YieldCurves.First().Value.Values.Values.Count;
+            int ycCount = dataSnapshotProcessor.Snapshot.YieldCurves.Any() ? dataSnapshotProcessor.Snapshot.YieldCurves.First().Value.Values.Values.Count : 0;
             return Tuple.Create(count, ycCount);
         }
 
