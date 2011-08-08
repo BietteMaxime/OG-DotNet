@@ -76,6 +76,7 @@
     <Compile Include="Builders\Streaming\IStreamingFudgeBuilder.cs" />
     <Compile Include="Builders\Streaming\SecuritiesResponseStreamingBuilder.cs" />
     <Compile Include="Builders\Streaming\StreamingFudgeBuilderBase.cs" />
+    <Compile Include="Builders\StringLabelledMatrix1DBuilder.cs" />
     <Compile Include="Builders\UserMarketDataSpecificationBuilder.cs" />
     <Compile Include="Builders\ValuePropertiesBuilder.cs" />
     <Compile Include="Builders\VolatilitySurfaceDataBuilder.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Mappedtypes\engine\View\NumberDeltaComparer.cs" />
     <Compile Include="Mappedtypes\financial\analytics\DoubleLabelledMatrix2D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrixEntry2D.cs" />
+    <Compile Include="Mappedtypes\financial\analytics\StringLabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeDefinition.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilityCubeKey.cs" />
     <Compile Include="Mappedtypes\Core\marketdatasnapshot\VolatilityPoint.cs" />
