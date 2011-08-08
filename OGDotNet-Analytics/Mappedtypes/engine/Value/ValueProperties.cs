@@ -27,7 +27,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
         public IEnumerable<string> this[string propertyName] { get { return GetValues(propertyName); } }
         public abstract bool IsSatisfiedBy(ValueProperties properties);
         public abstract ISet<string> GetValues(string propertyName);
-        public abstract ValueProperties WithoutAny(string propertyName);//TODO ValuePropertiesBuilder
+        public abstract ValueProperties WithoutAny(string propertyName); //TODO ValuePropertiesBuilder
         public static ValueProperties Create()
         {
             return EmptyValueProperties.Instance;
