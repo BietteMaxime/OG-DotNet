@@ -24,7 +24,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Core.Common
         [Fact]
         public void CantGetBadCurrency()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => Currency.Create(UniqueIdentifier.Of("CurrencyISO", "USD").ToString()));
+            Assert.Throws<ArgumentOutOfRangeException>(() => Currency.Create(UniqueId.Of("CurrencyISO", "USD").ToString()));
         }
 
         [Fact]

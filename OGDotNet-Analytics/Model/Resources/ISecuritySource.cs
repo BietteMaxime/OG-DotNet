@@ -14,7 +14,7 @@ namespace OGDotNet.Model.Resources
 {
     public interface ISecuritySource
     {
-        ISecurity GetSecurity(UniqueIdentifier uid);
+        ISecurity GetSecurity(UniqueId uid);
         ICollection<ISecurity> GetSecurities(ExternalIdBundle bundle);
         ISecurity GetSecurity(ExternalIdBundle bundle);
     }

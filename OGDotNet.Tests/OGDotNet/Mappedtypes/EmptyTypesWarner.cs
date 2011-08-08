@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="EmptyTypesWarner.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -26,7 +26,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes
         {
             get
             {
-                var mappedTypes = typeof(UniqueIdentifier).Assembly.GetTypes().Where(t => t.FullName.StartsWith("OGDotNet.Mappedtypes")).ToList();
+                var mappedTypes = typeof(UniqueId).Assembly.GetTypes().Where(t => t.FullName.StartsWith("OGDotNet.Mappedtypes")).ToList();
                 Assert.NotEmpty(mappedTypes);
                 return mappedTypes;
             }

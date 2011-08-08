@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="YieldCurveDefinitionDocument.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -26,7 +26,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 
         public YieldCurveDefinition Definition { get; set; }
 
-        public override UniqueIdentifier UniqueId { get; set; }
+        public override UniqueId UniqueId { get; set; }
 
         public static YieldCurveDefinitionDocument FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
@@ -35,7 +35,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             DateTimeOffset correctionToInstant;
             DateTimeOffset versionFromInstant = GetDocumentValues(ffc, out versionToInstant, out correctionFromInstant, out correctionToInstant);
 
-            var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
+            var uid = (ffc.GetString("uniqueId") != null) ? UniqueId.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueId>(ffc.GetByName("uniqueId"));
             var definition  = deserializer.FromField<YieldCurveDefinition>(ffc.GetByName("definition"));
 
             return new YieldCurveDefinitionDocument(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant) { Definition = definition, UniqueId = uid};

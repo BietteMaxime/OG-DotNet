@@ -14,18 +14,18 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube
 {
     public class VolatilitySurfaceKey : IComparable<VolatilitySurfaceKey>
     {
-        private readonly UniqueIdentifier _target;
+        private readonly UniqueId _target;
         private readonly string _name;
         private readonly string _instrumentType;
 
-        public VolatilitySurfaceKey(UniqueIdentifier target, string name, string instrumentType)
+        public VolatilitySurfaceKey(UniqueId target, string name, string instrumentType)
         {
             _target = target;
             _name = name;
             _instrumentType = instrumentType;
         }
 
-        public UniqueIdentifier Target
+        public UniqueId Target
         {
             get { return _target; }
         }
@@ -46,7 +46,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube
         }
         public static VolatilitySurfaceKey FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new VolatilitySurfaceKey(UniqueIdentifier.Parse(ffc.GetString("target")), ffc.GetString("name"), ffc.GetString("instrumentType"));
+            return new VolatilitySurfaceKey(UniqueId.Parse(ffc.GetString("target")), ffc.GetString("name"), ffc.GetString("instrumentType"));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

@@ -150,7 +150,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         public class TreeNode
         {
-            private readonly UniqueIdentifier _identifier;
+            private readonly UniqueId _identifier;
             private readonly ComputationTargetType _targetType;
             private readonly Func<ISecurity> _security;
             private readonly int _depth;
@@ -158,7 +158,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
             private string _name;
 
-            public TreeNode(UniqueIdentifier identifier, string name, ComputationTargetType targetType, int depth)
+            public TreeNode(UniqueId identifier, string name, ComputationTargetType targetType, int depth)
             {
                 _identifier = identifier;
                 _name = name;
@@ -166,7 +166,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 _depth = depth;
             }
 
-            public TreeNode(UniqueIdentifier identifier, ComputationTargetType targetType, Func<ISecurity> security, int depth, long quantity)
+            public TreeNode(UniqueId identifier, ComputationTargetType targetType, Func<ISecurity> security, int depth, long quantity)
             {
                 _identifier = identifier;
                 _targetType = targetType;
@@ -217,7 +217,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             return providedTargets.Intersect(requestedTargets).Select(t => new PrimitiveRow(t)).OrderBy(r => r.TargetName);
         }
 
-        private static void UpdatePortfolioRows(IEnumerable<PortfolioRow> rows, ILookup<UniqueIdentifier, ViewResultEntry> indexedResults)
+        private static void UpdatePortfolioRows(IEnumerable<PortfolioRow> rows, ILookup<UniqueId, ViewResultEntry> indexedResults)
         {
             UpdateDynamicRows(rows, r => indexedResults[r.ComputationTargetSpecification.Uid].ToDictionary(
                 GetColumnHeader,
@@ -230,7 +230,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             return new ColumnHeader(v.CalculationConfiguration, v.ComputedValue.Specification.ValueName, v.ComputedValue.Specification.Properties);
         }
 
-        private static void UpdatePrimitiveRows(IEnumerable<PrimitiveRow> rows, ILookup<UniqueIdentifier, ViewResultEntry> indexedResults)
+        private static void UpdatePrimitiveRows(IEnumerable<PrimitiveRow> rows, ILookup<UniqueId, ViewResultEntry> indexedResults)
         {
             UpdateDynamicRows(rows, r => indexedResults[r.TargetId].ToDictionary(
                 GetColumnHeader,

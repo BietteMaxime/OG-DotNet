@@ -65,7 +65,7 @@ namespace OGDotNet.Mappedtypes.Engine.View.Execution
             return new ExecutionOptions(cycleExecutionSequence, ViewExecutionFlags.CompileOnly);
         }
 
-        public static IViewExecutionOptions Snapshot(UniqueIdentifier snapshotIdentifier)
+        public static IViewExecutionOptions Snapshot(UniqueId snapshotIdentifier)
         {
             return new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled, defaultExecutionOptions: new ViewCycleExecutionOptions(default(DateTimeOffset), new UserMarketDataSpecification(snapshotIdentifier)));
         }

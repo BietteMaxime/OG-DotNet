@@ -73,9 +73,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Empty(collection);
         }
 
-        private static UniqueIdentifier StupidUid
+        private static UniqueId StupidUid
         {
-            get { return UniqueIdentifier.Of("xxx", "xxx"); }
+            get { return UniqueId.Of("xxx", "xxx"); }
         }
 
         private static ExternalId StupidIdentifier

@@ -319,7 +319,7 @@
     <Compile Include="Utils\LoggingClassBase.cs" />
     <Compile Include="Utils\Memoizer.cs" />
     <Compile Include="Utils\StringUtils.cs" />
-    <Compile Include="Mappedtypes\Id\UniqueIdentifier.cs" />
+    <Compile Include="Mappedtypes\Id\UniqueId.cs" />
     <Compile Include="Model\OpenGammaFudgeContext.cs" />
     <Compile Include="Mappedtypes\math\curve\InterpolatedDoublesCurve.cs" />
     <Compile Include="Mappedtypes\engine\View\ResultModelDefinition.xaml.cs" />

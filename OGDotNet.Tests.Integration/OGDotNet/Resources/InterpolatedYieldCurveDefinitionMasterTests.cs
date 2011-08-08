@@ -100,7 +100,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
 
-                var argumentException = Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Get(UniqueIdentifier.Of("XX", "Mising" + Guid.NewGuid())));
+                var argumentException = Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Get(UniqueId.Of("XX", "Mising" + Guid.NewGuid())));
                 Assert.True(argumentException.Message.StartsWith("Not found"));
             }
         }

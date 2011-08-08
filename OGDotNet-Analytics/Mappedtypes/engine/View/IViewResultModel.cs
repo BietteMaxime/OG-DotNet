@@ -16,8 +16,8 @@ namespace OGDotNet.Mappedtypes.Engine.View
     {
         DateTimeOffset ValuationTime { get; }
         DateTimeOffset ResultTimestamp { get; }
-        UniqueIdentifier ViewProcessId { get; }
-        UniqueIdentifier ViewCycleId { get; }
+        UniqueId ViewProcessId { get; }
+        UniqueId ViewCycleId { get; }
         IEnumerable<ViewResultEntry> AllResults { get; }
         TimeSpan CalculationDuration { get; }
         ComputedValue this[string calculationConfiguration, ValueRequirement valueRequirement] { get; }

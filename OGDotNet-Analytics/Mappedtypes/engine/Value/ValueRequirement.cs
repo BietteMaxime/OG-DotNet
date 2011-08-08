@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ValueRequirement.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -69,19 +69,19 @@ namespace OGDotNet.Mappedtypes.Engine.Value
             s.WriteInline(msg, "constraints", Constraints);
         }
 
-        public static UniqueIdentifier GetUniqueIdentifier(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer, string fieldName)
+        public static UniqueId GetUniqueIdentifier(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer, string fieldName)
         {
-            UniqueIdentifier portfolioIdentifier;
+            UniqueId portfolioIdentifier;
             IFudgeField idField = ffc.GetByName(fieldName);
             if (idField != null)
             {
                 if (idField.Value is string)
                 {
-                    portfolioIdentifier = UniqueIdentifier.Parse((string) idField.Value);
+                    portfolioIdentifier = UniqueId.Parse((string) idField.Value);
                 }
                 else if (idField.Value is IFudgeFieldContainer)
                 {
-                    portfolioIdentifier = deserializer.FromField<UniqueIdentifier>(idField);
+                    portfolioIdentifier = deserializer.FromField<UniqueId>(idField);
                 }
                 else
                 {

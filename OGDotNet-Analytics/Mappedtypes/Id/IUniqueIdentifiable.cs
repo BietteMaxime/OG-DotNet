@@ -9,6 +9,6 @@ namespace OGDotNet.Mappedtypes.Id
 {
     public interface IUniqueIdentifiable
     {
-        UniqueIdentifier UniqueId { get; }
+        UniqueId UniqueId { get; }
     }
 }

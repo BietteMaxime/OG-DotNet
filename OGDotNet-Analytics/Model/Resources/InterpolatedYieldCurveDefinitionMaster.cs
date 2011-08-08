@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="InterpolatedYieldCurveDefinitionMaster.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -33,8 +33,8 @@ namespace OGDotNet.Model.Resources
 
         private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
         {
-            var respMsg = _restTarget.Resolve(path).Post<UniqueIdentifier>(document, "uniqueId");
-            var uid = respMsg.UniqueId;
+            var respMsg = _restTarget.Resolve(path).Post<UniqueId>(document, "uniqueId");
+            var uid = respMsg;
             if (uid == null)
             {
                 throw new ArgumentException("No UID returned");
@@ -45,7 +45,7 @@ namespace OGDotNet.Model.Resources
             return document;
         }
 
-        public YieldCurveDefinitionDocument Get(UniqueIdentifier uniqueId)
+        public YieldCurveDefinitionDocument Get(UniqueId uniqueId)
         {
             var resp = _restTarget.Resolve("curves", uniqueId.ToString()).Get<YieldCurveDefinitionDocument>();
             if (resp == null || resp.UniqueId == null || resp.Definition == null)
@@ -55,7 +55,7 @@ namespace OGDotNet.Model.Resources
             return resp;
         }
 
-        public void Remove(UniqueIdentifier uniqueId)
+        public void Remove(UniqueId uniqueId)
         {
             _restTarget.Resolve("curves").Resolve(uniqueId.ToString()).Delete();
         }

@@ -37,7 +37,7 @@ namespace OGDotNet.Model.Context
 
         private readonly object _snapshotUidLock = new object();
         private readonly RemoteClient _remoteClient;
-        private UniqueIdentifier _temporarySnapshotUid;
+        private UniqueId _temporarySnapshotUid;
 
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, CancellationToken ct)
         {

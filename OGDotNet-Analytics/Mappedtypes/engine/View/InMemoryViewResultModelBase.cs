@@ -15,14 +15,14 @@ namespace OGDotNet.Mappedtypes.Engine.View
 {
     public abstract class InMemoryViewResultModelBase : IViewResultModel
     {
-        private readonly UniqueIdentifier _viewProcessId;
-        private readonly UniqueIdentifier _viewCycleId;
+        private readonly UniqueId _viewProcessId;
+        private readonly UniqueId _viewCycleId;
         private readonly DateTimeOffset _inputDataTimestamp;
         private readonly DateTimeOffset _resultTimestamp;
         private readonly IDictionary<string, ViewCalculationResultModel> _configurationMap;
         private readonly TimeSpan _calculationDuration;
 
-        protected InMemoryViewResultModelBase(UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, TimeSpan calculationDuration)
+        protected InMemoryViewResultModelBase(UniqueId viewProcessId, UniqueId viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, TimeSpan calculationDuration)
         {
             _viewProcessId = viewProcessId;
             _viewCycleId = viewCycleId;
@@ -36,12 +36,12 @@ namespace OGDotNet.Mappedtypes.Engine.View
         public DateTimeOffset ResultTimestamp { get { return _resultTimestamp; } }
         public TimeSpan CalculationDuration { get { return _calculationDuration; } }
 
-        public UniqueIdentifier ViewProcessId
+        public UniqueId ViewProcessId
         {
             get { return _viewProcessId; }
         }
 
-        public UniqueIdentifier ViewCycleId
+        public UniqueId ViewCycleId
         {
             get { return _viewCycleId; }
         }

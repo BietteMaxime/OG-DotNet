@@ -22,9 +22,9 @@ namespace OGDotNet.Mappedtypes.Engine.View
 {
     public class ViewDefinition
     {
-        private readonly UniqueIdentifier _portfolioIdentifier;
+        private readonly UniqueId _portfolioIdentifier;
         private readonly UserPrincipal _user;
-        private readonly UniqueIdentifier _uniqueID;
+        private readonly UniqueId _uniqueID;
 
         private readonly ResultModelDefinition _resultModelDefinition;
 
@@ -40,7 +40,7 @@ namespace OGDotNet.Mappedtypes.Engine.View
         private TimeSpan? _minFullCalcPeriod;
         private TimeSpan? _maxFullCalcPeriod;
 
-        public ViewDefinition(string name, ResultModelDefinition resultModelDefinition = null, UniqueIdentifier portfolioIdentifier = null, UserPrincipal user = null, Currency defaultCurrency = null, TimeSpan? minDeltaCalcPeriod = null, TimeSpan? maxDeltaCalcPeriod = null, TimeSpan? minFullCalcPeriod = null, TimeSpan? maxFullCalcPeriod = null, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName = null, UniqueIdentifier uniqueID = null)
+        public ViewDefinition(string name, ResultModelDefinition resultModelDefinition = null, UniqueId portfolioIdentifier = null, UserPrincipal user = null, Currency defaultCurrency = null, TimeSpan? minDeltaCalcPeriod = null, TimeSpan? maxDeltaCalcPeriod = null, TimeSpan? minFullCalcPeriod = null, TimeSpan? maxFullCalcPeriod = null, Dictionary<string, ViewCalculationConfiguration> calculationConfigurationsByName = null, UniqueId uniqueID = null)
         {
             _name = name;
             _uniqueID = uniqueID;
@@ -61,7 +61,7 @@ namespace OGDotNet.Mappedtypes.Engine.View
             set { _name = value; }
         }
 
-        public UniqueIdentifier PortfolioIdentifier
+        public UniqueId PortfolioIdentifier
         {
             get { return _portfolioIdentifier; }
         }
@@ -110,7 +110,7 @@ namespace OGDotNet.Mappedtypes.Engine.View
             get { return _calculationConfigurationsByName; }
         }
 
-        public UniqueIdentifier UniqueID
+        public UniqueId UniqueID
         {
             get { return _uniqueID; }
         }
@@ -124,11 +124,11 @@ namespace OGDotNet.Mappedtypes.Engine.View
         {
             var name = ffc.GetValue<string>("name");
             var uniqueIdString = ffc.GetString("uniqueId");
-            var uniqueId = uniqueIdString == null ? null : UniqueIdentifier.Parse(uniqueIdString);
+            var uniqueId = uniqueIdString == null ? null : UniqueId.Parse(uniqueIdString);
 
             var resultModelDefinition = deserializer.FromField<ResultModelDefinition>(ffc.GetByName("resultModelDefinition"));
 
-            UniqueIdentifier portfolioIdentifier = ValueRequirement.GetUniqueIdentifier(ffc, deserializer, "identifier");
+            UniqueId portfolioIdentifier = ValueRequirement.GetUniqueIdentifier(ffc, deserializer, "identifier");
             var user = deserializer.FromField<UserPrincipal>(ffc.GetByName("user"));
 
             var currency = ffc.GetValue<Currency>("currency");

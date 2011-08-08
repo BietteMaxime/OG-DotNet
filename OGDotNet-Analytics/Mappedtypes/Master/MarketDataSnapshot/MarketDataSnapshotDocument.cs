@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="MarketDataSnapshotDocument.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -15,10 +15,10 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {
     public class MarketDataSnapshotDocument : AbstractDocument
     {
-        private UniqueIdentifier _uniqueId;
+        private UniqueId _uniqueId;
         private ManageableMarketDataSnapshot _snapshot;
 
-        public override UniqueIdentifier UniqueId
+        public override UniqueId UniqueId
         {
             get { return _uniqueId; }
             set { _uniqueId = value; }
@@ -30,13 +30,13 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
             set { _snapshot = value; }
         }
 
-        private MarketDataSnapshotDocument(UniqueIdentifier uniqueId, ManageableMarketDataSnapshot snapshot, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant) : base(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant)
+        private MarketDataSnapshotDocument(UniqueId uniqueId, ManageableMarketDataSnapshot snapshot, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant) : base(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant)
         {
             _uniqueId = uniqueId;
             _snapshot = snapshot;
         }
 
-        public MarketDataSnapshotDocument(UniqueIdentifier uniqueId, ManageableMarketDataSnapshot snapshot)
+        public MarketDataSnapshotDocument(UniqueId uniqueId, ManageableMarketDataSnapshot snapshot)
         {
             _uniqueId = uniqueId;
             _snapshot = snapshot;
@@ -49,7 +49,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
             DateTimeOffset correctionToInstant;
             DateTimeOffset versionFromInstant = GetDocumentValues(ffc, out versionToInstant, out correctionFromInstant, out correctionToInstant);
 
-            var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
+            var uid = (ffc.GetString("uniqueId") != null) ? UniqueId.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueId>(ffc.GetByName("uniqueId"));
             var snapshot = deserializer.FromField<ManageableMarketDataSnapshot>(ffc.GetByName("snapshot"));
 
             return new MarketDataSnapshotDocument(uid, snapshot, versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant);

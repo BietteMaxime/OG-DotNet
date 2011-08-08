@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="Currency.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -120,7 +120,7 @@ namespace OGDotNet.Mappedtypes.Util.Money
             return new Currency(isoCode.ToUpper(CultureInfo.CreateSpecificCulture("en")));
         }
 
-        public static Currency Create(UniqueIdentifier isoCode)
+        public static Currency Create(UniqueId isoCode)
         {
             if (isoCode.Scheme != IdentificationDomain)
                 throw new ArgumentException("Unexpected Scheme", "isoCode");
@@ -140,14 +140,14 @@ namespace OGDotNet.Mappedtypes.Util.Money
             return InstanceMap.Get(isoCode);
         }
 
-        private readonly UniqueIdentifier _uniqueId;
+        private readonly UniqueId _uniqueId;
 
         private Currency(string isoCode)
         {
-            _uniqueId = UniqueIdentifier.Of(IdentificationDomain, isoCode);
+            _uniqueId = Id.UniqueId.Of(IdentificationDomain, isoCode);
         }
 
-        public UniqueIdentifier UniqueId
+        public UniqueId UniqueId
         {
             get { return _uniqueId; }
         }

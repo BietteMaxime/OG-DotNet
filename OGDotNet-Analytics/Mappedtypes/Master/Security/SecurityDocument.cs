@@ -17,9 +17,9 @@ namespace OGDotNet.Mappedtypes.Master.Security
     public class SecurityDocument : AbstractDocument
     {
         private readonly ISecurity _security;
-        private UniqueIdentifier _uniqueId;
+        private UniqueId _uniqueId;
 
-        public override UniqueIdentifier UniqueId
+        public override UniqueId UniqueId
         {
             get { return _uniqueId; }
             set { _uniqueId = value; }
@@ -27,7 +27,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
 
         public ISecurity Security { get { return _security; } }
 
-        public SecurityDocument(UniqueIdentifier uniqueId, ISecurity security, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant)
+        public SecurityDocument(UniqueId uniqueId, ISecurity security, DateTimeOffset versionFromInstant, DateTimeOffset versionToInstant, DateTimeOffset correctionFromInstant, DateTimeOffset correctionToInstant)
             : base(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant)
         {
             _uniqueId = uniqueId;
@@ -46,7 +46,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
             DateTimeOffset correctionToInstant;
             DateTimeOffset versionFromInstant = GetDocumentValues(ffc, out versionToInstant, out correctionFromInstant, out correctionToInstant);
 
-            var uid = (ffc.GetString("uniqueId") != null) ? UniqueIdentifier.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"));
+            var uid = (ffc.GetString("uniqueId") != null) ? UniqueId.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueId>(ffc.GetByName("uniqueId"));
             var security = deserializer.FromField<ISecurity>(ffc.GetByName("security"));
 
             return new SecurityDocument(uid, security, versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant);

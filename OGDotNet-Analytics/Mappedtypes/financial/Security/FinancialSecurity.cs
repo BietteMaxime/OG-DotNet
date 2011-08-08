@@ -16,7 +16,7 @@ namespace OGDotNet.Mappedtypes.Financial.Security
     /// </summary>
     public class FinancialSecurity : ManageableSecurity
     {
-        public FinancialSecurity(string name, string securityType, UniqueIdentifier uniqueId, ExternalIdBundle identifiers) : base(name, securityType, uniqueId, identifiers)
+        public FinancialSecurity(string name, string securityType, UniqueId uniqueId, ExternalIdBundle identifiers) : base(name, securityType, uniqueId, identifiers)
         {
         }
     }

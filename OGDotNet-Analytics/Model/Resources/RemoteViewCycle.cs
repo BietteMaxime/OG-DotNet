@@ -28,11 +28,11 @@ namespace OGDotNet.Model.Resources
             _location = location;
         }
 
-        public UniqueIdentifier UniqueId
+        public UniqueId UniqueId
         {
             get
             {
-                return _location.Resolve("id").Get<UniqueIdentifier>();
+                return _location.Resolve("id").Get<UniqueId>();
             }
         }
 
@@ -54,9 +54,9 @@ namespace OGDotNet.Model.Resources
             return _location.Resolve("queryCaches").Post<ComputationCacheResponse>(computationCacheQuery) ?? new ComputationCacheResponse(new List<Pair<ValueSpecification, object>>());
         }
 
-        public UniqueIdentifier GetViewProcessId()
+        public UniqueId GetViewProcessId()
         {
-            return _location.Resolve("viewProcessId").Get<UniqueIdentifier>();
+            return _location.Resolve("viewProcessId").Get<UniqueId>();
         }
 
         public ViewCycleState GetState()

@@ -17,7 +17,7 @@ namespace OGDotNet.Mappedtypes.Engine.View
     {
         private readonly List<ComputedValue> _allLiveData;
 
-        public InMemoryViewComputationResultModel(UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, List<ComputedValue> allLiveData, TimeSpan calculationDuration)
+        public InMemoryViewComputationResultModel(UniqueId viewProcessId, UniqueId viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, IDictionary<string, ViewCalculationResultModel> configurationMap, List<ComputedValue> allLiveData, TimeSpan calculationDuration)
             : base(viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, configurationMap, calculationDuration)
         {
             _allLiveData = allLiveData;

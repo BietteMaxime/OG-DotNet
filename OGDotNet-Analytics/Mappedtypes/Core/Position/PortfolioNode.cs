@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="PortfolioNode.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -16,12 +16,12 @@ namespace OGDotNet.Mappedtypes.Core.Position
     [FudgeSurrogate(typeof(PortfolioNodeImplBuilder))]
     public class PortfolioNode : IUniqueIdentifiable
     {
-        private readonly UniqueIdentifier _uniqueId;
+        private readonly UniqueId _uniqueId;
         private readonly string _name;
         private readonly IList<PortfolioNode> _subNodes;
         private readonly IList<IPosition> _positions;
 
-        internal PortfolioNode(UniqueIdentifier uniqueId, string name, IList<PortfolioNode> subNodes, IList<IPosition> positions)
+        internal PortfolioNode(UniqueId uniqueId, string name, IList<PortfolioNode> subNodes, IList<IPosition> positions)
         {
             _uniqueId = uniqueId;
             _name = name;
@@ -44,7 +44,7 @@ namespace OGDotNet.Mappedtypes.Core.Position
             get { return _positions; }
         }
 
-        public UniqueIdentifier UniqueId
+        public UniqueId UniqueId
         {
             get { return _uniqueId; }
         }

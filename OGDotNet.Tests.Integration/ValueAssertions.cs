@@ -352,7 +352,7 @@ namespace OGDotNet.Tests.Integration
             Assert.NotNull(identifier);
         }
 
-        public static void AssertSensibleValue(UniqueIdentifier identifier)
+        public static void AssertSensibleValue(UniqueId identifier)
         {
             Assert.NotNull(identifier);
         }

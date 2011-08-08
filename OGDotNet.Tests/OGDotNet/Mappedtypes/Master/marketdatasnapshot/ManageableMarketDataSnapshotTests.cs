@@ -29,7 +29,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
             var manageableVolatilityCubeSnapshots = GetManageableVolatilityCubeSnapshots();
             var manageableMarketDataSnapshot = new ManageableMarketDataSnapshot("SomeView", manageableUnstructuredMarketDataSnapshot, manageableYieldCurveSnapshots, manageableVolatilityCubeSnapshots, manageableVolatilitySurfaceSnapshots);
 
-            var valueSpec = new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("ID", "1"));
+            var valueSpec = new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("ID", "1"));
             const string valueName = "Value";
             manageableMarketDataSnapshot.Values.Add(valueSpec, new Dictionary<string, ValueSnapshot> {{valueName, new ValueSnapshot(12){OverrideValue = 13}}});
             Assert.True(manageableMarketDataSnapshot.HaveOverrides());
@@ -61,7 +61,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
         {
             return new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>
                        {
-                           {new VolatilityCubeKey(Currency.USD, "N"), new ManageableVolatilityCubeSnapshot(new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> {{new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("S", "V")), new Dictionary<string, ValueSnapshot> {{"K", new ValueSnapshot(12){OverrideValue = 13}}}}}))
+                           {new VolatilityCubeKey(Currency.USD, "N"), new ManageableVolatilityCubeSnapshot(new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> {{new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("S", "V")), new Dictionary<string, ValueSnapshot> {{"K", new ValueSnapshot(12){OverrideValue = 13}}}}}))
                                }
                        };
         }
@@ -70,7 +70,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
         {
             return new Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>
                        {
-                           {new VolatilitySurfaceKey(UniqueIdentifier.Of("S", "V"), "N", "I"),
+                           {new VolatilitySurfaceKey(UniqueId.Of("S", "V"), "N", "I"),
                                new ManageableVolatilitySurfaceSnapshot(new Dictionary<Pair<object, object>, ValueSnapshot>
                                                                            {
                                                                                {
@@ -87,7 +87,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
                            {new YieldCurveKey(Currency.USD, "N"), new ManageableYieldCurveSnapshot(new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>
                                                                                                                                                     {
                                                                                                                                                                                                                                       {
-                                                                                                                                                                                                                                          new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("S", "V")), new Dictionary<string, ValueSnapshot> {{"K", new ValueSnapshot(12){OverrideValue = 13}}}
+                                                                                                                                                                                                                                          new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("S", "V")), new Dictionary<string, ValueSnapshot> {{"K", new ValueSnapshot(12){OverrideValue = 13}}}
                                                                                                                                                                                                                                           }}), DateTimeOffset.Now)}
                        };
         }

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="UniqueIdentifier.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="UniqueId.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -14,7 +14,7 @@ using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Id
 {
-    public class UniqueIdentifier : IComparable<UniqueIdentifier>, IEquatable<UniqueIdentifier>, IComparable, IUniqueIdentifiable
+    public class UniqueId : IComparable<UniqueId>, IEquatable<UniqueId>, IComparable, IUniqueIdentifiable
     {
         private const string Separator = "~";
         static readonly string[] SeparatorArray = new[] { Separator };
@@ -27,12 +27,12 @@ namespace OGDotNet.Mappedtypes.Id
         private readonly string _value;
         private readonly string _version;
 
-        public static UniqueIdentifier Of(string scheme, string value, string version = null)
+        public static UniqueId Of(string scheme, string value, string version = null)
         {
-            return new UniqueIdentifier(scheme, value, version);
+            return new UniqueId(scheme, value, version);
         }
 
-        public static UniqueIdentifier Parse(string uidStr)
+        public static UniqueId Parse(string uidStr)
         {
             ArgumentChecker.NotEmpty(uidStr, "uidStr");
             string[] split = uidStr.Split(SeparatorArray, StringSplitOptions.None);
@@ -46,7 +46,7 @@ namespace OGDotNet.Mappedtypes.Id
             throw new ArgumentException("Invalid identifier format: " + uidStr);
         }
 
-        private UniqueIdentifier(string scheme, string value, string version)
+        private UniqueId(string scheme, string value, string version)
         {
             ArgumentChecker.NotEmpty(scheme, "scheme");
             ArgumentChecker.NotEmpty(value, "value");
@@ -84,11 +84,11 @@ namespace OGDotNet.Mappedtypes.Id
             }
         }
 
-        public UniqueIdentifier ToLatest()
+        public UniqueId ToLatest()
         {
             if (IsVersioned)
             {
-                return new UniqueIdentifier(_scheme, _value, null);
+                return new UniqueId(_scheme, _value, null);
             }
             else
             {
@@ -112,7 +112,7 @@ namespace OGDotNet.Mappedtypes.Id
             return buf.ToString();
         }
 
-        public UniqueIdentifier UniqueId
+        UniqueId IUniqueIdentifiable.UniqueId
         {
             get { return this; }
         }
@@ -120,7 +120,7 @@ namespace OGDotNet.Mappedtypes.Id
         public int CompareTo(object obj)
         {
             ArgumentChecker.NotNull(obj, "obj");
-            var uniqueIdentifier = obj as UniqueIdentifier;
+            var uniqueIdentifier = obj as UniqueId;
             if (uniqueIdentifier == null)
             {
                 throw new ArgumentException(string.Format("Unexpected type {0}", obj.GetType()), "obj");
@@ -131,7 +131,7 @@ namespace OGDotNet.Mappedtypes.Id
 
         #region auto generated equality
 
-        public int CompareTo(UniqueIdentifier other)
+        public int CompareTo(UniqueId other)
         {
             //NOTE: the aim here is to make compare work the same was as in java, which is ~InvariantCulture
 
@@ -151,7 +151,7 @@ namespace OGDotNet.Mappedtypes.Id
             return string.Compare(_version, other._version, comparison); // This handles null the same as the java CompareUtils class
         }
 
-        public bool Equals(UniqueIdentifier other)
+        public bool Equals(UniqueId other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -162,8 +162,8 @@ namespace OGDotNet.Mappedtypes.Id
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(UniqueIdentifier)) return false;
-            return Equals((UniqueIdentifier)obj);
+            if (obj.GetType() != typeof(UniqueId)) return false;
+            return Equals((UniqueId)obj);
         }
 
         public override int GetHashCode()
@@ -177,18 +177,18 @@ namespace OGDotNet.Mappedtypes.Id
             }
         }
 
-        public static bool operator ==(UniqueIdentifier left, UniqueIdentifier right)
+        public static bool operator ==(UniqueId left, UniqueId right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(UniqueIdentifier left, UniqueIdentifier right)
+        public static bool operator !=(UniqueId left, UniqueId right)
         {
             return !Equals(left, right);
         }
         #endregion
 
-        public static UniqueIdentifier FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        public static UniqueId FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             string schema = null; 
             string value = null;
@@ -215,7 +215,7 @@ namespace OGDotNet.Mappedtypes.Id
                         throw new ArgumentException();
                 }
             }
-            return new UniqueIdentifier(schema, value, version);
+            return new UniqueId(schema, value, version);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

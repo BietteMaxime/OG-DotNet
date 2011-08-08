@@ -38,7 +38,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
             var start = end - TimeSpan.FromDays(7);
 
-            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueIdentifier.Of("DbHts", "3580"), start, false, end, true);
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, end, true);
             AssertSane(series, start, end);
         }
 
@@ -49,7 +49,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var end = DateTimeOffset.Now;
 
-            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueIdentifier.Of("DbHts", "3580"));
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"));
             AssertSane(series, end);
         }
 
@@ -109,7 +109,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             return remoteSecurityMaster.Search("*", "EQUITY", new PagingRequest(1, 3));
         }
 
-        private static void AssertSane(Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> result)
+        private static void AssertSane(Tuple<UniqueId, ILocalDateDoubleTimeSeries> result)
         {
             var uniqueIdentifier = result.Item1;
             ILocalDateDoubleTimeSeries series = result.Item2;

@@ -29,7 +29,7 @@ namespace OGDotNet.Model.Resources
             return _restTarget.Resolve("search").Post<SearchResult<SecurityDocument>>(request);
         }
 
-        public ISecurity GetSecurity(UniqueIdentifier uid)
+        public ISecurity GetSecurity(UniqueId uid)
         {
             SecurityDocument securityDocument = _restTarget.Resolve("security").Resolve(uid.ToString()).Get<SecurityDocument>();
             return securityDocument.Security;

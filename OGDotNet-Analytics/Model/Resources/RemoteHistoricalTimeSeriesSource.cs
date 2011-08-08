@@ -25,14 +25,14 @@ namespace OGDotNet.Model.Resources
             _rest = rest;
         }
 
-        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueIdentifier uid)
+        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueId uid)
         {
             RestTarget target = _rest.Resolve("uid")
                 .Resolve(uid.ToString());
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
-        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueIdentifier uid, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
+        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueId uid, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
         {
             RestTarget target = _rest.Resolve("uidByDate")
                                       .Resolve(uid.ToString())
@@ -43,7 +43,7 @@ namespace OGDotNet.Model.Resources
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField)
+        public Tuple<UniqueId, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField)
         {
             RestTarget target = _rest.Resolve("all")
                           .Resolve(EncodeDate(identifierValidityDate))
@@ -54,7 +54,7 @@ namespace OGDotNet.Model.Resources
             return DecodePairMessage(target.GetFudge());
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
+        public Tuple<UniqueId, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
         {
             ArgumentChecker.NotNull(identifierBundle, "identifierBundle");
             ArgumentChecker.NotNull(dataSource, "dataSource");
@@ -72,11 +72,11 @@ namespace OGDotNet.Model.Resources
             return DecodePairMessage(target.GetFudge());
         }
 
-        private Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> DecodePairMessage(FudgeMsg message)
+        private Tuple<UniqueId, ILocalDateDoubleTimeSeries> DecodePairMessage(FudgeMsg message)
         {
             if (message == null)
             {
-                return new Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries>(null, null);
+                return new Tuple<UniqueId, ILocalDateDoubleTimeSeries>(null, null);
             }
 
             var uniqueIdString = message.GetString("uniqueId");
@@ -89,7 +89,7 @@ namespace OGDotNet.Model.Resources
             {
                 throw new ArgumentException("timeSeries not present in message");
             }
-            return Tuple.Create(UniqueIdentifier.Parse(uniqueIdString), _fudgeContext.GetSerializer().Deserialize<ILocalDateDoubleTimeSeries>(timeSeriesField));
+            return Tuple.Create(UniqueId.Parse(uniqueIdString), _fudgeContext.GetSerializer().Deserialize<ILocalDateDoubleTimeSeries>(timeSeriesField));
         }
 
         private static string EncodeDate(DateTimeOffset currentDate)

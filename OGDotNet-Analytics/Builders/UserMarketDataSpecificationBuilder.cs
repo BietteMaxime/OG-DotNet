@@ -27,7 +27,7 @@ namespace OGDotNet.Builders
 
         public override UserMarketDataSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            return new UserMarketDataSpecification(deserializer.FromField<UniqueIdentifier>(msg.GetByName("userSnapshotId")));
+            return new UserMarketDataSpecification(deserializer.FromField<UniqueId>(msg.GetByName("userSnapshotId")));
         }
     }
 }

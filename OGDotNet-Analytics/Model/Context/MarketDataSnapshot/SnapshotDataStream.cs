@@ -23,9 +23,9 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
     public class SnapshotDataStream : LastResultViewClient
     {
         private readonly ViewDefinition _viewDefinition;
-        private readonly UniqueIdentifier _snapshotId;
+        private readonly UniqueId _snapshotId;
 
-        public SnapshotDataStream(ViewDefinition viewDefinition, RemoteEngineContext remoteEngineContext, UniqueIdentifier snapshotId)
+        public SnapshotDataStream(ViewDefinition viewDefinition, RemoteEngineContext remoteEngineContext, UniqueId snapshotId)
             : base(remoteEngineContext)
         {
             ArgumentChecker.NotNull(viewDefinition, "viewDefinition");

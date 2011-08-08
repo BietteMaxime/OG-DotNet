@@ -25,7 +25,7 @@ namespace OGDotNet.Builders
         public override PortfolioNodeImpl DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             return new PortfolioNodeImpl(
-                UniqueIdentifier.Parse(msg.GetString("identifier")), msg.GetString("name"),
+                UniqueId.Parse(msg.GetString("identifier")), msg.GetString("name"),
                 deserializer.FromField<IList<PortfolioNode>>(msg.GetByName("subNodes")) ?? new List<PortfolioNode>(),
                 deserializer.FromField<IList<IPosition>>(msg.GetByName("positions")) ?? new List<IPosition>());
         }

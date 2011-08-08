@@ -214,7 +214,7 @@ namespace OGDotNet.Model.Resources
             return CreateCycleReference(null);
         }
 
-        public IEngineResourceReference<IViewCycle> CreateCycleReference(UniqueIdentifier cycleId)
+        public IEngineResourceReference<IViewCycle> CreateCycleReference(UniqueId cycleId)
         {
             var location = _rest.Resolve("createLatestCycleReference").Create(cycleId);
             return location == null ? null : new RemoteViewCycleReference(location);
@@ -230,10 +230,10 @@ namespace OGDotNet.Model.Resources
              return _rest.Resolve("viewDefinition").Get<ViewDefinition>();
          }
 
-        public UniqueIdentifier GetUniqueId()
+        public UniqueId GetUniqueId()
         {
             var restTarget = _rest.Resolve("id");
-            return restTarget.Get<UniqueIdentifier>();
+            return restTarget.Get<UniqueId>();
         }
         public ViewClientState GetState()
         {

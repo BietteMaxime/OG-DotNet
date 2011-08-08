@@ -32,13 +32,13 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 
         private string _basisViewName;
 
-        private UniqueIdentifier _uniqueId;
+        private UniqueId _uniqueId;
 
         public ManageableMarketDataSnapshot(string basisViewName, ManageableUnstructuredMarketDataSnapshot globalValues,
                                             IDictionary<YieldCurveKey, ManageableYieldCurveSnapshot> yieldCurves,
                                             IDictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> volatilityCubes,
                                             IDictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> volatilitySurfaces,
-                                            UniqueIdentifier uniqueId = null)
+                                            UniqueId uniqueId = null)
         {
             _basisViewName = basisViewName;
             _globalValues = globalValues;
@@ -48,7 +48,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
             _uniqueId = uniqueId;
         }
 
-        public UniqueIdentifier UniqueId
+        public UniqueId UniqueId
         {
             get { return _uniqueId; }
             set { _uniqueId = value; }
@@ -224,7 +224,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
                                                                 IFudgeDeserializer deserializer)
         {
             var uidString = ffc.GetString("uniqueId");
-            UniqueIdentifier uid = uidString == null ? null : UniqueIdentifier.Parse(uidString);
+            UniqueId uid = uidString == null ? null : UniqueId.Parse(uidString);
 
             var surfaceMessage = ffc.GetMessage("volatilitySurfaces");
             Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> surfaces;

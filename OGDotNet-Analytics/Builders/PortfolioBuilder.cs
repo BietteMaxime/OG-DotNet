@@ -23,7 +23,7 @@ namespace OGDotNet.Builders
 
         public override IPortfolio DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            return new PortfolioImpl(deserializer.FromField<PortfolioNode>(msg.GetByName("root")), UniqueIdentifier.Parse(msg.GetString("identifier")), msg.GetString("name"));
+            return new PortfolioImpl(deserializer.FromField<PortfolioNode>(msg.GetByName("root")), UniqueId.Parse(msg.GetString("identifier")), msg.GetString("name"));
         }
     }
 }

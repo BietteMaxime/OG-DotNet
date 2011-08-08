@@ -14,7 +14,7 @@ namespace OGDotNet.Mappedtypes.Financial.Security.Option
     /// </summary>
     class EquityOptionSecurity : FinancialSecurity
     {
-        public EquityOptionSecurity(string name, string securityType, UniqueIdentifier uniqueId, ExternalIdBundle identifiers) : base(name, securityType, uniqueId, identifiers)
+        public EquityOptionSecurity(string name, string securityType, UniqueId uniqueId, ExternalIdBundle identifiers) : base(name, securityType, uniqueId, identifiers)
         {
         }
     }

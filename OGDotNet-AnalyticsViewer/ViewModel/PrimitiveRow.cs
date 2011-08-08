@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="PrimitiveRow.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -12,14 +12,14 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 {
     public class PrimitiveRow : DynamicRow
     {
-        private readonly UniqueIdentifier _targetId;
+        private readonly UniqueId _targetId;
 
-        public PrimitiveRow(UniqueIdentifier targetId)
+        public PrimitiveRow(UniqueId targetId)
         {
             _targetId = targetId;
         }
 
-        public UniqueIdentifier TargetId
+        public UniqueId TargetId
         {
             get { return _targetId; }
         }

@@ -28,7 +28,7 @@ namespace OGDotNet.Model.Resources
             _restTarget = restTarget;
         }
 
-        public ISecurity GetSecurity(UniqueIdentifier uid)
+        public ISecurity GetSecurity(UniqueId uid)
         {
             var target = _restTarget.Resolve("securities").Resolve("security").Resolve(uid.ToString());
             return target.Get<ISecurity>();

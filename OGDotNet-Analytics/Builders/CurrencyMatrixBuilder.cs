@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="CurrencyMatrixBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -32,7 +32,7 @@ namespace OGDotNet.Builders
             IFudgeField field = message.GetByName(UniqueIDFieldName);
             if (field != null)
             {
-                var uid = UniqueIdentifier.Parse((string)field.Value);
+                var uid = UniqueId.Parse((string)field.Value);
                 matrixImpl.UniqueId = uid;
             }
             field = message.GetByName(CrossConvertFieldName);

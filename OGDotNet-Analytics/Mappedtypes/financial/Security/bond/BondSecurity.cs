@@ -21,7 +21,7 @@ namespace OGDotNet.Mappedtypes.Financial.Security.Bond
         private readonly string _market;
         private readonly string _currency;
 
-        public BondSecurity(string name, string securityType, UniqueIdentifier uniqueId, ExternalIdBundle identifiers,
+        public BondSecurity(string name, string securityType, UniqueId uniqueId, ExternalIdBundle identifiers,
                             string issuerName, string issuerType, string issuerDomicile, string market, string currency // ... you get the idea, I'm not going to write all of these out
             ) : base(name, securityType, uniqueId, identifiers)
         {

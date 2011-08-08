@@ -16,14 +16,14 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
 {
     public class UniqueIdentifierTests
     {
-        static readonly UniqueIdentifier[] ExpectedOrder = new[]
+        static readonly UniqueId[] ExpectedOrder = new[]
                                     {
-                                        UniqueIdentifier.Of("A", "1"),
-                                        UniqueIdentifier.Of("A", "2"),
-                                        UniqueIdentifier.Of("A", "2", "A"),
-                                        UniqueIdentifier.Of("A", "2", "B"),
-                                        UniqueIdentifier.Of("B", "1"),
-                                        UniqueIdentifier.Of("B", "2"),
+                                        UniqueId.Of("A", "1"),
+                                        UniqueId.Of("A", "2"),
+                                        UniqueId.Of("A", "2", "A"),
+                                        UniqueId.Of("A", "2", "B"),
+                                        UniqueId.Of("B", "1"),
+                                        UniqueId.Of("B", "2"),
                                     };
 
         [Fact]
@@ -54,7 +54,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             foreach (var uniqueIdentifier in ExpectedOrder)
             {
                 Assert.Equal(1, ExpectedOrder.Where(e => e.GetHashCode() == uniqueIdentifier.GetHashCode()).Count());
-                Assert.Equal(uniqueIdentifier.GetHashCode(), UniqueIdentifier.Of(uniqueIdentifier.Scheme, uniqueIdentifier.Value, uniqueIdentifier.Version).GetHashCode());
+                Assert.Equal(uniqueIdentifier.GetHashCode(), UniqueId.Of(uniqueIdentifier.Scheme, uniqueIdentifier.Value, uniqueIdentifier.Version).GetHashCode());
             }
         }
 
@@ -78,12 +78,12 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             EqualsCodeBehavesAsExpected((a, b) => a == b);
         }
 
-        private static void EqualsCodeBehavesAsExpected(Func<UniqueIdentifier, UniqueIdentifier, bool> equals)
+        private static void EqualsCodeBehavesAsExpected(Func<UniqueId, UniqueId, bool> equals)
         {
             foreach (var id in ExpectedOrder)
             {
                 Assert.Equal(1, ExpectedOrder.Where(e => equals(e, id)).Count());
-                Assert.True(equals(id, UniqueIdentifier.Of(id.Scheme, id.Value, id.Version)));
+                Assert.True(equals(id, UniqueId.Of(id.Scheme, id.Value, id.Version)));
             }
         }
 
@@ -92,7 +92,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
         {
             foreach (var uniqueIdentifier in ExpectedOrder)
             {
-                Assert.Equal(uniqueIdentifier, UniqueIdentifier.Parse(uniqueIdentifier.ToString()));
+                Assert.Equal(uniqueIdentifier, UniqueId.Parse(uniqueIdentifier.ToString()));
             }
         }
 
@@ -101,7 +101,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
         [InlineData("A~B~C~D~E")]
         public void WrongNumberOfSeparatorsFails(string uid)
         {
-            Assert.Throws<ArgumentException>(() => UniqueIdentifier.Parse(uid));
+            Assert.Throws<ArgumentException>(() => UniqueId.Parse(uid));
         }
     }
 }

@@ -18,10 +18,10 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
     {
         private readonly ExternalIdBundle _securityKey;
         private readonly IList<ITrade> _trades;
-        private readonly UniqueIdentifier _identifier;
+        private readonly UniqueId _identifier;
         private readonly long _quantity;
 
-        public PositionImpl(UniqueIdentifier identifier, long quantity, ExternalIdBundle securityKey, IList<ITrade> trades)
+        public PositionImpl(UniqueId identifier, long quantity, ExternalIdBundle securityKey, IList<ITrade> trades)
         {
             _securityKey = securityKey;
             _trades = trades;
@@ -44,7 +44,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             get { return _trades; }
         }
 
-        public UniqueIdentifier UniqueId
+        public UniqueId UniqueId
         {
             get { return _identifier; }
         }

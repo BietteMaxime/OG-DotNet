@@ -15,13 +15,13 @@ namespace OGDotNet.Mappedtypes.Engine.MarketData.Spec
     [FudgeSurrogate(typeof(UserMarketDataSpecificationBuilder))]
     public class UserMarketDataSpecification : MarketDataSpecification
     {
-        private readonly UniqueIdentifier _userSnapshotID;
+        private readonly UniqueId _userSnapshotID;
 
-        public UserMarketDataSpecification(UniqueIdentifier userSnapshotID)
+        public UserMarketDataSpecification(UniqueId userSnapshotID)
         {
             _userSnapshotID = userSnapshotID;
         }
 
-        public UniqueIdentifier UserSnapshotID { get { return _userSnapshotID; } }
+        public UniqueId UserSnapshotID { get { return _userSnapshotID; } }
     }
 }

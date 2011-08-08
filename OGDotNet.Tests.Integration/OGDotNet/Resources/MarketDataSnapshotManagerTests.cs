@@ -320,7 +320,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             return CausesTick(u => ExecutionOptions.Snapshot(u.ToLatest()), action);
         }
 
-        private static bool CausesTick(Func<UniqueIdentifier, IViewExecutionOptions> optionsFactory, Action<MarketDataSnapshotProcessor> action)
+        private static bool CausesTick(Func<UniqueId, IViewExecutionOptions> optionsFactory, Action<MarketDataSnapshotProcessor> action)
         {
             const string viewName = RemoteViewClientBatchTests.ViewName;
 

@@ -33,7 +33,7 @@ namespace OGDotNet.Mappedtypes.Engine
             get { return _value; }
         }
 
-        public UniqueIdentifier UniqueId
+        public UniqueId UniqueId
         {
             get
             {

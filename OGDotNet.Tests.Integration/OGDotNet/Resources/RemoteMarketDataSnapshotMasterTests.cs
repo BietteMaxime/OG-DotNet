@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteMarketDataSnapshotMasterTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -169,14 +169,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var name = TestUtils.GetUniqueName();
 
             var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));
-            UniqueIdentifier init = marketDataSnapshotDocument.UniqueId;
+            UniqueId init = marketDataSnapshotDocument.UniqueId;
             Assert.True(init.IsVersioned);
             Assert.Equal("0", init.Version);
             Assert.Equal(marketDataSnapshotDocument.UniqueId, marketDataSnapshotDocument.Snapshot.UniqueId);
 
             snapshotMaster.Update(marketDataSnapshotDocument);
 
-            UniqueIdentifier afterUpdate = marketDataSnapshotDocument.UniqueId;
+            UniqueId afterUpdate = marketDataSnapshotDocument.UniqueId;
             Assert.True(afterUpdate.IsVersioned);
             Assert.Equal("1", afterUpdate.Version);
             Assert.Equal(marketDataSnapshotDocument.UniqueId, marketDataSnapshotDocument.Snapshot.UniqueId);
@@ -228,14 +228,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>
                     {
                         {
-                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("AA", "XX")),
+                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("AA", "XX")),
                             new Dictionary<string, ValueSnapshot>
                                 {
                                     {"SomeValue", new ValueSnapshot(12)}
                                 }
                             },
                         {
-                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueIdentifier.Of("AA", "YY")),
+                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("AA", "YY")),
                             new Dictionary<string, ValueSnapshot>
                                 {
                                     {"SomeOtherValue", new ValueSnapshot(12){OverrideValue = 13}}

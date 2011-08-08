@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="MarketDataValueSpecification.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -17,9 +17,9 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
     public class MarketDataValueSpecification : IEquatable<MarketDataValueSpecification>
     {
         private readonly MarketDataValueType _type;
-        private readonly UniqueIdentifier _uniqueId;
+        private readonly UniqueId _uniqueId;
 
-        public MarketDataValueSpecification(MarketDataValueType type, UniqueIdentifier uniqueId)
+        public MarketDataValueSpecification(MarketDataValueType type, UniqueId uniqueId)
         {
             _type = type;
             _uniqueId = uniqueId;
@@ -30,7 +30,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
             get { return _type; }
         }
 
-        public UniqueIdentifier UniqueId
+        public UniqueId UniqueId
         {
             get { return _uniqueId; }
         }
@@ -62,7 +62,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
         {
             return new MarketDataValueSpecification(
                 EnumBuilder<MarketDataValueType>.Parse(ffc.GetMessage("type").GetString(1)),
-                deserializer.FromField<UniqueIdentifier>(ffc.GetByName("uniqueId"))
+                deserializer.FromField<UniqueId>(ffc.GetByName("uniqueId"))
                 );
         }
 

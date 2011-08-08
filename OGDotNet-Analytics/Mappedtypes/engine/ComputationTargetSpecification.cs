@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ComputationTargetSpecification.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -17,9 +17,9 @@ namespace OGDotNet.Mappedtypes.Engine
     public class ComputationTargetSpecification : IEquatable<ComputationTargetSpecification>
     {
         private readonly ComputationTargetType _type;
-        private readonly UniqueIdentifier _uid;
+        private readonly UniqueId _uid;
 
-        public ComputationTargetSpecification(ComputationTargetType type, UniqueIdentifier uid)
+        public ComputationTargetSpecification(ComputationTargetType type, UniqueId uid)
         {
             _type = type;
             _uid = uid;
@@ -30,7 +30,7 @@ namespace OGDotNet.Mappedtypes.Engine
             get { return _type; }
         }
 
-        public UniqueIdentifier Uid
+        public UniqueId Uid
         {
             get { return _uid; }
         }

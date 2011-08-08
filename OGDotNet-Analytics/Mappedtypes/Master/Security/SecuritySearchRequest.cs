@@ -17,7 +17,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
         private readonly string _name;
         private readonly string _securityType;
         private readonly ExternalIdSearch _externalIdSearch;
-        //TODO private List<ObjectIdentifier> _securityIds
+        //TODO private List<ObjectId> _securityIds
 
         public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType, ExternalIdSearch externalIdSearch)
         {

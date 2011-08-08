@@ -24,7 +24,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet
         {
             get
             {
-                var mappedTypes = typeof(UniqueIdentifier).Assembly.GetTypes().ToList();
+                var mappedTypes = typeof(UniqueId).Assembly.GetTypes().ToList();
                 Assert.NotEmpty(mappedTypes);
                 return mappedTypes.OrderBy(t => t.FullName);
             }
@@ -34,7 +34,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet
         [TypedPropertyData("Types")]
         public void ConsistentUniqueIdentifierPropertyName(Type mappedType)
         {
-            foreach (var propertyInfo in mappedType.GetProperties().Where(p => p.PropertyType == typeof(UniqueIdentifier)))
+            foreach (var propertyInfo in mappedType.GetProperties().Where(p => p.PropertyType == typeof(UniqueId)))
             {
                 switch (propertyInfo.Name)
                 {
@@ -51,7 +51,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet
         public void ExplicitImplementationofIUniqueIdentifiable(Type mappedType)
         {
             if (
-                mappedType.GetProperties().Where(p => p.PropertyType == typeof(UniqueIdentifier) && p.Name == "UniqueId").Any()
+                mappedType.GetProperties().Where(p => p.PropertyType == typeof(UniqueId) && p.Name == "UniqueId").Any()
                 && !typeof(IUniqueIdentifiable).IsAssignableFrom(mappedType))
             {
                 if (mappedType != typeof(ComputationTarget)

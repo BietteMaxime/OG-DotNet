@@ -15,7 +15,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
     [FudgeSurrogate(typeof(PortfolioNodeImplBuilder))]
     internal class PortfolioNodeImpl : PortfolioNode
     {
-        public PortfolioNodeImpl(UniqueIdentifier identifier, string name, IList<PortfolioNode> subNodes, IList<IPosition> positions) : base(identifier, name, subNodes, positions)
+        public PortfolioNodeImpl(UniqueId identifier, string name, IList<PortfolioNode> subNodes, IList<IPosition> positions) : base(identifier, name, subNodes, positions)
         {
         }
     }

@@ -34,7 +34,7 @@ namespace OGDotNet.Builders
             {
                 if (valueField.Value is string)
                 {
-                    return UniqueIdentifier.Parse((string)valueField.Value);
+                    return UniqueId.Parse((string)valueField.Value);
                 }
                 throw new ArgumentException("Computation target type which I don't know how to deserialize");
             }

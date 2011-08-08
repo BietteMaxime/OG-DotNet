@@ -22,7 +22,7 @@ namespace OGDotNet.Mappedtypes.Financial.currency
     {
         private readonly ConcurrentDictionary<Currency, Dictionary<Currency, CurrencyMatrixValue>> _values = new ConcurrentDictionary<Currency, Dictionary<Currency, CurrencyMatrixValue>>();
 
-        public UniqueIdentifier UniqueId { get; internal set; }
+        public UniqueId UniqueId { get; internal set; }
 
         public ICollection<Currency> SourceCurrencies
         {

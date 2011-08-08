@@ -23,7 +23,7 @@ namespace OGDotNet.Builders.ViewResultModel
         {
         }
 
-        protected override InMemoryViewDeltaResultModel BuildObject(IFudgeFieldContainer msg, IFudgeDeserializer deserializer, Dictionary<string, ViewCalculationResultModel> configurationMap, UniqueIdentifier viewProcessId, UniqueIdentifier viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, TimeSpan calculationDuration)
+        protected override InMemoryViewDeltaResultModel BuildObject(IFudgeFieldContainer msg, IFudgeDeserializer deserializer, Dictionary<string, ViewCalculationResultModel> configurationMap, UniqueId viewProcessId, UniqueId viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, TimeSpan calculationDuration)
         {
             var tsField = msg.GetByName("previousTS");
             DateTimeOffset previousResultTimestamp;

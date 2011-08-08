@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ComputationTargetSpecificationBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -32,7 +32,7 @@ namespace OGDotNet.Builders
         public override ComputationTargetSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             ComputationTargetType? type = null;
-            UniqueIdentifier uid = null;
+            UniqueId uid = null;
 
             foreach (var field in msg)
             {
@@ -42,7 +42,7 @@ namespace OGDotNet.Builders
                         type = EnumBuilder<ComputationTargetType>.Parse((string) field.Value);
                         break;
                     case "computationTargetIdentifier":
-                        uid = UniqueIdentifier.Parse((string)field.Value);
+                        uid = UniqueId.Parse((string)field.Value);
                         break;
                     default:
                         break;
@@ -54,7 +54,7 @@ namespace OGDotNet.Builders
         public static void AddMessageFields(IFudgeSerializer fudgeSerializer, IAppendingFudgeFieldContainer msg, ComputationTargetSpecification @object)
         {
             msg.Add("computationTargetType", EnumBuilder<ComputationTargetType>.GetJavaName(@object.Type));
-            UniqueIdentifier uid = @object.Uid;
+            UniqueId uid = @object.Uid;
             if (uid != null)
             {
                 fudgeSerializer.WriteInline(msg, "computationTargetIdentifier", uid);

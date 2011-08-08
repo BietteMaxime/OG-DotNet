@@ -23,10 +23,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private readonly ManualResetEventSlim _constructedEvent = new ManualResetEventSlim(false);
         private readonly SnapshotLiveDataStreamInvalidater _liveStream;
         private readonly RemoteEngineContext _remoteEngineContext;
-        private readonly UniqueIdentifier _snapshotId;
+        private readonly UniqueId _snapshotId;
         private readonly RemoteClient _remoteClient;
 
-        public SnapshotDataStreamInvalidater(SnapshotLiveDataStreamInvalidater liveStream, RemoteEngineContext remoteEngineContext, UniqueIdentifier snapshotId)
+        public SnapshotDataStreamInvalidater(SnapshotLiveDataStreamInvalidater liveStream, RemoteEngineContext remoteEngineContext, UniqueId snapshotId)
         {
             _liveStream = liveStream;
             _remoteEngineContext = remoteEngineContext;

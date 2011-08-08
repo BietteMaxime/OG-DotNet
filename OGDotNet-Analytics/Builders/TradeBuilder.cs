@@ -23,7 +23,7 @@ namespace OGDotNet.Builders
         public override ITrade DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             //TODO: the rest of this
-            var uniqueIdentifier = UniqueIdentifier.Parse(ffc.GetString("uniqueId"));
+            var uniqueIdentifier = UniqueId.Parse(ffc.GetString("uniqueId"));
 
             var tradeDate = ffc.GetValue<DateTimeOffset>("tradeDate");
 

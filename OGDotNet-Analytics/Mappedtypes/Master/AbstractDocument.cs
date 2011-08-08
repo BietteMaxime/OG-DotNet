@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="AbstractDocument.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -79,6 +79,6 @@ namespace OGDotNet.Mappedtypes.Master
             }
         }
 
-        public abstract UniqueIdentifier UniqueId { get; set; }
+        public abstract UniqueId UniqueId { get; set; }
     }
 }

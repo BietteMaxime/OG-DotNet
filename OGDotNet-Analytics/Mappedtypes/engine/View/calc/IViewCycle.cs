@@ -17,7 +17,7 @@ namespace OGDotNet.Mappedtypes.Engine.View.Calc
         IViewComputationResultModel GetResultModel();
         ComputationCacheResponse QueryComputationCaches(ComputationCacheQuery computationCacheQuery);
 
-        UniqueIdentifier GetViewProcessId();
+        UniqueId GetViewProcessId();
 
         ViewCycleState GetState();
         long GetDurationNanos();

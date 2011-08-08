@@ -51,14 +51,14 @@ namespace OGDotNet.Model.Resources
 
         private MarketDataSnapshotDocument PutDefinition(MarketDataSnapshotDocument document, params string[] pathParts)
         {
-            return ReqDefinition((t, d, f) => t.Put<UniqueIdentifier>(d, f), document, pathParts);
+            return ReqDefinition((t, d, f) => t.Put<UniqueId>(d, f), document, pathParts);
         }
         private MarketDataSnapshotDocument PostDefinition(MarketDataSnapshotDocument document, params string[] pathParts)
         {
-            return ReqDefinition((t, d, f) => t.Post<UniqueIdentifier>(d, f), document, pathParts);
+            return ReqDefinition((t, d, f) => t.Post<UniqueId>(d, f), document, pathParts);
         }
 
-        private MarketDataSnapshotDocument ReqDefinition(Func<RestTarget, MarketDataSnapshotDocument, string, UniqueIdentifier> reqFunc, MarketDataSnapshotDocument document, params string[] pathParts)
+        private MarketDataSnapshotDocument ReqDefinition(Func<RestTarget, MarketDataSnapshotDocument, string, UniqueId> reqFunc, MarketDataSnapshotDocument document, params string[] pathParts)
         {
             var target = pathParts.Aggregate(_restTarget, (r, p) => r.Resolve(p));
             var uid = reqFunc(target, document, "uniqueId");
@@ -73,7 +73,7 @@ namespace OGDotNet.Model.Resources
             return document;
         }
 
-        public MarketDataSnapshotDocument Get(UniqueIdentifier uniqueId)
+        public MarketDataSnapshotDocument Get(UniqueId uniqueId)
         {
             var resp = _restTarget.Resolve("snapshots").Resolve(uniqueId.ToString()).Get<MarketDataSnapshotDocument>();
             if (resp == null || resp.UniqueId == null || resp.Snapshot == null)
@@ -83,7 +83,7 @@ namespace OGDotNet.Model.Resources
             return resp;
         }
 
-        public void Remove(UniqueIdentifier uniqueId)
+        public void Remove(UniqueId uniqueId)
         {
             _restTarget.Resolve("snapshots").Resolve(uniqueId.ToString()).Delete();
         }
