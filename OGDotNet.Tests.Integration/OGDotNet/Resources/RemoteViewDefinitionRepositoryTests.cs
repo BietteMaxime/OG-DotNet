@@ -38,6 +38,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var remoteViewResource = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(viewName);
             Assert.NotNull(remoteViewResource);
             Assert.Equal(viewName, remoteViewResource.Name);
+            Assert.NotNull(remoteViewResource.UniqueID);
         }
     }
 }
