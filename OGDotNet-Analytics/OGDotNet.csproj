@@ -358,7 +358,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mappedtypes\financial\marketdatasnapshot\rest\" />
-    <Folder Include="Mappedtypes\NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
