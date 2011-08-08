@@ -335,7 +335,7 @@ namespace OGDotNet.Tests.Integration
             Assert.NotNull(trade);
             Assert.NotNull(trade.UniqueId);
             Assert.NotNull(trade.Counterparty);
-            Assert.NotNull(trade.Counterparty.Identifier);
+            Assert.NotNull(trade.Counterparty.ExternalId);
             Assert.NotEqual(default(DateTimeOffset), trade.TradeDate);
             AssertSensibleValue(trade.SecurityKey);
         }
