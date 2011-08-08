@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
@@ -23,9 +24,8 @@ namespace OGDotNet.Model.Resources
             _restTarget = restTarget;
         }
         
-        public SearchResult<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest, ExternalIdSearch externalIdSearch = null)
+        public SearchResult<SecurityDocument> Search(SecuritySearchRequest request)
         {
-            var request = new SecuritySearchRequest(pagingRequest, name, type, externalIdSearch);
             return _restTarget.Resolve("search").Post<SearchResult<SecurityDocument>>(request);
         }
 

@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.Security;
 using OGDotNet.Mappedtypes.Util.Db;
 using OGDotNet.Model.Resources;
@@ -72,7 +73,8 @@ namespace OGDotNet.SecurityViewer.View
                                                  try
                                                  {
                                                      CancelIfCancelled(token);
-                                                     var results = SecurityMaster.Search(name, type, new PagingRequest(currentPage, 20));
+                                                     var request = new SecuritySearchRequest(new PagingRequest(currentPage, 20), name, type);
+                                                     var results = SecurityMaster.Search(request);
                                                      CancelIfCancelled(token);
                                                      Dispatcher.Invoke((Action)(() =>
                                                                                           {

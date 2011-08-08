@@ -11,13 +11,17 @@ using OGDotNet.Mappedtypes.Util.Db;
 
 namespace OGDotNet.Mappedtypes.Master.Security
 {
-    internal class SecuritySearchRequest
+    public class SecuritySearchRequest
     {
         private readonly PagingRequest _pagingRequest;
         private readonly string _name;
         private readonly string _securityType;
         private readonly ExternalIdSearch _externalIdSearch;
         //TODO private List<ObjectId> _securityIds
+
+        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType) : this(pagingRequest, name, securityType, null)
+        {
+        }
 
         public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType, ExternalIdSearch externalIdSearch)
         {

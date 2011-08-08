@@ -106,7 +106,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static SearchResult<SecurityDocument> GetSomeEquities()
         {
             var remoteSecurityMaster = Context.SecurityMaster;
-            return remoteSecurityMaster.Search("*", "EQUITY", new PagingRequest(1, 3));
+            var request = new SecuritySearchRequest(new PagingRequest(1, 3), "*", "EQUITY");
+            return remoteSecurityMaster.Search(request);
         }
 
         private static void AssertSane(Tuple<UniqueId, ILocalDateDoubleTimeSeries> result)

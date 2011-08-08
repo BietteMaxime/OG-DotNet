@@ -19,21 +19,24 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanSearchWithRequest()
         {
-            var searchResult = Context.SecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 20));
+            var request = new SecuritySearchRequest(new PagingRequest(1, 20), "*", "FUTURE");
+            var searchResult = Context.SecurityMaster.Search(request);
             Assert.NotEmpty(searchResult.Documents);
 
             var securitytoFind = searchResult.Documents.First();
             var identifierBundle = securitytoFind.Security.Identifiers;
             {
                 var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers, IdentifierSearchType.All);
-                var singleSearchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All, identifierSearch);
+                request = new SecuritySearchRequest(PagingRequest.All, "*", "FUTURE", identifierSearch);
+                var singleSearchResult = Context.SecurityMaster.Search(request);
                 Assert.NotEmpty(singleSearchResult.Documents);
                 Assert.Single(singleSearchResult.Documents);
                 Assert.Equal(singleSearchResult.Documents.Single().Security.UniqueId, securitytoFind.UniqueId);
             }
             {
                 var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers.Concat(Enumerable.Repeat(ExternalId.Of("XXX", "YYY"), 1)), IdentifierSearchType.Any);
-                var singleSearchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All, identifierSearch);
+                request = new SecuritySearchRequest(PagingRequest.All, "*", "FUTURE", identifierSearch);
+                var singleSearchResult = Context.SecurityMaster.Search(request);
                 Assert.NotEmpty(singleSearchResult.Documents);
                 Assert.Single(singleSearchResult.Documents);
                 Assert.Equal(singleSearchResult.Documents.Single().Security.UniqueId, securitytoFind.UniqueId);
@@ -43,7 +46,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void GetsMatchSearch()
         {
-            var searchResult = Context.SecurityMaster.Search("*", "FUTURE", new PagingRequest(1, 1));
+            var request = new SecuritySearchRequest(new PagingRequest(1, 1), "*", "FUTURE", null);
+            var searchResult = Context.SecurityMaster.Search(request);
             foreach (var securityDocument in searchResult.Documents)
             {
                 var security = Context.SecurityMaster.GetSecurity(securityDocument.UniqueId);
@@ -61,7 +65,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Contains("FUTURE", result.SecurityTypes);
             foreach (var securityType in result.SecurityTypes)
             {
-                var searchResult = Context.SecurityMaster.Search("*", securityType, PagingRequest.One);
+                var request = new SecuritySearchRequest(PagingRequest.One, "*", securityType, null);
+                var searchResult = Context.SecurityMaster.Search(request);
                 switch (securityType)
                 {
                     default:
@@ -70,9 +75,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         break;
                 }
             }
+            var request1 = new SecuritySearchRequest(PagingRequest.None, "*", null, null);
             Assert.Equal(
-                Context.SecurityMaster.Search("*", null, PagingRequest.None).Paging.TotalItems,
-                result.SecurityTypes.Sum(r => Context.SecurityMaster.Search("*", r, PagingRequest.None).Paging.TotalItems)
+                Context.SecurityMaster.Search(request1).Paging.TotalItems,
+                result.SecurityTypes.Sum(r =>
+                                             {
+                                                 var request = new SecuritySearchRequest(PagingRequest.None, "*", r, null);
+                                                 return Context.SecurityMaster.Search(request).Paging.TotalItems;
+                                             })
                 );
         }
     }
