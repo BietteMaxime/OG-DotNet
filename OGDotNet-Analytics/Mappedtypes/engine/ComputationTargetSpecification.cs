@@ -35,11 +35,13 @@ namespace OGDotNet.Mappedtypes.Engine
             get { return _uid; }
         }
 
+        //NOTE: non standard equals method, since ComputationTargetType is an enum
+
         public bool Equals(ComputationTargetSpecification other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other._type, _type) && Equals(other._uid, _uid);
+            return other._type == _type && Equals(other._uid, _uid);
         }
 
         public override bool Equals(object obj)
@@ -54,7 +56,7 @@ namespace OGDotNet.Mappedtypes.Engine
         {
             unchecked
             {
-                return (_type.GetHashCode() * 397) ^ (_uid != null ? _uid.GetHashCode() : 0);
+                return ((int)_type * 397) ^ (_uid != null ? _uid.GetHashCode() : 0);
             }
         }
     }
