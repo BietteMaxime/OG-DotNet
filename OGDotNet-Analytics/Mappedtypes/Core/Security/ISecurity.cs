@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ISecurity.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -19,6 +19,6 @@ namespace OGDotNet.Mappedtypes.Core.Security
 
         string SecurityType { get; }
 
-        IdentifierBundle Identifiers { get; }
+        ExternalIdBundle Identifiers { get; }
     }
 }

@@ -11,7 +11,7 @@ namespace OGDotNet.Mappedtypes.Core.Position
 {
     public interface IPositionOrTrade : IUniqueIdentifiable
     {
-        IdentifierBundle SecurityKey { get; }
+        ExternalIdBundle SecurityKey { get; }
         long Quantity { get; }
     }
 }

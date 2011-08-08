@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Identifier.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="ExternalId.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -12,8 +12,8 @@ using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.Id
 {
-    [FudgeSurrogate(typeof(IdentifierBuilder))]
-    public class Identifier : IEquatable<Identifier>, IComparable<Identifier>
+    [FudgeSurrogate(typeof(ExternalIdBuilder))]
+    public class ExternalId : IEquatable<ExternalId>, IComparable<ExternalId>
     {
         private const string Separator = "~";
 
@@ -29,28 +29,28 @@ namespace OGDotNet.Mappedtypes.Id
             get { return _value; }
         }
 
-        public Identifier(string scheme, string value)
+        public ExternalId(string scheme, string value)
         {
             _scheme = scheme;
             _value = value;
         }
 
-        public static Identifier Of(string scheme, string value)
+        public static ExternalId Of(string scheme, string value)
         {
-            return new Identifier(scheme, value);
+            return new ExternalId(scheme, value);
         }
 
-        public static Identifier Parse(string s)
+        public static ExternalId Parse(string s)
         {
             int pos = s.IndexOf(Separator);
             if (pos < 0)
             {
                 throw new ArgumentException(string.Format("Invalid identifier format: {0}", s), "s");
             }
-            return new Identifier(s.Substring(0, pos), s.Substring(pos + 1));
+            return new ExternalId(s.Substring(0, pos), s.Substring(pos + 1));
         }
 
-        public int CompareTo(Identifier other)
+        public int CompareTo(ExternalId other)
         {
             //NOTE: the aim here is to make compare work the same was as in java, which is ~InvariantCulture
 
@@ -69,7 +69,7 @@ namespace OGDotNet.Mappedtypes.Id
             return string.Format("{0}{1}{2}", Scheme, Separator, Value);
         }
 
-        public bool Equals(Identifier other)
+        public bool Equals(ExternalId other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -80,8 +80,8 @@ namespace OGDotNet.Mappedtypes.Id
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(Identifier)) return false;
-            return Equals((Identifier)obj);
+            if (obj.GetType() != typeof(ExternalId)) return false;
+            return Equals((ExternalId)obj);
         }
 
         public override int GetHashCode()
@@ -92,12 +92,12 @@ namespace OGDotNet.Mappedtypes.Id
             }
         }
 
-        public static bool operator ==(Identifier left, Identifier right)
+        public static bool operator ==(ExternalId left, ExternalId right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Identifier left, Identifier right)
+        public static bool operator !=(ExternalId left, ExternalId right)
         {
             return !Equals(left, right);
         }

@@ -11,6 +11,6 @@ namespace OGDotNet.Mappedtypes.Core.Position
 {
     public interface ICounterparty
     {
-        Identifier Identifier { get; }
+        ExternalId Identifier { get; }
     }
 }

@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="MarketDataSnapshotSearchRequest.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -15,7 +15,7 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
         private readonly bool _includeData;
         private readonly PagingRequest _pagingRequest;
         private readonly string _name;
-        //TODO private readonly List<Identifier> _snapshotIds;
+        //TODO private readonly List<ExternalId> _snapshotIds;
 
         public MarketDataSnapshotSearchRequest(string name, PagingRequest pagingRequest, bool includeData = true)
         {

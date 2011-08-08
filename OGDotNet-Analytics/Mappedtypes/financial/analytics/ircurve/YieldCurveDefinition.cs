@@ -20,7 +20,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
         private readonly string _name;
         private readonly string _interpolatorName;
         private readonly List<FixedIncomeStrip> _strips = new List<FixedIncomeStrip>();
-        private Identifier _region;
+        private ExternalId _region;
 
         public YieldCurveDefinition(Currency currency, string name, string interpolatorName)
         {
@@ -57,7 +57,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             get { return new SortedSet<FixedIncomeStrip>(_strips); }
         }
 
-        public Identifier Region
+        public ExternalId Region
         {
             get { return _region; }
             set { _region = value; }
@@ -69,7 +69,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             string name = null;
             string interpolatorName = null;
             var strips = new List<FixedIncomeStrip>();
-            Identifier region = null;
+            ExternalId region = null;
             foreach (var fudgeField in ffc.GetAllFields())
             {
                 switch (fudgeField.Name)
@@ -84,7 +84,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
                         interpolatorName = (string)fudgeField.Value;
                         break;
                     case "region":
-                        region = Identifier.Parse((string)fudgeField.Value);
+                        region = ExternalId.Parse((string)fudgeField.Value);
                         break;
                     case "strip":
                         strips.Add(deserializer.FromField<FixedIncomeStrip>(fudgeField));

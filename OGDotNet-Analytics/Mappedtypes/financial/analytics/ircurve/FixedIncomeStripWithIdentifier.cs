@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="FixedIncomeStripWithIdentifier.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -15,9 +15,9 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
     {
         private readonly StripInstrumentType _instrumentType;
         private readonly Tenor _maturity;
-        private readonly Identifier _security;
+        private readonly ExternalId _security;
 
-        public FixedIncomeStripWithIdentifier(StripInstrumentType instrumentType, Tenor maturity, Identifier security)
+        public FixedIncomeStripWithIdentifier(StripInstrumentType instrumentType, Tenor maturity, ExternalId security)
         {
             _instrumentType = instrumentType;
             _maturity = maturity;
@@ -34,7 +34,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             get { return _maturity; }
         }
 
-        public Identifier Security
+        public ExternalId Security
         {
             get { return _security; }
         }

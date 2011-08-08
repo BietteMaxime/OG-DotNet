@@ -34,7 +34,7 @@ namespace OGDotNet.Model.Resources
             return target.Get<ISecurity>();
         }
 
-        public ISecurity GetSecurity(IdentifierBundle bundle)
+        public ISecurity GetSecurity(ExternalIdBundle bundle)
         {
             ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
 
@@ -49,7 +49,7 @@ namespace OGDotNet.Model.Resources
             return target.Get<SecuritiesResponse>().Securities;
         }
 
-        public ICollection<ISecurity> GetSecurities(IdentifierBundle bundle)
+        public ICollection<ISecurity> GetSecurities(ExternalIdBundle bundle)
         {
             ArgumentChecker.NotEmpty(bundle.Identifiers, "bundle");
 

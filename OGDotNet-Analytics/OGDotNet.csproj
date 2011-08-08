@@ -68,7 +68,7 @@
     <Compile Include="Builders\DurationBuilder.cs" />
     <Compile Include="Builders\EmptyFunctionParametersBuilder.cs" />
     <Compile Include="Builders\ExecutionOptionsBuilder.cs" />
-    <Compile Include="Builders\IdentifierBundleBuilder.cs" />
+    <Compile Include="Builders\ExternalIdBundleBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
     <Compile Include="Builders\LiveMarketDataSpecificationBuilder.cs" />
     <Compile Include="Builders\PortfolioNodeImplBuilder.cs" />
@@ -133,7 +133,7 @@
     <Compile Include="Mappedtypes\financial\currency\CurrencyMatrix.cs" />
     <Compile Include="Builders\EnumBuilder.cs" />
     <Compile Include="Builders\EnumUtils.cs" />
-    <Compile Include="Builders\IdentifierBuilder.cs" />
+    <Compile Include="Builders\ExternalIdBuilder.cs" />
     <Compile Include="Builders\PositionBuilder.cs" />
     <Compile Include="Builders\TradeBuilder.cs" />
     <Compile Include="Builders\ViewResultModel\InMemoryViewDeltaResultModelBuilder.cs" />
@@ -305,9 +305,9 @@
     <Compile Include="Mappedtypes\Master\SearchResult.cs" />
     <Compile Include="Utils\ArgumentChecker.cs" />
     <Compile Include="Mappedtypes\financial\Security\FinancialSecurity.cs" />
-    <Compile Include="Mappedtypes\Id\IdentifierBundle.cs" />
+    <Compile Include="Mappedtypes\Id\ExternalIdBundle.cs" />
     <Compile Include="Mappedtypes\Id\IdentifierSearch.cs" />
-    <Compile Include="Mappedtypes\Id\Identifier.cs" />
+    <Compile Include="Mappedtypes\Id\ExternalId.cs" />
     <Compile Include="Model\Resources\ISecuritySource.cs" />
     <Compile Include="Mappedtypes\Util\Db\Paging.cs" />
     <Compile Include="Mappedtypes\Master\Security\ManageableSecurity.cs" />

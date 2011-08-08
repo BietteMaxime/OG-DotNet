@@ -34,11 +34,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         private readonly List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
 
-        readonly ActionFactory<IdentifierBundle, ISecurity> _securityFactory;
+        readonly ActionFactory<ExternalIdBundle, ISecurity> _securityFactory;
 
         public ComputationResultsTables(ISecuritySource remoteSecuritySource, ICompiledViewDefinition compiledViewDefinition)
         {
-            _securityFactory = new ActionFactory<IdentifierBundle, ISecurity>(remoteSecuritySource.GetSecurity);
+            _securityFactory = new ActionFactory<ExternalIdBundle, ISecurity>(remoteSecuritySource.GetSecurity);
 
             _viewDefinition = compiledViewDefinition.ViewDefinition;
             _portfolio = compiledViewDefinition.Portfolio;

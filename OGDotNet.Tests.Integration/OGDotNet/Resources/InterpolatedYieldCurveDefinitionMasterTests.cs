@@ -112,7 +112,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
 
-                foreach (Identifier region in new[] { null, new Identifier("XX", "12"), new Identifier("asd", "asd") })
+                foreach (ExternalId region in new[] { null, new ExternalId("XX", "12"), new ExternalId("asd", "asd") })
                 {
                     YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
 
@@ -187,7 +187,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             string curveName = TestUtils.GetUniqueName();
 
-            var yieldCurveDefinition = new YieldCurveDefinition(Currency.USD, curveName, "Linear") { Region = new Identifier("SOMEWHERE", "Europe") };
+            var yieldCurveDefinition = new YieldCurveDefinition(Currency.USD, curveName, "Linear") { Region = new ExternalId("SOMEWHERE", "Europe") };
             yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.Day, InstrumentType = StripInstrumentType.Cash });
             yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.TwoYears, InstrumentType = StripInstrumentType.Future, NthFutureFromTenor = 23 });
             return new YieldCurveDefinitionDocument

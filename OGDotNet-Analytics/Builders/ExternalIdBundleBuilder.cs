@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IdentifierBundleBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="ExternalIdBundleBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -14,32 +14,32 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Builders
 {
-    class IdentifierBundleBuilder : BuilderBase<IdentifierBundle>
+    class ExternalIdBundleBuilder : BuilderBase<ExternalIdBundle>
     {
-        public IdentifierBundleBuilder(FudgeContext context, Type type) : base(context, type)
+        public ExternalIdBundleBuilder(FudgeContext context, Type type) : base(context, type)
         {
         }
 
-        public override IdentifierBundle DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
+        public override ExternalIdBundle DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            var identifiers = new HashSet<Identifier>();
+            var identifiers = new HashSet<ExternalId>();
 
             foreach (var field in msg.GetAllFields())
             {
                 switch (field.Name)
                 {
                     case "ID":
-                        var i = (Identifier)deserializer.FromField(field, typeof(Identifier));
+                        var i = (ExternalId)deserializer.FromField(field, typeof(ExternalId));
                         identifiers.Add(i);
                         break;
                     default:
                         throw new ArgumentException();
                 }
             }
-            return new IdentifierBundle(identifiers);
+            return new ExternalIdBundle(identifiers);
         }
 
-        protected override void SerializeImpl(IdentifierBundle obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
+        protected override void SerializeImpl(ExternalIdBundle obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
         {
             foreach (var identifier in obj.Identifiers)
             {

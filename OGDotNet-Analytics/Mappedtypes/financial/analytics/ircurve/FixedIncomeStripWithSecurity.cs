@@ -24,10 +24,10 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
         private readonly int _nthFutureFromTenor;
 
         private readonly DateTimeOffset _maturity;
-        private readonly Identifier _securityIdentifier;
+        private readonly ExternalId _securityIdentifier;
         private readonly ISecurity _security;
 
-        private FixedIncomeStripWithSecurity(StripInstrumentType instrumentType, Tenor tenor, Tenor resolvedTenor, int nthFutureFromTenor, DateTimeOffset maturity, Identifier securityIdentifier, ISecurity security)
+        private FixedIncomeStripWithSecurity(StripInstrumentType instrumentType, Tenor tenor, Tenor resolvedTenor, int nthFutureFromTenor, DateTimeOffset maturity, ExternalId securityIdentifier, ISecurity security)
         {
             _instrumentType = instrumentType;
             _tenor = tenor;
@@ -63,7 +63,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             get { return _maturity; }
         }
 
-        public Identifier SecurityIdentifier
+        public ExternalId SecurityIdentifier
         {
             get { return _securityIdentifier; }
         }
@@ -82,7 +82,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
                     new Tenor(ffc.GetString("resolvedTenor")),
                     ffc.GetInt("numFutures").GetValueOrDefault(-1),
                     GetDateTime(ffc.GetByName("maturity")),
-                    Identifier.Parse(ffc.GetString("identifier")),
+                    ExternalId.Parse(ffc.GetString("identifier")),
                     deserializer.FromField<ISecurity>(ffc.GetByName("security"))
                     );
 

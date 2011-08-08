@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="UniqueIdentifier.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -96,9 +96,9 @@ namespace OGDotNet.Mappedtypes.Id
             }
         }
         
-        public Identifier ToIdentifier()
+        public ExternalId ToIdentifier()
         {
-            return Identifier.Of("UID", ToString());
+            return ExternalId.Of("UID", ToString());
         }
 
         public override string ToString()

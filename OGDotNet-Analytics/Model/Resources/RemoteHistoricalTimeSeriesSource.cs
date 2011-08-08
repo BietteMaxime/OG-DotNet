@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteHistoricalTimeSeriesSource.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -43,7 +43,7 @@ namespace OGDotNet.Model.Resources
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(IdentifierBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField)
         {
             RestTarget target = _rest.Resolve("all")
                           .Resolve(EncodeDate(identifierValidityDate))
@@ -54,7 +54,7 @@ namespace OGDotNet.Model.Resources
             return DecodePairMessage(target.GetFudge());
         }
 
-        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(IdentifierBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
+        public Tuple<UniqueIdentifier, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
         {
             ArgumentChecker.NotNull(identifierBundle, "identifierBundle");
             ArgumentChecker.NotNull(dataSource, "dataSource");

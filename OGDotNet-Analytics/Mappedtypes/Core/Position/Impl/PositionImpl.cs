@@ -16,12 +16,12 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
     [FudgeSurrogate(typeof(PositionBuilder))]
     class PositionImpl : IPosition
     {
-        private readonly IdentifierBundle _securityKey;
+        private readonly ExternalIdBundle _securityKey;
         private readonly IList<ITrade> _trades;
         private readonly UniqueIdentifier _identifier;
         private readonly long _quantity;
 
-        public PositionImpl(UniqueIdentifier identifier, long quantity, IdentifierBundle securityKey, IList<ITrade> trades)
+        public PositionImpl(UniqueIdentifier identifier, long quantity, ExternalIdBundle securityKey, IList<ITrade> trades)
         {
             _securityKey = securityKey;
             _trades = trades;
@@ -29,7 +29,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             _quantity = quantity;
         }
 
-        public IdentifierBundle SecurityKey
+        public ExternalIdBundle SecurityKey
         {
             get { return _securityKey; }
         }

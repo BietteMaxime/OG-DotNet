@@ -340,14 +340,14 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(trade.SecurityKey);
         }
 
-        public static void AssertSensibleValue(IdentifierBundle bundle)
+        public static void AssertSensibleValue(ExternalIdBundle bundle)
         {
             Assert.NotNull(bundle);
             Assert.NotEmpty(bundle.Identifiers);
             AssertSensibleValue(bundle.Identifiers);
         }
 
-        public static void AssertSensibleValue(Identifier identifier)
+        public static void AssertSensibleValue(ExternalId identifier)
         {
             Assert.NotNull(identifier);
         }

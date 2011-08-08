@@ -52,7 +52,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var fixedIncomeStripWithIdentifier = matches.First();
                 Assert.NotNull(fixedIncomeStripWithIdentifier.Security);
 
-                var security = Context.SecuritySource.GetSecurity(new IdentifierBundle(fixedIncomeStripWithIdentifier.Security));
+                var security = Context.SecuritySource.GetSecurity(new ExternalIdBundle(fixedIncomeStripWithIdentifier.Security));
                 if (fixedIncomeStrip.InstrumentType == StripInstrumentType.Future)
                 {
                     Assert.Equal(EnumBuilder<StripInstrumentType>.GetJavaName(fixedIncomeStripWithIdentifier.InstrumentType), security.SecurityType);

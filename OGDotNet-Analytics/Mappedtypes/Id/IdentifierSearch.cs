@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="IdentifierSearch.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -17,16 +17,16 @@ namespace OGDotNet.Mappedtypes.Id
 {
     public class IdentifierSearch
     {
-        private readonly IEnumerable<Identifier> _identifiers;
+        private readonly IEnumerable<ExternalId> _identifiers;
         private readonly IdentifierSearchType _searchType;
 
-        public IdentifierSearch(IEnumerable<Identifier> identifiers, IdentifierSearchType searchType)
+        public IdentifierSearch(IEnumerable<ExternalId> identifiers, IdentifierSearchType searchType)
         {
             _identifiers = identifiers;
             _searchType = searchType;
         }
 
-        public IEnumerable<Identifier> Identifiers
+        public IEnumerable<ExternalId> Identifiers
         {
             get { return _identifiers; }
         }

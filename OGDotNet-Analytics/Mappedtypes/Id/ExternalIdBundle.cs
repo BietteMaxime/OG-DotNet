@@ -1,5 +1,5 @@
-//-----------------------------------------------------------------------
-// <copyright file="IdentifierBundle.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+﻿//-----------------------------------------------------------------------
+// <copyright file="ExternalIdBundle.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -13,20 +13,20 @@ using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.Id
 {
-    [FudgeSurrogate(typeof(IdentifierBundleBuilder))]
-    public class IdentifierBundle
+    [FudgeSurrogate(typeof(ExternalIdBundleBuilder))]
+    public class ExternalIdBundle
     {
-        private readonly HashSet<Identifier> _identifiers;
+        private readonly HashSet<ExternalId> _identifiers;
 
-        public IdentifierBundle(params Identifier[] identifiers) : this(new HashSet<Identifier>(identifiers)) { }
-        public IdentifierBundle(IEnumerable<Identifier> identifiers) : this(new HashSet<Identifier>(identifiers)) { }
+        public ExternalIdBundle(params ExternalId[] identifiers) : this(new HashSet<ExternalId>(identifiers)) { }
+        public ExternalIdBundle(IEnumerable<ExternalId> identifiers) : this(new HashSet<ExternalId>(identifiers)) { }
 
-        private IdentifierBundle(HashSet<Identifier> identifiers)
+        private ExternalIdBundle(HashSet<ExternalId> identifiers)
         {
             _identifiers = identifiers;
         }
 
-        public IEnumerable<Identifier> Identifiers
+        public IEnumerable<ExternalId> Identifiers
         {
             get { return _identifiers; }
         }

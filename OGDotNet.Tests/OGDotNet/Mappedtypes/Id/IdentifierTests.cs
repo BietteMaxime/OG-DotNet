@@ -16,13 +16,13 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
 {
     public class IdentifierTests
     {
-        static readonly Identifier[] ExpectedOrder = new[]
+        static readonly ExternalId[] ExpectedOrder = new[]
                                     {
-                                        Identifier.Of("A", "1"),
-                                        Identifier.Of("A", "2"),
-                                        Identifier.Of("B", "1"),
-                                        Identifier.Of("B", "2"),
-                                        Identifier.Of("B", "2~3"),
+                                        ExternalId.Of("A", "1"),
+                                        ExternalId.Of("A", "2"),
+                                        ExternalId.Of("B", "1"),
+                                        ExternalId.Of("B", "2"),
+                                        ExternalId.Of("B", "2~3"),
                                     };
 
         [Fact]
@@ -50,7 +50,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             foreach (var identifier in ExpectedOrder)
             {
                 Assert.Equal(1, ExpectedOrder.Where(e => e.GetHashCode() == identifier.GetHashCode()).Count());
-                Assert.Equal(identifier.GetHashCode(), Identifier.Of(identifier.Scheme, identifier.Value).GetHashCode());
+                Assert.Equal(identifier.GetHashCode(), ExternalId.Of(identifier.Scheme, identifier.Value).GetHashCode());
             }
         }
 
@@ -73,12 +73,12 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             EqualsCodeBehavesAsExpected((a, b) => a == b);
         }
 
-        private static void EqualsCodeBehavesAsExpected(Func<Identifier, Identifier, bool> equals)
+        private static void EqualsCodeBehavesAsExpected(Func<ExternalId, ExternalId, bool> equals)
         {
             foreach (var id in ExpectedOrder)
             {
                 Assert.Equal(1, ExpectedOrder.Where(e => equals(e, id)).Count());
-                Assert.True(equals(id, Identifier.Of(id.Scheme, id.Value)));
+                Assert.True(equals(id, ExternalId.Of(id.Scheme, id.Value)));
             }
         }
 
@@ -87,7 +87,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
         {
             foreach (var identifier in ExpectedOrder)
             {
-                Assert.Equal(identifier, Identifier.Parse(identifier.ToString()));
+                Assert.Equal(identifier, ExternalId.Parse(identifier.ToString()));
             }
         }
 
@@ -95,7 +95,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
         [InlineData("A")]
         public void WrongNumberOfSeparatorsFails(string uid)
         {
-            Assert.Throws<ArgumentException>(() => Identifier.Parse(uid));
+            Assert.Throws<ArgumentException>(() => ExternalId.Parse(uid));
         }
     }
 }

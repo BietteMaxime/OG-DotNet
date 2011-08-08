@@ -27,9 +27,9 @@ namespace OGDotNet.Builders
 
             var tradeDate = ffc.GetValue<DateTimeOffset>("tradeDate");
 
-            var securityKey = deserializer.FromField<IdentifierBundle>(ffc.GetByName("securityKey"));
+            var securityKey = deserializer.FromField<ExternalIdBundle>(ffc.GetByName("securityKey"));
 
-            var counterPartyIdentifier = Identifier.Parse(ffc.GetString("counterpartyKey") ?? ffc.GetString("counterparty")); //NOTE: this is a hack because we don't use proto yet
+            var counterPartyIdentifier = ExternalId.Parse(ffc.GetString("counterpartyKey") ?? ffc.GetString("counterparty")); //NOTE: this is a hack because we don't use proto yet
             var quant = ffc.GetValue<long>("quantity");
             return new TradeImpl(uniqueIdentifier, tradeDate, securityKey, new CounterpartyImpl(counterPartyIdentifier), quant);
         }

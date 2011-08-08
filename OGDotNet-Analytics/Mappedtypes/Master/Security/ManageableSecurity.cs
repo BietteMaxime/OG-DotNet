@@ -19,9 +19,9 @@ namespace OGDotNet.Mappedtypes.Master.Security
         private readonly string _name;
         private readonly string _securityType;
         private readonly UniqueIdentifier _uniqueId;
-        private readonly IdentifierBundle _identifiers;
+        private readonly ExternalIdBundle _identifiers;
 
-        protected ManageableSecurity(string name, string securityType, UniqueIdentifier uniqueId, IdentifierBundle identifiers)
+        protected ManageableSecurity(string name, string securityType, UniqueIdentifier uniqueId, ExternalIdBundle identifiers)
         {
             _name = name;
             _securityType = string.Intern(securityType); // Should be a small static set
@@ -44,7 +44,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
             get { return _uniqueId; }
         }
 
-        public IdentifierBundle Identifiers
+        public ExternalIdBundle Identifiers
         {
             get { return _identifiers; }
         }

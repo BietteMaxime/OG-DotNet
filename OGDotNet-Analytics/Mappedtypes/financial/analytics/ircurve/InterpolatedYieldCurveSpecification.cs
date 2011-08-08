@@ -27,10 +27,10 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
         private readonly string _name;
         private readonly Currency _currency;
         private readonly List<FixedIncomeStripWithIdentifier> _resolvedStrips;
-        private readonly Identifier _region;
+        private readonly ExternalId _region;
 
         public InterpolatedYieldCurveSpecification(DateTimeOffset curveDate, string name, Currency currency,  
-                        List<FixedIncomeStripWithIdentifier> resolvedStrips, Identifier region)
+                        List<FixedIncomeStripWithIdentifier> resolvedStrips, ExternalId region)
         {
             _curveDate = curveDate;
             _name = name;
@@ -59,7 +59,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             get { return _resolvedStrips; }
         }
 
-        public Identifier Region
+        public ExternalId Region
         {
             get { return _region; }
         }
@@ -69,11 +69,11 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             var curveDate = ffc.GetValue<DateTimeOffset>("curveDate");
             string name = ffc.GetString("name");
             var currency = ffc.GetValue<Currency>("currency");
-            var region = Identifier.Parse(ffc.GetString("region"));
+            var region = ExternalId.Parse(ffc.GetString("region"));
             var resolvedStripFields = ffc.GetAllByName("resolvedStrips");
 
             var resolvedStrips = resolvedStripFields.Select(deserializer.FromField<FixedIncomeStripWithIdentifierFudge>)
-                .Select(s => new FixedIncomeStripWithIdentifier(EnumBuilder<StripInstrumentType>.Parse(s.Type), new Tenor(s.Tenor), Identifier.Parse(s.Identifier))).
+                .Select(s => new FixedIncomeStripWithIdentifier(EnumBuilder<StripInstrumentType>.Parse(s.Type), new Tenor(s.Tenor), ExternalId.Parse(s.Identifier))).
                 ToList();
             return new InterpolatedYieldCurveSpecification(curveDate, name, currency, resolvedStrips, region);
         }

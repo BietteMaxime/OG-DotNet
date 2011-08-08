@@ -1,5 +1,5 @@
-//-----------------------------------------------------------------------
-// <copyright file="IdentifierBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+﻿//-----------------------------------------------------------------------
+// <copyright file="ExternalIdBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -13,20 +13,20 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Builders
 {
-    internal class IdentifierBuilder : BuilderBase<Identifier>
+    internal class ExternalIdBuilder : BuilderBase<ExternalId>
     {
-        public IdentifierBuilder(FudgeContext context, Type type) : base(context, type)
+        public ExternalIdBuilder(FudgeContext context, Type type) : base(context, type)
         {
         }
 
-        public override Identifier DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
+        public override ExternalId DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             string scheme = msg.GetValue<string>("Scheme");
             string value = msg.GetValue<string>("Value");
-            return new Identifier(scheme, value);
+            return new ExternalId(scheme, value);
         }
 
-        protected override void SerializeImpl(Identifier obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
+        protected override void SerializeImpl(ExternalId obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
         {
             msg.Add("Scheme", obj.Scheme);
             msg.Add("Value", obj.Value);

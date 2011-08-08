@@ -12,15 +12,15 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
     class CounterpartyImpl : ICounterparty
     {
-        private readonly Identifier _identifier;
+        private readonly ExternalId _identifier;
 
-        public CounterpartyImpl(Identifier identifier)
+        public CounterpartyImpl(ExternalId identifier)
         {
             ArgumentChecker.NotNull(identifier, "identifier");
             _identifier = identifier;
         }
 
-        public Identifier Identifier
+        public ExternalId Identifier
         {
             get { return _identifier; }
         }

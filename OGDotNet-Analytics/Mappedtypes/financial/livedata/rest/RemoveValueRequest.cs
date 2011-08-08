@@ -13,7 +13,7 @@ namespace OGDotNet.Mappedtypes.Financial.LiveData.Rest
     public class RemoveValueRequest
     {
         private ValueRequirement _valueRequirement;
-        private Identifier _identifier;
+        private ExternalId _identifier;
         private string _valueName;
 
         public ValueRequirement ValueRequirement
@@ -22,7 +22,7 @@ namespace OGDotNet.Mappedtypes.Financial.LiveData.Rest
             set { _valueRequirement = value; }
         }
 
-        public Identifier Identifier
+        public ExternalId Identifier
         {
             get { return _identifier; }
             set { _identifier = value; }

@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteLiveDataInjector.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -29,7 +29,7 @@ namespace OGDotNet.Model.Resources
             AddValue(addValueRequest);
         }
 
-        public void AddValue(Identifier identifier, string valueName, object value)
+        public void AddValue(ExternalId identifier, string valueName, object value)
         {
             ArgumentChecker.NotNull(identifier, "identifier");
             ArgumentChecker.NotEmpty(valueName, "valueName");
@@ -41,7 +41,7 @@ namespace OGDotNet.Model.Resources
             _rest.Resolve("add").Post(addValueRequest);
         }
 
-        public void RemoveValue(Identifier identifier, string valueName)
+        public void RemoveValue(ExternalId identifier, string valueName)
         {
             ArgumentChecker.NotNull(identifier, "identifier");
             ArgumentChecker.NotEmpty(valueName, "valueName");

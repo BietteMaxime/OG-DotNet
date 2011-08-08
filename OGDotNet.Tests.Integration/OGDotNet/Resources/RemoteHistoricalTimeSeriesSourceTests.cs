@@ -57,7 +57,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanGetATimeSeriesByEmptyIdentifierBundle()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
-            var series = timeSeriesSource.GetHistoricalTimeSeries(new IdentifierBundle(), DateTimeOffset.Now, DataSource, DataProvider, DataField);
+            var series = timeSeriesSource.GetHistoricalTimeSeries(new ExternalIdBundle(), DateTimeOffset.Now, DataSource, DataProvider, DataField);
             Assert.NotNull(series);
         }
 
@@ -66,7 +66,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
-            var result = timeSeriesSource.GetHistoricalTimeSeries(new IdentifierBundle(new Identifier("BLOOMBERG_BUID", "IX289029-0")), DateTimeOffset.Now, DataSource, DataProvider, DataField);
+            var result = timeSeriesSource.GetHistoricalTimeSeries(new ExternalIdBundle(new ExternalId("BLOOMBERG_BUID", "IX289029-0")), DateTimeOffset.Now, DataSource, DataProvider, DataField);
             AssertSane(result);
         }
 

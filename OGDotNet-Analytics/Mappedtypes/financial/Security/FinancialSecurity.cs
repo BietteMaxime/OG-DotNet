@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="FinancialSecurity.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -16,7 +16,7 @@ namespace OGDotNet.Mappedtypes.Financial.Security
     /// </summary>
     public class FinancialSecurity : ManageableSecurity
     {
-        public FinancialSecurity(string name, string securityType, UniqueIdentifier uniqueId, IdentifierBundle identifiers) : base(name, securityType, uniqueId, identifiers)
+        public FinancialSecurity(string name, string securityType, UniqueIdentifier uniqueId, ExternalIdBundle identifiers) : base(name, securityType, uniqueId, identifiers)
         {
         }
     }

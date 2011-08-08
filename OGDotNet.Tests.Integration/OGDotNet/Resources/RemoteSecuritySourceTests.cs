@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteSecuritySourceTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -26,14 +26,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanDoEmptyBundleMultiQuery()
         {
             var remoteSecuritySource = Context.SecuritySource;
-            Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurities(new IdentifierBundle()));
+            Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurities(new ExternalIdBundle()));
         }
 
         [Fact]
         public void CanDoEmptyBundleSingleQuery()
         {
             var remoteSecuritySource = Context.SecuritySource;
-            Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurity(new IdentifierBundle()));
+            Assert.Throws<ArgumentException>(() => remoteSecuritySource.GetSecurity(new ExternalIdBundle()));
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanDoEmptyMissingBundleQuery()
         {
             var remoteSecuritySource = Context.SecuritySource;
-            var collection = remoteSecuritySource.GetSecurities(new IdentifierBundle(StupidIdentifier));
+            var collection = remoteSecuritySource.GetSecurities(new ExternalIdBundle(StupidIdentifier));
             Assert.Empty(collection);
         }
 
@@ -78,9 +78,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             get { return UniqueIdentifier.Of("xxx", "xxx"); }
         }
 
-        private static Identifier StupidIdentifier
+        private static ExternalId StupidIdentifier
         {
-            get { return new Identifier("xxx", "xxx"); }
+            get { return new ExternalId("xxx", "xxx"); }
         }
     }
 }

@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="UriEncoding.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -19,7 +19,7 @@ namespace OGDotNet.Model.Resources
             return curveDate.ToString("yyyy-MM-dd");
         }
 
-        internal static Tuple<string, string>[] GetParameters(IdentifierBundle bundle)
+        internal static Tuple<string, string>[] GetParameters(ExternalIdBundle bundle)
         {
             var ids = bundle.Identifiers.ToList();
 
