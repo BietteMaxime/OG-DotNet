@@ -37,48 +37,16 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         const double GraphOffset = 0.4;
         const int ProjectedCurveSize = 400;
 
-        private readonly DispatcherTimer _timer;
-
         private bool _haveInitedData;
         double _zRange = 100.0;
 
         public VolatilitySurfaceCell()
         {
             InitializeComponent();
-            _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(80.0) };
-
-            double speed = 0.02;
-
-            double t = Math.PI / 4.0;
-            const double maxT = Math.PI / 2.0;
-            const double minT = 0;
-            SetCamera(t);
-            _timer.Start();
-
-            _timer.Tick += delegate
-            {
-                if (t > maxT)
-                {
-                    speed = -Math.Abs(speed);
-                }
-
-                if (t < minT)
-                {
-                    speed = Math.Abs(speed);
-                }
-
-                t += speed;
-
-                SetCamera(t);
-                UpdateToolTip(Mouse.GetPosition(mainViewport));
-            };
-        }
-
-        private void SetCamera(double t)
-        {
+            
             const double circleRadius = 3.8;
-
-            camera.Position = Center + (new Vector3D(Math.Sin(t), Math.Cos(t), 0) * circleRadius);
+            
+            camera.Position = Center + (new Vector3D(0, 1, 0) * circleRadius);
             camera.LookDirection = Center - camera.Position;
         }
 
@@ -140,26 +108,22 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
-            _timer.IsEnabled = false;
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
             toolTip.IsOpen = false;
-            _timer.IsEnabled = true;
         }
 
         private void detailsButton_Checked(object sender, RoutedEventArgs e)
         {
             InitTableData();
             detailsPopup.IsOpen = true;
-            _timer.IsEnabled = false;
         }
 
         private void detailsButton_Unchecked(object sender, RoutedEventArgs e)
         {
             detailsPopup.IsOpen = false;
-            _timer.IsEnabled = true;
         }
 
         private void detailsPopup_Closed(object sender, EventArgs e)
@@ -630,7 +594,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private void mainViewport_MouseMove(object sender, MouseEventArgs e)
         {
-            _timer.IsEnabled = false;
             Point position = e.GetPosition(mainViewport);
             UpdateToolTip(position);
 
