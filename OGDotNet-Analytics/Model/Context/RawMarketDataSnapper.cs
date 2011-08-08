@@ -230,14 +230,19 @@ namespace OGDotNet.Model.Context
 
                 var specs = graph.DependencyNodes.SelectMany(n => n.OutputValues)
                     //This is a hack: the spec value will be pruned from the dep graph but will be in the computation cache,
-                    //  and we know that it has exactly the some properties as the Curve value
-                    .SelectMany(v => v.ValueName == ValueRequirementNames.YieldCurve ? new[] { v, new ValueSpecification(ValueRequirementNames.YieldCurveSpec, v.TargetSpecification, v.Properties) } : new[] { v })
+                    //  and we know how its properties relate to the sCurve value
+                    .SelectMany(v => v.ValueName == ValueRequirementNames.YieldCurve ? new[] { v, new ValueSpecification(ValueRequirementNames.YieldCurveSpec, v.TargetSpecification, GetSpecProperties(v.Properties)) } : new[] { v })
 
                     .Where(v => specNames.Contains(v.ValueName));
                 ret.Add(config, specs.ToList());
             }
 
             return ret;
+        }
+
+        private static ValueProperties GetSpecProperties(ValueProperties properties)
+        {
+            return properties.WithoutAny(ValueRequirementNames.CurveCalculationMethod);
         }
 
         private static ValueProperties GetCurveProperties(ValueSpecification sp)

@@ -21,5 +21,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
         public const string VolatilitySurfaceData = "VolatilitySurfaceData";
 
         public const string VolatilityCubeMarketData = "VolatilityCubeMarketData";
+
+        public const string CurveCalculationMethod = "CurveCalculationMethod";
     }
 }

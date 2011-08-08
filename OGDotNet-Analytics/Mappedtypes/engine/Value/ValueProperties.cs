@@ -27,7 +27,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
         public IEnumerable<string> this[string propertyName] { get { return GetValues(propertyName); } }
         public abstract bool IsSatisfiedBy(ValueProperties properties);
         public abstract ISet<string> GetValues(string propertyName);
-
+        public abstract ValueProperties WithoutAny(string propertyName);//TODO ValuePropertiesBuilder
         public static ValueProperties Create()
         {
             return EmptyValueProperties.Instance;
@@ -66,6 +66,11 @@ namespace OGDotNet.Mappedtypes.Engine.Value
             public override ISet<string> GetValues(string propertyName)
             {
                 return null;
+            }
+
+            public override ValueProperties WithoutAny(string propertyName)
+            {
+                return this;
             }
 
             public override bool Equals(ValueProperties other)
@@ -145,6 +150,28 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 ISet<string> ret;
                 PropertyValues.TryGetValue(propertyName, out ret);
                 return ret;
+            }
+
+            public override ValueProperties WithoutAny(string propertyName)
+            {
+                ISet<string> optional = _optional;
+                Dictionary<string, ISet<string>> propertyValues = PropertyValues;
+                if (optional != null && optional.Contains(propertyName))
+                {
+                    if (optional.Count == 1)
+                    {
+                        optional = null;
+                    }
+                    else
+                    {
+                        optional = SmallSet<string>.Create(optional.Where(v => v != propertyName));
+                    }
+                }
+                if (propertyValues.ContainsKey(propertyName))
+                {
+                    propertyValues = propertyValues.Where(k => k.Key != propertyName).ToDictionary(k => k.Key, k => k.Value);
+                }
+                return new FiniteValueProperties(propertyValues, optional);
             }
 
             public override int GetHashCode()
@@ -257,6 +284,11 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 return new HashSet<string>();
             }
 
+            public override ValueProperties WithoutAny(string propertyName)
+            {
+                return new NearlyInfiniteValueProperties(SmallSet<string>.Create(propertyName));
+            }
+
             public override bool Equals(ValueProperties other)
             {
                 return ReferenceEquals(other, Instance);
@@ -293,6 +325,11 @@ namespace OGDotNet.Mappedtypes.Engine.Value
             public override ISet<string> GetValues(string propertyName)
             {
                 return Without.Contains(propertyName) ? null : new HashSet<string>();
+            }
+
+            public override ValueProperties WithoutAny(string propertyName)
+            {
+                return new NearlyInfiniteValueProperties(new HashSet<string>(Without) { propertyName });
             }
 
             public override bool Equals(ValueProperties other)
