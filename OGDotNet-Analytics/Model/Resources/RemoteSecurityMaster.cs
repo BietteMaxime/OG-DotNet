@@ -23,9 +23,9 @@ namespace OGDotNet.Model.Resources
             _restTarget = restTarget;
         }
         
-        public SearchResult<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest, IdentifierSearch identifierSearch = null)
+        public SearchResult<SecurityDocument> Search(string name, string type, PagingRequest pagingRequest, ExternalIdSearch externalIdSearch = null)
         {
-            var request = new SecuritySearchRequest(pagingRequest, name, type, identifierSearch);
+            var request = new SecuritySearchRequest(pagingRequest, name, type, externalIdSearch);
             return _restTarget.Resolve("search").Post<SearchResult<SecurityDocument>>(request);
         }
 

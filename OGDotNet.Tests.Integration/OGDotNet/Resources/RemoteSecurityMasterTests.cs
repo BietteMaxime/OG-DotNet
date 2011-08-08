@@ -25,14 +25,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var securitytoFind = searchResult.Documents.First();
             var identifierBundle = securitytoFind.Security.Identifiers;
             {
-                var identifierSearch = new IdentifierSearch(identifierBundle.Identifiers, IdentifierSearchType.All);
+                var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers, IdentifierSearchType.All);
                 var singleSearchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All, identifierSearch);
                 Assert.NotEmpty(singleSearchResult.Documents);
                 Assert.Single(singleSearchResult.Documents);
                 Assert.Equal(singleSearchResult.Documents.Single().Security.UniqueId, securitytoFind.UniqueId);
             }
             {
-                var identifierSearch = new IdentifierSearch(identifierBundle.Identifiers.Concat(Enumerable.Repeat(ExternalId.Of("XXX", "YYY"), 1)), IdentifierSearchType.Any);
+                var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers.Concat(Enumerable.Repeat(ExternalId.Of("XXX", "YYY"), 1)), IdentifierSearchType.Any);
                 var singleSearchResult = Context.SecurityMaster.Search("*", "FUTURE", PagingRequest.All, identifierSearch);
                 Assert.NotEmpty(singleSearchResult.Documents);
                 Assert.Single(singleSearchResult.Documents);

@@ -16,10 +16,10 @@ namespace OGDotNet.Mappedtypes.Master.Security
         private readonly PagingRequest _pagingRequest;
         private readonly string _name;
         private readonly string _securityType;
-        private readonly IdentifierSearch _externalIdSearch;
+        private readonly ExternalIdSearch _externalIdSearch;
         //TODO private List<ObjectIdentifier> _securityIds
 
-        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType, IdentifierSearch externalIdSearch)
+        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType, ExternalIdSearch externalIdSearch)
         {
             _pagingRequest = pagingRequest;
             _externalIdSearch = externalIdSearch;
@@ -42,7 +42,7 @@ namespace OGDotNet.Mappedtypes.Master.Security
             get { return _securityType; }
         }
 
-        public IdentifierSearch ExternalIdSearch
+        public ExternalIdSearch ExternalIdSearch
         {
             get { return _externalIdSearch; }
         }

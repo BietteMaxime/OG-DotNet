@@ -306,7 +306,7 @@
     <Compile Include="Utils\ArgumentChecker.cs" />
     <Compile Include="Mappedtypes\financial\Security\FinancialSecurity.cs" />
     <Compile Include="Mappedtypes\Id\ExternalIdBundle.cs" />
-    <Compile Include="Mappedtypes\Id\IdentifierSearch.cs" />
+    <Compile Include="Mappedtypes\Id\ExternalIdSearch.cs" />
     <Compile Include="Mappedtypes\Id\ExternalId.cs" />
     <Compile Include="Model\Resources\ISecuritySource.cs" />
     <Compile Include="Mappedtypes\Util\Db\Paging.cs" />
