@@ -1,10 +1,10 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UniqueIdentifierTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+﻿//-----------------------------------------------------------------------
+// <copyright file="ExternalIdTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
 // </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
 using System;
 using System.Linq;
@@ -14,16 +14,15 @@ using Xunit.Extensions;
 
 namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
 {
-    public class UniqueIdentifierTests
+    public class ExternalIdTests
     {
-        static readonly UniqueId[] ExpectedOrder = new[]
+        static readonly ExternalId[] ExpectedOrder = new[]
                                     {
-                                        UniqueId.Of("A", "1"),
-                                        UniqueId.Of("A", "2"),
-                                        UniqueId.Of("A", "2", "A"),
-                                        UniqueId.Of("A", "2", "B"),
-                                        UniqueId.Of("B", "1"),
-                                        UniqueId.Of("B", "2"),
+                                        ExternalId.Of("A", "1"),
+                                        ExternalId.Of("A", "2"),
+                                        ExternalId.Of("B", "1"),
+                                        ExternalId.Of("B", "2"),
+                                        ExternalId.Of("B", "2~3"),
                                     };
 
         [Fact]
@@ -34,16 +33,13 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
                 var small = ExpectedOrder[i];
 
                 Assert.Equal(0, small.CompareTo(small));
-                Assert.Equal(0, small.CompareTo((object)small));
-
+                
                 for (int j = i + 1; j < ExpectedOrder.Length; j++)
                 {
                     var big = ExpectedOrder[j];
                     Assert.InRange(small.CompareTo(big), int.MinValue, -1);
-                    Assert.InRange(small.CompareTo((object)big), int.MinValue, -1);
-
+                    
                     Assert.InRange(big.CompareTo(small), 1, int.MaxValue);
-                    Assert.InRange(big.CompareTo((object)small), 1, int.MaxValue);
                 }
             }
         }
@@ -51,10 +47,10 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
         [Fact]
         public void HashCodeBehavesAsExpected()
         {
-            foreach (var uniqueIdentifier in ExpectedOrder)
+            foreach (var identifier in ExpectedOrder)
             {
-                Assert.Equal(1, ExpectedOrder.Where(e => e.GetHashCode() == uniqueIdentifier.GetHashCode()).Count());
-                Assert.Equal(uniqueIdentifier.GetHashCode(), UniqueId.Of(uniqueIdentifier.Scheme, uniqueIdentifier.Value, uniqueIdentifier.Version).GetHashCode());
+                Assert.Equal(1, ExpectedOrder.Where(e => e.GetHashCode() == identifier.GetHashCode()).Count());
+                Assert.Equal(identifier.GetHashCode(), ExternalId.Of(identifier.Scheme, identifier.Value).GetHashCode());
             }
         }
 
@@ -68,7 +64,6 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
         public void ObjectEqualsCodeBehavesAsExpected()
         {
             EqualsCodeBehavesAsExpected((a, b) => a.Equals((object)b));
-            Assert.Throws<ArgumentException>(() => ExpectedOrder.First().CompareTo("SomeOtherType"));
             Assert.False(ExpectedOrder.First().Equals("SomeOtherType"));
         }
 
@@ -78,30 +73,29 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             EqualsCodeBehavesAsExpected((a, b) => a == b);
         }
 
-        private static void EqualsCodeBehavesAsExpected(Func<UniqueId, UniqueId, bool> equals)
+        private static void EqualsCodeBehavesAsExpected(Func<ExternalId, ExternalId, bool> equals)
         {
             foreach (var id in ExpectedOrder)
             {
                 Assert.Equal(1, ExpectedOrder.Where(e => equals(e, id)).Count());
-                Assert.True(equals(id, UniqueId.Of(id.Scheme, id.Value, id.Version)));
+                Assert.True(equals(id, ExternalId.Of(id.Scheme, id.Value)));
             }
         }
 
         [Fact]
         public void ParseWorks()
         {
-            foreach (var uniqueIdentifier in ExpectedOrder)
+            foreach (var identifier in ExpectedOrder)
             {
-                Assert.Equal(uniqueIdentifier, UniqueId.Parse(uniqueIdentifier.ToString()));
+                Assert.Equal(identifier, ExternalId.Parse(identifier.ToString()));
             }
         }
 
         [Theory]
         [InlineData("A")]
-        [InlineData("A~B~C~D~E")]
         public void WrongNumberOfSeparatorsFails(string uid)
         {
-            Assert.Throws<ArgumentException>(() => UniqueId.Parse(uid));
+            Assert.Throws<ArgumentException>(() => ExternalId.Parse(uid));
         }
     }
 }

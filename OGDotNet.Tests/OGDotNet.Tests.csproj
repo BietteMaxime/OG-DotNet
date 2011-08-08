@@ -71,8 +71,8 @@
     <Compile Include="OGDotNet\Mappedtypes\Core\marketdatasnapshot\MarketDataValueTypeTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\EmptyTypesWarner.cs" />
     <Compile Include="OGDotNet\Mappedtypes\engine\value\ValuePropertiesTest.cs" />
-    <Compile Include="OGDotNet\Mappedtypes\Id\IdentifierTests.cs" />
-    <Compile Include="OGDotNet\Mappedtypes\Id\UniqueIdentifierTests.cs" />
+    <Compile Include="OGDotNet\Mappedtypes\Id\ExternalIdTests.cs" />
+    <Compile Include="OGDotNet\Mappedtypes\Id\UniqueIdTests.cs" />
     <Compile Include="OGDotNet\Mappedtypes\Master\marketdatasnapshot\ManageableMarketDataSnapshotTests.cs" />
     <Compile Include="OGDotNet\OGDotNetModuleTests.cs" />
     <Compile Include="OGDotNet\Utils\GenericUtilsTest.cs" />
