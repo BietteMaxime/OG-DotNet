@@ -5,8 +5,12 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using Fudge.Serialization;
+using OGDotNet.Builders;
+
 namespace OGDotNet.Mappedtypes.Engine.Function
 {
+    [FudgeSurrogate(typeof(EmptyFunctionParametersBuilder))]
     public class EmptyFunctionParameters : IFunctionParameters
     {
     }

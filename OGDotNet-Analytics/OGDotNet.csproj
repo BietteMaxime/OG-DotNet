@@ -66,6 +66,7 @@
     <Compile Include="Builders\DependencyNodeBuilder.cs" />
     <Compile Include="Builders\DoubleLabelledMatrix2DBuilder.cs" />
     <Compile Include="Builders\DurationBuilder.cs" />
+    <Compile Include="Builders\EmptyFunctionParametersBuilder.cs" />
     <Compile Include="Builders\ExecutionOptionsBuilder.cs" />
     <Compile Include="Builders\IdentifierBundleBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
