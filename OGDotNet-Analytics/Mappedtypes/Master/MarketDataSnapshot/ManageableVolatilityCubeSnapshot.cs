@@ -88,8 +88,11 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
                                                                  PrepareAddAction
                 ).Aggregate(UpdateAction<ManageableVolatilityCubeSnapshot>.Empty, (a, b) => a.Concat(b));
 
-            //TODO strikes
-            return valuesUpdateAction.Concat(updateAction);
+            var strikesAction = Clone(_strikes).ProjectStructure(Clone(newObject._strikes), 
+                PrepareUpdateFrom,
+                                                                 PrepareRemoveAction,
+                                                                 PrepareAddAction).Aggregate(UpdateAction<ManageableVolatilityCubeSnapshot>.Empty, (a, b) => a.Concat(b));
+            return valuesUpdateAction.Concat(updateAction).Concat(strikesAction);
         }
 
         private static UpdateAction<ManageableVolatilityCubeSnapshot> PrepareUpdateFrom(VolatilityPoint key, ValueSnapshot currValue, ValueSnapshot newValue)
@@ -116,6 +119,32 @@ namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
                                                                           {
                                                                               s._values.Add(key, new ValueSnapshot(newMarketValue));
                                                                           });
+        }
+
+        private static UpdateAction<ManageableVolatilityCubeSnapshot> PrepareUpdateFrom(Pair<Tenor, Tenor> key, ValueSnapshot currValue, ValueSnapshot newValue)
+        {
+            var newMarketValue = newValue.MarketValue;
+            return new UpdateAction<ManageableVolatilityCubeSnapshot>(delegate(ManageableVolatilityCubeSnapshot s)
+            {
+                s._strikes[key].MarketValue = newMarketValue;
+            });
+        }
+
+        private static UpdateAction<ManageableVolatilityCubeSnapshot> PrepareRemoveAction(Pair<Tenor, Tenor> key, ValueSnapshot currValue)
+        {
+            return new UpdateAction<ManageableVolatilityCubeSnapshot>(delegate(ManageableVolatilityCubeSnapshot s)
+            {
+                s._strikes.Remove(key);
+            });
+        }
+
+        private static UpdateAction<ManageableVolatilityCubeSnapshot> PrepareAddAction(Pair<Tenor, Tenor> key, ValueSnapshot newValue)
+        {
+            var newMarketValue = newValue.MarketValue;
+            return new UpdateAction<ManageableVolatilityCubeSnapshot>(delegate(ManageableVolatilityCubeSnapshot s)
+            {
+                s._strikes.Add(key, new ValueSnapshot(newMarketValue));
+            });
         }
 
         public ManageableVolatilityCubeSnapshot Clone()
