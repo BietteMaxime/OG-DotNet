@@ -134,7 +134,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 using (var remoteClient = Context.CreateUserClient())
                 {
-                    viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, Guid.NewGuid());
+                    viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, TestUtils.GetUniqueName());
 
                     remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                     try

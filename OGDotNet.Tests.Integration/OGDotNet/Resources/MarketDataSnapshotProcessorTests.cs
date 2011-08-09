@@ -259,7 +259,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var viewDefinition = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(ViewDefinitionName);
             using (var remoteClient = Context.CreateUserClient())
             {
-                viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, Guid.NewGuid());
+                SetTemporaryName(viewDefinition);
 
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                 try
@@ -281,6 +281,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        private static void SetTemporaryName(ViewDefinition viewDefinition)
+        {
+            viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, TestUtils.GetUniqueName());
+        }
+
         [Xunit.Extensions.Fact]
         public void CanGetYieldCurveValuesAfterRemovingViewAndReconnecting() //LAP-66
         {
@@ -289,7 +294,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var viewDefinition = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(ViewDefinitionName);
             using (var remoteClient = Context.CreateUserClient())
             {
-                viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, Guid.NewGuid());
+                SetTemporaryName(viewDefinition);
 
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                 try
@@ -325,7 +330,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var viewDefinition = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(ViewDefinitionName);
             using (var remoteClient = Context.CreateUserClient())
             {
-                viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, Guid.NewGuid());
+                SetTemporaryName(viewDefinition);
 
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                 try
@@ -361,7 +366,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var viewDefinition = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(ViewDefinitionName);
             using (var remoteClient = Context.CreateUserClient())
             {
-                viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, Guid.NewGuid());
+                SetTemporaryName(viewDefinition);
 
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                 try
