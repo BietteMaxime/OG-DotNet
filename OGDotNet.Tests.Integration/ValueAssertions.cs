@@ -15,6 +15,7 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.Engine.Function.Resolver;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Cache;
@@ -280,7 +281,12 @@ namespace OGDotNet.Tests.Integration
                 AssertSensibleValue(viewDefin.Portfolio);
             }
             Assert.NotNull(viewDefin.ViewDefinition);
+
             AssertSensibleValue(viewDefin.ViewDefinition.CalculationConfigurationsByName);
+            foreach (var kvp in viewDefin.ViewDefinition.CalculationConfigurationsByName)
+            {
+                Assert.Equal(kvp.Key, kvp.Value.Name);
+            }
 
             Assert.Equal(default(DateTimeOffset) == viewDefin.EarliestValidity, viewDefin.LatestValidity == default(DateTimeOffset));
         }
@@ -294,6 +300,12 @@ namespace OGDotNet.Tests.Integration
         {
             AssertSensibleValue(calculationConfiguration.SpecificRequirements);
             AssertSensibleValue(calculationConfiguration.PortfolioRequirementsBySecurityType);
+            AssertSensibleValue(calculationConfiguration.ResolutionRuleTransform);
+        }
+
+        public static void AssertSensibleValue(IResolutionRuleTransform transform)
+        {
+            Assert.NotNull(transform);
         }
 
         public static void AssertSensibleValue(ValueProperties props)
