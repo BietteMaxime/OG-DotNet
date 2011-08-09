@@ -12,33 +12,12 @@ namespace OGDotNet.Mappedtypes.Financial.LiveData.Rest
 {
     public class AddValueRequest
     {
-        private ValueRequirement _valueRequirement;
-        private ExternalId _identifier;
-        private string _valueName;
-        private object _value;
+        public ValueRequirement ValueRequirement { get; set; }
 
-        public ValueRequirement ValueRequirement
-        {
-            get { return _valueRequirement; }
-            set { _valueRequirement = value; }
-        }
+        public ExternalId Identifier { get; set; }
 
-        public ExternalId Identifier
-        {
-            get { return _identifier; }
-            set { _identifier = value; }
-        }
+        public string ValueName { get; set; }
 
-        public string ValueName
-        {
-            get { return _valueName; }
-            set { _valueName = value; }
-        }
-
-        public object Value
-        {
-            get { return _value; }
-            set { _value = value; }
-        }
+        public object Value { get; set; }
     }
 }

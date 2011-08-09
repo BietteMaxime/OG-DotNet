@@ -8,7 +8,7 @@
 
 using OGDotNet.WPFUtils.Windsor;
 
-namespace OGDotNet_SecurityViewer
+namespace OGDotNet.SecurityViewer
 {
     /// <summary>
     /// Interaction logic for App.xaml

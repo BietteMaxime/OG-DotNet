@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using Fudge;
 using OGDotNet.Utils;

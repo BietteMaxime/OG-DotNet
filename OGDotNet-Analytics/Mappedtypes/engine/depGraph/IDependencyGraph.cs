@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.Collections.Generic;
-using OGDotNet.Mappedtypes.Engine.DepGraph;
 
 namespace OGDotNet.Mappedtypes.Engine.DepGraph
 {

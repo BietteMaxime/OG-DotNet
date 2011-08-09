@@ -28,7 +28,7 @@ namespace OGDotNet.Builders
             msg.Add("valueName", obj.ValueName);
         }
 
-        public override ValueSpecification DeserializeImpl(Fudge.IFudgeFieldContainer msg, Fudge.Serialization.IFudgeDeserializer deserializer)
+        public override ValueSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
             string valueName = null;
             ValueProperties properties = null;

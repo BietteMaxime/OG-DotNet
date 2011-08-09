@@ -12,8 +12,8 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using OGDotNet.Mappedtypes.Core.Security;
-using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.Security;
 using OGDotNet.Mappedtypes.Util.Db;
 using OGDotNet.Model.Resources;
@@ -126,7 +126,7 @@ namespace OGDotNet.SecurityViewer.View
                 Update();
         }
 
-        private void nameBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void nameBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (IsLoaded)
                 Update();
@@ -143,7 +143,7 @@ namespace OGDotNet.SecurityViewer.View
             Update();
         }
 
-        private void grid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void grid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (itemGrid.SelectedItem != null)
             {
@@ -165,7 +165,7 @@ namespace OGDotNet.SecurityViewer.View
             SecurityTimeSeriesWindow.ShowDialog(securities, this);
         }
 
-        private void grid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void grid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             detailsGrid.DataContext = itemGrid.SelectedItem;
         }

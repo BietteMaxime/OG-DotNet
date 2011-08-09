@@ -59,13 +59,13 @@ namespace OGDotNet.Mappedtypes.Engine.View.Listener
         public Exception BuildException()
         {
             Type exceptionType;
-            if (DotNetTypesByJavaTypeName.TryGetValue(this.Type, out exceptionType))
+            if (DotNetTypesByJavaTypeName.TryGetValue(Type, out exceptionType))
             {
-                if (this.Message == null)
+                if (Message == null)
                 {
                     ConstructorInfo constructorInfo = exceptionType.GetConstructor(new Type[] { });
                     if (constructorInfo == null)
-                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", this.Type, exceptionType), "javaType");
+                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", Type, exceptionType), "javaType");
 
                     return (Exception)constructorInfo.Invoke(new object[] { });
                 }
@@ -74,15 +74,15 @@ namespace OGDotNet.Mappedtypes.Engine.View.Listener
                     ConstructorInfo constructorInfo = exceptionType.GetConstructor(new[] { typeof(string) });
 
                     if (constructorInfo == null)
-                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", this.Type, exceptionType), "javaType");
+                        throw new ArgumentException(string.Format("Can't construct exception type {0}->{1}", Type, exceptionType), "javaType");
                     if (constructorInfo.GetParameters()[0].Name != "message")
-                        throw new ArgumentException(string.Format("Exception type {0}->{1} expectes {2} not message", this.Type, exceptionType, this.Message), "javaType");
-                    return (Exception)constructorInfo.Invoke(new object[] { this.Message });
+                        throw new ArgumentException(string.Format("Exception type {0}->{1} expectes {2} not message", Type, exceptionType, Message), "javaType");
+                    return (Exception)constructorInfo.Invoke(new object[] { Message });
                 }
             }
             else
             {
-                return BuildGenericException(this.Type, this.Message);
+                return BuildGenericException(Type, Message);
             }
         }
 

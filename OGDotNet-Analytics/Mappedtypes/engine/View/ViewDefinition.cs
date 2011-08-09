@@ -8,12 +8,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Engine.Value;
-using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
 using OGDotNet.Mappedtypes.Util.Money;

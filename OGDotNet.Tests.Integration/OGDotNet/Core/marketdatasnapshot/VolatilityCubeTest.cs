@@ -96,7 +96,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Core.marketdatasnapshot
             }
         }
 
-        private Pair<Tenor, Tenor> GetStrikeKey(VolatilityPoint dataPoint)
+        private static Pair<Tenor, Tenor> GetStrikeKey(VolatilityPoint dataPoint)
         {
             return new Pair<Tenor, Tenor>(dataPoint.SwapTenor, dataPoint.OptionExpiry);
         }

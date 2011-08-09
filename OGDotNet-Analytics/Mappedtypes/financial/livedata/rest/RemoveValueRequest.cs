@@ -12,26 +12,10 @@ namespace OGDotNet.Mappedtypes.Financial.LiveData.Rest
 {
     public class RemoveValueRequest
     {
-        private ValueRequirement _valueRequirement;
-        private ExternalId _identifier;
-        private string _valueName;
+        public ValueRequirement ValueRequirement { get; set; }
 
-        public ValueRequirement ValueRequirement
-        {
-            get { return _valueRequirement; }
-            set { _valueRequirement = value; }
-        }
+        public ExternalId Identifier { get; set; }
 
-        public ExternalId Identifier
-        {
-            get { return _identifier; }
-            set { _identifier = value; }
-        }
-
-        public string ValueName
-        {
-            get { return _valueName; }
-            set { _valueName = value; }
-        }
+        public string ValueName { get; set; }
     }
 }

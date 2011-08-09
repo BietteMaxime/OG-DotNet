@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Util.Timeseries.Fast;
 using OGDotNet.Mappedtypes.Util.Timeseries.Fast.Integer;
 
 namespace OGDotNet.Mappedtypes.Util.Timeseries.Fast.LongInt

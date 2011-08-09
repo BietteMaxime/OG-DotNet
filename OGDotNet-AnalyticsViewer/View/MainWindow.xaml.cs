@@ -17,7 +17,6 @@ using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Client;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
-using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 using OGDotNet.WPFUtils;
 using OGDotNet.WPFUtils.Windsor;

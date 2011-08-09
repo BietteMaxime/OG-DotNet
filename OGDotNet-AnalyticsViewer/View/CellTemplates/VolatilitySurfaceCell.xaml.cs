@@ -7,15 +7,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using System.Windows.Threading;
 using OGDotNet.AnalyticsViewer.Properties;
 using OGDotNet.AnalyticsViewer.View.Charts;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
@@ -29,7 +26,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
     /// </summary>
     public partial class VolatilitySurfaceCell : UserControl
     {
-        const double labelHeight = 0.2;
+        const double LabelHeight = 0.2;
 
         private static readonly bool ToScale = Settings.Default.ShowVolatilityCurveToScale;
         static readonly Point3D Center = new Point3D(0.5, 0.5, 0.5);
@@ -227,10 +224,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                    {
                                        new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), -90)),
                                        new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 180)),
-                                       new ScaleTransform3D(1.0, 1.0, labelHeight), 
-                                       new TranslateTransform3D(1, -GraphOffset, 1 + labelHeight)
+                                       new ScaleTransform3D(1.0, 1.0, LabelHeight), 
+                                       new TranslateTransform3D(1, -GraphOffset, 1 + LabelHeight)
                                    };
-            ret.Transform = new Transform3DGroup() { Children = new Transform3DCollection(transform3Ds) };
+            ret.Transform = new Transform3DGroup { Children = new Transform3DCollection(transform3Ds) };
             return ret;
         }
 
@@ -242,10 +239,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                    {
                                        new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), -90)),
                                        new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 90)),
-                                       new ScaleTransform3D(1.0, 1.0, labelHeight), 
-                                       new TranslateTransform3D(-GraphOffset, 0, 1 + labelHeight)
+                                       new ScaleTransform3D(1.0, 1.0, LabelHeight), 
+                                       new TranslateTransform3D(-GraphOffset, 0, 1 + LabelHeight)
                                    };
-            ret.Transform = new Transform3DGroup() { Children = new Transform3DCollection(transform3Ds) };
+            ret.Transform = new Transform3DGroup { Children = new Transform3DCollection(transform3Ds) };
             return ret;
         }
 
@@ -253,7 +250,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             GeometryModel3D textModel = GetUnitText(text);
             var lightModel = new AmbientLight(Colors.White);
-            return new Model3DGroup()
+            return new Model3DGroup
             {
                 Children = new Model3DCollection(new Model3D[] { textModel, lightModel })
             };
@@ -263,16 +260,14 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         /// <returns>a text model with z=0, of unit size</returns>
         private static GeometryModel3D GetUnitText(string text)
         {
-            TextBlock b = new TextBlock
+            var b = new TextBlock
             {
                 Text = text,
                 Background = new SolidColorBrush(Colors.White),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
             };
-            DiffuseMaterial materialWithLabel = new DiffuseMaterial();
-            materialWithLabel.Brush = new VisualBrush(b);
-            materialWithLabel.Brush = new VisualBrush(b);
+            var materialWithLabel = new DiffuseMaterial {Brush = new VisualBrush(b)};
 
             var cuboid = new MeshGeometry3D();
             cuboid.Positions = new Point3DCollection(

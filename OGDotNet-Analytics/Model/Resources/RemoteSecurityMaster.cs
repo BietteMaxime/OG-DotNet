@@ -6,12 +6,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.Security;
-using OGDotNet.Mappedtypes.Util.Db;
 
 namespace OGDotNet.Model.Resources
 {

@@ -97,7 +97,7 @@ namespace OGDotNet.Model.Resources
             return nanos + seconds * nanosPerSecond;
         }
 
-        private long GetLong(IFudgeField field)
+        private static long GetLong(IFudgeField field)
         {
             return ((IConvertible)field.Value).ToInt64(null);
         }

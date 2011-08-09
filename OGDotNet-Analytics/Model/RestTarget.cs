@@ -12,9 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Fudge;
-using Fudge.Encodings;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Engine.View.Calc;
 
 namespace OGDotNet.Model
 {

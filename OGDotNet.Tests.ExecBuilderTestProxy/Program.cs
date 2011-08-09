@@ -6,8 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-
 namespace OGDotNet.Tests.ExecBuilderTestProxy
 {
     /// <summary>

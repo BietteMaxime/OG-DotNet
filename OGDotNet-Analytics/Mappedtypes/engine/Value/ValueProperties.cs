@@ -224,8 +224,10 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 {
                     if (property.Value == null)
                     {
-                        var optMessage = new FudgeMsg(s.Context);
-                        optMessage.Add((string)null, IndicatorType.Instance);
+                        var optMessage = new FudgeMsg(s.Context)
+                                             {
+                                                 {(string) null, IndicatorType.Instance}
+                                             };
 
                         withMessage.Add(property.Key, optMessage);
                     }

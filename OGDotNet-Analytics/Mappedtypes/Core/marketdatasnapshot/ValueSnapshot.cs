@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.ComponentModel;
 using Fudge;
 using Fudge.Serialization;

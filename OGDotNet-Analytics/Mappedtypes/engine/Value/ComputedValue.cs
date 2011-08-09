@@ -6,11 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using Fudge;
 using Fudge.Serialization;
-using Fudge.Types;
 using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.Engine.Value

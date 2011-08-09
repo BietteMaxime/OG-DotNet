@@ -136,7 +136,7 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
             myLine.Points.Clear();
         }
 
-        private void canvas_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        private void canvas_MouseDown(object sender, MouseEventArgs e)
         {
             NearestPointEventArgs nearestPointEventArgs = GetNearestPoint(e);
             InvokePointClicked(nearestPointEventArgs);

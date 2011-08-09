@@ -37,7 +37,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
                 var xs = lookup.SelectMany(kvp => kvp.Value.Keys).Distinct().OrderBy(x => x).ToList();
 
-                grid.Columns.Add(new DataGridTextColumn()
+                grid.Columns.Add(new DataGridTextColumn
                                      {
                                          Header = "Y \\ X",
                                          Binding =
@@ -48,8 +48,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                      });
                 foreach (var x in xs)
                 {
-                    grid.Columns.Add(new DataGridTextColumn()
-                    {
+                    grid.Columns.Add(new DataGridTextColumn
+                                         {
                         Header = x,
                         Binding =
                                         new Binding(".Key")

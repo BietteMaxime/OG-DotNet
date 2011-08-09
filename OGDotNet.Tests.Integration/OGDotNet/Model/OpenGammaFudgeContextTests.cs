@@ -32,7 +32,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Model
             for (int i = 0; i < 1000; i++)
             {
                 var context = new OpenGammaFudgeContext();
-                var parallelLoopResult = Parallel.For(1, 4 * Environment.ProcessorCount, _ => Thrash(context));
+                Parallel.For(1, 4 * Environment.ProcessorCount, _ => Thrash(context));
             }
         }
 

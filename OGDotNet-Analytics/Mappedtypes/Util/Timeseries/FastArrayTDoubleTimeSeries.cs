@@ -10,8 +10,9 @@ using System;
 using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Util.Timeseries.Fast;
 
-namespace OGDotNet.Mappedtypes.Util.Timeseries.Fast.Integer
+namespace OGDotNet.Mappedtypes.Util.Timeseries
 {
     public abstract class FastArrayTDoubleTimeSeries<T>
     {

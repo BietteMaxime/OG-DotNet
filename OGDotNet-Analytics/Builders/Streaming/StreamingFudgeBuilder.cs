@@ -6,15 +6,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-#define TEST_STREAMING_BUILDER_SPEED
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Fudge.Encodings;
 using OGDotNet.Model;
-using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Builders.Streaming
 {

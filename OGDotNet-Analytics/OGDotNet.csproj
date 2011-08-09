@@ -57,7 +57,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Builders\BuilderBase.xaml.cs" />
+    <Compile Include="Builders\BuilderBase.cs" />
     <Compile Include="Builders\CombinedMarketDataSpecificationBuilder.cs" />
     <Compile Include="Builders\ComputationTargetBuilder.cs" />
     <Compile Include="Builders\ComputationTargetSpecificationBuilder.cs" />
@@ -239,9 +239,9 @@
     <Compile Include="Mappedtypes\OpenGammaException.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\fast\longint\FastArrayLongDoubleTimeSeries.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ArrayLocalDateDoubleTimeSeries.cs" />
-    <Compile Include="Mappedtypes\Util\Timeseries\Localdate\DateTimeNumericEncoding.cs" />
-    <Compile Include="Mappedtypes\Util\Timeseries\Localdate\FastArrayIntDoubleTimeSeries.cs" />
-    <Compile Include="Mappedtypes\Util\Timeseries\Localdate\FastArrayTDoubleTimeSeries.cs" />
+    <Compile Include="Mappedtypes\Util\Timeseries\fast\DateTimeNumericEncoding.cs" />
+    <Compile Include="Mappedtypes\Util\Timeseries\fast\Integer\FastArrayIntDoubleTimeSeries.cs" />
+    <Compile Include="Mappedtypes\Util\Timeseries\FastArrayTDoubleTimeSeries.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\LocalDateEpochDaysConverter.cs" />
     <Compile Include="Mappedtypes\Util\tuple\Pair.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\DependencyGraphWalker.cs" />

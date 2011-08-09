@@ -5,8 +5,6 @@
 //     Please see distribution for license.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-using OGDotNet.Mappedtypes.Id;
-
 namespace OGDotNet.Mappedtypes.Engine.View.Execution
 {
     public interface IViewExecutionOptions

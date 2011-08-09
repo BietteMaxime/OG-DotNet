@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 using System.Collections.Generic;
 using OGDotNet.Builders.Streaming;
-using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Engine.DepGraph

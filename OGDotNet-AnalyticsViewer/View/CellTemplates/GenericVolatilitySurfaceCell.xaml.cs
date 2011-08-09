@@ -11,7 +11,6 @@ using System.Windows;
 using System.Windows.Controls;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Financial.Analytics;
-using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface;
 using OGDotNet.Utils;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates

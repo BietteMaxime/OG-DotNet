@@ -15,7 +15,6 @@ using System.Windows.Controls;
 using OGDotNet.AnalyticsViewer.ViewModel;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Financial.Analytics;
-using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;

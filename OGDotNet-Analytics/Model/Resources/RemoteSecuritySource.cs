@@ -8,9 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Fudge;
-using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Utils;
@@ -19,12 +16,10 @@ namespace OGDotNet.Model.Resources
 {
     internal class RemoteSecuritySource : IFinancialSecuritySource
     {
-        private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly RestTarget _restTarget;
 
-        public RemoteSecuritySource(OpenGammaFudgeContext fudgeContext, RestTarget restTarget)
+        public RemoteSecuritySource(RestTarget restTarget)
         {
-            _fudgeContext = fudgeContext;
             _restTarget = restTarget;
         }
 

@@ -14,15 +14,11 @@ namespace OGDotNet.Model.Resources
 {
     public class RemoteViewDefinitionRepository
     {
-        private readonly OpenGammaFudgeContext _context;
         private readonly RestTarget _rest;
-        private readonly string _activeMqSpec;
 
-        public RemoteViewDefinitionRepository(OpenGammaFudgeContext context, RestTarget rest, string activeMqSpec)
+        public RemoteViewDefinitionRepository(RestTarget rest)
         {
-            _context = context;
             _rest = rest;
-            _activeMqSpec = activeMqSpec;
         }
 
         public IEnumerable<string> GetDefinitionNames()

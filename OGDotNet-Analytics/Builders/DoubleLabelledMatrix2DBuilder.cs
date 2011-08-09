@@ -76,8 +76,7 @@ namespace OGDotNet.Builders
                         var value = (double)field.Value;
                         if (newRow)
                         {
-                            var row = new List<double>();
-                            row.Add(value);
+                            var row = new List<double> { value };
                             values.Add(row);
                             newRow = false;
                         }

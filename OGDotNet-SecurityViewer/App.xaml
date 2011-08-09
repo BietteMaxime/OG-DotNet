@@ -1,4 +1,4 @@
-﻿<Windsor:OGDotNetApp x:Class="OGDotNet_SecurityViewer.App"
+﻿<Windsor:OGDotNetApp x:Class="OGDotNet.SecurityViewer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windsor="clr-namespace:OGDotNet.WPFUtils.Windsor;assembly=OGDotNet.WPFUtils" StartupUri="View\SecurityWindow.xaml">
     <Application.Resources>
