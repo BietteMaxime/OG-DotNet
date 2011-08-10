@@ -180,7 +180,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         counts = newCount;
                     }
                 }
-                Thread.Sleep(TimeSpan.FromSeconds(1));
             }
         }
 
