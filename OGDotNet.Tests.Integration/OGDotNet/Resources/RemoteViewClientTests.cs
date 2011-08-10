@@ -18,6 +18,7 @@ using OGDotNet.Mappedtypes.Engine.View.Client;
 using OGDotNet.Mappedtypes.Engine.View.Compilation;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.PublicAPI;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
@@ -138,7 +139,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, defaultExecutionOptions:new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification()));
                 var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
 
-                var results = resultsEnum.Take(20).ToList();
+                var results = resultsEnum.Take(200).ToList();
                 Assert.True(results.All(r => r != null));
                 var counts = results.Select(r => r.AllResults.Count());
                 if (counts.Distinct().Count() != 1)
@@ -146,6 +147,40 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     throw new Exception(string.Format("Inconsistent number of results for {0} {1}", viewDefinition.Name, string.Join(",", counts.Select(c => c.ToString()))));
                 }
                 Assert.Equal(1, counts.Distinct().Count());
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void NumberOfResultsIsConsistentOnRecompile(ViewDefinition viewDefinition)
+        {
+            int? counts = null;
+            var viewProcess = new HashSet<UniqueId>();
+            for (int i = 0; i < 30; i++)
+            {
+                using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+                {
+                    var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, defaultExecutionOptions: new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification()));
+                    var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options, true);
+
+                    var results = resultsEnum.Take(1).ToList();
+                    var result = results.Single();
+                    if (!viewProcess.Add(result.ViewProcessId))
+                    {
+                        throw new Exception("Shared process");
+                    }
+                    Assert.NotNull(result);
+                    int newCount = result.AllResults.Count();
+                    if (counts.HasValue)
+                    {
+                        Assert.Equal(counts.Value, newCount);
+                    }
+                    else
+                    {
+                        counts = newCount;
+                    }
+                }
+                Thread.Sleep(TimeSpan.FromSeconds(1));
             }
         }
 
