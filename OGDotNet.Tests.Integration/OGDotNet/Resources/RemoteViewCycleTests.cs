@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,8 +16,10 @@ using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Calc;
+using OGDotNet.Mappedtypes.Engine.View.Compilation;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
@@ -156,6 +159,105 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     CheckCompleteGraph(wholeGraph);
                 }
             });
+        }
+
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void NumberOfResultsIsConsistent(ViewDefinition defn)
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                var cycles = new BlockingCollection<UniqueId>();
+
+                var listener = new EventViewResultListener();
+                listener.ProcessCompleted += delegate { cycles.Add(null); };
+                listener.ViewDefinitionCompilationFailed += delegate { cycles.Add(null); };
+                listener.CycleExecutionFailed += delegate { cycles.Add(null); };
+
+                listener.CycleCompleted += (sender, e) => cycles.Add(e.FullResult.ViewCycleId);
+
+                remoteViewClient.SetResultListener(listener);
+                remoteViewClient.SetViewCycleAccessSupported(true);
+                var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, null, new ViewCycleExecutionOptions(default(DateTimeOffset), ExecutionOptions.GetDefaultMarketDataSpec()));
+                remoteViewClient.AttachToViewProcess(defn.Name, options);
+                
+                const int cyclesCount = 5;
+
+                var countTasks = new List<Task<int>>();
+                TimeSpan timeout = TimeSpan.FromMinutes(2);
+                for (int i = 0; i < cyclesCount; i++)
+                {
+                    UniqueId uid;
+                    if (! cycles.TryTake(out uid, timeout))
+                    {
+                        throw new TimeoutException(string.Format("Failed to get result {0} in {1}", i, timeout));
+                    }
+                    if (uid == null)
+                    {
+                        throw new Exception("Some error occured");
+                    }
+                    var t = Task.Factory.StartNew(() => CountResults(remoteViewClient, uid));
+                    t.ContinueWith(tx =>
+                                       {
+                                           var ignore = tx.Exception; //In case an earlier one throws an exception
+                                       });
+                    countTasks.Add(t);
+                }
+
+                IEnumerable<int> counts = countTasks.Select(t => t.Result).ToList();
+                if (counts.Distinct().Count() != 1)
+                {
+                    throw new Exception(string.Format("Inconsistent number of results for {0} {1}", defn.Name, string.Join(",", counts.Select(c => c.ToString()))));
+                }
+                Assert.Equal(1, counts.Distinct().Count());
+            }
+        }
+
+        private static int CountResults(RemoteViewClient remoteViewClient, UniqueId cycleId)
+        {
+            using (var engineResourceReference = remoteViewClient.CreateCycleReference(cycleId))
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+                IViewCycle cycle = engineResourceReference.Value;
+                var counts = Enumerable.Range(0, 3).Select(_ => CountResults(cycle)).ToList();
+                return counts.Distinct().Single();
+            }
+        }
+
+        private static int CountResults(IViewCycle cycle)
+        {
+            int count = 0;
+
+            var compiledViewDefinition = cycle.GetCompiledViewDefinition();
+            foreach (var kvp in compiledViewDefinition.ViewDefinition.CalculationConfigurationsByName)
+            {
+                var viewCalculationConfiguration = kvp.Key;
+   
+                var dependencyGraphExplorer = compiledViewDefinition.GetDependencyGraphExplorer(viewCalculationConfiguration);
+                Assert.NotNull(dependencyGraphExplorer);
+                var wholeGraph = dependencyGraphExplorer.GetWholeGraph();
+
+                IEnumerable<ValueSpecification> allSpecs = wholeGraph.DependencyNodes.SelectMany(n => n.OutputValues);
+                var distinctKindsOfSpec = allSpecs
+                    .ToLookup(s => s.ValueName).Select(g => g.First());
+                var specs = new HashSet<ValueSpecification>(distinctKindsOfSpec);
+
+                if (!specs.Any())
+                {
+                    continue;
+                }
+                var computationCacheResponse = cycle.QueryComputationCaches(new ComputationCacheQuery(viewCalculationConfiguration, specs));
+                Assert.InRange(computationCacheResponse.Results.Count, 0, specs.Count());
+                foreach (var result in computationCacheResponse.Results)
+                {
+                    Assert.Contains(result.First, specs);
+                    Assert.NotNull(result.Second);
+                    ValueAssertions.AssertSensibleValue(result.Second);
+                }
+                count += computationCacheResponse.Results.Count;
+            }
+
+            return count;
         }
 
         [Theory]
