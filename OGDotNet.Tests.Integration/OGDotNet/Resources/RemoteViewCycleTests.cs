@@ -167,14 +167,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                var cycles = new BlockingCollection<UniqueId>();
+                var cycles = new BlockingCollection<IEngineResourceReference<IViewCycle>>();
 
                 var listener = new EventViewResultListener();
                 listener.ProcessCompleted += delegate { cycles.Add(null); };
                 listener.ViewDefinitionCompilationFailed += delegate { cycles.Add(null); };
                 listener.CycleExecutionFailed += delegate { cycles.Add(null); };
 
-                listener.CycleCompleted += (sender, e) => cycles.Add(e.FullResult.ViewCycleId);
+                listener.CycleCompleted += (sender, e) => cycles.Add(remoteViewClient.CreateCycleReference(e.FullResult.ViewCycleId));
 
                 remoteViewClient.SetResultListener(listener);
                 remoteViewClient.SetViewCycleAccessSupported(true);
@@ -182,29 +182,24 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 remoteViewClient.AttachToViewProcess(defn.Name, options);
                 
                 const int cyclesCount = 5;
-
+                List<int> counts = new List<int>(cyclesCount);
                 var countTasks = new List<Task<int>>();
                 TimeSpan timeout = TimeSpan.FromMinutes(2);
                 for (int i = 0; i < cyclesCount; i++)
                 {
-                    UniqueId uid;
-                    if (! cycles.TryTake(out uid, timeout))
+                    IEngineResourceReference<IViewCycle> cycle;
+                    if (! cycles.TryTake(out cycle, timeout))
                     {
                         throw new TimeoutException(string.Format("Failed to get result {0} in {1}", i, timeout));
                     }
-                    if (uid == null)
+                    if (cycle == null)
                     {
                         throw new Exception("Some error occured");
                     }
-                    var t = Task.Factory.StartNew(() => CountResults(remoteViewClient, uid));
-                    t.ContinueWith(tx =>
-                                       {
-                                           var ignore = tx.Exception; //In case an earlier one throws an exception
-                                       });
-                    countTasks.Add(t);
+                    int countResults = CountResults(cycle);
+                    counts.Add(countResults);
                 }
 
-                IEnumerable<int> counts = countTasks.Select(t => t.Result).ToList();
                 if (counts.Distinct().Count() != 1)
                 {
                     throw new Exception(string.Format("Inconsistent number of results for {0} {1}", defn.Name, string.Join(",", counts.Select(c => c.ToString()))));
@@ -213,13 +208,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private static int CountResults(RemoteViewClient remoteViewClient, UniqueId cycleId)
+        private static int CountResults(IEngineResourceReference<IViewCycle> cycle)
         {
-            using (var engineResourceReference = remoteViewClient.CreateCycleReference(cycleId))
+            using (cycle)
             {
                 Thread.Sleep(TimeSpan.FromSeconds(5));
-                IViewCycle cycle = engineResourceReference.Value;
-                var counts = Enumerable.Range(0, 3).Select(_ => CountResults(cycle)).ToList();
+                var counts = Enumerable.Range(0, 3).Select(_ => CountResults(cycle.Value)).ToList();
                 return counts.Distinct().Single();
             }
         }
