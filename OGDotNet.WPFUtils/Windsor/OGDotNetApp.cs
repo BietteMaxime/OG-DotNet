@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Configuration;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,6 +16,7 @@ using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
 using Castle.Windsor.Installer;
 using OGDotNet.Model.Context;
+using Configuration = Castle.Windsor.Installer.Configuration;
 
 namespace OGDotNet.WPFUtils.Windsor
 {
@@ -42,10 +44,17 @@ namespace OGDotNet.WPFUtils.Windsor
 
         public OGDotNetApp()
         {
-            _container = new WindsorContainer(new XmlInterpreter(new ConfigResource("castle")));
+            //Can't read default config directly if we're untrusted http://social.msdn.microsoft.com/Forums/en-US/clr/thread/1e14f665-10a3-426b-a75d-4e66354c5522
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            var section = config.Sections["castle"];
+            var configXml = section.SectionInformation.GetRawXml();
+            var resource = new StaticContentResource(configXml);
+            var xmlInterpreter = new XmlInterpreter(resource);
+            _container = new WindsorContainer(xmlInterpreter);
             
-           var defaultConfigurationStore = new DefaultConfigurationStore();
-            FromAssembly.Containing<RemoteEngineContextFactory>().Install(_container, defaultConfigurationStore);
+            FromAssembly.Containing<RemoteEngineContextFactory>().Install(_container, new DefaultConfigurationStore());
+
             _container.Register();
 
             //Give all of the windows the opportunity to pick up context
