@@ -162,8 +162,15 @@ namespace OGDotNet.Model.Resources
         {
             ArgumentChecker.NotNull(viewDefinitionName, "viewDefinitionName");
             ArgumentChecker.NotNull(executionOptions, "executionOptions");
-            AttachToViewProcessRequest request = new AttachToViewProcessRequest(viewDefinitionName, executionOptions, newBatchProcess);
+            var request = new AttachToViewProcessRequest(viewDefinitionName, executionOptions, newBatchProcess);
             _rest.Resolve("attachSearch").Post(request);
+        }
+
+        public void AttachToViewProcess(UniqueId processId)
+        {
+            ArgumentChecker.NotNull(processId, "processId");
+
+            _rest.Resolve("attachDirect").Post(processId);
         }
         public void DetachFromViewProcess()
         {

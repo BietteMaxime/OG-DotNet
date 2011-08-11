@@ -62,6 +62,37 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
+        public void CanAttachToViewProcess()
+        {
+            const string vdName = "Equity Option Test View 1";
+            using (var firstClient = Context.ViewProcessor.CreateClient())
+            {
+                Assert.False(firstClient.IsAttached);
+                firstClient.AttachToViewProcess(vdName, ExecutionOptions.RealTime, true);
+                Assert.True(firstClient.IsAttached);
+                while (firstClient.GetLatestResult() == null)
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(1));
+                }
+                var firstResult = firstClient.GetLatestResult();
+
+                using (var secondClient = Context.ViewProcessor.CreateClient())
+                {
+                    secondClient.AttachToViewProcess(firstResult.ViewProcessId);
+                    var secondResult = secondClient.GetLatestResult();
+                    Assert.NotNull(secondResult);
+                    Assert.Equal(secondResult.ViewProcessId, firstResult.ViewProcessId);
+
+                    firstClient.TriggerCycle();
+                    firstClient.Dispose();
+
+                    var thirdResult = secondClient.GetLatestResult();
+                    Assert.NotNull(thirdResult);
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
         public void CanGetUid()
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
