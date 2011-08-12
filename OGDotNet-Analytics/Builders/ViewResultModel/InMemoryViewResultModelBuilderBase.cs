@@ -53,7 +53,6 @@ namespace OGDotNet.Builders.ViewResultModel
                         }
                         break;
                     case 2:
-                        var map = new Dictionary<ComputationTargetSpecification, IDictionary<string, ComputedValue>>();
                         var mapAll = new Dictionary<ComputationTargetSpecification, ISet<ComputedValue>>();
 
                         foreach (var f in (IFudgeFieldContainer)field.Value)
@@ -62,16 +61,14 @@ namespace OGDotNet.Builders.ViewResultModel
 
                             ComputationTargetSpecification target = v.Specification.TargetSpecification;
 
-                            if (!map.ContainsKey(target))
+                            if (!mapAll.ContainsKey(target))
                             {
-                                map.Add(target, new Dictionary<string, ComputedValue>());
                                 mapAll.Add(target, new HashSet<ComputedValue>());
                             }
-                            map[target][v.Specification.ValueName] = v; //NOTE: we make an arbitrary choice here
                             mapAll[target].Add(v);
                         }
 
-                        var value = new ViewCalculationResultModel(map, mapAll);
+                        var value = new ViewCalculationResultModel(mapAll);
 
                         if (!keys.Any())
                         {

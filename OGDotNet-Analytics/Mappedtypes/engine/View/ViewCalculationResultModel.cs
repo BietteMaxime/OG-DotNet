@@ -16,7 +16,7 @@ namespace OGDotNet.Mappedtypes.Engine.View
     {
         private readonly Dictionary<ComputationTargetSpecification, ISet<ComputedValue>> _mapAll;
 
-        public ViewCalculationResultModel(IDictionary<ComputationTargetSpecification, IDictionary<string, ComputedValue>> map, Dictionary<ComputationTargetSpecification, ISet<ComputedValue>> mapAll)
+        public ViewCalculationResultModel(Dictionary<ComputationTargetSpecification, ISet<ComputedValue>> mapAll)
         {
             _mapAll = mapAll;
         }
