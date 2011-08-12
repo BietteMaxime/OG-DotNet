@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using System.Text;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
 {
@@ -17,14 +18,21 @@ namespace OGDotNet.Builders
     {
         private readonly string _dotNetPrefix;
         readonly ConcurrentDictionary<string, Type> _getTypeCache = new ConcurrentDictionary<string, Type>();
+        readonly Memoizer<Type, string> _getNameCache;
 
         public JavaTypeMappingStrategyWithInterfaces(string dotNetPrefix, string javaPrefix)
             : base(dotNetPrefix, javaPrefix)
         {
+            _getNameCache = new Memoizer<Type, string>(GetNameImpl);
             _dotNetPrefix = dotNetPrefix;
         }
 
         public override string GetName(Type type)
+        {
+            return _getNameCache.Get(type);
+        }
+
+        private string GetNameImpl(Type type)
         {
             string javaxPrefix = _dotNetPrefix + ".JavaX";
             if (type.FullName.StartsWith(javaxPrefix))
