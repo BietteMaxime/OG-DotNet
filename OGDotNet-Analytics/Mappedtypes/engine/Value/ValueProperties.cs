@@ -197,17 +197,24 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 {
                     return false;
                 }
-                return PropertyValues.Count == finiteOther.PropertyValues.Count
-                       && PropertyValues.All(delegate(KeyValuePair<string, ISet<string>> entry)
-                       {
-                           var value = entry.Value;
-                           ISet<string> otherValue;
-                           if (!finiteOther.PropertyValues.TryGetValue(entry.Key, out otherValue))
-                           {
-                               return false;
-                           }
-                           return value.SetEquals(otherValue);
-                       });
+                if (PropertyValues.Count != finiteOther.PropertyValues.Count)
+                {
+                    return false;
+                }
+                foreach (var propertyValue in PropertyValues)
+                {
+                    var value = propertyValue.Value;
+                    ISet<string> otherValue;
+                    if (!finiteOther.PropertyValues.TryGetValue(propertyValue.Key, out otherValue))
+                    {
+                        return false;
+                    }
+                    if (! value.SetEquals(otherValue))
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
 
             public override string ToString()
