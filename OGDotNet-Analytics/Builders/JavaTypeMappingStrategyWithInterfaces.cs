@@ -71,15 +71,16 @@ namespace OGDotNet.Builders
 
         public override Type GetType(string name)
         {
-            if (_getTypeCache.ContainsKey(name))
+            Type ret;
+            if (_getTypeCache.TryGetValue(name, out ret))
             {
-                return _getTypeCache[name];
+                return ret;
             }
-            var ret = GetTypeImpl(name);
+            ret = GetTypeImpl(name);
             // Cacheing null returns (e.g. Memoizer) would lose the dynamic behaviour
             if (ret != null)
             {
-                _getTypeCache[name] = ret;
+                _getTypeCache[name] = ret; //Repeated assignments will be matching
             }
             return ret;
         }
