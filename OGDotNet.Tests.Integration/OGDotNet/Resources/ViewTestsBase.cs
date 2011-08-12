@@ -44,6 +44,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 return true;
             if (definitionName == "Bond Future Test View")
                 return true;
+            if (definitionName == "Bond View")
+                return true;
+            if (definitionName == "Bond View 2")
+                return true;
             if (definitionName.StartsWith("Cash Equity"))
                 return true;
             if (definitionName.StartsWith("GlobeOp Bond View"))
