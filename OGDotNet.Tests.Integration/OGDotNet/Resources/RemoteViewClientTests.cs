@@ -170,7 +170,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, defaultExecutionOptions:new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification()));
                 var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
 
-                var results = resultsEnum.Take(200).ToList();
+                var results = resultsEnum.Take(3).ToList();
                 Assert.True(results.All(r => r != null));
                 var counts = results.Select(r => r.AllResults.Count());
                 if (counts.Distinct().Count() != 1)
@@ -187,11 +187,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             int? counts = null;
             var viewProcess = new HashSet<UniqueId>();
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 10; i++)
             {
                 using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                 {
-                    var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, defaultExecutionOptions: new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification()));
+                    var options = ExecutionOptions.SingleCycle;
                     var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options, true);
 
                     var results = resultsEnum.Take(1).ToList();
