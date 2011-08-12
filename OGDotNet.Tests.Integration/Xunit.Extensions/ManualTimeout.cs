@@ -17,7 +17,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
     {
         private static int DefaultTimeout
         {
-            get { return (int)TimeSpan.FromMinutes(5).TotalMilliseconds; }
+            get { return (int)TimeSpan.FromMinutes(10).TotalMilliseconds; }
         }
 
         internal static T ExecuteWithTimeout<T>(Func<T> work)
