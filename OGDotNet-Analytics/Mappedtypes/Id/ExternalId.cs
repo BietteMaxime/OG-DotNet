@@ -9,6 +9,7 @@
 using System;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Id
 {
@@ -31,6 +32,8 @@ namespace OGDotNet.Mappedtypes.Id
 
         public ExternalId(string scheme, string value)
         {
+            ArgumentChecker.NotNull(scheme, "scheme");
+            ArgumentChecker.NotNull(value, "value");
             _scheme = scheme;
             _value = value;
         }
@@ -73,7 +76,7 @@ namespace OGDotNet.Mappedtypes.Id
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other._scheme, _scheme) && Equals(other._value, _value);
+            return other._scheme.Equals(_scheme) && other._value.Equals(_value);
         }
 
         public override bool Equals(object obj)
@@ -88,7 +91,7 @@ namespace OGDotNet.Mappedtypes.Id
         {
             unchecked
             {
-                return ((_scheme != null ? _scheme.GetHashCode() : 0) * 397) ^ (_value != null ? _value.GetHashCode() : 0);
+                return (_scheme.GetHashCode() * 397) ^ _value.GetHashCode();
             }
         }
 

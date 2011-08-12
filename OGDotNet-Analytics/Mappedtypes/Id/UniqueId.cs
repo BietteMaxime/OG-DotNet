@@ -155,7 +155,7 @@ namespace OGDotNet.Mappedtypes.Id
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other._scheme, _scheme) && Equals(other._value, _value) && Equals(other._version, _version);
+            return other._scheme.Equals(_scheme) && other._value.Equals(_value) && Equals(other._version, _version);
         }
 
         public override bool Equals(object obj)
@@ -170,8 +170,8 @@ namespace OGDotNet.Mappedtypes.Id
         {
             unchecked
             {
-                int result = _scheme != null ? _scheme.GetHashCode() : 0;
-                result = (result * 397) ^ (_value != null ? _value.GetHashCode() : 0);
+                int result = _scheme.GetHashCode();
+                result = (result * 397) ^ _value.GetHashCode();
                 result = (result * 397) ^ (_version != null ? _version.GetHashCode() : 0);
                 return result;
             }
