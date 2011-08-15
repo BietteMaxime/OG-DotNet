@@ -26,8 +26,8 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))
         {
             return WithLastResults(ct,
-                (cycle, graphs, results) =>
-                    RawMarketDataSnapper.CreateSnapshotFromCycle(results, graphs, cycle, _basisViewName, RemoteEngineContext));
+                                   (cycle, graphs, results) =>
+                                   RemoteEngineContext.MarketDataSnapshotter.CreateSnapshot(RemoteViewClient, cycle) );
         }
 
         protected override void AttachToViewProcess(RemoteViewClient remoteViewClient)

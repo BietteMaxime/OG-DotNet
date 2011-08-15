@@ -75,6 +75,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
+        public RemoteViewClient RemoteViewClient
+        {
+            get { return _remoteViewClient; }
+        }
+
         private void SetError(JavaException javaException)
         {
             Exception buildException = javaException.BuildException();

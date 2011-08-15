@@ -7,12 +7,14 @@
 //-----------------------------------------------------------------------
 using OGDotNet.Mappedtypes.Engine.View.Calc;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
-using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Resources;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
+    /// <summary>
+    /// At the moment this is largely tested via <see cref="MarketDataSnapshotManagerTests"/> and <see cref="MarketDataSnapshotProcessorTests"/> 
+    /// </summary>
     public class RemoteMarketDataSnapshotterTests : ViewTestsBase
     {
         [Xunit.Extensions.Fact]
