@@ -73,6 +73,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        //TOD: Test that we haven't included market data globally which should only be in the structured objects
+
         private static IViewComputationResultModel GetFirstResult(IViewExecutionOptions options, string viewName)
         {
             using (var remoteViewClient2 = Context.ViewProcessor.CreateClient())
