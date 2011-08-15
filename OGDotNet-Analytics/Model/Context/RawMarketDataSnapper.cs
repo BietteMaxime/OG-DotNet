@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Mappedtypes.Engine.Value;

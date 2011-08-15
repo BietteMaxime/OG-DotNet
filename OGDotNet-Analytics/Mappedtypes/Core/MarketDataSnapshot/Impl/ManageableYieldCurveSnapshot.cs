@@ -10,9 +10,10 @@ using System;
 using System.ComponentModel;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 
-namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 {
     public class ManageableYieldCurveSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableYieldCurveSnapshot>
     {

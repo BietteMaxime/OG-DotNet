@@ -12,12 +12,13 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
+using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Mappedtypes.Util.Tuple;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 {
     public class ManageableVolatilityCubeSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableVolatilityCubeSnapshot>
     {

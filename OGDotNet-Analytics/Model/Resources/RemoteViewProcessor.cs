@@ -6,6 +6,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
 
 namespace OGDotNet.Model.Resources
@@ -42,6 +44,12 @@ namespace OGDotNet.Model.Resources
         public RemoteViewClient CreateClient()
         {
             return CreateClient(UserPrincipal.DefaultUser);
+        }
+
+        public UniqueId GetUniqueId()
+        {
+            var restTarget = _rest.Resolve("id");
+            return restTarget.Get<UniqueId>();
         }
     }
 }

@@ -15,12 +15,13 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
+using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 {
     public class ManageableUnstructuredMarketDataSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableUnstructuredMarketDataSnapshot>
     {

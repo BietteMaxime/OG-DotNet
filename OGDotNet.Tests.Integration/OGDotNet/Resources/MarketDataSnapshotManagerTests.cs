@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OGDotNet.Mappedtypes;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;

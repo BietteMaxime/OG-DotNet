@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System.Threading;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 

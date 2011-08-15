@@ -9,6 +9,7 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot

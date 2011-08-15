@@ -16,11 +16,12 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
+namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 {
     public class ManageableMarketDataSnapshot : INotifyPropertyChanged, IUpdatableFrom<ManageableMarketDataSnapshot>, IUniqueIdentifiable
     {

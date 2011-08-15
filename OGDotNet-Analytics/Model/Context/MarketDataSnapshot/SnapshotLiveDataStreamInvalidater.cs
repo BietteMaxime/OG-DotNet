@@ -9,7 +9,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading;
-using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot
 {

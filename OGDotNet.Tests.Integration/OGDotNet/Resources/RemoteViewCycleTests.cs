@@ -386,7 +386,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             });
         }
 
-        private static void WithViewCycle(Action<ViewDefinitionCompiledArgs, IViewCycle, RemoteViewClient> action, string viewName = "Equity Option Test View 1")
+        public static void WithViewCycle(Action<ViewDefinitionCompiledArgs, IViewCycle, RemoteViewClient> action, string viewName = "Equity Option Test View 1")
         {
             using (var executedMre = new ManualResetEventSlim(false))
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())

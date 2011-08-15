@@ -7,9 +7,9 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Threading;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
-using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot

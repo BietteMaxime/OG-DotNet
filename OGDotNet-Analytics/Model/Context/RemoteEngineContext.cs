@@ -32,16 +32,29 @@ namespace OGDotNet.Model.Context
             get { return _rootUri; }
         }
 
+        private RestTarget GetTarget(string service)
+        {
+            return new RestTarget(_fudgeContext, _serviceUris[service]);
+        }
+
         public RemoteClient CreateUserClient()
         {
-            return new RemoteClient(new RestTarget(_fudgeContext, _serviceUris["userData"]));
+            return new RemoteClient(GetTarget("userData"));
         }
 
         public RemoteViewProcessor ViewProcessor
         {
             get
             {
-                return new RemoteViewProcessor(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["viewProcessor"]), _activeMQSpec);
+                return new RemoteViewProcessor(_fudgeContext, GetTarget("viewProcessor"), _activeMQSpec);
+            }
+        }
+
+        public RemoteMarketDataSnapshotter MarketDataSnapshotter
+        {
+            get
+            {
+                return new RemoteMarketDataSnapshotter(GetTarget("marketDataSnapshotter"));
             }
         }
 
@@ -49,7 +62,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteSecuritySource(new RestTarget(_fudgeContext, _serviceUris["securitySource"]));
+                return new RemoteSecuritySource(GetTarget("securitySource"));
             }
         }
 
@@ -57,7 +70,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteSecurityMaster(new RestTarget(_fudgeContext, _serviceUris["sharedSecurityMaster"]));
+                return new RemoteSecurityMaster(GetTarget("sharedSecurityMaster"));
             }
         }
 
@@ -72,7 +85,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteMarketDataSnapshotMaster(new RestTarget(_fudgeContext, _serviceUris["sharedMarketDataSnapshotMaster"]));
+                return new RemoteMarketDataSnapshotMaster(GetTarget("sharedMarketDataSnapshotMaster"));
             }
         }
 
@@ -80,7 +93,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteInterpolatedYieldCurveSpecificationBuilder(new RestTarget(_fudgeContext, _serviceUris["interpolatedYieldCurveSpecificationBuilder"]));
+                return new RemoteInterpolatedYieldCurveSpecificationBuilder(GetTarget("interpolatedYieldCurveSpecificationBuilder"));
             }
         }
 
@@ -88,7 +101,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteHistoricalTimeSeriesSource(_fudgeContext, new RestTarget(_fudgeContext, _serviceUris["historicalTimeSeriesSource"]));
+                return new RemoteHistoricalTimeSeriesSource(_fudgeContext, GetTarget("historicalTimeSeriesSource"));
             }
         }
 
@@ -96,7 +109,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteCurrencyMatrixSource(new RestTarget(_fudgeContext, _serviceUris["currencyMatrixSource"]));
+                return new RemoteCurrencyMatrixSource(GetTarget("currencyMatrixSource"));
             }
         }
 
@@ -104,7 +117,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteVolatilityCubeDefinitionSource(new RestTarget(_fudgeContext, _serviceUris["volatilityCubeDefinitionSource"]));
+                return new RemoteVolatilityCubeDefinitionSource(GetTarget("volatilityCubeDefinitionSource"));
             }
         }
     }

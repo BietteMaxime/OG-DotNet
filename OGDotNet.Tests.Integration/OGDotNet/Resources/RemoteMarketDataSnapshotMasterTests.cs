@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;

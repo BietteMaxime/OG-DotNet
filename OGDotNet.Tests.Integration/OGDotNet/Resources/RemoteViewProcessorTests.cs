@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
