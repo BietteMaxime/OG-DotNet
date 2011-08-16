@@ -88,7 +88,7 @@ namespace OGDotNet.Mappedtypes.Engine.View.Listener
 
         private static Exception BuildGenericException(string javaType, string message = null)
         {
-            return new Exception(string.Format("{0}: {1} - {2}", javaType, message, "Unmappable java exception ocurred"));
+            return new Exception(string.Format("{0}: {1} - {2}", javaType, message, "Unmappable java exception occurred"));
         }
     }
 }
