@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="TradeImpl.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="SimpleTrade.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -13,7 +13,7 @@ using OGDotNet.Mappedtypes.Id;
 namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
     [FudgeSurrogate(typeof(TradeBuilder))]
-    class TradeImpl : ITrade
+    class SimpleTrade : ITrade
     {
         private readonly UniqueId _uniqueId;
         private readonly DateTimeOffset _tradeDate;
@@ -21,7 +21,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
         private readonly CounterpartyImpl _counterparty;
         private readonly long _quantity;
 
-        public TradeImpl(UniqueId uniqueId, DateTimeOffset tradeDate, ExternalIdBundle securityKey, CounterpartyImpl counterparty, long quantity)
+        public SimpleTrade(UniqueId uniqueId, DateTimeOffset tradeDate, ExternalIdBundle securityKey, CounterpartyImpl counterparty, long quantity)
         {
             _uniqueId = uniqueId;
             _quantity = quantity;

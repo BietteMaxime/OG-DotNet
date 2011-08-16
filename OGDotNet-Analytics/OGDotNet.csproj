@@ -152,7 +152,7 @@
     <Compile Include="Mappedtypes\Core\Position\ICounterparty.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\CounterpartyImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\SimplePortfolioNode.cs" />
-    <Compile Include="Mappedtypes\Core\Position\Impl\TradeImpl.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Impl\SimpleTrade.cs" />
     <Compile Include="Mappedtypes\Core\Position\ITrade.cs" />
     <Compile Include="Mappedtypes\Core\Security\ISecurity.cs" />
     <Compile Include="Mappedtypes\DataNotFoundException.cs" />

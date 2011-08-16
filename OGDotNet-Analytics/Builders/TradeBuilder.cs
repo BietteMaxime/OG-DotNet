@@ -31,7 +31,7 @@ namespace OGDotNet.Builders
 
             var counterPartyIdentifier = ExternalId.Parse(ffc.GetString("counterpartyKey") ?? ffc.GetString("counterparty")); //NOTE: this is a hack because we don't use proto yet
             var quant = ffc.GetValue<long>("quantity");
-            return new TradeImpl(uniqueIdentifier, tradeDate, securityKey, new CounterpartyImpl(counterPartyIdentifier), quant);
+            return new SimpleTrade(uniqueIdentifier, tradeDate, securityKey, new CounterpartyImpl(counterPartyIdentifier), quant);
         }
     }
 }
