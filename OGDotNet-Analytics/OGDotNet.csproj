@@ -71,7 +71,8 @@
     <Compile Include="Builders\ExternalIdBundleBuilder.cs" />
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
     <Compile Include="Builders\LiveMarketDataSpecificationBuilder.cs" />
-    <Compile Include="Builders\PortfolioNodeImplBuilder.cs" />
+    <Compile Include="Builders\SimplePortfolioNodeBuilder.cs" />
+    <Compile Include="Builders\SimplePositionBuilder.cs" />
     <Compile Include="Builders\Streaming\DependencyGraphStreamingBuilder.cs" />
     <Compile Include="Builders\Streaming\IStreamingFudgeBuilder.cs" />
     <Compile Include="Builders\Streaming\SecuritiesResponseStreamingBuilder.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Builders\UserMarketDataSpecificationBuilder.cs" />
     <Compile Include="Builders\ValuePropertiesBuilder.cs" />
     <Compile Include="Builders\VolatilitySurfaceDataBuilder.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Impl\SimplePosition.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\engine\function\IFunctionDefinition.cs" />
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\VolatilityCubeData.cs" />
@@ -136,7 +138,6 @@
     <Compile Include="Builders\EnumBuilder.cs" />
     <Compile Include="Builders\EnumUtils.cs" />
     <Compile Include="Builders\ExternalIdBuilder.cs" />
-    <Compile Include="Builders\PositionBuilder.cs" />
     <Compile Include="Builders\TradeBuilder.cs" />
     <Compile Include="Builders\ViewResultModel\InMemoryViewDeltaResultModelBuilder.cs" />
     <Compile Include="Builders\ViewResultModel\InMemoryViewResultModelBuilderBase.cs" />
@@ -150,8 +151,7 @@
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\YieldCurveKey.cs" />
     <Compile Include="Mappedtypes\Core\Position\ICounterparty.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\CounterpartyImpl.cs" />
-    <Compile Include="Mappedtypes\Core\Position\Impl\PortfolioNodeImpl.cs" />
-    <Compile Include="Mappedtypes\Core\Position\Impl\PositionImpl.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Impl\SimplePortfolioNode.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\TradeImpl.cs" />
     <Compile Include="Mappedtypes\Core\Position\ITrade.cs" />
     <Compile Include="Mappedtypes\Core\Security\ISecurity.cs" />

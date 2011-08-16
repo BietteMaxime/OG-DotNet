@@ -13,7 +13,7 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position
 {
-    [FudgeSurrogate(typeof(PortfolioNodeImplBuilder))]
+    [FudgeSurrogate(typeof(SimplePortfolioNodeBuilder))]
     public class PortfolioNode : IUniqueIdentifiable
     {
         private readonly UniqueId _uniqueId;

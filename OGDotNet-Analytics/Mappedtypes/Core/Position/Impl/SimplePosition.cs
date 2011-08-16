@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="PositionImpl.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="SimplePosition.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -12,15 +12,15 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position.Impl
 {
-    [FudgeSurrogate(typeof(PositionBuilder))]
-    class PositionImpl : IPosition
+    [FudgeSurrogate(typeof(SimplePositionBuilder))]
+    class SimplePosition : IPosition
     {
         private readonly ExternalIdBundle _securityKey;
         private readonly IList<ITrade> _trades;
         private readonly UniqueId _identifier;
         private readonly long _quantity;
 
-        public PositionImpl(UniqueId identifier, long quantity, ExternalIdBundle securityKey, IList<ITrade> trades)
+        public SimplePosition(UniqueId identifier, long quantity, ExternalIdBundle securityKey, IList<ITrade> trades)
         {
             _securityKey = securityKey;
             _trades = trades;

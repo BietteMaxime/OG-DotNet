@@ -12,7 +12,7 @@ using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.Core.Position
 {
-    [FudgeSurrogate(typeof(PositionBuilder))]
+    [FudgeSurrogate(typeof(SimplePositionBuilder))]
     public interface IPosition : IPositionOrTrade
     {
         IEnumerable<ITrade> Trades { get; }

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="PortfolioNodeImplBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="SimplePortfolioNodeBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -16,15 +16,15 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Builders
 {
-    class PortfolioNodeImplBuilder : BuilderBase<PortfolioNodeImpl>
+    class SimplePortfolioNodeBuilder : BuilderBase<SimplePortfolioNode>
     {
-        public PortfolioNodeImplBuilder(FudgeContext context, Type type) : base(context, type)
+        public SimplePortfolioNodeBuilder(FudgeContext context, Type type) : base(context, type)
         {
         }
 
-        public override PortfolioNodeImpl DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
+        public override SimplePortfolioNode DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            return new PortfolioNodeImpl(
+            return new SimplePortfolioNode(
                 UniqueId.Parse(msg.GetString("identifier")), msg.GetString("name"),
                 deserializer.FromField<IList<PortfolioNode>>(msg.GetByName("subNodes")) ?? new List<PortfolioNode>(),
                 deserializer.FromField<IList<IPosition>>(msg.GetByName("positions")) ?? new List<IPosition>());
