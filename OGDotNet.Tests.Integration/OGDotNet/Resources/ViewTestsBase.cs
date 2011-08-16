@@ -33,6 +33,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "European Corporate Bond View",
                                                                       "European Corporate Bond View - test",
                                                                       "Random Matrix",
+                                                                      "Multi-Currency Swap Test View (2)",
+                                                                      "PoC Bond View",
+                                                                      "PoC Bond View Implied",
                                                                       "Simple IR Future Option Test View" //PLAT-1459
                                                                   };
 
@@ -81,7 +84,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static bool IsNotBanned(string n)
         {
-            return !BannedViews.Contains(n) && !TestUtils.ContainsGuid(n) && !n.Contains("web form test") && !n.Contains("web test");
+            return !BannedViews.Contains(n) 
+                && !TestUtils.ContainsGuid(n) 
+                && !n.Contains("web form test") 
+                && !n.Contains("web test")
+                && !n.EndsWith("(afshin)");
         }
 
         public static IEnumerable<ViewDefinition> FastTickingViewDefinitions
