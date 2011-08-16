@@ -125,7 +125,6 @@
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStream.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStreamInvalidater.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotLiveDataStreamInvalidater.cs" />
-    <Compile Include="Model\Context\StructuredSnapper.cs" />
     <Compile Include="Model\Resources\FudgeMessageDecoder.cs" />
     <Compile Include="Model\Resources\RemoteMarketDataSnapshotter.cs" />
     <Compile Include="Model\Resources\RemoteVolatilityCubeDefinitionSource.cs" />

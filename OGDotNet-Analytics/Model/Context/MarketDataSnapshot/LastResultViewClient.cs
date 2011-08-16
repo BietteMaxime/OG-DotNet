@@ -7,12 +7,14 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Calc;
+using OGDotNet.Mappedtypes.Engine.View.Compilation;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Mappedtypes.Util.Tuple;
 using OGDotNet.Model.Resources;
@@ -120,7 +122,9 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 if (_graphsOutOfDate)
                 {
                     _graphsOutOfDate = false; //NOTE: this is safe because our result message are serialized with our compiled notifications
-                    _graphs = RawMarketDataSnapper.GetGraphs(resourceReference.Value.GetCompiledViewDefinition());
+                    ICompiledViewDefinitionWithGraphs compiledViewDefinitionWithGraphs = resourceReference.Value.GetCompiledViewDefinition();
+                    _graphs = compiledViewDefinitionWithGraphs.CompiledCalculationConfigurations.Keys
+                        .ToDictionary(k => k, k => compiledViewDefinitionWithGraphs.GetDependencyGraphExplorer(k).GetWholeGraph());
                     InvokeGraphChanged();
                 }
 
