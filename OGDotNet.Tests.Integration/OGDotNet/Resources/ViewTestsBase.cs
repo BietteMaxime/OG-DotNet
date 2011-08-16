@@ -24,7 +24,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "10K USD Swap Test View",
 
                                                                       // Broken
-                                                                      "Jon Laplace Test View",
                                                                       "OvernightBatchTestView",
                                                                       "GlobeOp Bond View",
                                                                       "GlobeOp Bond View Implied",
