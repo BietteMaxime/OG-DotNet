@@ -9,13 +9,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using OGDotNet.Mappedtypes.Engine.DepGraph;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.Engine.View.Calc;
-using OGDotNet.Mappedtypes.Engine.View.Compilation;
+using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
+using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Math.Curve;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot
@@ -44,42 +45,33 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             _constructedEvent.Wait(ct);
 
             ViewDefinition viewDefinition = null;
+            Dictionary<YieldCurveKey, Dictionary<string, ValueRequirement>> specs = null;
+
             _liveStream.With(ct, liveDataStream => liveDataStream.WithLastResults(ct,
                                                                     (cycle, results) =>
                                                                         {
-                                                                            Dictionary<string, IDependencyGraph> graphs = GetGraphs(cycle);
                                                                             var tempViewName = string.Format("{0}-{1}", typeof(SnapshotDataStream).Name, Guid.NewGuid());
-                                                                            viewDefinition = GetViewDefinition(tempViewName, graphs);
+                                                                            specs = _remoteEngineContext.MarketDataSnapshotter.GetYieldCurveRequirements(liveDataStream.RemoteViewClient, cycle);
+                                                                            viewDefinition = GetViewDefinition(specs);
                                                                             viewDefinition.Name = tempViewName;
                                                                             _remoteClient.ViewDefinitionRepository.
                                                                                 AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                                                                         }));
-            return new SnapshotDataStream(viewDefinition, _remoteEngineContext, _snapshotId.ToLatest());
-        }
-
-        private static Dictionary<string, IDependencyGraph> GetGraphs(IViewCycle cycle)
-        {
-            ICompiledViewDefinitionWithGraphs compiledViewDefinitionWithGraphs = cycle.GetCompiledViewDefinition();
-            return compiledViewDefinitionWithGraphs.CompiledCalculationConfigurations.Keys.ToDictionary(k => k, k => compiledViewDefinitionWithGraphs.GetDependencyGraphExplorer(k).GetWholeGraph());
+            return new SnapshotDataStream(viewDefinition, _remoteEngineContext, _snapshotId.ToLatest(), specs);
         }
 
         private void OnGraphChanged(object sender, EventArgs e)
         {
             Invalidate();
         }
-        private static ViewDefinition GetViewDefinition(string name, IDictionary<string, IDependencyGraph> graphs)
+
+        private static ViewDefinition GetViewDefinition(Dictionary<YieldCurveKey, Dictionary<string, ValueRequirement>> specs)
         {
-            IEnumerable<ValueSpecification> specs = RawMarketDataSnapper.GetYieldCurveSpecs(graphs);
             var calculationConfigurationsByName = new Dictionary<string, ViewCalculationConfiguration>
                                                       {
-                                                          {"Default", new ViewCalculationConfiguration("Default", specs.Select(ToRequirement), new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>())}
+                                                          {"Default", new ViewCalculationConfiguration("Default", specs.SelectMany(s => s.Value.Values), new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>())}
                                                       };
-            return new ViewDefinition(name, calculationConfigurationsByName: calculationConfigurationsByName);
-        }
-
-        private static ValueRequirement ToRequirement(ValueSpecification spec)
-        {
-            return new ValueRequirement(spec.ValueName, spec.TargetSpecification, spec.Properties);
+            return new ViewDefinition(null, calculationConfigurationsByName: calculationConfigurationsByName);
         }
 
         protected override void Dispose(bool disposing)

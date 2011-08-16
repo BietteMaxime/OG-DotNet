@@ -28,5 +28,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                    Assert.NotNull(snapshot);
                });
         }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetYieldCurveSpecs()
+        {
+            RemoteMarketDataSnapshotter snapshotter = Context.MarketDataSnapshotter;
+            RemoteViewCycleTests.WithViewCycle(
+           delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
+           {
+               var snapshot = snapshotter.GetYieldCurveRequirements(client, cycle);
+               Assert.NotNull(snapshot);
+               Assert.NotEmpty(snapshot);
+           });
+        }
     }
 }
