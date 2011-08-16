@@ -125,6 +125,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     AssertSaneValue(curve);
                     Assert.True(curve.Values.Values.Keys.Any(s => ! manageableMarketDataSnapshot.GlobalValues.Values.ContainsKey(s))); //LAP-37
                 }
+                foreach (var cube in manageableMarketDataSnapshot.VolatilityCubes.Values)
+                {
+                    Assert.True(cube.Values.Any(v => v.Value.MarketValue == null));
+                }
             }
         }
 
