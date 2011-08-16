@@ -289,7 +289,7 @@
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrixEntry.cs" />
     <Compile Include="Mappedtypes\LiveData\UserPrincipal.cs" />
     <Compile Include="Mappedtypes\Core\Position\Portfolio.cs" />
-    <Compile Include="Mappedtypes\Core\Position\Impl\PortfolioImpl.cs" />
+    <Compile Include="Mappedtypes\Core\Position\Impl\SimplePortfolio.cs" />
     <Compile Include="Mappedtypes\Core\Position\PortfolioNode.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPosition.cs" />
     <Compile Include="Model\Context\RemoteEngineContext.cs" />
