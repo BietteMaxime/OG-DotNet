@@ -25,8 +25,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                                                                       // Broken
                                                                       "OvernightBatchTestView",
-                                                                      "GlobeOp Bond View",
-                                                                      "GlobeOp Bond View Implied",
                                                                       "Cash Equity Detailed Test View",
                                                                       "Cash Equity Test View",
                                                                       "European Corporate Bond View",
