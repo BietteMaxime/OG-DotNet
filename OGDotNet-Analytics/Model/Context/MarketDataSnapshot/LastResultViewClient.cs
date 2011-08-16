@@ -6,15 +6,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OGDotNet.Mappedtypes;
-using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Calc;
-using OGDotNet.Mappedtypes.Engine.View.Compilation;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Mappedtypes.Util.Tuple;
 using OGDotNet.Model.Resources;
@@ -31,14 +27,11 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private readonly ManualResetEventSlim _haveResults = new ManualResetEventSlim(false);
 
         private readonly object _lastResultsLock = new object();
-        private Pair<Dictionary<string, IDependencyGraph>,
-            Pair<IEngineResourceReference<IViewCycle>, IViewComputationResultModel>>
-            _lastResults;
+        private Pair<IEngineResourceReference<IViewCycle>, IViewComputationResultModel> _lastResults;
 
         private RemoteViewClient _remoteViewClient;
 
         private bool _graphsOutOfDate;
-        private Dictionary<string, IDependencyGraph> _graphs;
 
         private volatile Exception _error; //TODO: combine multiple exceptions
 
@@ -122,20 +115,17 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                 if (_graphsOutOfDate)
                 {
                     _graphsOutOfDate = false; //NOTE: this is safe because our result message are serialized with our compiled notifications
-                    ICompiledViewDefinitionWithGraphs compiledViewDefinitionWithGraphs = resourceReference.Value.GetCompiledViewDefinition();
-                    _graphs = compiledViewDefinitionWithGraphs.CompiledCalculationConfigurations.Keys
-                        .ToDictionary(k => k, k => compiledViewDefinitionWithGraphs.GetDependencyGraphExplorer(k).GetWholeGraph());
-                    InvokeGraphChanged();
+                    InvokeGraphChanged(); //NOTE: we need to delay this until we have a cycle
                 }
 
-                var newResults = Pair.Create(_graphs, Pair.Create(resourceReference, results));
+                var newResults = Pair.Create(resourceReference, results);
                 var previous = Interlocked.Exchange(ref _lastResults, newResults);
 
                 _haveResults.Set();
 
                 if (previous != null)
                 {
-                    previous.Second.First.Dispose();
+                    previous.First.Dispose();
                 }
             }
         }
@@ -152,7 +142,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                     if (lastResults != null)
                     {
                         //NOTE: the engine would clean this up anyway
-                        lastResults.Second.First.Dispose();
+                        lastResults.First.Dispose();
                     }
                     Monitor.PulseAll(_lastResultsLock);
                 }
@@ -164,32 +154,32 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             }
         }
 
-        public void WithLastResults(CancellationToken ct, Action<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel> action)
+        public void WithLastResults(CancellationToken ct, Action<IViewCycle, IViewComputationResultModel> action)
         {
-            WithLastResults<object>(ct, (c, g, m) =>
+            WithLastResults<object>(ct, (c, m) =>
             {
-                action(c, g, m);
+                action(c, m);
                 return null;
             });
         }
 
-        protected T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
+        protected T WithLastResults<T>(CancellationToken ct, Func<IViewCycle, IViewComputationResultModel, T> func)
         {
             WaitForAResult(ct);
             lock (_lastResultsLock)
             {
                 CheckDisposed();
-                return func(_lastResults.Second.First.Value, _lastResults.First, _lastResults.Second.Second);
+                return func(_lastResults.First.Value, _lastResults.Second);
             }
         }
 
-        protected T WithLastResults<T>(Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, bool> waitFor, CancellationToken ct, Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, T> func)
+        protected T WithLastResults<T>(Func<IViewCycle, IViewComputationResultModel, bool> waitFor, CancellationToken ct, Func<IViewCycle, IViewComputationResultModel, T> func)
         {
             WaitFor(waitFor, ct);
             return WithLastResults(ct, func);
         }
 
-        private void WaitFor(Func<IViewCycle, IDictionary<string, IDependencyGraph>, IViewComputationResultModel, bool> waitFor, CancellationToken ct)
+        private void WaitFor(Func<IViewCycle, IViewComputationResultModel, bool> waitFor, CancellationToken ct)
         {
             WaitForAResult(ct);
             lock (_lastResultsLock)

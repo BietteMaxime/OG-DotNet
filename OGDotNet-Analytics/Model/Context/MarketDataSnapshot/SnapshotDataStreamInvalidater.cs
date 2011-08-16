@@ -12,6 +12,8 @@ using System.Threading;
 using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
+using OGDotNet.Mappedtypes.Engine.View.Calc;
+using OGDotNet.Mappedtypes.Engine.View.Compilation;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
@@ -43,8 +45,9 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
             ViewDefinition viewDefinition = null;
             _liveStream.With(ct, liveDataStream => liveDataStream.WithLastResults(ct,
-                                                                    (cycle, graphs, results) =>
+                                                                    (cycle, results) =>
                                                                         {
+                                                                            Dictionary<string, IDependencyGraph> graphs = GetGraphs(cycle);
                                                                             var tempViewName = string.Format("{0}-{1}", typeof(SnapshotDataStream).Name, Guid.NewGuid());
                                                                             viewDefinition = GetViewDefinition(tempViewName, graphs);
                                                                             viewDefinition.Name = tempViewName;
@@ -52,6 +55,12 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                                                                                 AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                                                                         }));
             return new SnapshotDataStream(viewDefinition, _remoteEngineContext, _snapshotId.ToLatest());
+        }
+
+        private static Dictionary<string, IDependencyGraph> GetGraphs(IViewCycle cycle)
+        {
+            ICompiledViewDefinitionWithGraphs compiledViewDefinitionWithGraphs = cycle.GetCompiledViewDefinition();
+            return compiledViewDefinitionWithGraphs.CompiledCalculationConfigurations.Keys.ToDictionary(k => k, k => compiledViewDefinitionWithGraphs.GetDependencyGraphExplorer(k).GetWholeGraph());
         }
 
         private void OnGraphChanged(object sender, EventArgs e)

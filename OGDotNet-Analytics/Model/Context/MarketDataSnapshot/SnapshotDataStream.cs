@@ -41,8 +41,8 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> GetYieldCurves(DateTimeOffset waitFor, CancellationToken ct)
         {
-            return WithLastResults((cycle, graphs, results) => Matches(results, waitFor),
-                ct, (cycle, graphs, results) => RawMarketDataSnapper.EvaluateYieldCurves(results, _viewDefinition));
+            return WithLastResults((cycle, results) => Matches(results, waitFor),
+                ct, (cycle, results) => RawMarketDataSnapper.EvaluateYieldCurves(results, _viewDefinition));
         }
 
         private static bool Matches(IViewComputationResultModel results, DateTimeOffset waitFor)

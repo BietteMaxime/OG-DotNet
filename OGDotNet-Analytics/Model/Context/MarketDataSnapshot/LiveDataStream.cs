@@ -26,7 +26,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         public ManageableMarketDataSnapshot GetNewSnapshotForUpdate(CancellationToken ct = default(CancellationToken))
         {
             return WithLastResults(ct,
-                                   (cycle, graphs, results) =>
+                                   (cycle, results) =>
                                    RemoteEngineContext.MarketDataSnapshotter.CreateSnapshot(RemoteViewClient, cycle) );
         }
 
