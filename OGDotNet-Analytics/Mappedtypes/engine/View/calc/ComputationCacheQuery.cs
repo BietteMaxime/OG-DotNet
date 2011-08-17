@@ -48,7 +48,7 @@ namespace OGDotNet.Mappedtypes.Engine.View.Calc
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             a.Add("calculationConfigurationName", _calculationConfigurationName);
-            var fudgeMsg = new FudgeMsg();
+            var fudgeMsg = new FudgeMsg(s.Context);
             var s2 = ((OpenGammaFudgeContext) s.Context).GetSerializer();
             foreach (var valueSpecification in _valueSpecifications)
             {

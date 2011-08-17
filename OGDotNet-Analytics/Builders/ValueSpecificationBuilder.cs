@@ -23,7 +23,7 @@ namespace OGDotNet.Builders
         {
             new ComputationTargetSpecificationBuilder(serializer.Context, typeof(ComputationTargetSpecification)).Serialize(obj.TargetSpecification, msg, serializer);
 
-            var fudgeMsg = new FudgeMsg();
+            var fudgeMsg = new FudgeMsg(serializer.Context);
             serializer.WriteInline(fudgeMsg, "properties", obj.Properties);
             msg.Add("valueName", obj.ValueName);
         }

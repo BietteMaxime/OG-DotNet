@@ -225,7 +225,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
 
             public void Serialize(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
             {
-                var withMessage = new FudgeMsg();
+                var withMessage = new FudgeMsg(s.Context);
 
                 foreach (var property in PropertyValues)
                 {
@@ -260,7 +260,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 {
                     foreach (var optional in _optional)
                     {
-                        withMessage.Add(optional, new FudgeMsg(new Field("optional", IndicatorType.Instance)));
+                        withMessage.Add(optional, new FudgeMsg(s.Context, new Field("optional", IndicatorType.Instance)));
                     }
                 }
                 a.Add("with", withMessage);

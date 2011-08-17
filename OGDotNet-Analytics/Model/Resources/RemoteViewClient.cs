@@ -123,7 +123,7 @@ namespace OGDotNet.Model.Resources
             var clientResultStream = new ClientResultStream(_fudgeContext, _mqTemplate);
             try
             {
-                _rest.Resolve("startJmsResultStream").PostFudge(new FudgeMsg {{"destination", clientResultStream.QueueName}});
+                _rest.Resolve("startJmsResultStream").PostFudge(new FudgeMsg (_fudgeContext) {{"destination", clientResultStream.QueueName}});
                 return clientResultStream;    
             }
             catch
@@ -140,12 +140,12 @@ namespace OGDotNet.Model.Resources
 
         public void SetUpdatePeriod(long periodMillis)
         {
-            _rest.Resolve("updatePeriod").Put(new FudgeMsg(new Field("updatePeriod", periodMillis)));
+            _rest.Resolve("updatePeriod").Put(new FudgeMsg(_fudgeContext, new Field("updatePeriod", periodMillis)));
         }
 
         public void SetViewResultMode(ViewResultMode mode)
         {
-            var fudgeMsg = new FudgeMsg {{1, EnumBuilder<ViewResultMode>.GetJavaName(mode)}};
+            var fudgeMsg = new FudgeMsg(_fudgeContext) {{1, EnumBuilder<ViewResultMode>.GetJavaName(mode)}};
             _rest.Resolve("resultMode").Put(fudgeMsg);
         }
 

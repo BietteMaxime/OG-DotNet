@@ -40,7 +40,7 @@ namespace OGDotNet.Builders
             }
             else
             {
-                var withoutMessage = new FudgeMsg();
+                var withoutMessage = new FudgeMsg(serializer.Context);
 
                 if (obj is NearlyInfiniteValueProperties)
                 {

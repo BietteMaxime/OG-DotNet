@@ -48,7 +48,7 @@ namespace OGDotNet.Tests.OGDotNet.Utils.Tuple
 
             if (!skipNonGenericCheck)
             {
-                var nonGenericMessage = new FudgeMsg(message.GetAllFields().Where(f => f.Ordinal != 0 || !((string)f.Value).Contains('`')).ToArray());
+                var nonGenericMessage = new FudgeMsg(_fudgeContext, message.GetAllFields().Where(f => f.Ordinal != 0 || !((string)f.Value).Contains('`')).ToArray());
                 CheckRoundTrip(fudgeSerializer, orig, nonGenericMessage);
             }
         }
