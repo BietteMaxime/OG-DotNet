@@ -7,14 +7,15 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using Fudge.Serialization;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
 {
-    class MemoizingTypeMappingStrategy : IFudgeTypeMappingStrategy
+    public class MemoizingTypeMappingStrategy : IFudgeTypeMappingStrategy
     {
-        readonly ConcurrentDictionary<string, Type> _getTypeCache = new ConcurrentDictionary<string, Type>();
+        readonly Memoizer<string, Type> _getTypeCache;
         readonly Memoizer<Type, string> _getNameCache;
 
         private readonly IFudgeTypeMappingStrategy _inner;
@@ -23,6 +24,33 @@ namespace OGDotNet.Builders
         {
             _inner = inner;
             _getNameCache = new Memoizer<Type, string>(GetNameImpl);
+            _getTypeCache = new Memoizer<string, Type>(GetTypeImpl);
+
+            var weakRef = new WeakReference(this);
+            HookUpWeakClearingDelegate(weakRef);
+        }
+
+        private static void HookUpWeakClearingDelegate(WeakReference weakRef)
+        {
+            AssemblyLoadEventHandler ret = null;
+            ret = delegate(object sender, AssemblyLoadEventArgs args)
+                      {
+                          var target = (MemoizingTypeMappingStrategy) weakRef.Target;
+                          if (target == null)
+                          {
+                              //Unhook us, multiple unhooks is fine
+                              AppDomain.CurrentDomain.AssemblyLoad -= ret;
+                          }
+                          else
+                          {
+                              // Since we cache even null returns but we would like to keep the the dynamic behaviour
+                              // If the type request is being proccessed whilst this is called then we might cache the old value
+                              //  but that would be mad
+                              target._getTypeCache.Clear();
+                          }
+                      };
+            Thread.MemoryBarrier();
+            AppDomain.CurrentDomain.AssemblyLoad += ret;
         }
 
         public string GetName(Type type)
@@ -37,18 +65,7 @@ namespace OGDotNet.Builders
 
         public Type GetType(string name)
         {
-            Type ret;
-            if (_getTypeCache.TryGetValue(name, out ret))
-            {
-                return ret;
-            }
-            ret = GetTypeImpl(name);
-            // Cacheing null returns (e.g. Memoizer) would lose the dynamic behaviour
-            if (ret != null)
-            {
-                _getTypeCache[name] = ret; //Repeated assignments will be matching
-            }
-            return ret;
+            return _getTypeCache.Get(name);
         }
 
         private Type GetTypeImpl(string name)

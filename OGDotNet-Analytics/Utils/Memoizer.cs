@@ -46,5 +46,10 @@ namespace OGDotNet.Utils
         {
             return _values.GetOrAdd(arg, _func);
         }
+
+        public void Clear()
+        {
+            _values.Clear();
+        }
     }
 }
