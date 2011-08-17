@@ -211,7 +211,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Theory(Parallel = false)]
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void NumberOfResultsIsConsistent(ViewDefinition defn)
         {
