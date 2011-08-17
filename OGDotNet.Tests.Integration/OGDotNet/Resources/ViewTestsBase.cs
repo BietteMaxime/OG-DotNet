@@ -33,7 +33,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Multi-Currency Swap Test View (2)",
                                                                       "PoC Bond View",
                                                                       "PoC Bond View Implied",
-                                                                      "UNTITLED",
                                                                       "Simple IR Future Option Test View" //PLAT-1459
                                                                   };
 
@@ -86,7 +85,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 && !TestUtils.ContainsGuid(n) 
                 && !n.Contains("web form test") 
                 && !n.Contains("web test")
-                && !n.EndsWith("(afshin)");
+                && !n.EndsWith("(afshin)")
+                && n.Any(c => char.IsLower(c));
         }
 
         public static IEnumerable<ViewDefinition> FastTickingViewDefinitions
