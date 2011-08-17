@@ -180,8 +180,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 remoteViewClient.AttachToViewProcess(defn.Name, options);
                 
                 const int cyclesCount = 5;
-                List<int> counts = new List<int>(cyclesCount);
-                var countTasks = new List<Task<int>>();
+                
+                var cyclesList = new List<IEngineResourceReference<IViewCycle>>();
+                
                 TimeSpan timeout = TimeSpan.FromMinutes(2);
                 for (int i = 0; i < cyclesCount; i++)
                 {
@@ -194,10 +195,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     {
                         throw new Exception("Some error occured");
                     }
-                    int countResults = CountResults(cycle);
-                    counts.Add(countResults);
+                    cyclesList.Add(cycle);
                 }
+                remoteViewClient.DetachFromViewProcess(); //Stop gathering more and more referencess
 
+                var counts = cyclesList.Select(CountResults).ToList();
+                
                 if (counts.Distinct().Count() != 1)
                 {
                     throw new Exception(string.Format("Inconsistent number of results for {0} {1}", defn.Name, string.Join(",", counts.Select(c => c.ToString()))));
