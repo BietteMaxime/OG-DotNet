@@ -120,5 +120,13 @@ namespace OGDotNet.Model.Context
                 return new RemoteVolatilityCubeDefinitionSource(GetTarget("volatilityCubeDefinitionSource"));
             }
         }
+
+        public RemoteAvailableOutputs RemoteAvailableOutputs
+        {
+            get
+            {
+                return new RemoteAvailableOutputs(new RestTarget(_fudgeContext, _rootUri).Resolve("availableOutputs")); //TODO less hard coded
+            }
+        }
     }
 }
