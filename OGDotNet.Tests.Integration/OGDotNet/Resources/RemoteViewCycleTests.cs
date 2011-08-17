@@ -159,6 +159,58 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             });
         }
 
+        [Xunit.Extensions.Fact]
+        public void CanHoldLotsOfCycles()
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                const int cyclesCount = 1000;
+
+                var cycles = new BlockingCollection<IEngineResourceReference<IViewCycle>>();
+
+                var listener = new EventViewResultListener();
+                listener.ProcessCompleted += delegate { cycles.Add(null); };
+                listener.ViewDefinitionCompilationFailed += delegate { cycles.Add(null); };
+                listener.CycleExecutionFailed += delegate { cycles.Add(null); };
+
+                listener.CycleCompleted += (sender, e) =>
+                                               {
+                                                   remoteViewClient.Pause();
+                                                   //Use parallel to fill the thread pool
+                                                   Parallel.For(0, cyclesCount, _ => cycles.Add(remoteViewClient.CreateCycleReference(e.FullResult.ViewCycleId)));
+                                               };
+
+                remoteViewClient.SetResultListener(listener);
+                remoteViewClient.SetViewCycleAccessSupported(true);
+                var options = ExecutionOptions.RealTime;
+                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", options);
+
+                var cyclesList = new List<IEngineResourceReference<IViewCycle>>();
+
+                TimeSpan timeout = TimeSpan.FromMinutes(2);
+                for (int i = 0; i < cyclesCount; i++)
+                {
+                    IEngineResourceReference<IViewCycle> cycle;
+                    if (!cycles.TryTake(out cycle, timeout))
+                    {
+                        throw new TimeoutException(string.Format("Failed to get result {0} in {1}", i, timeout));
+                    }
+                    if (cycle == null)
+                    {
+                        throw new Exception("Some error occured");
+                    }
+                    cyclesList.Add(cycle);
+                }
+                remoteViewClient.DetachFromViewProcess(); //Stop gathering more and more referencess
+
+                Thread.Sleep(TimeSpan.FromSeconds(20)); //Make sure we have to heartbeat a few times
+                foreach (var engineResourceReference in cyclesList)
+                {
+                    Assert.NotNull(engineResourceReference.Value.UniqueId);
+                }
+            }
+        }
+
         [Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void NumberOfResultsIsConsistent(ViewDefinition defn)
