@@ -16,6 +16,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class ViewTestsBase : TestWithContextBase
     {
+        const string EnvVarName = "GDotNet.Tests.Integration.DefinitionNames";
+
         private static readonly string InterestingView = null; // Useful for debugging
 
         protected static readonly HashSet<string> BannedViews = new HashSet<string>
@@ -60,6 +62,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             get
             {
+                var envViews = Environment.GetEnvironmentVariable(EnvVarName);
+                if (envViews != null)
+                {
+                    return envViews.Split(';');
+                }
                 var remoteEngineContext = Context;
                 var definitionNames = remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
                 var ret = InterestingView == null ? definitionNames.Where(IsNotBanned) : Enumerable.Repeat(InterestingView, 1);
