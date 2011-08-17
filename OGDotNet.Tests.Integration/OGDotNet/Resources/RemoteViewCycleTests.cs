@@ -215,43 +215,36 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void NumberOfResultsIsConsistent(ViewDefinition defn)
         {
+            const int cyclesCount = 5;
+
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            using (var mre = new ManualResetEvent(false))
             {
                 var cycles = new BlockingCollection<IEngineResourceReference<IViewCycle>>();
 
                 var listener = new EventViewResultListener();
-                listener.ProcessCompleted += delegate { cycles.Add(null); };
-                listener.ViewDefinitionCompilationFailed += delegate { cycles.Add(null); };
-                listener.CycleExecutionFailed += delegate { cycles.Add(null); };
+                listener.ProcessCompleted += delegate { mre.Set(); };
+                listener.ViewDefinitionCompilationFailed += delegate { mre.Set(); };
+                listener.CycleExecutionFailed += delegate { mre.Set(); };
 
                 listener.CycleCompleted += (sender, e) => cycles.Add(remoteViewClient.CreateCycleReference(e.FullResult.ViewCycleId));
 
                 remoteViewClient.SetResultListener(listener);
                 remoteViewClient.SetViewCycleAccessSupported(true);
-                var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, null, new ViewCycleExecutionOptions(default(DateTimeOffset), ExecutionOptions.GetDefaultMarketDataSpec()));
+
+                var sequence = ArbitraryViewCycleExecutionSequence.Of(Enumerable.Range(0, cyclesCount).Select(i => DateTimeOffset.Now + TimeSpan.FromHours(i)));
+                var options = new ExecutionOptions(sequence, ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, null, new ViewCycleExecutionOptions(default(DateTimeOffset), ExecutionOptions.GetDefaultMarketDataSpec()));
+
                 remoteViewClient.AttachToViewProcess(defn.Name, options);
                 
-                const int cyclesCount = 5;
-                
-                var cyclesList = new List<IEngineResourceReference<IViewCycle>>();
-                
                 TimeSpan timeout = TimeSpan.FromMinutes(2);
-                for (int i = 0; i < cyclesCount; i++)
+                if (! mre.WaitOne(timeout))
                 {
-                    IEngineResourceReference<IViewCycle> cycle;
-                    if (! cycles.TryTake(out cycle, timeout))
-                    {
-                        throw new TimeoutException(string.Format("Failed to get result {0} in {1}", i, timeout));
-                    }
-                    if (cycle == null)
-                    {
-                        throw new Exception("Some error occured");
-                    }
-                    cyclesList.Add(cycle);
+                    throw new TimeoutException(string.Format("Failed to get result in {0}", timeout));
                 }
-                remoteViewClient.DetachFromViewProcess(); //Stop gathering more and more referencess
-
-                var counts = cyclesList.Select(CountResults).ToList();
+                Assert.Equal(cyclesCount, cycles.Count);
+                
+                var counts = cycles.Select(CountResults).ToList();
                 
                 if (counts.Distinct().Count() != 1)
                 {
