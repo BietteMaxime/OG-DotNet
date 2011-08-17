@@ -49,7 +49,15 @@ namespace OGDotNet.Model.Resources
 
         private void SendHeartbeat()
         {
-            _heartbeatRest.Post();
+            _heartbeatRest.PostAsync(HeartbeatOK, HeartbeatFailed);
+        }
+
+        private static void HeartbeatFailed(Exception obj)
+        {
+        }
+
+        private static void HeartbeatOK()
+        {
         }
 
         protected override void Dispose(bool disposing)

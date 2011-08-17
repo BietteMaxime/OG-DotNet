@@ -120,6 +120,31 @@ namespace OGDotNet.Model
             }
         }
 
+        public void PostAsync(Action okCallback, Action<Exception> errorCallback)
+        {
+            RestExceptionMapping.GetWithExceptionMapping(delegate
+            {
+                HttpWebRequest request = GetBasicRequest();
+                request.Method = "POST";
+                return request.BeginGetResponse(PostAsyncCallback, Tuple.Create(request, okCallback, errorCallback));
+            });
+        }
+
+        private static void PostAsyncCallback(IAsyncResult ar)
+        {
+            var state = (Tuple<HttpWebRequest, Action, Action<Exception>>)ar.AsyncState;
+            try
+            {
+                WebResponse endGetResponse = state.Item1.EndGetResponse(ar);
+                //TODO check response
+                state.Item2();
+            }
+            catch (Exception e)
+            {
+                state.Item3(e);
+            }
+        }
+
         public FudgeMsg PostFudge(FudgeMsg reqMsg)
         {
             return FudgeRequestImpl("POST", reqMsg);
