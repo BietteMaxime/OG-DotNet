@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using Apache.NMS;
 using OGDotNet.Mappedtypes.Engine.DepGraph;
 using OGDotNet.Mappedtypes.Engine.Value;
 
@@ -22,7 +23,13 @@ namespace OGDotNet.Model.Resources
 
         public IDependencyGraph GetWholeGraph()
         {
-            return _resolve.Resolve("wholeGraph").Get<IDependencyGraph>();
+            var dependencyGraph = _resolve.Resolve("wholeGraph").Get<IDependencyGraph>();
+            if (dependencyGraph == null)
+            {
+                throw new IllegalStateException("Null graph returned, perhaps the cycle dissapeared");
+            }
+
+            return dependencyGraph;
         }
 
         public IDependencyGraph GetSubgraphProducing(ValueSpecification output)
@@ -30,7 +37,12 @@ namespace OGDotNet.Model.Resources
             string encodedValueSpec = _resolve.EncodeBean(output);
             var subGraphTarget = _resolve.Resolve("subgraphProducing", Tuple.Create("msg", encodedValueSpec));
 
-            return subGraphTarget.Get<IDependencyGraph>();
+            var dependencyGraph = subGraphTarget.Get<IDependencyGraph>();
+            if (dependencyGraph == null)
+            {
+                throw new IllegalStateException("Null graph returned, perhaps the cycle dissapeared");
+            }
+            return dependencyGraph;
         }
     }
 }
