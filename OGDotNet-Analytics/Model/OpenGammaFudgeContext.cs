@@ -36,7 +36,9 @@ namespace OGDotNet.Model
 
         public OpenGammaFudgeContext()
         {
-            SetProperty(ContextProperties.TypeMappingStrategyProperty, new JavaTypeMappingStrategyWithInterfaces("OGDotNet.Mappedtypes", "com.opengamma"));
+            var javaMappingStrategy = new JavaTypeMappingStrategyWithInterfaces("OGDotNet.Mappedtypes", "com.opengamma");
+            var mappingStrategy = new MemoizingTypeMappingStrategy(javaMappingStrategy);
+            SetProperty(ContextProperties.TypeMappingStrategyProperty, mappingStrategy);
             SetProperty(ContextProperties.FieldNameConventionProperty, FudgeFieldNameConvention.CamelCase);
             AddSecondaryTypes(TypeDictionary);
             _fudgeSurrogateSelector = new MemoizingFudgeSurrogateSelector(this);

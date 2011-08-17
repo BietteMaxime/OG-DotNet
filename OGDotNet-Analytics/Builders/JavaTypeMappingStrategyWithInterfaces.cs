@@ -6,33 +6,23 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using System.Collections.Concurrent;
 using System.Text;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes;
-using OGDotNet.Utils;
 
 namespace OGDotNet.Builders
 {
     class JavaTypeMappingStrategyWithInterfaces : JavaTypeMappingStrategy
     {
         private readonly string _dotNetPrefix;
-        readonly ConcurrentDictionary<string, Type> _getTypeCache = new ConcurrentDictionary<string, Type>();
-        readonly Memoizer<Type, string> _getNameCache;
 
         public JavaTypeMappingStrategyWithInterfaces(string dotNetPrefix, string javaPrefix)
             : base(dotNetPrefix, javaPrefix)
         {
-            _getNameCache = new Memoizer<Type, string>(GetNameImpl);
             _dotNetPrefix = dotNetPrefix;
         }
 
         public override string GetName(Type type)
-        {
-            return _getNameCache.Get(type);
-        }
-
-        private string GetNameImpl(Type type)
         {
             string javaxPrefix = _dotNetPrefix + ".JavaX";
             if (type.FullName.StartsWith(javaxPrefix))
@@ -70,22 +60,6 @@ namespace OGDotNet.Builders
         }
 
         public override Type GetType(string name)
-        {
-            Type ret;
-            if (_getTypeCache.TryGetValue(name, out ret))
-            {
-                return ret;
-            }
-            ret = GetTypeImpl(name);
-            // Cacheing null returns (e.g. Memoizer) would lose the dynamic behaviour
-            if (ret != null)
-            {
-                _getTypeCache[name] = ret; //Repeated assignments will be matching
-            }
-            return ret;
-        }
-
-        private Type GetTypeImpl(string name)
         {
             var ret = base.GetType(name);
             if (ret == null && name.Contains("."))
