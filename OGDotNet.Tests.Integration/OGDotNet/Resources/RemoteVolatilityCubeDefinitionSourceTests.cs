@@ -6,23 +6,18 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using OGDotNet.Mappedtypes.Util.Money;
-using OGDotNet.Tests.Integration.Xunit.Extensions;
+using Xunit.Extensions;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteVolatilityCubeDefinitionSourceTests : TestWithContextBase
     {
-        [Fact]
-        public void CanGetDefaultDefn()
+        [Xunit.Extensions.Theory]
+        [InlineData("DEFAULT")]
+        [InlineData("BLOOMBERG")]
+        public void CanGetDefaultDefn(string cubeName)
         {
-            var defn = Context.VolatilityCubeDefinitionSource.GetDefinition(Currency.USD, "DEFAULT");
-            ValueAssertions.AssertSensibleValue(defn);
-        }
-
-        [Fact]
-        public void CanGetBloombergDefn()
-        {
-            var defn = Context.VolatilityCubeDefinitionSource.GetDefinition(Currency.USD, "DEFAULT");
+            var defn = Context.VolatilityCubeDefinitionSource.GetDefinition(Currency.USD, cubeName);
             ValueAssertions.AssertSensibleValue(defn);
         }
     }
