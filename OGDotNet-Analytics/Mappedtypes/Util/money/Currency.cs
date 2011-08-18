@@ -111,7 +111,7 @@ namespace OGDotNet.Mappedtypes.Util.Money
 
         private static Currency GetInstanceImpl(string isoCode)
         {
-            ArgumentChecker.NotEmpty(isoCode, "ISO Code");
+            ArgumentChecker.NotEmpty(isoCode, "isoCode");
             if (isoCode.Length != 3)
             {
                 throw new ArgumentOutOfRangeException("Invalid ISO code: " + isoCode);
