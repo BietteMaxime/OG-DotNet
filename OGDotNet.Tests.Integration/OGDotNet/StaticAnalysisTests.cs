@@ -9,6 +9,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Fudge;
+using Mono.Cecil;
+using Mono.Cecil.Cil;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Id;
@@ -103,6 +106,66 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                     }
                 }
             }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void NoBannedMethods()
+        {
+            List<string> fails = new List<string>();
+            var assembly = typeof(UniqueId).Assembly;
+            var assemblyDefinition = AssemblyFactory.GetAssembly(assembly.Location);
+            foreach (ModuleDefinition module in assemblyDefinition.Modules)
+            {
+                foreach (TypeDefinition type in module.Types)
+                {
+                    if (type.IsInterface)
+                    {
+                        continue;
+                    }
+                    foreach (MethodDefinition method in type.Methods)
+                    {
+                        if (! method.HasBody)
+                        {
+                            continue;
+                        }
+                        var methodBody = method.Body;
+                        foreach (Instruction instruction in methodBody.Instructions)
+                        {
+                            if (instruction.OpCode.FlowControl != FlowControl.Call)
+                                continue;
+                            var methodReference = (MethodReference)instruction.Operand;
+                            string reason;
+                            if (IsBannedCall(methodReference, out reason))
+                            {
+                                fails.Add(string.Format("{0}: Method {1} calls {2} which is banned", reason, method, methodReference));
+                            }
+                        }
+                    }
+                }   
+            }
+            if (fails.Any())
+            {
+                var message = Environment.NewLine + string.Join(Environment.NewLine, fails);
+                Assert.True(false, message);
+                throw new Exception(message);
+            }
+        }
+
+        private static bool IsBannedCall(MethodReference methodReference, out string reason)
+        {
+            if (methodReference.DeclaringType.FullName == typeof(FudgeMsg).FullName)
+            {
+                if (methodReference.Name == ".ctor")
+                {
+                    if (!methodReference.Parameters.Cast<ParameterDefinition>().Any(d => d.ParameterType.FullName == typeof(FudgeContext).FullName))
+                    {
+                        reason = "Constructing  a FudgeMsg without a FudgeContext is slow";
+                        return true;
+                    }
+                }
+            }
+            reason = null;
+            return false;
         }
 
         [Xunit.Extensions.Fact]
