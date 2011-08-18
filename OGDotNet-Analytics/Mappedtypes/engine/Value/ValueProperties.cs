@@ -86,7 +86,10 @@ namespace OGDotNet.Mappedtypes.Engine.Value
 
             internal FiniteValueProperties(Dictionary<string, ISet<string>> propertyValues, ISet<string> optional)
             {
-                ArgumentChecker.NotEmpty(propertyValues, "propertyValues");
+                if (propertyValues.Count == 0)
+                {//This happens so much it's done with Count check
+                    throw new ArgumentException("propertyValues");
+                }
                 PropertyValues = propertyValues;
                 _optional = optional;
             }
