@@ -77,7 +77,8 @@ namespace OGDotNet.Builders
                 return false;
             }
             var valueFields = ffc.GetAllByName("value");
-            if (valueFields.Count != 1)
+            var valueFieldCount = valueFields.Count;
+            if (valueFieldCount != 1)
             {
                 return false;
             }
@@ -87,11 +88,11 @@ namespace OGDotNet.Builders
                 return false;
             }
 
-            if (valueFields.Count + allByOrdinal.Count != ffc.Count())
+            if (valueFieldCount + allByOrdinal.Count != ffc.Count())
             {
                 return false;
             }
-            if (valueFields.Count != 1)
+            if (valueFieldCount != 1)
             {
                 return false;
             }

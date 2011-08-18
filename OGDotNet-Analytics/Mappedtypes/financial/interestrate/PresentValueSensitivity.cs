@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Fudge;
 using Fudge.Serialization;
 
@@ -36,7 +37,7 @@ namespace OGDotNet.Mappedtypes.Financial.InterestRate
             int id = 0;
             foreach (var tuple in curveNames.Zip(sensitivities, Tuple.Create))
             {
-                string curveName = "TODO " + (id++); //I believe the java is broken
+                string curveName = new StringBuilder("TODO ").Append(id++).ToString(); //I believe the java is broken
                 var listSensitivities = (IFudgeFieldContainer) tuple.Item2;
                 var pairsFields = listSensitivities.GetAllByName(null);
                 var tuples = pairsFields.Select(ReadPair).ToList();

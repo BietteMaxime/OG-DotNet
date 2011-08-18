@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Utils;
@@ -56,7 +57,7 @@ namespace OGDotNet.Mappedtypes.Math.Curve
             var index = Array.BinarySearch(_xData, x);
             if (index < 0)
             {
-                throw new ArgumentOutOfRangeException("x", "Curve does not contain data for x point " + x);
+                throw new ArgumentOutOfRangeException("x", new StringBuilder("Curve does not contain data for x = ").Append(x).ToString());
             }
 
             return YData[index];

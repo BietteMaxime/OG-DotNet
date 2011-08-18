@@ -25,9 +25,10 @@ namespace OGDotNet.Builders
         public override string GetName(Type type)
         {
             string javaxPrefix = _dotNetPrefix + ".JavaX";
-            if (type.FullName.StartsWith(javaxPrefix))
+            var typeFullName = type.FullName;
+            if (typeFullName.StartsWith(javaxPrefix))
             {
-                StringBuilder name = new StringBuilder("javax").Append(type.FullName.Substring(javaxPrefix.Length));
+                StringBuilder name = new StringBuilder("javax").Append(typeFullName.Substring(javaxPrefix.Length));
                 int end = LastIndexOf(name, '.');
                 for (int i = 0; i < end; i++)
                 {
@@ -37,7 +38,8 @@ namespace OGDotNet.Builders
             }
             var javaName = base.GetName(type);
 
-            if (type.IsInterface && type.Name.Length > 2 && type.Name[0] == 'I' && char.IsUpper(type.Name[1]))
+            var typeName = type.Name;
+            if (type.IsInterface && typeName.Length > 2 && typeName[0] == 'I' && char.IsUpper(typeName[1]))
             {
                 var dotIndex = javaName.LastIndexOf('.');
                 var stringBuilder = new StringBuilder(javaName);
@@ -65,7 +67,7 @@ namespace OGDotNet.Builders
             if (ret == null && name.Contains("."))
             {
                 var interfaceName = new StringBuilder(name);
-                interfaceName.Insert(name.LastIndexOf(".") + 1, 'I');
+                interfaceName.Insert(name.LastIndexOf('.') + 1, 'I');
                 ret = base.GetType(interfaceName.ToString());
                 CheckRoundTrip(name, ret);
             }

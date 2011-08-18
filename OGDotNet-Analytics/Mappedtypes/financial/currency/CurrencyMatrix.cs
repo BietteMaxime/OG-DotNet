@@ -60,17 +60,19 @@ namespace OGDotNet.Mappedtypes.Financial.currency
             foreach (IFudgeField field in message)
             {
                 CurrencyMatrixValue cross = CurrencyMatrixValue.Of(Currency.Create(field.Name));
-                foreach (IFudgeField field2 in (IFudgeFieldContainer)field.Value)
+                var value = field.Value;
+                foreach (IFudgeField field2 in (IFudgeFieldContainer)value)
                 {
                     Currency source = Currency.Create(field2.Name);
-                    if (field2.Value is IFudgeFieldContainer)
+                    var value2 = field2.Value;
+                    if (value2 is IFudgeFieldContainer)
                     {
-                        Currency target = Currency.Create(((IFudgeFieldContainer)field2.Value).First().Name);
+                        Currency target = Currency.Create(((IFudgeFieldContainer)value2).First().Name);
                         values.Add(Tuple.Create(source, target), cross);
                     }
                     else
                     {
-                        Currency target = Currency.Create((string)field2.Value);
+                        Currency target = Currency.Create((string)value2);
                         values.Add(Tuple.Create(source, target), cross);
                         values.Add(Tuple.Create(target, source), cross);
                     }

@@ -86,17 +86,18 @@ namespace OGDotNet.Builders
             {
                 var name = string.Intern(field.Name); // Should be a small static set
 
-                if (Equals(field.Type, IndicatorFieldType.Instance))
+                var fieldType = field.Type;
+                if (Equals(fieldType, IndicatorFieldType.Instance))
                 {
                     //withAny
                     properties.Add(name, new HashSet<string>());
                 }
-                else if (Equals(field.Type, StringFieldType.Instance))
+                else if (Equals(fieldType, StringFieldType.Instance))
                 {
                     var value = (string)field.Value;
                     properties.Add(name, SmallSet<string>.Create(value));
                 }
-                else if (Equals(field.Type, FudgeMsgFieldType.Instance))
+                else if (Equals(fieldType, FudgeMsgFieldType.Instance))
                 {
                     var propMessage = (IFudgeFieldContainer)field.Value;
 

@@ -35,16 +35,19 @@ namespace OGDotNet.Builders
                 FudgeMsg submsg = (FudgeMsg) typeField.Value;
                 foreach (var valueField in submsg)
                 {
+                    var valueName = valueField.Name;
+
                     AvailableOutput availableOutput;
-                    if (!outputsByValueName.TryGetValue(valueField.Name, out availableOutput))
+                    if (!outputsByValueName.TryGetValue(valueName, out availableOutput))
                     {
-                        availableOutput = new AvailableOutput(valueField.Name);
-                        outputsByValueName.Add(valueField.Name, availableOutput);
+                        availableOutput = new AvailableOutput(valueName);
+                        outputsByValueName.Add(valueName, availableOutput);
                     }
 
                     var valueProperties = deserializer.FromField<ValueProperties>(valueField);
 
-                    if (typeField.Name == null)
+                    var type = typeField.Name;
+                    if (type == null)
                     {
                         if (availableOutput.PortfolioNodeProperties != null)
                         {
@@ -54,8 +57,8 @@ namespace OGDotNet.Builders
                     }
                     else
                     {
-                        securityTypes.Add(typeField.Name);
-                        availableOutput.PositionProperties.Add(typeField.Name, valueProperties);
+                        securityTypes.Add(type);
+                        availableOutput.PositionProperties.Add(type, valueProperties);
                     }
                 }
             }

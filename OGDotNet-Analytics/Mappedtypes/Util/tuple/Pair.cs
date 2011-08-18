@@ -101,17 +101,18 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
             var field = ffc.GetByName(fieldName);
             if (field.Type != FudgeMsgFieldType.Instance)
             {
+                var value = field.Value;
                 if (typeof(T) == typeof(long))
                 {
-                    return (T)(object)Convert.ToInt64(field.Value);
+                    return (T)(object)Convert.ToInt64(value);
                 }
                 else if (typeof(T) == typeof(int))
                 {
-                    return (T)(object)Convert.ToInt32(field.Value);
+                    return (T)(object)Convert.ToInt32(value);
                 }
                 else
                 {
-                    return (T)field.Value;
+                    return (T)value;
                 }
             }
             return (T)deserializer.FromField(field, typeof(T));

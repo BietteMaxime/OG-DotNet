@@ -103,22 +103,10 @@ namespace OGDotNet.Mappedtypes.Engine.Value
 
             public override bool IsSatisfiedBy(ValueProperties properties)
             {
-                if (InfiniteValueProperties.Instance.IsSatisfiedBy(properties))
+                //Common case first
+                var finProps = properties as FiniteValueProperties;
+                if (finProps != null)
                 {
-                    return true;
-                }
-                if (properties is EmptyValueProperties)
-                {
-                    return false;
-                }
-                if (properties is NearlyInfiniteValueProperties)
-                {
-                    var niProps = (NearlyInfiniteValueProperties ) properties;
-                    return  !niProps.Without.Any(p => PropertyValues.ContainsKey(p) && (_optional == null || ! _optional.Contains(p)));
-                }
-                if (properties is FiniteValueProperties)
-                {
-                    var finProps = (FiniteValueProperties) properties;
                     foreach (var propertyValue in PropertyValues)
                     {
                         if (_optional != null && _optional.Contains(propertyValue.Key))
@@ -141,6 +129,19 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                         }
                     }
                     return true;
+                }
+                if (InfiniteValueProperties.Instance.IsSatisfiedBy(properties))
+                {
+                    return true;
+                }
+                if (properties is EmptyValueProperties)
+                {
+                    return false;
+                }
+                var niProps = properties as NearlyInfiniteValueProperties;
+                if (niProps != null)
+                {
+                    return !niProps.Without.Any(p => PropertyValues.ContainsKey(p) && (_optional == null || !_optional.Contains(p)));
                 }
                 throw new ArgumentException();
             }
@@ -179,6 +180,12 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 int hashCode = PropertyValues.Count;
                 hashCode = hashCode * 397 ^ (_optional == null ? 0 : _optional.Count);
                 return hashCode;
+            }
+
+            public override bool Equals(object obj)
+            {
+                var vp = obj as ValueProperties;
+                return vp != null && Equals(vp);
             }
 
             public override bool Equals(ValueProperties other)
@@ -225,13 +232,14 @@ namespace OGDotNet.Mappedtypes.Engine.Value
 
             public void Serialize(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
             {
-                var withMessage = new FudgeMsg(s.Context);
+                var context = s.Context;
+                var withMessage = new FudgeMsg(context);
 
                 foreach (var property in PropertyValues)
                 {
                     if (property.Value == null)
                     {
-                        var optMessage = new FudgeMsg(s.Context)
+                        var optMessage = new FudgeMsg(context)
                                              {
                                                  {(string) null, IndicatorType.Instance}
                                              };
@@ -248,7 +256,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                     }
                     else
                     {
-                        var manyMesssage = new FudgeMsg(s.Context);
+                        var manyMesssage = new FudgeMsg(context);
                         foreach (var val in property.Value)
                         {
                             manyMesssage.Add(property.Key, val);
@@ -260,7 +268,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 {
                     foreach (var optional in _optional)
                     {
-                        withMessage.Add(optional, new FudgeMsg(s.Context, new Field("optional", IndicatorType.Instance)));
+                        withMessage.Add(optional, new FudgeMsg(context, new Field("optional", IndicatorType.Instance)));
                     }
                 }
                 a.Add("with", withMessage);

@@ -16,7 +16,7 @@ namespace OGDotNet.Mappedtypes.Id
     [FudgeSurrogate(typeof(ExternalIdBuilder))]
     public class ExternalId : IEquatable<ExternalId>, IComparable<ExternalId>
     {
-        private const string Separator = "~";
+        private const char Separator = '~';
 
         private readonly string _scheme;
         public string Scheme

@@ -16,10 +16,10 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 {
     public class FixedIncomeStrip : IComparable<FixedIncomeStrip>
     {
-        public StripInstrumentType InstrumentType;
-        public Tenor CurveNodePointTime;
-        public string ConventionName;
-        public int NthFutureFromTenor;
+        public StripInstrumentType InstrumentType { get; set; }
+        public Tenor CurveNodePointTime { get; set; }
+        public string ConventionName { get; set; }
+        public int NthFutureFromTenor { get; set; }
 
         public static FixedIncomeStrip FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {

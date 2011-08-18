@@ -10,18 +10,18 @@ namespace OGDotNet.Mappedtypes.Engine.Value
 {
     public static class ValueRequirementNames
     {
-        public const string MarketValue = "Market_Value";
+        public static readonly string MarketValue = "Market_Value";
 
-        public const string YieldCurve = "YieldCurve";
-        public const string YieldCurveSpec = "YieldCurveSpec";
-        public const string YieldCurveInterpolated = "YieldCurveInterpolated";
-        public const string YieldCurveMarketData = "YieldCurveMarketData";
-        public const string YieldCurveJacobian = "YieldCurveJacobian";
+        public static readonly string YieldCurve = "YieldCurve";
+        public static readonly string YieldCurveSpec = "YieldCurveSpec";
+        public static readonly string YieldCurveInterpolated = "YieldCurveInterpolated";
+        public static readonly string YieldCurveMarketData = "YieldCurveMarketData";
+        public static readonly string YieldCurveJacobian = "YieldCurveJacobian";
 
-        public const string VolatilitySurfaceData = "VolatilitySurfaceData";
+        public static readonly string VolatilitySurfaceData = "VolatilitySurfaceData";
 
-        public const string VolatilityCubeMarketData = "VolatilityCubeMarketData";
+        public static readonly string VolatilityCubeMarketData = "VolatilityCubeMarketData";
 
-        public const string CurveCalculationMethod = "CurveCalculationMethod";
+        public static readonly string CurveCalculationMethod = "CurveCalculationMethod";
     }
 }

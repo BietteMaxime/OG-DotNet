@@ -75,17 +75,18 @@ namespace OGDotNet.Mappedtypes.Engine.Value
             IFudgeField idField = ffc.GetByName(fieldName);
             if (idField != null)
             {
-                if (idField.Value is string)
+                var value = idField.Value;
+                if (value is string)
                 {
-                    portfolioIdentifier = UniqueId.Parse((string) idField.Value);
+                    portfolioIdentifier = UniqueId.Parse((string) value);
                 }
-                else if (idField.Value is IFudgeFieldContainer)
+                else if (value is IFudgeFieldContainer)
                 {
                     portfolioIdentifier = deserializer.FromField<UniqueId>(idField);
                 }
                 else
                 {
-                    throw new ArgumentException(String.Format("Couldn't read UID {0}", idField.Value));
+                    throw new ArgumentException(String.Format("Couldn't read UID {0}", value));
                 }
             }
             else

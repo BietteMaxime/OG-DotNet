@@ -123,16 +123,18 @@ namespace OGDotNet.Mappedtypes.Engine.View
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer calcConfigMsg, IFudgeSerializer s)
         {
-            var fudgeSerializer = new FudgeSerializer(s.Context);
+            var context = s.Context;
+
+            var fudgeSerializer = new FudgeSerializer(context);
 
             calcConfigMsg.Add("name", Name);
             foreach (var securityTypeRequirements in PortfolioRequirementsBySecurityType)
             {
-                FudgeMsg securityTypeRequirementsMsg = new FudgeMsg(s.Context);
+                FudgeMsg securityTypeRequirementsMsg = new FudgeMsg(context);
                 securityTypeRequirementsMsg.Add("securityType", securityTypeRequirements.Key);
                 foreach (var requirement in securityTypeRequirements.Value)
                 {
-                    var newMessage = s.Context.NewMessage();
+                    var newMessage = context.NewMessage();
                     newMessage.Add("requiredOutput", requirement.Item1);
                     newMessage.Add("constraints", fudgeSerializer.SerializeToMsg(requirement.Item2));
 
