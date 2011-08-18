@@ -14,6 +14,7 @@ using OGDotNet.Tests.Integration.OGDotNet.Builders;
 using OGDotNet.Tests.Integration.OGDotNet.Model;
 using OGDotNet.Tests.Integration.OGDotNet.Model.Context;
 using OGDotNet.Tests.Integration.OGDotNet.Resources;
+using OGDotNet.Tests.Integration.Xunit.Extensions;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
@@ -27,6 +28,7 @@ namespace OGDotNet.Tests.Integration
                                                           typeof(RemoteEngineContextFactoryTests),
                                                           typeof(TestsAreIntegrationTests),
                                                           typeof(StaticAnalysisTests),
+                                                          typeof(CecilTests),
                                                           typeof(MemoizingTypeMappingStrategyTest),
 
                                                           typeof(OpenGammaFudgeContextTests), //Here because it is slow

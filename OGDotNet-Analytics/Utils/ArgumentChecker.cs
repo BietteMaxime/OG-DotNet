@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace OGDotNet.Utils
 {
-    internal static class ArgumentChecker
+    public static class ArgumentChecker
     {
         public static void Not(bool condition, string argName)
         {

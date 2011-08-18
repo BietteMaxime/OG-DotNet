@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OGDotNet\Builders\MemoizingTypeMappingStrategyTest.cs" />
+    <Compile Include="Xunit.Extensions\CecilTests.cs" />
     <Compile Include="OGDotNet\Resources\AvailableOutputsResourceTest.cs" />
     <Compile Include="OGDotNet\Resources\RemoteMarketDataSnapshotterTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteVolatilityCubeDefinitionSourceTests.cs" />

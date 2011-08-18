@@ -17,6 +17,7 @@ using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
+using OGDotNet.Utils;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet
@@ -109,66 +110,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet
         }
 
         [Xunit.Extensions.Fact]
-        public void NoBannedMethods()
-        {
-            List<string> fails = new List<string>();
-            var assembly = typeof(UniqueId).Assembly;
-            var assemblyDefinition = AssemblyFactory.GetAssembly(assembly.Location);
-            foreach (ModuleDefinition module in assemblyDefinition.Modules)
-            {
-                foreach (TypeDefinition type in module.Types)
-                {
-                    if (type.IsInterface)
-                    {
-                        continue;
-                    }
-                    foreach (MethodDefinition method in type.Methods)
-                    {
-                        if (! method.HasBody)
-                        {
-                            continue;
-                        }
-                        var methodBody = method.Body;
-                        foreach (Instruction instruction in methodBody.Instructions)
-                        {
-                            if (instruction.OpCode.FlowControl != FlowControl.Call)
-                                continue;
-                            var methodReference = (MethodReference)instruction.Operand;
-                            string reason;
-                            if (IsBannedCall(methodReference, out reason))
-                            {
-                                fails.Add(string.Format("{0}: Method {1} calls {2} which is banned", reason, method, methodReference));
-                            }
-                        }
-                    }
-                }   
-            }
-            if (fails.Any())
-            {
-                var message = Environment.NewLine + string.Join(Environment.NewLine, fails);
-                Assert.True(false, message);
-                throw new Exception(message);
-            }
-        }
-
-        private static bool IsBannedCall(MethodReference methodReference, out string reason)
-        {
-            if (methodReference.DeclaringType.FullName == typeof(FudgeMsg).FullName)
-            {
-                if (methodReference.Name == ".ctor")
-                {
-                    if (!methodReference.Parameters.Cast<ParameterDefinition>().Any(d => d.ParameterType.FullName == typeof(FudgeContext).FullName))
-                    {
-                        reason = "Constructing  a FudgeMsg without a FudgeContext is slow";
-                        return true;
-                    }
-                }
-            }
-            reason = null;
-            return false;
-        }
-
-        [Xunit.Extensions.Fact]
         public void NamespaceCasingConsistent()
         {
             var nameSpaces = new HashSet<string>();
@@ -191,6 +132,103 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                         throw new Exception(string.Format("Found many casings {0}: {1}", g.Key, string.Join(",", g)));
                     }
                 }
+            }
+        }
+
+        [CecilTests.MethodCallsTest]
+        public void NoBannedMethods(MethodDefinition method, Instruction instruction, MethodReference methodReference)
+        {
+            if (methodReference.DeclaringType.FullName == typeof(FudgeMsg).FullName && methodReference.Name == ".ctor")
+            {
+                if (!methodReference.Parameters.Cast<ParameterDefinition>().Any(d => d.ParameterType.FullName == typeof(FudgeContext).FullName))
+                {
+                    throw new Exception("Constructing  a FudgeMsg without a FudgeContext is slow");
+                }
+            }
+        }
+
+        [CecilTests.MethodCallsTest]
+        public void ArgumentCheckerCalledCorrectly(MethodDefinition method, Instruction instruction, MethodReference methodReference)
+        {
+            if (methodReference.DeclaringType.FullName == typeof(ArgumentChecker).FullName)
+            {
+                var parameters = methodReference.Parameters.Cast<ParameterDefinition>().ToList();
+                var argNameParam = parameters.Where(p => p.Name == "argName").Single();
+                Assert.Equal(argNameParam, parameters.Last());
+                var ldStr = instruction.Previous;
+                if (ldStr.OpCode != OpCodes.Ldstr)
+                {
+                    //Some fancy pants dynamic call
+                    return;
+                }
+                string argName = (string)ldStr.Operand;
+                if (argName.Contains("."))
+                {
+                    //Some fancy pants fishing call
+                    return;
+                }
+
+                if (!method.Parameters.Cast<ParameterDefinition>().Any(p => p.Name == argName))
+                {
+                    throw new Exception(string.Format("Wrong arg name {0}", argName));
+                }
+
+                if (methodReference.Name != "Not")
+                {//Only things which should be called directly on an arg
+                    var ldArg = ldStr.Previous;
+                    ParameterDefinition parameterDefinition = GetParameterDefinition(method, ldArg);
+                    if (parameterDefinition == null)
+                    {
+                        return;
+                    }
+                    if (parameterDefinition.Name != argName)
+                    {
+                        throw new Exception(string.Format(
+                            "Wrong arg name {0} != {1}", argName, parameterDefinition.Name));
+                    }
+                }
+            }
+        }
+
+        private static ParameterDefinition GetParameterDefinition(MethodDefinition method, Instruction ldArg)
+        {
+            if (ldArg.OpCode == OpCodes.Ldarg_S)
+            {
+                return (ParameterDefinition)ldArg.Operand;
+            }
+            int index = GetLdArgIndex(ldArg);
+            if (index < 0)
+            {
+                return null;
+            }
+            if (method.HasThis)
+            {
+                index -= 1;
+            }
+            return method.Parameters[index];
+        }
+
+        private static int GetLdArgIndex(Instruction ldArg)
+        {
+            if (ldArg.OpCode == OpCodes.Ldarg_0)
+            {
+                return 0;
+            }
+            else if (ldArg.OpCode == OpCodes.Ldarg_1)
+            {
+                return 1;
+            }
+            else if (ldArg.OpCode == OpCodes.Ldarg_2)
+            {
+                return 2;
+            }
+            else if (ldArg.OpCode == OpCodes.Ldarg_3)
+            {
+                return 3;
+            }
+            else
+            {
+                return -1;
             }
         }
     }
