@@ -7,7 +7,10 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit.Sdk;
+using TimeoutException = Xunit.Sdk.TimeoutException;
 
 namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {
@@ -25,15 +28,56 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
              * It also leaves the method executing, which hangs the build.
              */
 
-            try
+            return WithRetry(3, 6,
+                delegate
+                {
+                    try
+                    {
+                        return ManualTimeout.ExecuteWithTimeout(() => InnerCommand.Execute(testClass));
+                    }
+                    finally
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }
+                });
+        }
+
+        private static T WithRetry<T>(int shortAttempts, int maxAttempts, Func<T> action)
+        {
+            var es = new List<Exception>();
+            int succcess = 0;
+            for (int i = 0; i < maxAttempts; i++)
             {
-                return ManualTimeout.ExecuteWithTimeout(() => InnerCommand.Execute(testClass));
+                try
+                {
+                    var result = action();
+                    if (i == 0)
+                    {
+                        return result;
+                    }
+                    else
+                    {
+                        succcess++;
+                    }
+                }
+                catch (TimeoutException)
+                {
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Potentially retrying after " + e);
+                    if (i == shortAttempts - 1 && succcess == 0)
+                    {
+                        //No success, presume it's just failing
+                        throw;
+                    }
+                    es.Add(e);
+                }
             }
-            finally
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
+            var message = string.Format("Intermittent failure {0}/{1} times: {2}", maxAttempts - succcess, maxAttempts, string.Join(",", es.Select(e => e.Message).Distinct()));
+            throw new AggregateException(message, es);
         }
     }
 }
