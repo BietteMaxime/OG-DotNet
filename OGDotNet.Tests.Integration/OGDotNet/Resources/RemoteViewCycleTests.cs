@@ -337,6 +337,37 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }, defn.Name);
         }
 
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanGetAllTerminalValues(ViewDefinition defn)
+        {
+            WithViewCycle(
+            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
+            {
+                var compiledViewDefinition = cycle.GetCompiledViewDefinition();
+                var viewComputationResultModel = cycle.GetResultModel();
+                foreach (var kvp in compiledViewDefinition.ViewDefinition.CalculationConfigurationsByName)
+                {
+                    var viewCalculationConfiguration = kvp.Key;
+                    var results = viewComputationResultModel.AllResults.Where(r => r.CalculationConfiguration == viewCalculationConfiguration).ToDictionary(r => r.ComputedValue.Specification, r => r.ComputedValue.Value);
+                    var specs = results.Select(r => r.Key).ToList();
+
+                    var computationCacheResponse = cycle.QueryComputationCaches(new ComputationCacheQuery(viewCalculationConfiguration, specs));
+                    Assert.Equal(specs.Count(), computationCacheResponse.Results.Count);
+                    foreach (var result in computationCacheResponse.Results)
+                    {
+                        Assert.Contains(result.First, specs);
+                        var expected = results[result.First];
+                        Assert.Equal(expected.GetType(), result.Second.GetType());
+                        if (expected is double)
+                        {
+                            Assert.Equal(expected, result.Second);
+                        }
+                    }
+                }
+            }, defn.Name);
+        }
+
         private static void CheckCompleteGraph(IDependencyGraph wholeGraph)
         {
             foreach (DependencyNode node in wholeGraph.DependencyNodes)

@@ -49,7 +49,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other._valueName, _valueName) && Equals(other._targetSpecification, _targetSpecification);
+            return Equals(other._valueName, _valueName) && Equals(other._targetSpecification, _targetSpecification) && other._properties.Equals(_properties);
         }
 
         public override bool Equals(object obj)
