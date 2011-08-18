@@ -60,7 +60,7 @@ namespace OGDotNet.Builders
             {
                 if (withoutMessage.Any())
                 {
-                    var without = withoutMessage.GetAllFields().Select(f => f.Value).Cast<string>();
+                    var without = withoutMessage.Select(f => f.Value).Cast<string>();
                     var withoutSet = SmallSet<string>.Create(without);
                     return new NearlyInfiniteValueProperties(withoutSet);
                 }
@@ -77,12 +77,10 @@ namespace OGDotNet.Builders
                 return EmptyValueProperties.Instance;
             }
 
-            IList<IFudgeField> fields = withMessage.GetAllFields();
-
-            var properties = new Dictionary<string, ISet<string>>(fields.Count);
+            var properties = new Dictionary<string, ISet<string>>(withMessage.GetNumFields());
             HashSet<string> optional = null;
 
-            foreach (var field in fields)
+            foreach (var field in withMessage)
             {
                 var name = string.Intern(field.Name); // Should be a small static set
 
@@ -99,32 +97,28 @@ namespace OGDotNet.Builders
                 }
                 else if (Equals(fieldType, FudgeMsgFieldType.Instance))
                 {
-                    var propMessage = (IFudgeFieldContainer)field.Value;
-
-                    IList<IFudgeField> fudgeFields = propMessage.GetAllFields();
+                    var propMessage = (IFudgeFieldContainer) field.Value;
+                    var hashSet = new HashSet<string>();
+                    foreach (var fudgeField in propMessage)
                     {
-                        var hashSet = new HashSet<string>();
-                        foreach (var fudgeField in fudgeFields)
+                        if (fudgeField.Value == IndicatorType.Instance)
                         {
-                            if (fudgeField.Value == IndicatorType.Instance)
+                            if (fudgeField.Name != "optional")
                             {
-                                if (fudgeField.Name != "optional")
-                                {
-                                    throw new ArgumentException();
-                                }
-                                optional = optional ?? new HashSet<string>();
-                                optional.Add(name);
+                                throw new ArgumentException();
                             }
-                            else
-                            {
-                                string value = (string)fudgeField.Value;
-                                hashSet.Add(value);
-                            }
+                            optional = optional ?? new HashSet<string>();
+                            optional.Add(name);
                         }
-                        if (hashSet.Any())
+                        else
                         {
-                            properties.Add(name, hashSet);
+                            string value = (string) fudgeField.Value;
+                            hashSet.Add(value);
                         }
+                    }
+                    if (hashSet.Any())
+                    {
+                        properties.Add(name, hashSet);
                     }
                 }
             }
