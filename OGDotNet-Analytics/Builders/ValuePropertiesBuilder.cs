@@ -29,10 +29,6 @@ namespace OGDotNet.Builders
 
         protected override void SerializeImpl(ValueProperties obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
         {
-            if (obj is EmptyValueProperties)
-            {
-                return;
-            }
             var finite = obj as FiniteValueProperties;
             if (finite != null)
             {
@@ -40,6 +36,10 @@ namespace OGDotNet.Builders
             }
             else
             {
+                if (obj is EmptyValueProperties)
+                {
+                    return;
+                }
                 var withoutMessage = new FudgeMsg(serializer.Context);
 
                 if (obj is NearlyInfiniteValueProperties)

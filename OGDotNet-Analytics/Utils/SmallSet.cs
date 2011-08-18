@@ -167,7 +167,7 @@ namespace OGDotNet.Utils
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            array[arrayIndex] = _value;
         }
 
         public bool Remove(T item)

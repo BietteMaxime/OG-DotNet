@@ -238,6 +238,8 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 var context = s.Context;
                 var withMessage = new FudgeMsg(context);
 
+                var v = new string[1];
+
                 foreach (var property in PropertyValues)
                 {
                     if (property.Value == null)
@@ -249,13 +251,14 @@ namespace OGDotNet.Mappedtypes.Engine.Value
 
                         withMessage.Add(property.Key, optMessage);
                     }
-                    else if (!property.Value.Any())
+                    else if (0 == property.Value.Count)
                     {
                         withMessage.Add(property.Key, IndicatorType.Instance);
                     }
                     else if (property.Value.Count == 1)
                     {
-                        withMessage.Add(property.Key, property.Value.Single());
+                        property.Value.CopyTo(v, 0);
+                        withMessage.Add(property.Key, v[0]);
                     }
                     else
                     {
