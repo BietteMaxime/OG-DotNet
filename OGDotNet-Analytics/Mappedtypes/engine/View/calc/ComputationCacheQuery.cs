@@ -6,16 +6,15 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Engine.Value;
-using OGDotNet.Model;
 
 namespace OGDotNet.Mappedtypes.Engine.View.Calc
 {
+    [FudgeSurrogate(typeof(ComputationCacheQueryBuilder))]
     public class ComputationCacheQuery
     {
         private readonly string _calculationConfigurationName;
@@ -38,23 +37,6 @@ namespace OGDotNet.Mappedtypes.Engine.View.Calc
         public IEnumerable<ValueSpecification> ValueSpecifications
         {
             get { return _valueSpecifications; }
-        }
-
-        public static ComputationCacheQuery FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            a.Add("calculationConfigurationName", _calculationConfigurationName);
-            var fudgeMsg = new FudgeMsg(s.Context);
-            var s2 = ((OpenGammaFudgeContext) s.Context).GetSerializer();
-            foreach (var valueSpecification in _valueSpecifications)
-            {
-                fudgeMsg.Add(null, null, s2.SerializeToMsg(valueSpecification));
-            }
-            a.Add("valueSpecifications", fudgeMsg);
         }
     }
 }
