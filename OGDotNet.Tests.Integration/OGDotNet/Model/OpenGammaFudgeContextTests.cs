@@ -39,7 +39,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Model
         /// <summary>
         /// This tries to check that the cacheing which breaks <see cref="SerializerIsThreadSafe"/> actually works
         /// </summary>
-        [Fact(Timeout = 12000)]
+        [Fact(Timeout = 12000, Skip = "This test is machine dependent")]
         public void SerializerIsFast()
         {
             var context = new OpenGammaFudgeContext();

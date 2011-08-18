@@ -91,7 +91,7 @@ namespace OGDotNet.Tests.OGDotNet.Utils
             }
         }
 
-        [Fact(Timeout = 10000)]
+        [Fact(Timeout = 10000, Skip = "This test is machine dependent")]
         public void TestCache()
         {
             for (int i = 0; i < 1000000; i++)
