@@ -14,8 +14,6 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
-using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
@@ -52,7 +50,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 
         public UpdateAction<ManageableUnstructuredMarketDataSnapshot> PrepareUpdateFrom(ManageableUnstructuredMarketDataSnapshot newSnapshot)
         {
-            var currValues = GetUpdateDictionary(Values);
+            var currValues = GetUpdateDictionary(_values);
             var newValues = GetUpdateDictionary(newSnapshot.Values);
 
             return currValues.ProjectStructure(newValues,

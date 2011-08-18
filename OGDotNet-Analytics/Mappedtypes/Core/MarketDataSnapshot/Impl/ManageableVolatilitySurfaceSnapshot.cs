@@ -88,7 +88,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 
         public void RemoveAllOverrides()
         {
-            foreach (var valueSnapshot in Values)
+            foreach (var valueSnapshot in _values)
             {
                 valueSnapshot.Value.OverrideValue = null;
             }

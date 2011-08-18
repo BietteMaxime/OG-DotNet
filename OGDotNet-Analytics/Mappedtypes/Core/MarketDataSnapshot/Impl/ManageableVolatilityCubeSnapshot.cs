@@ -163,7 +163,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
         public void RemoveAllOverrides()
         {
             _otherValues.RemoveAllOverrides();
-            foreach (var valueSnapshot in Values)
+            foreach (var valueSnapshot in _values)
             {
                 if (valueSnapshot.Value != null && valueSnapshot.Value.OverrideValue != null)
                 {

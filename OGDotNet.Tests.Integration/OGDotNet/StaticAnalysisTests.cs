@@ -13,6 +13,7 @@ using Fudge;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -274,6 +275,69 @@ namespace OGDotNet.Tests.Integration.OGDotNet
             else
             {
                 return false;
+            }
+        }
+
+        [CecilTests.TypesTest]
+        public void SnapshotObjectsConsistentUpdateable(TypeDefinition type)
+        {
+            if (type.Namespace.StartsWith(typeof(ManageableMarketDataSnapshot).Namespace))
+            {
+                if (type.IsInterface)
+                {
+                    return;
+                }
+                var publicMethods = type.Methods.Cast<MethodDefinition>().Where(m => m.IsPublic);
+                Assert.NotEmpty(publicMethods);
+
+                var haveOverrides = publicMethods.SingleOrDefault(m => m.Name == "HaveOverrides");
+                var removeAllOverrides = publicMethods.SingleOrDefault(m => m.Name == "RemoveAllOverrides");
+                var prepareUpdate = publicMethods.SingleOrDefault(m => m.Name == "PrepareUpdateFrom");
+
+                if ((haveOverrides == null) != (removeAllOverrides == null) || (haveOverrides == null) != (prepareUpdate == null))
+                {
+                    throw new Exception("Missing method from group");
+                }
+                if (haveOverrides != null)
+                {
+                    var haRefs = new HashSet<FieldReference>(GetReferences(haveOverrides));
+                    var raoRefs = new HashSet<FieldReference>(GetReferences(removeAllOverrides));
+                    var puRefs = new HashSet<FieldReference>(GetReferences(prepareUpdate));
+                    Assert.NotEmpty(haRefs);
+                    
+                    if (! haRefs.SetEquals(raoRefs))
+                    {
+                        throw new Exception("HaveOverrides and RemoveAllOverrides use different fields");
+                    }
+                    if (!haRefs.SetEquals(puRefs))
+                    {
+                        throw new Exception("HaveOverrides and PrepareUpdateFrom use different fields");
+                    }
+
+                    foreach (FieldDefinition field in type.Fields)
+                    {
+                        if (field.IsStatic)
+                            continue;
+                        if (! field.FieldType.Name.Contains("Dictionary"))
+                            continue;
+                        var fieldReferences = haRefs.Where(f => f.Resolve() == field).ToList();
+                        if (fieldReferences.Count != 1)
+                        {
+                            throw new Exception(string.Format("Field {0} is not used", field.Name));
+                        }
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<FieldReference> GetReferences(MethodDefinition haveOverrides)
+        {
+            foreach (Instruction inst in haveOverrides.Body.Instructions)
+            {
+                if (inst.OpCode == OpCodes.Ldfld)
+                {
+                    yield return (FieldReference) inst.Operand;
+                }
             }
         }
     }

@@ -13,10 +13,8 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
 using OGDotNet.Utils;
@@ -108,11 +106,11 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
             {
                 yieldCurveSnapshot.RemoveAllOverrides();
             }
-            foreach (var volatilityCubeSnapshot in VolatilityCubes.Values)
+            foreach (var volatilityCubeSnapshot in _volatilityCubes.Values)
             {
                 volatilityCubeSnapshot.RemoveAllOverrides();
             }
-            foreach (var surface in VolatilitySurfaces.Values)
+            foreach (var surface in _volatilitySurfaces.Values)
             {
                 surface.RemoveAllOverrides();
             }
