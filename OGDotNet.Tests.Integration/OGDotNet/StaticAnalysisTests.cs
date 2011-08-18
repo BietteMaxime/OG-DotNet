@@ -241,5 +241,40 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                 return -1;
             }
         }
+
+        [CecilTests.TypesTest]
+        public void BuildersAllUseful(TypeDefinition type)
+        {
+            if (type.BaseType != null && type.BaseType.Name.StartsWith("BuilderBase"))
+            {
+                var methods = type.Methods.Cast<MethodDefinition>();
+                Assert.NotEmpty(methods);
+
+                var serialize = methods.SingleOrDefault(m => m.Name == "SerializeImpl");
+                var deserialize = methods.SingleOrDefault(m => m.Name == "DeserializeImpl");
+                Assert.NotNull(deserialize);
+                if (!(IsUseful(deserialize) || IsUseful(serialize)))
+                {
+                    throw new Exception("Neither deserialize nor serialize is useful");
+                }
+            }
+        }
+
+        private static bool IsUseful(MethodDefinition serialize)
+        {
+            if (serialize == null)
+            {
+                return false;
+            }
+            var instructionCollection = serialize.Body.Instructions;
+            if (instructionCollection.Count > 3)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

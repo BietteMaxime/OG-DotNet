@@ -11,15 +11,13 @@ using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Utils;
-using Xunit;
 using Xunit.Sdk;
 
 namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {
     public class CecilTests
     {
-        public static IEnumerable<Tuple<MethodDefinition, Instruction>> Instructions
+        public static IEnumerable<TypeDefinition> Types
         {
             get
             {
@@ -29,21 +27,32 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                 {
                     foreach (TypeDefinition type in module.Types)
                     {
-                        if (type.IsInterface)
+                        yield return type;
+                    }
+                }
+            }
+        }
+
+        public static IEnumerable<Tuple<MethodDefinition, Instruction>> Instructions
+        {
+            get
+            {
+                foreach (TypeDefinition type in Types)
+                {
+                    if (type.IsInterface)
+                    {
+                        continue;
+                    }
+                    foreach (MethodDefinition method in type.Methods)
+                    {
+                        if (!method.HasBody)
                         {
                             continue;
                         }
-                        foreach (MethodDefinition method in type.Methods)
+                        var methodBody = method.Body;
+                        foreach (Instruction instruction in methodBody.Instructions)
                         {
-                            if (!method.HasBody)
-                            {
-                                continue;
-                            }
-                            var methodBody = method.Body;
-                            foreach (Instruction instruction in methodBody.Instructions)
-                            {
-                                yield return Tuple.Create(method, instruction);
-                            }
+                            yield return Tuple.Create(method, instruction);
                         }
                     }
                 }
@@ -106,6 +115,55 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                     try
                     {
                         _method.Invoke(testClass, call.Item1, call.Item2, call.Item3);
+                        return null;
+                    }
+                    catch (Exception e)
+                    {
+                        return e;
+                    }
+                }
+            }
+        }
+        public class TypesTest : global::Xunit.FactAttribute
+        {
+            protected override IEnumerable<ITestCommand> EnumerateTestCommands(IMethodInfo method)
+            {
+                yield return new TypesTestCommand(method);
+            }
+
+            private class TypesTestCommand : TestCommand
+            {
+                private readonly IMethodInfo _method;
+
+                public TypesTestCommand(IMethodInfo method)
+                    : base(method, method.Name, 0)
+                {
+                    _method = method;
+                }
+
+                public override MethodResult Execute(object testClass)
+                {
+                    var results = Types.Select(c => Tuple.Create(Invoke(testClass, c), c)).Where(e => e.Item1 != null).ToList();
+                    if (results.Any())
+                    {
+                        var shortMessage = string.Format("{0} fails", results.Count);
+                        var messages = results.Select(GetMessage);
+                        string message = string.Format("{0} Details:{1}{2}", shortMessage, Environment.NewLine, string.Join(Environment.NewLine, messages));
+                        return new FailedResult(_method, new AggregateException(message, results.Select(r => r.Item1)), shortMessage);
+                    }
+                    return new PassedResult(_method, "OK");
+                }
+
+                private static string GetMessage(Tuple<Exception, TypeDefinition> r)
+                {
+                    return string.Format("{0}: Type {1}", r.Item1.Message, r.Item2);
+                }
+
+                private Exception Invoke(object testClass, TypeDefinition type)
+                {
+                    try
+                    {
+                        _method.Invoke(testClass, type);
                         return null;
                     }
                     catch (Exception e)
