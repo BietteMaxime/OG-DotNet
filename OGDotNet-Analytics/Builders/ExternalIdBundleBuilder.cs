@@ -24,7 +24,7 @@ namespace OGDotNet.Builders
         {
             var identifiers = new HashSet<ExternalId>();
 
-            foreach (var field in msg.GetAllFields())
+            foreach (var field in msg)
             {
                 switch (field.Name)
                 {

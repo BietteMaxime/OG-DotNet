@@ -70,7 +70,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             string interpolatorName = null;
             var strips = new List<FixedIncomeStrip>();
             ExternalId region = null;
-            foreach (var fudgeField in ffc.GetAllFields())
+            foreach (var fudgeField in ffc)
             {
                 switch (fudgeField.Name)
                 {

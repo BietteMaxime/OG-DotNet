@@ -138,11 +138,21 @@ namespace OGDotNet.Tests.Integration.OGDotNet
         [CecilTests.MethodCallsTest]
         public void NoBannedMethods(MethodDefinition method, Instruction instruction, MethodReference methodReference)
         {
-            if (methodReference.DeclaringType.FullName == typeof(FudgeMsg).FullName && methodReference.Name == ".ctor")
+            if (methodReference.DeclaringType.FullName == typeof(IFudgeFieldContainer).FullName)
             {
-                if (!methodReference.Parameters.Cast<ParameterDefinition>().Any(d => d.ParameterType.FullName == typeof(FudgeContext).FullName))
+                if (methodReference.Name == "GetAllFields")
                 {
-                    throw new Exception("Constructing  a FudgeMsg without a FudgeContext is slow");
+                    throw new Exception("GetAllFields is ~20% slower than raw enumeration (and enumeration can be made faster in the future)");
+                }
+            }
+            if (methodReference.DeclaringType.FullName == typeof(FudgeMsg).FullName)
+            {
+                if (methodReference.Name == ".ctor")
+                {
+                    if (!methodReference.Parameters.Cast<ParameterDefinition>().Any(d => d.ParameterType.FullName == typeof(FudgeContext).FullName))
+                    {
+                        throw new Exception("Constructing  a FudgeMsg without a FudgeContext is slow");
+                    }
                 }
             }
         }

@@ -194,7 +194,7 @@ namespace OGDotNet.Mappedtypes.Id
             string value = null;
             string version = null;
 
-            foreach (var field in ffc.GetAllFields())
+            foreach (var field in ffc)
             {
                 switch (field.Name)
                 {
