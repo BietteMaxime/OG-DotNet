@@ -61,10 +61,6 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                         succcess++;
                     }
                 }
-                catch (TimeoutException)
-                {
-                    throw;
-                }
                 catch (Exception e)
                 {
                     Console.WriteLine("Potentially retrying after " + e);
