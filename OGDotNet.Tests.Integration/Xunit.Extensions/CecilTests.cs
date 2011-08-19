@@ -17,13 +17,17 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {
     public class CecilTests
     {
+        private static AssemblyDefinition GetAssembly()
+        {
+            var assembly = typeof(UniqueId).Assembly;
+            return AssemblyFactory.GetAssembly(assembly.Location);
+        }
+
         public static IEnumerable<TypeDefinition> Types
         {
             get
             {
-                var assembly = typeof(UniqueId).Assembly;
-                var assemblyDefinition = AssemblyFactory.GetAssembly(assembly.Location);
-                foreach (ModuleDefinition module in assemblyDefinition.Modules)
+                foreach (ModuleDefinition module in GetAssembly().Modules)
                 {
                     foreach (TypeDefinition type in module.Types)
                     {
@@ -76,9 +80,28 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             }
         }
 
-        public class MethodCallsTest : global::Xunit.FactAttribute
+        public abstract class CecilTestBase : global::Xunit.FactAttribute
         {
             protected override IEnumerable<ITestCommand> EnumerateTestCommands(IMethodInfo method)
+            {
+                try
+                {
+                    GetAssembly();
+                    throw new ArgumentException();
+                }
+                catch (ArgumentException ae)
+                {
+                    return new ITestCommand[] { new SkipCommand(method, method.Name, string.Format("Cannot run cecil, perhaps the assembly is instrumented: {0}", ae)) };
+                }
+                return EnumerateTestCommandsImpl(method);
+            }
+
+            protected abstract IEnumerable<ITestCommand> EnumerateTestCommandsImpl(IMethodInfo method);
+        }
+
+        public class MethodCallsTest : CecilTestBase
+        {
+            protected override IEnumerable<ITestCommand> EnumerateTestCommandsImpl(IMethodInfo method)
             {
                 yield return new CallTestCommand(method);
             }
@@ -124,9 +147,9 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                 }
             }
         }
-        public class TypesTest : global::Xunit.FactAttribute
+        public class TypesTest : CecilTestBase
         {
-            protected override IEnumerable<ITestCommand> EnumerateTestCommands(IMethodInfo method)
+            protected override IEnumerable<ITestCommand> EnumerateTestCommandsImpl(IMethodInfo method)
             {
                 yield return new TypesTestCommand(method);
             }
