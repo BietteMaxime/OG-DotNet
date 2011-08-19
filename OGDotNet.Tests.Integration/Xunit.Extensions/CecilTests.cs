@@ -87,7 +87,6 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                 try
                 {
                     GetAssembly();
-                    throw new ArgumentException();
                 }
                 catch (ArgumentException ae)
                 {
