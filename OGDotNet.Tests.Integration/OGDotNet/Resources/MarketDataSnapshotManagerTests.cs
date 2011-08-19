@@ -29,7 +29,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class MarketDataSnapshotManagerTests : ViewTestsBase
     {
-        [global::Xunit.Fact]
+        [Xunit.Extensions.Fact]
         public void CantCreateFromBrokenView()
         {
             var snapshotManager = Context.MarketDataSnapshotManager;

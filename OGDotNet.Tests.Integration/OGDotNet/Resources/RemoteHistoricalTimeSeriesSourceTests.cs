@@ -14,23 +14,23 @@ using OGDotNet.Mappedtypes.Master.Security;
 using OGDotNet.Mappedtypes.Util.Db;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
 using Xunit;
-
+using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteHistoricalTimeSeriesSourceTests : TestWithContextBase
     {
-         const string DataField = "PX_LAST";
+        const string DataField = "PX_LAST";
         const string DataSource = "BLOOMBERG";
         const string DataProvider = null;
 
-        [Xunit.Extensions.Fact]
+        [Fact]
         public void CanGet()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
             Assert.NotNull(timeSeriesSource);
         }
 
-        [FactAttribute]
+        [Fact]
         public void CanGetATimeSeries()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
@@ -42,7 +42,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             AssertSane(series, start, end);
         }
 
-        [FactAttribute]
+        [Fact]
         public void CanGetACompleteTimeSeries()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
@@ -53,7 +53,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             AssertSane(series, end);
         }
 
-        [FactAttribute]
+        [Fact]
         public void CanGetATimeSeriesByEmptyIdentifierBundle()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
@@ -61,7 +61,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.NotNull(series);
         }
 
-        [FactAttribute]
+        [Fact]
         public void CanGetATimeSeriesByIdentifierBundle()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
@@ -70,7 +70,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             AssertSane(result);
         }
 
-        [FactAttribute]
+        [Fact]
         public void CanGetSeriesForSomeEquities()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
@@ -84,7 +84,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [FactAttribute]
+        [Fact]
         public void CanGetSeriesForSomeEquitiesAlt()
         {
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
