@@ -122,9 +122,9 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                         var shortMessage = string.Format("{0} fails", results.Count);
                         var messages = results.Select(GetMessage);
                         string message = string.Format("{0} Details:{1}{2}", shortMessage, Environment.NewLine, string.Join(Environment.NewLine, messages));
-                        return new FailedResult(_method, new AggregateException(message, results.Select(r => r.Item1)),  shortMessage);
+                        return new FailedResult(_method, new AggregateException(message, results.Select(r => r.Item1)),  DisplayName);
                     }
-                    return new PassedResult(_method, "OK");
+                    return new PassedResult(testMethod, DisplayName);
                 }
 
                 private static string GetMessage(Tuple<Exception, Tuple<MethodDefinition, Instruction, MethodReference>> r)
@@ -171,9 +171,10 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                         var shortMessage = string.Format("{0} fails", results.Count);
                         var messages = results.Select(GetMessage);
                         string message = string.Format("{0} Details:{1}{2}", shortMessage, Environment.NewLine, string.Join(Environment.NewLine, messages));
-                        return new FailedResult(_method, new AggregateException(message, results.Select(r => r.Item1)), shortMessage);
+                        return new FailedResult(_method, new AggregateException(message, results.Select(r => r.Item1)), DisplayName);
                     }
-                    return new PassedResult(_method, "OK");
+
+                    return new PassedResult(testMethod, DisplayName);
                 }
 
                 private static string GetMessage(Tuple<Exception, TypeDefinition> r)
