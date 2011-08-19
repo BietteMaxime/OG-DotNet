@@ -46,6 +46,7 @@ namespace OGDotNet.Builders
             {
                 s.WriteInline(a, "defaultExecutionOptions", obj.DefaultExecutionOptions);
             }
+            s.WriteInline(a, "versionCorrection", obj.VersionCorrection);
         }
 
         static readonly Dictionary<ViewExecutionFlags, string> FlagFieldNames = BuildFlagNames();

@@ -74,13 +74,15 @@ namespace OGDotNet.Mappedtypes.Engine.View.Execution
         private readonly ViewExecutionFlags _flags;
         private readonly int? _maxSuccessiveDeltaCycles;
         private readonly ViewCycleExecutionOptions _defaultExecutionOptions;
+        private readonly VersionCorrection _versionCorrection;
 
-        public ExecutionOptions(IViewCycleExecutionSequence executionSequence, ViewExecutionFlags flags, int? maxSuccessiveDeltaCycles = null, ViewCycleExecutionOptions defaultExecutionOptions = null)
+        public ExecutionOptions(IViewCycleExecutionSequence executionSequence, ViewExecutionFlags flags, int? maxSuccessiveDeltaCycles = null, ViewCycleExecutionOptions defaultExecutionOptions = null, VersionCorrection versionCorrection = null)
         {
             _executionSequence = executionSequence;
             _flags = flags;
             _maxSuccessiveDeltaCycles = maxSuccessiveDeltaCycles;
             _defaultExecutionOptions = defaultExecutionOptions;
+            _versionCorrection = versionCorrection ?? VersionCorrection.Latest;
         }
 
         public IViewCycleExecutionSequence ExecutionSequence
@@ -101,6 +103,11 @@ namespace OGDotNet.Mappedtypes.Engine.View.Execution
         public int? MaxSuccessiveDeltaCycles
         {
             get { return _maxSuccessiveDeltaCycles; }
+        }
+
+        public VersionCorrection VersionCorrection
+        {
+            get { return _versionCorrection; }
         }
     }
 }

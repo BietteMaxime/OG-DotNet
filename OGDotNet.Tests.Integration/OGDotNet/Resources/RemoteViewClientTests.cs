@@ -20,10 +20,10 @@ using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.PublicAPI;
-using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
 using OGDotNet.Utils;
 using Xunit;
+using Xunit.Extensions;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -47,7 +47,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [TypedPropertyData("ViewDefinitions")]
         public void CanAttach(ViewDefinition vd)
         {
@@ -101,7 +101,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [TypedPropertyData("ViewDefinitions")]
         public void CanGetIsLiveComputationRunning(ViewDefinition definition)
         {
@@ -115,14 +115,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [TypedPropertyData("ViewDefinitions")]
         public void CanStartAndGetAResult(ViewDefinition definition)
         {
             Assert.NotNull(GetOneResultCache.Get(definition.Name));
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [TypedPropertyData("ViewDefinitions")]
         public void CanGetCompilationResults(ViewDefinition definition)
         {
@@ -147,7 +147,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void CanGetManyResults(ViewDefinition viewDefinition)
         {
@@ -161,7 +161,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void NumberOfResultsIsConsistent(ViewDefinition viewDefinition)
         {
@@ -181,7 +181,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void NumberOfResultsIsConsistentOnRecompile(ViewDefinition viewDefinition)
         {
@@ -214,7 +214,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [EnumValuesData]
         public void CanSetViewResultMode(ViewResultMode mode)
         {
@@ -243,6 +243,33 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     if (viewDefinition != null)
                     {
                         ValueAssertions.AssertSensibleValue(viewDefinition);
+                        return;
+                    }
+                    Thread.Sleep(TimeSpan.FromSeconds(1));
+                }
+                Assert.True(false, "Failed to get view definition");
+            }
+        }
+
+        [Xunit.Extensions.Theory]
+        [InlineData("10:00:00Z", "11:00:00Z")]
+        [InlineData(null, null)]
+        public void CanGetVersionCorrection(string versionAsOf, string correctedTo)
+        {
+            VersionCorrection vc = versionAsOf == null ? VersionCorrection.Latest : new VersionCorrection(DateTimeOffset.Parse(versionAsOf), DateTimeOffset.Parse(correctedTo));
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.CompileOnly, versionCorrection: vc);
+                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", options);
+
+                for (int i = 0; i < 30; i++)
+                {
+                    var viewDefinition = remoteViewClient.GetViewDefinition();
+                    if (viewDefinition != null)
+                    {
+                        ValueAssertions.AssertSensibleValue(viewDefinition);
+                        var roundTripped = remoteViewClient.GetProcessVersionCorrection();
+                        Assert.Equal(vc, roundTripped);
                         return;
                     }
                     Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -358,7 +385,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void ViewResultsMatchDefinition(ViewDefinition viewDefinition)
         {
@@ -447,7 +474,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
+        [Xunit.Extensions.Theory]
         [TypedPropertyData("ViewDefinitions")]
         public void ViewResultsHaveSaneValues(ViewDefinition definition)
         {

@@ -14,6 +14,7 @@ using System.Threading;
 using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
+using OGDotNet.Mappedtypes.Id;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
@@ -44,6 +45,19 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanRunSingleYesterdayCycleBatch()
         {
             IViewExecutionOptions req = ExecutionOptions.GetSingleCycle(DateTimeOffset.Now - TimeSpan.FromDays(1), new LiveMarketDataSpecification());
+            var runToCompletion = RunToCompletion(req);
+            Assert.Equal(1, runToCompletion.Item1.Count());
+            Assert.Equal(1, runToCompletion.Item2.Count());
+            AssertApproximatelyEqual(req.ExecutionSequence.Next.ValuationTime, runToCompletion.Item2.Single().FullResult.ValuationTime);
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanRunSingleYesterdayCycleBatchWithVersion()
+        {
+            DateTimeOffset valuationTime = DateTimeOffset.Now - TimeSpan.FromDays(1);
+            var seq = ArbitraryViewCycleExecutionSequence.Of(valuationTime);
+            const ViewExecutionFlags flags = ViewExecutionFlags.RunAsFastAsPossible | ViewExecutionFlags.AwaitMarketData;
+            IViewExecutionOptions req = new ExecutionOptions(seq, flags, defaultExecutionOptions:new ViewCycleExecutionOptions(valuationTime, new LiveMarketDataSpecification()), versionCorrection:new VersionCorrection(valuationTime, valuationTime));
             var runToCompletion = RunToCompletion(req);
             Assert.Equal(1, runToCompletion.Item1.Count());
             Assert.Equal(1, runToCompletion.Item2.Count());

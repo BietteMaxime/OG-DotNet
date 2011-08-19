@@ -15,7 +15,12 @@ namespace OGDotNet.Utils
     {
         public static DateTimeOffset ToDateTimeOffsetWithDefault(this FudgeDateTime dt)
         {
-            return (dt == null) ? default(DateTimeOffset) : dt.ToDateTimeOffset();
+            return dt == null ? default(DateTimeOffset) : dt.ToDateTimeOffset();
+        }
+
+        public static FudgeDateTime ToFudgeDateTimeOffsetWithDefault(this DateTimeOffset dt)
+        {
+            return dt == default(DateTimeOffset) ? null : new FudgeDateTime(dt);
         }
     }
 }

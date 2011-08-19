@@ -232,10 +232,15 @@ namespace OGDotNet.Model.Resources
             return _rest.Resolve("latestResult").Get<IViewComputationResultModel>();
         }
 
-         public ViewDefinition GetViewDefinition()
-         {
-             return _rest.Resolve("viewDefinition").Get<ViewDefinition>();
-         }
+        public ViewDefinition GetViewDefinition()
+        {
+            return _rest.Resolve("viewDefinition").Get<ViewDefinition>();
+        }
+
+        public VersionCorrection GetProcessVersionCorrection()
+        {
+            return _rest.Resolve("processVersionCorrection").Get<VersionCorrection>();
+        }
 
         public UniqueId GetUniqueId()
         {
