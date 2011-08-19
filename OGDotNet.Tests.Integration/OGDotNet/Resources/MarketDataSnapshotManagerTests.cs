@@ -153,18 +153,26 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 updated.Values[targetChanged][valueChanged].OverrideValue = 12;
 
-                bool seenUpdate = false;
+                long updatesSeen = 0;
+                long yieldCurveUpdatesSeen = 0;
                 foreach (var value in updated.GlobalValues.Values.SelectMany(v => v.Value.Values))
                 {
-                    value.PropertyChanged += delegate { seenUpdate = true; };
+                    value.PropertyChanged += delegate { Interlocked.Increment(ref updatesSeen); };
+                }
+                foreach (var value in updated.YieldCurves.Values.SelectMany(v => v.Values.Values.SelectMany(vv => vv.Value.Select(vvv => vvv.Value))))
+                {
+                    value.PropertyChanged += delegate { Interlocked.Increment(ref yieldCurveUpdatesSeen); };
                 }
 
                 Thread.Sleep(TimeSpan.FromSeconds(30));
                 var action = proc.PrepareUpdate();
                 Assert.Empty(action.Warnings);
-                Assert.False(seenUpdate);
+                Assert.Equal(0, Interlocked.Read(ref updatesSeen));
+                Assert.Equal(0, Interlocked.Read(ref yieldCurveUpdatesSeen));
                 action.Execute(updated);
-                Assert.True(seenUpdate);
+                
+                Console.Out.WriteLine(Interlocked.Read(ref updatesSeen) + " - " + Interlocked.Read(ref yieldCurveUpdatesSeen));
+                Assert.NotEqual(0, Interlocked.Read(ref updatesSeen) + Interlocked.Read(ref yieldCurveUpdatesSeen));
 
                 Assert.Null(updated.Name);
                 Assert.Null(updated.UniqueId);
