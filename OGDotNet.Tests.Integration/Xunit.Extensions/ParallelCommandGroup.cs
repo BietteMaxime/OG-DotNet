@@ -58,7 +58,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
                             return new LifetimeCommand(command, innerCommand).Execute(null);
                         };
 
-                    var task = new Task<MethodResult>(action);
+                    var task = new Task<MethodResult>(action, TaskCreationOptions.LongRunning);
                     _tasks.Add(testCommand, task);
                 }
 
