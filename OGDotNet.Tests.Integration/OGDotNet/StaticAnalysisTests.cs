@@ -261,6 +261,40 @@ namespace OGDotNet.Tests.Integration.OGDotNet
             }
         }
 
+        [CecilTests.TypesTest]
+        public void BuildersAreSymmetric(TypeDefinition type)
+        {
+            if (type.Name == "ValuePropertiesBuilder")
+            {
+                //This builder is too clever for its own good
+                return;
+            }
+            if (type.BaseType != null && type.BaseType.Name.StartsWith("BuilderBase"))
+            {
+                var methods = type.Methods.Cast<MethodDefinition>();
+                Assert.NotEmpty(methods);
+
+                var serialize = methods.SingleOrDefault(m => m.Name == "SerializeImpl");
+                var deserialize = methods.SingleOrDefault(m => m.Name == "DeserializeImpl");
+                Assert.NotNull(deserialize);
+                if (IsUseful(deserialize) && IsUseful(serialize))
+                {
+                    var deserializeStrings = new HashSet<string>(GetStaticStrings(deserialize));
+                    var serializeStrings = new HashSet<string>(GetStaticStrings(serialize));
+                    if (! deserializeStrings.SetEquals(serializeStrings))
+                    {
+                        deserializeStrings.SymmetricExceptWith(serializeStrings);
+                        throw new Exception(string.Format("Mismatched strings: {0}", string.Join(",", deserializeStrings)));
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<string> GetStaticStrings(MethodDefinition method)
+        {
+            return method.Body.Instructions.Cast<Instruction>().Where(i => i.OpCode == OpCodes.Ldstr).Select(i => i.Operand).Cast<string>();
+        }
+
         private static bool IsUseful(MethodDefinition serialize)
         {
             if (serialize == null)
