@@ -32,14 +32,14 @@ namespace OGDotNet.Model.Resources
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
-        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueId uid, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
+        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueId uid, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool includeEnd)
         {
             RestTarget target = _rest.Resolve("uidByDate")
                                       .Resolve(uid.ToString())
                                       .Resolve(UriEncoding.ToString(start))
                                       .Resolve(inclusiveStart.ToString())
                                       .Resolve(UriEncoding.ToString(end))
-                                      .Resolve(exclusiveEnd.ToString());
+                                      .Resolve(includeEnd.ToString());
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
@@ -54,7 +54,7 @@ namespace OGDotNet.Model.Resources
             return DecodePairMessage(target.GetFudge());
         }
 
-        public Tuple<UniqueId, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool exclusiveEnd)
+        public Tuple<UniqueId, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool includeEnd)
         {
             ArgumentChecker.NotNull(identifierBundle, "identifierBundle");
             ArgumentChecker.NotNull(dataSource, "dataSource");
@@ -68,7 +68,7 @@ namespace OGDotNet.Model.Resources
                                 .Resolve(EncodeDate(start))
                                 .Resolve(inclusiveStart.ToString())
                                 .Resolve(EncodeDate(end))
-                                .Resolve(exclusiveEnd.ToString(), UriEncoding.GetParameters(identifierBundle));
+                                .Resolve(includeEnd.ToString(), UriEncoding.GetParameters(identifierBundle));
             return DecodePairMessage(target.GetFudge());
         }
 

@@ -38,8 +38,25 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
             var start = end - TimeSpan.FromDays(7);
 
-            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, end, true);
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, end, false);
             AssertSane(series, start, end);
+        }
+
+        [Fact]
+        public void CanGetATimeSeriesExclusive()
+        {
+            var timeSeriesSource = Context.HistoricalTimeSeriesSource;
+
+            var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
+            var start = end - TimeSpan.FromDays(7);
+
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, end, false);
+            AssertSane(series, start, end);
+            var lastIncluded = series.Values.Last().Item1;
+            ILocalDateDoubleTimeSeries seriesExclusive = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, lastIncluded, false);
+            Assert.Equal(series.Values.Count - 1, seriesExclusive.Values.Count);
+            ILocalDateDoubleTimeSeries seriesInclusive = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, lastIncluded, true);
+            Assert.Equal(series.Values.Count, seriesInclusive.Values.Count);
         }
 
         [Fact]
