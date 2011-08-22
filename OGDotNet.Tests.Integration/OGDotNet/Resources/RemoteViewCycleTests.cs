@@ -237,7 +237,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 remoteViewClient.AttachToViewProcess(defn.Name, options);
                 
-                TimeSpan timeout = TimeSpan.FromMinutes(2);
+                TimeSpan timeout = TimeSpan.FromMinutes(5);
                 if (! mre.WaitOne(timeout))
                 {
                     throw new TimeoutException(string.Format("Failed to get result in {0}", timeout));
