@@ -59,5 +59,10 @@ namespace OGDotNet.Mappedtypes.Engine
                 return ((int)_type * 397) ^ (_uid != null ? _uid.GetHashCode() : 0);
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("[ComputationTargetSpecification {0} {1}]", Uid, Type);
+        }
     }
 }

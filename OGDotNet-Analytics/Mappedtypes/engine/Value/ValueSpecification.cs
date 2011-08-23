@@ -67,5 +67,10 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 return ((_valueName != null ? _valueName.GetHashCode() : 0) * 397) ^ (_targetSpecification != null ? _targetSpecification.GetHashCode() : 0);
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("[ValueSpecification {0} on {1}]", ValueName, TargetSpecification);
+        }
     }
 }
