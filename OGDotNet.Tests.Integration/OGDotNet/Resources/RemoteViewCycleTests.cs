@@ -227,7 +227,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 listener.ViewDefinitionCompilationFailed += delegate { mre.Set(); };
                 listener.CycleExecutionFailed += delegate { mre.Set(); };
 
-                listener.CycleCompleted += (sender, e) => cycles.Add(remoteViewClient.CreateCycleReference(e.FullResult.ViewCycleId));
+                listener.CycleCompleted += (sender, e) =>
+                                               {
+                                                   cycles.Add(remoteViewClient.CreateCycleReference(e.FullResult.ViewCycleId));
+                                                   remoteViewClient.TriggerCycle();
+                                               };
 
                 remoteViewClient.SetResultListener(listener);
                 remoteViewClient.SetViewCycleAccessSupported(true);
@@ -244,29 +248,36 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 }
                 Assert.Equal(cyclesCount, cycles.Count);
                 
-                var counts = cycles.Select(CountResults).ToList();
-                
-                if (counts.Distinct().Count() != 1)
+                var specs = cycles.Select(GetAllSpecs).ToList();
+
+                var inconsistent = specs.Zip(specs.Skip(1), Tuple.Create).SelectMany(
+                    t =>
+                        {
+                            var diff = new HashSet<Tuple<string, ValueSpecification>>(t.Item1);
+                            diff.SymmetricExceptWith(t.Item2);
+                            return diff;
+                        }).Distinct();
+                if (inconsistent.Any())
                 {
-                    throw new Exception(string.Format("Inconsistent number of results for {0} {1}", defn.Name, string.Join(",", counts.Select(c => c.ToString()))));
+                    var counts = string.Join(",", specs.Select(c => c.Count.ToString()));
+                    var inconsistentStrings = specs.Select(s => string.Join(",", s.Where(x => inconsistent.Contains(x)).Select(x => x.ToString())));
+                    string inconsistentString = string.Join(Environment.NewLine, inconsistentStrings);
+                    throw new Exception(string.Format("Inconsistent number of results for {0} {1}: {2}", defn.Name, counts, inconsistentString));
                 }
-                Assert.Equal(1, counts.Distinct().Count());
             }
         }
 
-        private static int CountResults(IEngineResourceReference<IViewCycle> cycle)
+        private static HashSet<Tuple<string, ValueSpecification>> GetAllSpecs(IEngineResourceReference<IViewCycle> cycle)
         {
             using (cycle)
             {
-                Thread.Sleep(TimeSpan.FromSeconds(5));
-                var counts = Enumerable.Range(0, 3).Select(_ => CountResults(cycle.Value)).ToList();
-                return counts.Distinct().Single();
+                return GetAllSpecs(cycle.Value);
             }
         }
 
-        private static int CountResults(IViewCycle cycle)
+        private static HashSet<Tuple<string, ValueSpecification>> GetAllSpecs(IViewCycle cycle)
         {
-            int count = 0;
+            var specSet = new HashSet<Tuple<string, ValueSpecification>>();
 
             var compiledViewDefinition = cycle.GetCompiledViewDefinition();
             foreach (var kvp in compiledViewDefinition.ViewDefinition.CalculationConfigurationsByName)
@@ -294,10 +305,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     Assert.NotNull(result.Second);
                     ValueAssertions.AssertSensibleValue(result.Second);
                 }
-                count += computationCacheResponse.Results.Count;
+                var newSpecs = computationCacheResponse.Results.Select(p => Tuple.Create(viewCalculationConfiguration, p.First));
+                foreach (var newSpec in newSpecs)
+                {
+                    Assert.True(specSet.Add(newSpec));
+                }
             }
 
-            return count;
+            return specSet;
         }
 
         [Theory]
