@@ -69,8 +69,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             UniqueId portfolio = defn.PortfolioIdentifier;
 
             var remoteAvailableOutputs = Context.RemoteAvailableOutputs;
-            remoteAvailableOutputs.MaxNodes = -1;
-            remoteAvailableOutputs.MaxPositions = -1;
+            remoteAvailableOutputs.MaxNodes = 2;
+            remoteAvailableOutputs.MaxPositions = 2;
 
             var availableOutputs = remoteAvailableOutputs.GetPortfolioOutputs(portfolio);
 
