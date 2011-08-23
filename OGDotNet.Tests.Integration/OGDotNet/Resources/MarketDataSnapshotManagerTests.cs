@@ -164,13 +164,18 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     value.PropertyChanged += delegate { Interlocked.Increment(ref yieldCurveUpdatesSeen); };
                 }
 
-                Thread.Sleep(TimeSpan.FromSeconds(30));
-                var action = proc.PrepareUpdate();
-                Assert.Empty(action.Warnings);
-                Assert.Equal(0, Interlocked.Read(ref updatesSeen));
-                Assert.Equal(0, Interlocked.Read(ref yieldCurveUpdatesSeen));
-                action.Execute(updated);
-                
+                for (int i = 0; i < 10; i++)
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(3));
+                    var action = proc.PrepareUpdate();
+                    Assert.Empty(action.Warnings);
+                    Assert.Equal(0, Interlocked.Read(ref updatesSeen));
+                    Assert.Equal(0, Interlocked.Read(ref yieldCurveUpdatesSeen));
+                    action.Execute(updated);
+                    if (Interlocked.Read(ref updatesSeen) + Interlocked.Read(ref yieldCurveUpdatesSeen) > 0)
+                        break;
+                }
+
                 Console.Out.WriteLine(Interlocked.Read(ref updatesSeen) + " - " + Interlocked.Read(ref yieldCurveUpdatesSeen));
                 Assert.NotEqual(0, Interlocked.Read(ref updatesSeen) + Interlocked.Read(ref yieldCurveUpdatesSeen));
 
@@ -360,10 +365,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         var task = new Task<bool>(enumerator.MoveNext);
                         task.Start();
 
-                        Assert.False(task.Wait(TimeSpan.FromSeconds(10)));
+                        Assert.False(task.Wait(TimeSpan.FromSeconds(5)));
 
                         action(proc);
-                        bool ret = task.Wait(TimeSpan.FromSeconds(10));
+                        bool ret = task.Wait(TimeSpan.FromSeconds(5));
                         if (! ret)
                         {
                             ((Task) task).ContinueWith(t => { var ignore = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
