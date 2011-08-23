@@ -254,7 +254,6 @@
     <Compile Include="Mappedtypes\Util\Timeseries\FastArrayTDoubleTimeSeries.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\LocalDateEpochDaysConverter.cs" />
     <Compile Include="Mappedtypes\Util\tuple\Pair.cs" />
-    <Compile Include="Model\Context\MarketDataSnapshot\DependencyGraphWalker.cs" />
     <Compile Include="Model\Context\MarketDataSnapshotManager.cs" />
     <Compile Include="Model\Context\MarketDataSnapshotProcessor.cs" />
     <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
