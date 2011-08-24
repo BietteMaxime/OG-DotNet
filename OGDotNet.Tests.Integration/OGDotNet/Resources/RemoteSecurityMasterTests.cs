@@ -79,6 +79,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             searchResult = Context.SecurityMaster.Search(request);
             Assert.Equal(1, searchResult.Documents.Count);
             Assert.Equal(intialResult.Documents[2].UniqueId, searchResult.Documents.Single().UniqueId);
+
+            request = new SecuritySearchRequest(PagingRequest.OfIndex(intialResult.Paging.TotalItems, 1), "*", "FUTURE", null);
+            searchResult = Context.SecurityMaster.Search(request);
+            Assert.Empty(searchResult.Documents);
         }
 
         [Xunit.Extensions.Fact]
