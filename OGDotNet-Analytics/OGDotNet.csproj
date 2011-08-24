@@ -321,9 +321,9 @@
     <Compile Include="Mappedtypes\Id\ExternalIdSearch.cs" />
     <Compile Include="Mappedtypes\Id\ExternalId.cs" />
     <Compile Include="Model\Resources\ISecuritySource.cs" />
-    <Compile Include="Mappedtypes\Util\Db\Paging.cs" />
+    <Compile Include="Mappedtypes\Util\Paging.cs" />
     <Compile Include="Mappedtypes\Master\Security\ManageableSecurity.cs" />
-    <Compile Include="Mappedtypes\Util\Db\PagingRequest.cs" />
+    <Compile Include="Mappedtypes\Util\PagingRequest.cs" />
     <Compile Include="Model\RestTarget.cs" />
     <Compile Include="Mappedtypes\Master\Security\SecurityDocument.cs" />
     <Compile Include="Mappedtypes\Master\Security\SecuritySearchRequest.cs" />

@@ -15,7 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Master.Security;
-using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Util;
 using OGDotNet.Model.Resources;
 using OGDotNet.WPFUtils.Windsor;
 

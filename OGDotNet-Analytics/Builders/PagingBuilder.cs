@@ -8,7 +8,7 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Util;
 
 namespace OGDotNet.Builders
 {

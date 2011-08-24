@@ -11,7 +11,7 @@ using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
-using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Util;
 
 namespace OGDotNet.Model.Resources
 {

@@ -11,7 +11,7 @@ using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.Security;
-using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Util;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;

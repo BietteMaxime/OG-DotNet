@@ -9,7 +9,7 @@
 using Fudge.Serialization;
 using OGDotNet.Builders;
 
-namespace OGDotNet.Mappedtypes.Util.Db
+namespace OGDotNet.Mappedtypes.Util
 {
     [FudgeSurrogate(typeof(PagingRequestBuilder))]
     public class PagingRequest

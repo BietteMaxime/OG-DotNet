@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Util;
 
 namespace OGDotNet.Mappedtypes.Master.MarketDataSnapshot
 {

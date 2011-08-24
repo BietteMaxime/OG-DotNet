@@ -9,7 +9,7 @@
 using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.Security;
-using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Util;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources

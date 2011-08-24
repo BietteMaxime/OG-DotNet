@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="SecuritySearchRequest.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.Util.Db;
+using OGDotNet.Mappedtypes.Util;
 
 namespace OGDotNet.Mappedtypes.Master.Security
 {
