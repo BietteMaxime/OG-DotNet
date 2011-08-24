@@ -73,7 +73,7 @@ namespace OGDotNet.SecurityViewer.View
                                                  try
                                                  {
                                                      CancelIfCancelled(token);
-                                                     var request = new SecuritySearchRequest(new PagingRequest(currentPage, 20), name, type);
+                                                     var request = new SecuritySearchRequest(PagingRequest.OfPage(currentPage, 20), name, type);
                                                      var results = SecurityMaster.Search(request);
                                                      CancelIfCancelled(token);
                                                      Dispatcher.Invoke((Action)(() =>

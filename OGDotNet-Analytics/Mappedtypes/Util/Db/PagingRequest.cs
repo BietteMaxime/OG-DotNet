@@ -6,29 +6,49 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Fudge.Serialization;
+using OGDotNet.Builders;
+
 namespace OGDotNet.Mappedtypes.Util.Db
 {
+    [FudgeSurrogate(typeof(PagingRequestBuilder))]
     public class PagingRequest
     {
-        public static readonly PagingRequest All = new PagingRequest(1, int.MaxValue);
-        public static readonly PagingRequest None = new PagingRequest(1, 0);
-        public static readonly PagingRequest One = new PagingRequest(1, 1);
-        private readonly int _page;
-        public int Page
+        public static readonly PagingRequest All = new PagingRequest(0, int.MaxValue);
+        public static readonly PagingRequest None = new PagingRequest(0, 0);
+        public static readonly PagingRequest One = new PagingRequest(0, 1);
+        private readonly int _index;
+        public int Index
         {
-            get { return _page; }
+            get { return _index; }
         }
 
-        private readonly int _pagingSize;
-        public int PagingSize
+        private readonly int _size;
+        public int Size
         {
-            get { return _pagingSize; }
+            get { return _size; }
         }
 
-        public PagingRequest(int page, int pagingSize)
+        private PagingRequest(int index, int size)
         {
-            _page = page;
-            _pagingSize = pagingSize;
+            _index = index;
+            _size = size;
+        }
+
+        public static PagingRequest OfIndex(int index, int size)
+        {
+            return new PagingRequest(index, size);
+        }
+
+        public static PagingRequest OfPage(int page, int pagingSize)
+        {
+            int index = (page - 1) * pagingSize;
+            return new PagingRequest(index, pagingSize);
+        }
+
+        public static PagingRequest First(int n)
+        {
+            return new PagingRequest(0, n);
         }
     }
 }

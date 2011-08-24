@@ -6,24 +6,47 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
+using Fudge.Serialization;
+using OGDotNet.Builders;
 
 namespace OGDotNet.Mappedtypes.Util.Db
 {
-    [Serializable]
+    [FudgeSurrogate(typeof(PagingBuilder))]
     public class Paging
     {
-        public int Page;
-        public int PagingSize;
-        public int TotalItems;
+        private readonly PagingRequest _request;
+        private readonly int _totalItems;
+
+        public Paging(PagingRequest request, int totalItems)
+        {
+            _request = request;
+            _totalItems = totalItems;
+        }
+
+        public PagingRequest Request
+        {
+            get { return _request; }
+        }
+
+        public int TotalItems
+        {
+            get { return _totalItems; }
+        }
+
+        public int Pages
+        {
+            get
+            {
+                return (TotalItems - 1) / Request.Size + 1;
+            }
+        }
 
         public int CurrentPage
         {
-            get { return Page; }
-        }
-        public int Pages
-        {
-            get { return ((TotalItems - 1) / PagingSize) + 1; }
+            get
+            {
+                return (Request.Index / Request.Size) + 1;
+            }
         }
     }
 }

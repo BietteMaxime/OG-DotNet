@@ -75,6 +75,8 @@
     <Compile Include="Builders\JavaTypeMappingStrategyWithInterfaces.cs" />
     <Compile Include="Builders\LiveMarketDataSpecificationBuilder.cs" />
     <Compile Include="Builders\MemoizingTypeMappingStrategy.cs" />
+    <Compile Include="Builders\PagingBuilder.cs" />
+    <Compile Include="Builders\PagingRequestBuilder.cs" />
     <Compile Include="Builders\SimplePortfolioNodeBuilder.cs" />
     <Compile Include="Builders\SimplePositionBuilder.cs" />
     <Compile Include="Builders\Streaming\DependencyGraphStreamingBuilder.cs" />

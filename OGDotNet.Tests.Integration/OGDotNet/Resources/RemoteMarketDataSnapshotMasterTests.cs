@@ -31,7 +31,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanSearch()
         {
             var snapshotMaster = Context.MarketDataSnapshotMaster;
-            var searchResult = snapshotMaster.Search(TestUtils.GetUniqueName(), new PagingRequest(1, 10));
+            var searchResult = snapshotMaster.Search(TestUtils.GetUniqueName(), PagingRequest.First(10));
             Assert.NotNull(searchResult.Documents);
             Assert.Empty(searchResult.Documents);
         }
@@ -39,7 +39,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void SearchMatchesNotInclude()
         {
-            var pagingRequest = new PagingRequest(1, 2);
+            var pagingRequest = PagingRequest.First(2);
 
             var snapshotMaster = Context.MarketDataSnapshotMaster;
             var searchResult = snapshotMaster.Search("*", pagingRequest);
@@ -113,7 +113,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));
 
-            var searchResult = snapshotMaster.Search(name, new PagingRequest(1, 10));
+            var searchResult = snapshotMaster.Search(name, PagingRequest.First(10));
             Assert.NotEmpty(searchResult.Documents);
             Assert.Equal(1, searchResult.Documents.Count);
             var retDoc = searchResult.Documents[0];

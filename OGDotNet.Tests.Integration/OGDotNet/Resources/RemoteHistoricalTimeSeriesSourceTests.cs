@@ -123,7 +123,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static SearchResult<SecurityDocument> GetSomeEquities()
         {
             var remoteSecurityMaster = Context.SecurityMaster;
-            var request = new SecuritySearchRequest(new PagingRequest(1, 3), "*", "EQUITY");
+            var request = new SecuritySearchRequest(PagingRequest.First(3), "*", "EQUITY");
             return remoteSecurityMaster.Search(request);
         }
 

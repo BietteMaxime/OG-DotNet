@@ -19,7 +19,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanSearchWithRequest()
         {
-            var request = new SecuritySearchRequest(new PagingRequest(1, 20), "*", "FUTURE");
+            var request = new SecuritySearchRequest(PagingRequest.First(20), "*", "FUTURE");
             var searchResult = Context.SecurityMaster.Search(request);
             Assert.NotEmpty(searchResult.Documents);
 
@@ -46,7 +46,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void GetsMatchSearch()
         {
-            var request = new SecuritySearchRequest(new PagingRequest(1, 1), "*", "FUTURE", null);
+            var request = new SecuritySearchRequest(PagingRequest.One, "*", "FUTURE", null);
             var searchResult = Context.SecurityMaster.Search(request);
             foreach (var securityDocument in searchResult.Documents)
             {
@@ -54,6 +54,31 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.NotNull(security);
                 Assert.Equal(securityDocument.Security.Name, security.Name);
             }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void PagingBehavesAsExpected()
+        {
+            const int initialDocs = 10;
+            var request = new SecuritySearchRequest(PagingRequest.First(initialDocs), "*", "FUTURE", null);
+            var intialResult = Context.SecurityMaster.Search(request);
+            Assert.Equal(initialDocs, intialResult.Documents.Count);
+            Assert.InRange(intialResult.Paging.TotalItems, initialDocs, int.MaxValue);
+
+            request = new SecuritySearchRequest(PagingRequest.OfIndex(0, 1), "*", "FUTURE", null);
+            var searchResult = Context.SecurityMaster.Search(request);
+            Assert.Equal(1, searchResult.Documents.Count);
+            Assert.Equal(intialResult.Documents[0].UniqueId, searchResult.Documents.Single().UniqueId);
+
+            request = new SecuritySearchRequest(PagingRequest.OfPage(1, 1), "*", "FUTURE", null);
+            searchResult = Context.SecurityMaster.Search(request);
+            Assert.Equal(1, searchResult.Documents.Count);
+            Assert.Equal(intialResult.Documents[0].UniqueId, searchResult.Documents.Single().UniqueId);
+
+            request = new SecuritySearchRequest(PagingRequest.OfIndex(2, 1), "*", "FUTURE", null);
+            searchResult = Context.SecurityMaster.Search(request);
+            Assert.Equal(1, searchResult.Documents.Count);
+            Assert.Equal(intialResult.Documents[2].UniqueId, searchResult.Documents.Single().UniqueId);
         }
 
         [Xunit.Extensions.Fact]
