@@ -15,8 +15,15 @@ namespace OGDotNet.Mappedtypes.Financial.Security.Equity
     /// </summary>
     public class EquitySecurity : FinancialSecurity
     {
-        public EquitySecurity(string name, string securityType, UniqueId uniqueId, ExternalIdBundle identifiers) : base(name, securityType, uniqueId, identifiers)
+        private readonly string _shortName;
+        public EquitySecurity(string name, string securityType, UniqueId uniqueId, ExternalIdBundle identifiers, string shortName) : base(name, securityType, uniqueId, identifiers)
         {
+            _shortName = shortName;
+        }
+
+        public string ShortName
+        {
+            get { return _shortName; }
         }
     }
 }
