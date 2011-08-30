@@ -26,7 +26,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var securitytoFind = searchResult.Documents.First();
             var identifierBundle = securitytoFind.Security.Identifiers;
             {
-                var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers, IdentifierSearchType.All);
+                var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers, ExternalIdSearchType.All);
                 request = new SecuritySearchRequest(PagingRequest.All, "*", "FUTURE", identifierSearch);
                 var singleSearchResult = Context.SecurityMaster.Search(request);
                 Assert.NotEmpty(singleSearchResult.Documents);
@@ -34,7 +34,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Equal(singleSearchResult.Documents.Single().Security.UniqueId, securitytoFind.UniqueId);
             }
             {
-                var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers.Concat(Enumerable.Repeat(ExternalId.Of("XXX", "YYY"), 1)), IdentifierSearchType.Any);
+                var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers.Concat(Enumerable.Repeat(ExternalId.Of("XXX", "YYY"), 1)), ExternalIdSearchType.Any);
                 request = new SecuritySearchRequest(PagingRequest.All, "*", "FUTURE", identifierSearch);
                 var singleSearchResult = Context.SecurityMaster.Search(request);
                 Assert.NotEmpty(singleSearchResult.Documents);

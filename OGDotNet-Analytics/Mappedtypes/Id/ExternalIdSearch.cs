@@ -18,9 +18,9 @@ namespace OGDotNet.Mappedtypes.Id
     public class ExternalIdSearch
     {
         private readonly IEnumerable<ExternalId> _identifiers;
-        private readonly IdentifierSearchType _searchType;
+        private readonly ExternalIdSearchType _searchType;
 
-        public ExternalIdSearch(IEnumerable<ExternalId> identifiers, IdentifierSearchType searchType)
+        public ExternalIdSearch(IEnumerable<ExternalId> identifiers, ExternalIdSearchType searchType)
         {
             _identifiers = identifiers;
             _searchType = searchType;
@@ -39,7 +39,7 @@ namespace OGDotNet.Mappedtypes.Id
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             s.WriteInline(a, "identifiers", _identifiers.Select(id => id.ToString()).ToList());
-            a.Add("searchType", EnumBuilder<IdentifierSearchType>.GetJavaName(_searchType));
+            a.Add("searchType", EnumBuilder<ExternalIdSearchType>.GetJavaName(_searchType));
         }
     }
 }

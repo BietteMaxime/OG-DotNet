@@ -313,7 +313,7 @@
     <Compile Include="Mappedtypes\Engine\value\ValueSpecification.cs" />
     <Compile Include="Mappedtypes\Engine\View\InMemoryViewComputationResultModel.cs" />
     <Compile Include="Model\Resources\RemoteClient.cs" />
-    <Compile Include="Mappedtypes\Id\IdentifierSearchType.cs" />
+    <Compile Include="Mappedtypes\Id\ExternalIdSearchType.cs" />
     <Compile Include="Mappedtypes\Master\SearchResult.cs" />
     <Compile Include="Utils\ArgumentChecker.cs" />
     <Compile Include="Mappedtypes\financial\Security\FinancialSecurity.cs" />
