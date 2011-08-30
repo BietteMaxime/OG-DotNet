@@ -38,7 +38,7 @@ namespace OGDotNet.Mappedtypes.Id
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
-            s.WriteInline(a, "identifiers", _identifiers.Select(id => id.ToString()).ToList());
+            s.WriteInline(a, "identifiers", _identifiers.ToList());
             a.Add("searchType", EnumBuilder<ExternalIdSearchType>.GetJavaName(_searchType));
         }
     }
