@@ -11,6 +11,8 @@ namespace OGDotNet.Mappedtypes.Engine.Value
     public static class ValueRequirementNames
     {
         public static readonly string MarketValue = "Market_Value";
+        public static readonly string Volume = "Market_Volume";
+        public static readonly string ImpliedVolatility = "Market_ImpliedVolatility";
 
         public static readonly string YieldCurve = "YieldCurve";
         public static readonly string YieldCurveSpec = "YieldCurveSpec";
