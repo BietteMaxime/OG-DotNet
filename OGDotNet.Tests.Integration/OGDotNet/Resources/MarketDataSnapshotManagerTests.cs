@@ -363,17 +363,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         Assert.True(enumerator.MoveNext());
 
                         var task = new Task<bool>(enumerator.MoveNext);
+                        ((Task)task).ContinueWith(t => { var ignore = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
                         task.Start();
 
                         Assert.False(task.Wait(TimeSpan.FromSeconds(5)));
 
                         action(proc);
-                        bool ret = task.Wait(TimeSpan.FromSeconds(5));
-                        if (! ret)
-                        {
-                            ((Task) task).ContinueWith(t => { var ignore = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
-                        }
-                        return ret;
+
+                        return task.Wait(TimeSpan.FromSeconds(5));
                     }
                 }
             }

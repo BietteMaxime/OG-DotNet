@@ -100,6 +100,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
             Task next;
             if (taskQueue.TryDequeue(out next))
             {
+                next.ContinueWith(t => { var ignore = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
                 next.ContinueWith(t => StartOne(taskQueue));
                 next.Start();
             }
