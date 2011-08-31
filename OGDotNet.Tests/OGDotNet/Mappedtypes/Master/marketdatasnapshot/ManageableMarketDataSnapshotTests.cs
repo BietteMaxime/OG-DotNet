@@ -14,6 +14,7 @@ using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Tuple;
+using OGDotNet.Model.Context.MarketDataSnapshot;
 using Xunit;
 
 namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
@@ -90,6 +91,75 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
                                                                                                                                                                                                                                           new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("S", "V")), new Dictionary<string, ValueSnapshot> {{"K", new ValueSnapshot(12){OverrideValue = 13}}}
                                                                                                                                                                                                                                           }}), DateTimeOffset.Now)}
                        };
+        }
+
+        [Fact]
+        public void VersionedSecuritiesUpdateCorrectlyBasic() //LAP-30
+        {
+            var before =
+                new ManageableUnstructuredMarketDataSnapshot(
+                    new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>());
+            var update =
+                new ManageableUnstructuredMarketDataSnapshot(
+                    new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>());
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("A", "A", "1")), new Dictionary<string, ValueSnapshot> { { "A", new ValueSnapshot(null) } });
+            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("A", "A", "2")), new Dictionary<string, ValueSnapshot> { { "A", new ValueSnapshot(null) } });
+
+            UpdateAction<ManageableUnstructuredMarketDataSnapshot> prepareUpdateFrom = before.PrepareUpdateFrom(update);
+            Assert.Equal(0, prepareUpdateFrom.Warnings.Count());
+
+            prepareUpdateFrom.Execute(before);
+
+            List<UniqueId> updatedIds = before.Values.Keys.Select(m => m.UniqueId).OrderBy(u => u).ToList();
+            List<UniqueId> expected = new[]
+                                          {
+                                              UniqueId.Of("A", "A", "2"),
+                                          }.OrderBy(u => u).ToList();
+
+            Assert.Equal(expected.Count, updatedIds.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i], updatedIds[i]);
+            }
+        }
+
+        [Fact]
+        public void VersionedSecuritiesUpdateCorrectly() //LAP-30
+        {
+            var before =
+                new ManageableUnstructuredMarketDataSnapshot(
+                    new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>());
+            var update =
+                new ManageableUnstructuredMarketDataSnapshot(
+                    new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>());
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("A", "A", "1")), new Dictionary<string, ValueSnapshot>{{"A", new ValueSnapshot(null)}});
+            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("A", "A", "2")), new Dictionary<string, ValueSnapshot> { { "A", new ValueSnapshot(null) } });
+            
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("B", "B", "1")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
+            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("B", "B", "1")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("B", "B", "2")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
+            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("B", "B", "2")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
+
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("C", "C", "1")), new Dictionary<string, ValueSnapshot> { { "C", new ValueSnapshot(null) { OverrideValue = 12 } } });
+
+            UpdateAction<ManageableUnstructuredMarketDataSnapshot> prepareUpdateFrom = before.PrepareUpdateFrom(update);
+            Assert.Equal(1, prepareUpdateFrom.Warnings.Count());
+
+            prepareUpdateFrom.Execute(before);
+
+            List<UniqueId> updatedIds = before.Values.Keys.Select(m => m.UniqueId).OrderBy(u => u).ToList();
+            List<UniqueId> expected = new[]
+                                          {
+                                              UniqueId.Of("A", "A", "2"),
+                                              UniqueId.Of("B", "B", "1"),
+                                              UniqueId.Of("B", "B", "2"),
+                                          }.OrderBy(u => u).ToList();
+
+            Assert.Equal(expected.Count, updatedIds.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i], updatedIds[i]);
+            }
         }
     }
 }

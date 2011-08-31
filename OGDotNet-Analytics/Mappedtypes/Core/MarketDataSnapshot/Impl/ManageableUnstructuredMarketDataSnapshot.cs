@@ -199,6 +199,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
                                                                                    {
                                                                                        var prevValue = s._values[currSpec];
                                                                                        s.Values[newSpec] = prevValue;
+                                                                                       s._values.Remove(currSpec);
                                                                                        s.InvokePropertyChanged("Values");
                                                                                    })
                     );

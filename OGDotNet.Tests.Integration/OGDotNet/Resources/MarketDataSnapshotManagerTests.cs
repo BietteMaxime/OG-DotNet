@@ -148,6 +148,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 var updated = proc.Snapshot;
 
+                var beforeCount = updated.Values.Count;
+
                 var targetChanged = updated.Values.Keys.First();
                 var valueChanged = updated.Values[targetChanged].Keys.First();
 
@@ -176,6 +178,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         break;
                 }
 
+                var afterCount = updated.Values.Count;
+                Assert.Equal(beforeCount, afterCount);
                 Console.Out.WriteLine(Interlocked.Read(ref updatesSeen) + " - " + Interlocked.Read(ref yieldCurveUpdatesSeen));
                 Assert.NotEqual(0, Interlocked.Read(ref updatesSeen) + Interlocked.Read(ref yieldCurveUpdatesSeen));
 
