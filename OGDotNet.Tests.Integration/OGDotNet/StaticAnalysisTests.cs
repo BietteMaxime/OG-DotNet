@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Fudge;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -106,6 +107,31 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                                                                       type.Namespace));
                         }
                     }
+                }
+            }
+        }
+
+        [CecilTests.TypesTest]
+        public void FactoryMethodsNamedDotNetStyle(TypeDefinition type)
+        {
+            List<MethodDefinition> methodInfos = type.Methods.Cast<MethodDefinition>().Where(m => m.IsStatic && !m.IsSpecialName && type.Equals(m.ReturnType.ReturnType.Resolve())).ToList();
+            foreach (var methodInfo in methodInfos)
+            {
+                if (methodInfo.Name == "Of" || methodInfo.Name == "From")
+                {
+                    throw new Exception(string.Format("{0} is a Create method named Of in the java convention", methodInfo.Name));
+                }
+                if (methodInfo.Name == "FromFudgeMsg")
+                {
+                    continue;
+                }
+                if (methodInfo.Name == "Create")
+                {
+                    continue;
+                }
+                if (methodInfo.Name.StartsWith("Without"))
+                {
+                    continue;
                 }
             }
         }

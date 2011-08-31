@@ -19,7 +19,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private readonly List<Action<T>> _updateActions;
         public static readonly UpdateAction<T> Empty = new UpdateAction<T>(Enumerable.Empty<Action<T>>(), Enumerable.Empty<Warning>());
 
-        internal static UpdateAction<T> Of(IEnumerable<UpdateAction<T>> actions)
+        internal static UpdateAction<T> Create(IEnumerable<UpdateAction<T>> actions)
         {
             return actions.Aggregate(Empty, (a, b) => a.Concat(b));
         }

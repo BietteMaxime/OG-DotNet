@@ -139,9 +139,9 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
                 );
 
             return globalUpdate.Wrap<ManageableMarketDataSnapshot>(s => s._globalValues)
-                .Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(ycActions))
-                .Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(cubeActions))
-                .Concat(UpdateAction<ManageableMarketDataSnapshot>.Of(surfaceActions));
+                .Concat(UpdateAction<ManageableMarketDataSnapshot>.Create(ycActions))
+                .Concat(UpdateAction<ManageableMarketDataSnapshot>.Create(cubeActions))
+                .Concat(UpdateAction<ManageableMarketDataSnapshot>.Create(surfaceActions));
         }
 
         private static UpdateAction<ManageableMarketDataSnapshot> PrepareCurveRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)

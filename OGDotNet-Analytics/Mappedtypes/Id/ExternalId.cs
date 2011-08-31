@@ -38,7 +38,7 @@ namespace OGDotNet.Mappedtypes.Id
             _value = value;
         }
 
-        public static ExternalId Of(string scheme, string value)
+        public static ExternalId Create(string scheme, string value)
         {
             return new ExternalId(scheme, value);
         }

@@ -34,7 +34,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Equal(singleSearchResult.Documents.Single().Security.UniqueId, securitytoFind.UniqueId);
             }
             {
-                var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers.Concat(Enumerable.Repeat(ExternalId.Of("XXX", "YYY"), 1)), ExternalIdSearchType.Any);
+                var identifierSearch = new ExternalIdSearch(identifierBundle.Identifiers.Concat(Enumerable.Repeat(ExternalId.Create("XXX", "YYY"), 1)), ExternalIdSearchType.Any);
                 request = new SecuritySearchRequest(PagingRequest.All, "*", "FUTURE", identifierSearch);
                 var singleSearchResult = Context.SecurityMaster.Search(request);
                 Assert.NotEmpty(singleSearchResult.Documents);

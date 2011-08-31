@@ -42,7 +42,7 @@ namespace OGDotNet.Mappedtypes.Engine.View.Execution
 
         public static IViewExecutionOptions GetSingleCycle(DateTimeOffset valuationTime, MarketDataSpecification marketDataSpecification)
         {
-            return Batch(ArbitraryViewCycleExecutionSequence.Of(valuationTime), new ViewCycleExecutionOptions(valuationTime, marketDataSpecification));
+            return Batch(ArbitraryViewCycleExecutionSequence.Create(valuationTime), new ViewCycleExecutionOptions(valuationTime, marketDataSpecification));
         }
 
         public static IViewExecutionOptions Batch(IViewCycleExecutionSequence cycleExecutionSequence)
@@ -57,7 +57,7 @@ namespace OGDotNet.Mappedtypes.Engine.View.Execution
 
         public static IViewExecutionOptions GetCompileOnly()
         {
-            return GetCompileOnly(ArbitraryViewCycleExecutionSequence.Of(DateTimeOffset.Now));
+            return GetCompileOnly(ArbitraryViewCycleExecutionSequence.Create(DateTimeOffset.Now));
         }
 
         public static IViewExecutionOptions GetCompileOnly(IViewCycleExecutionSequence cycleExecutionSequence)

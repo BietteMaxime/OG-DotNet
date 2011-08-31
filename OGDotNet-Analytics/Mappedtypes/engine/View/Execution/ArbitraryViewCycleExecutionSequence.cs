@@ -20,18 +20,18 @@ namespace OGDotNet.Mappedtypes.Engine.View.Execution
     {
         private readonly Queue<ViewCycleExecutionOptions> _executionSequence;
 
-        public static ArbitraryViewCycleExecutionSequence Of(params DateTimeOffset[] valuationTimes)
+        public static ArbitraryViewCycleExecutionSequence Create(params DateTimeOffset[] valuationTimes)
         {
-            return Of((IEnumerable<DateTimeOffset>) valuationTimes);
+            return Create((IEnumerable<DateTimeOffset>) valuationTimes);
         }
 
-        public static ArbitraryViewCycleExecutionSequence Of(IEnumerable<DateTimeOffset> valuationTimes)
+        public static ArbitraryViewCycleExecutionSequence Create(IEnumerable<DateTimeOffset> valuationTimes)
         {
             var executionSequence = valuationTimes.Select(t => new ViewCycleExecutionOptions(t, new LiveMarketDataSpecification(string.Empty)));
             return new ArbitraryViewCycleExecutionSequence(executionSequence);
         }
 
-        public static ArbitraryViewCycleExecutionSequence Of(params ViewCycleExecutionOptions[] options)
+        public static ArbitraryViewCycleExecutionSequence Create(params ViewCycleExecutionOptions[] options)
         {
             return new ArbitraryViewCycleExecutionSequence(options);
         }

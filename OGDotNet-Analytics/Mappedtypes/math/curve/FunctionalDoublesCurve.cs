@@ -27,7 +27,7 @@ namespace OGDotNet.Mappedtypes.Math.Curve
         {
             string name = GetName(ffc);
             double[] parameters = ffc.GetValue<double[]>("NSS parameters");
-            return From(new NelsonSiegelSvennsonBondCurveModel(parameters).Eval, name);
+            return Create(new NelsonSiegelSvennsonBondCurveModel(parameters).Eval, name);
         }
 
         public override IList<double> XData
@@ -56,7 +56,7 @@ namespace OGDotNet.Mappedtypes.Math.Curve
             return _function(x);
         }
 
-        public static FunctionalDoublesCurve From(Func<double, double> function, string name)
+        public static FunctionalDoublesCurve Create(Func<double, double> function, string name)
         {
             return new FunctionalDoublesCurve(function, name);
         }

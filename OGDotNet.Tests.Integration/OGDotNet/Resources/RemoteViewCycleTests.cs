@@ -236,7 +236,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 remoteViewClient.SetResultListener(listener);
                 remoteViewClient.SetViewCycleAccessSupported(true);
 
-                var sequence = ArbitraryViewCycleExecutionSequence.Of(Enumerable.Range(0, cyclesCount).Select(i => DateTimeOffset.Now + TimeSpan.FromHours(i)));
+                var sequence = ArbitraryViewCycleExecutionSequence.Create(Enumerable.Range(0, cyclesCount).Select(i => DateTimeOffset.Now + TimeSpan.FromHours(i)));
                 var options = new ExecutionOptions(sequence, ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, null, new ViewCycleExecutionOptions(default(DateTimeOffset), ExecutionOptions.GetDefaultMarketDataSpec()));
 
                 remoteViewClient.AttachToViewProcess(defn.Name, options);

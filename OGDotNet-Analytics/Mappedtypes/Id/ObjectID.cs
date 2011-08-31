@@ -24,7 +24,7 @@ namespace OGDotNet.Mappedtypes.Id
             _value = value;
         }
 
-        public static ObjectID Of(string scheme, string value)
+        public static ObjectID Create(string scheme, string value)
         {
             ArgumentChecker.NotNull(scheme, "scheme");
             ArgumentChecker.NotNull(value, "value");

@@ -190,7 +190,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
                                                                       });
                                                           });
 
-            UpdateAction<ManageableUnstructuredMarketDataSnapshot> ret = UpdateAction<ManageableUnstructuredMarketDataSnapshot>.Of(actions);
+            UpdateAction<ManageableUnstructuredMarketDataSnapshot> ret = UpdateAction<ManageableUnstructuredMarketDataSnapshot>.Create(actions);
 
             if (!currSpec.Equals(newSpec))
             {//we need to update the key, since we used a non standard comparer

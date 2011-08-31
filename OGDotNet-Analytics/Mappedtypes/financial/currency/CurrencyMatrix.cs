@@ -39,7 +39,7 @@ namespace OGDotNet.Mappedtypes.Financial.currency
             if (source.Equals(target))
             {
                 // This shouldn't happen in sensible code
-                return CurrencyMatrixValue.Of(1.0);
+                return CurrencyMatrixValue.Create(1.0);
             }
             Dictionary<Currency, CurrencyMatrixValue> targets;
             if (_values.TryGetValue(source, out targets))
@@ -59,7 +59,7 @@ namespace OGDotNet.Mappedtypes.Financial.currency
 
             foreach (IFudgeField field in message)
             {
-                CurrencyMatrixValue cross = CurrencyMatrixValue.Of(Currency.Create(field.Name));
+                CurrencyMatrixValue cross = CurrencyMatrixValue.Create(Currency.Create(field.Name));
                 var value = field.Value;
                 foreach (IFudgeField field2 in (IFudgeFieldContainer)value)
                 {

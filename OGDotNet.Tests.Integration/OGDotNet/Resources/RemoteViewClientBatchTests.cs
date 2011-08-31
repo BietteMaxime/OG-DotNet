@@ -26,7 +26,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanRunZeroCycleBatch()
         {
-            var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(new DateTimeOffset[] { })));
+            var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Create(new DateTimeOffset[] { })));
             Assert.Empty(runToCompletion.Item1);
             Assert.Empty(runToCompletion.Item2);
         }
@@ -55,7 +55,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanRunSingleYesterdayCycleBatchWithVersion()
         {
             DateTimeOffset valuationTime = DateTimeOffset.Now - TimeSpan.FromDays(1);
-            var seq = ArbitraryViewCycleExecutionSequence.Of(valuationTime);
+            var seq = ArbitraryViewCycleExecutionSequence.Create(valuationTime);
             const ViewExecutionFlags flags = ViewExecutionFlags.RunAsFastAsPossible | ViewExecutionFlags.AwaitMarketData;
             IViewExecutionOptions req = new ExecutionOptions(seq, flags, defaultExecutionOptions:new ViewCycleExecutionOptions(valuationTime, new LiveMarketDataSpecification()), versionCorrection:new VersionCorrection(valuationTime, valuationTime));
             var runToCompletion = RunToCompletion(req);
@@ -74,7 +74,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                          DateTimeOffset.Now - TimeSpan.FromDays(5)
                                      };
 
-            var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Of(valuationTimes)));
+            var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Create(valuationTimes)));
 
             foreach (var t in runToCompletion.Item2.Zip(valuationTimes, Tuple.Create))
             {

@@ -30,7 +30,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
             var manageableVolatilityCubeSnapshots = GetManageableVolatilityCubeSnapshots();
             var manageableMarketDataSnapshot = new ManageableMarketDataSnapshot("SomeView", manageableUnstructuredMarketDataSnapshot, manageableYieldCurveSnapshots, manageableVolatilityCubeSnapshots, manageableVolatilitySurfaceSnapshots);
 
-            var valueSpec = new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("ID", "1"));
+            var valueSpec = new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("ID", "1"));
             const string valueName = "Value";
             manageableMarketDataSnapshot.Values.Add(valueSpec, new Dictionary<string, ValueSnapshot> {{valueName, new ValueSnapshot(12){OverrideValue = 13}}});
             Assert.True(manageableMarketDataSnapshot.HaveOverrides());
@@ -62,7 +62,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
         {
             return new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>
                        {
-                           {new VolatilityCubeKey(Currency.USD, "N"), new ManageableVolatilityCubeSnapshot(new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> {{new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("S", "V")), new Dictionary<string, ValueSnapshot> {{"K", new ValueSnapshot(12){OverrideValue = 13}}}}}))
+                           {new VolatilityCubeKey(Currency.USD, "N"), new ManageableVolatilityCubeSnapshot(new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> {{new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("S", "V")), new Dictionary<string, ValueSnapshot> {{"K", new ValueSnapshot(12){OverrideValue = 13}}}}}))
                                }
                        };
         }
@@ -71,7 +71,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
         {
             return new Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>
                        {
-                           {new VolatilitySurfaceKey(UniqueId.Of("S", "V"), "N", "I"),
+                           {new VolatilitySurfaceKey(UniqueId.Create("S", "V"), "N", "I"),
                                new ManageableVolatilitySurfaceSnapshot(new Dictionary<Pair<object, object>, ValueSnapshot>
                                                                            {
                                                                                {
@@ -88,7 +88,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
                            {new YieldCurveKey(Currency.USD, "N"), new ManageableYieldCurveSnapshot(new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>
                                                                                                                                                     {
                                                                                                                                                                                                                                       {
-                                                                                                                                                                                                                                          new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("S", "V")), new Dictionary<string, ValueSnapshot> {{"K", new ValueSnapshot(12){OverrideValue = 13}}}
+                                                                                                                                                                                                                                          new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("S", "V")), new Dictionary<string, ValueSnapshot> {{"K", new ValueSnapshot(12){OverrideValue = 13}}}
                                                                                                                                                                                                                                           }}), DateTimeOffset.Now)}
                        };
         }
@@ -102,8 +102,8 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
             var update =
                 new ManageableUnstructuredMarketDataSnapshot(
                     new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>());
-            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("A", "A", "1")), new Dictionary<string, ValueSnapshot> { { "A", new ValueSnapshot(null) } });
-            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("A", "A", "2")), new Dictionary<string, ValueSnapshot> { { "A", new ValueSnapshot(null) } });
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("A", "A", "1")), new Dictionary<string, ValueSnapshot> { { "A", new ValueSnapshot(null) } });
+            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("A", "A", "2")), new Dictionary<string, ValueSnapshot> { { "A", new ValueSnapshot(null) } });
 
             UpdateAction<ManageableUnstructuredMarketDataSnapshot> prepareUpdateFrom = before.PrepareUpdateFrom(update);
             Assert.Equal(0, prepareUpdateFrom.Warnings.Count());
@@ -113,7 +113,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
             List<UniqueId> updatedIds = before.Values.Keys.Select(m => m.UniqueId).OrderBy(u => u).ToList();
             List<UniqueId> expected = new[]
                                           {
-                                              UniqueId.Of("A", "A", "2"),
+                                              UniqueId.Create("A", "A", "2"),
                                           }.OrderBy(u => u).ToList();
 
             Assert.Equal(expected.Count, updatedIds.Count);
@@ -132,15 +132,15 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
             var update =
                 new ManageableUnstructuredMarketDataSnapshot(
                     new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>());
-            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("A", "A", "1")), new Dictionary<string, ValueSnapshot>{{"A", new ValueSnapshot(null)}});
-            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("A", "A", "2")), new Dictionary<string, ValueSnapshot> { { "A", new ValueSnapshot(null) } });
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("A", "A", "1")), new Dictionary<string, ValueSnapshot>{{"A", new ValueSnapshot(null)}});
+            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("A", "A", "2")), new Dictionary<string, ValueSnapshot> { { "A", new ValueSnapshot(null) } });
             
-            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("B", "B", "1")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
-            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("B", "B", "1")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
-            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("B", "B", "2")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
-            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("B", "B", "2")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("B", "B", "1")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
+            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("B", "B", "1")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("B", "B", "2")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
+            update.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("B", "B", "2")), new Dictionary<string, ValueSnapshot> { { "B", new ValueSnapshot(null) } });
 
-            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("C", "C", "1")), new Dictionary<string, ValueSnapshot> { { "C", new ValueSnapshot(null) { OverrideValue = 12 } } });
+            before.Values.Add(new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("C", "C", "1")), new Dictionary<string, ValueSnapshot> { { "C", new ValueSnapshot(null) { OverrideValue = 12 } } });
 
             UpdateAction<ManageableUnstructuredMarketDataSnapshot> prepareUpdateFrom = before.PrepareUpdateFrom(update);
             Assert.Equal(1, prepareUpdateFrom.Warnings.Count());
@@ -150,9 +150,9 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
             List<UniqueId> updatedIds = before.Values.Keys.Select(m => m.UniqueId).OrderBy(u => u).ToList();
             List<UniqueId> expected = new[]
                                           {
-                                              UniqueId.Of("A", "A", "2"),
-                                              UniqueId.Of("B", "B", "1"),
-                                              UniqueId.Of("B", "B", "2"),
+                                              UniqueId.Create("A", "A", "2"),
+                                              UniqueId.Create("B", "B", "1"),
+                                              UniqueId.Create("B", "B", "2"),
                                           }.OrderBy(u => u).ToList();
 
             Assert.Equal(expected.Count, updatedIds.Count);

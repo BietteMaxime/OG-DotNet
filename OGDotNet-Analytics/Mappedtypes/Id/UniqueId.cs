@@ -27,7 +27,7 @@ namespace OGDotNet.Mappedtypes.Id
         private readonly string _value;
         private readonly string _version;
 
-        public static UniqueId Of(string scheme, string value, string version = null)
+        public static UniqueId Create(string scheme, string value, string version = null)
         {
             return new UniqueId(scheme, value, version);
         }
@@ -39,9 +39,9 @@ namespace OGDotNet.Mappedtypes.Id
             switch (split.Length)
             {
                 case 2:
-                    return Of(split[0], split[1]);
+                    return Create(split[0], split[1]);
                 case 3:
-                    return Of(split[0], split[1], split[2]);
+                    return Create(split[0], split[1], split[2]);
             }
             throw new ArgumentException("Invalid identifier format: " + uidStr);
         }
@@ -98,7 +98,7 @@ namespace OGDotNet.Mappedtypes.Id
         
         public ExternalId ToIdentifier()
         {
-            return ExternalId.Of("UID", ToString());
+            return ExternalId.Create("UID", ToString());
         }
 
         public override string ToString()
@@ -133,7 +133,7 @@ namespace OGDotNet.Mappedtypes.Id
         {
             get
             {
-                return ObjectID.Of(_scheme, _value);
+                return ObjectID.Create(_scheme, _value);
             }
         }
 

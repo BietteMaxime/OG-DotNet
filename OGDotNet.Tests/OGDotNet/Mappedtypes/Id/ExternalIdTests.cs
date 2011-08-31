@@ -18,11 +18,11 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
     {
         static readonly ExternalId[] ExpectedOrder = new[]
                                     {
-                                        ExternalId.Of("A", "1"),
-                                        ExternalId.Of("A", "2"),
-                                        ExternalId.Of("B", "1"),
-                                        ExternalId.Of("B", "2"),
-                                        ExternalId.Of("B", "2~3"),
+                                        ExternalId.Create("A", "1"),
+                                        ExternalId.Create("A", "2"),
+                                        ExternalId.Create("B", "1"),
+                                        ExternalId.Create("B", "2"),
+                                        ExternalId.Create("B", "2~3"),
                                     };
 
         [Fact]
@@ -50,7 +50,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             foreach (var identifier in ExpectedOrder)
             {
                 Assert.Equal(1, ExpectedOrder.Where(e => e.GetHashCode() == identifier.GetHashCode()).Count());
-                Assert.Equal(identifier.GetHashCode(), ExternalId.Of(identifier.Scheme, identifier.Value).GetHashCode());
+                Assert.Equal(identifier.GetHashCode(), ExternalId.Create(identifier.Scheme, identifier.Value).GetHashCode());
             }
         }
 
@@ -78,7 +78,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             foreach (var id in ExpectedOrder)
             {
                 Assert.Equal(1, ExpectedOrder.Where(e => equals(e, id)).Count());
-                Assert.True(equals(id, ExternalId.Of(id.Scheme, id.Value)));
+                Assert.True(equals(id, ExternalId.Create(id.Scheme, id.Value)));
             }
         }
 

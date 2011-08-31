@@ -229,14 +229,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>
                     {
                         {
-                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("AA", "XX")),
+                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("AA", "XX")),
                             new Dictionary<string, ValueSnapshot>
                                 {
                                     {"SomeValue", new ValueSnapshot(12)}
                                 }
                             },
                         {
-                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Of("AA", "YY")),
+                            new MarketDataValueSpecification(MarketDataValueType.Primitive, UniqueId.Create("AA", "YY")),
                             new Dictionary<string, ValueSnapshot>
                                 {
                                     {"SomeOtherValue", new ValueSnapshot(12){OverrideValue = 13}}

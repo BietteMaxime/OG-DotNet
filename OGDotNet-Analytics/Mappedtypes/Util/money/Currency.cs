@@ -144,7 +144,7 @@ namespace OGDotNet.Mappedtypes.Util.Money
 
         private Currency(string isoCode)
         {
-            _uniqueId = UniqueId.Of(IdentificationDomain, isoCode);
+            _uniqueId = UniqueId.Create(IdentificationDomain, isoCode);
         }
 
         public UniqueId UniqueId

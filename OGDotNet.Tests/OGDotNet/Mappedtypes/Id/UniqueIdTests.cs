@@ -18,12 +18,12 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
     {
         static readonly UniqueId[] ExpectedOrder = new[]
                                     {
-                                        UniqueId.Of("A", "1"),
-                                        UniqueId.Of("A", "2"),
-                                        UniqueId.Of("A", "2", "A"),
-                                        UniqueId.Of("A", "2", "B"),
-                                        UniqueId.Of("B", "1"),
-                                        UniqueId.Of("B", "2"),
+                                        UniqueId.Create("A", "1"),
+                                        UniqueId.Create("A", "2"),
+                                        UniqueId.Create("A", "2", "A"),
+                                        UniqueId.Create("A", "2", "B"),
+                                        UniqueId.Create("B", "1"),
+                                        UniqueId.Create("B", "2"),
                                     };
 
         [Fact]
@@ -54,7 +54,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             foreach (var uniqueIdentifier in ExpectedOrder)
             {
                 Assert.Equal(1, ExpectedOrder.Where(e => e.GetHashCode() == uniqueIdentifier.GetHashCode()).Count());
-                Assert.Equal(uniqueIdentifier.GetHashCode(), UniqueId.Of(uniqueIdentifier.Scheme, uniqueIdentifier.Value, uniqueIdentifier.Version).GetHashCode());
+                Assert.Equal(uniqueIdentifier.GetHashCode(), UniqueId.Create(uniqueIdentifier.Scheme, uniqueIdentifier.Value, uniqueIdentifier.Version).GetHashCode());
             }
         }
 
@@ -83,7 +83,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Id
             foreach (var id in ExpectedOrder)
             {
                 Assert.Equal(1, ExpectedOrder.Where(e => equals(e, id)).Count());
-                Assert.True(equals(id, UniqueId.Of(id.Scheme, id.Value, id.Version)));
+                Assert.True(equals(id, UniqueId.Create(id.Scheme, id.Value, id.Version)));
             }
         }
 

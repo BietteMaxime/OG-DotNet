@@ -21,7 +21,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteLiveDataInjectorTests : TestWithContextBase
     {
-        static readonly UniqueId BloombergUid = UniqueId.Of("BLOOMBERG_TICKER", "USDRG Curncy");
+        static readonly UniqueId BloombergUid = UniqueId.Create("BLOOMBERG_TICKER", "USDRG Curncy");
         private static readonly ExternalId BloombergId = BloombergUid.ToIdentifier();
 
         [Fact]

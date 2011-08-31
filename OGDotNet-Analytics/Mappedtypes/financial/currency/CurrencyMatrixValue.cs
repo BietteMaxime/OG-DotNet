@@ -18,12 +18,12 @@ namespace OGDotNet.Mappedtypes.Financial.currency
     {
         public abstract CurrencyMatrixValue Reciprocal { get; }
 
-        public static CurrencyMatrixValue Of(Currency currency)
+        public static CurrencyMatrixValue Create(Currency currency)
         {
             return new CurrencyMatrixCross(currency);
         }
 
-        public static CurrencyMatrixValue Of(double fixedValue)
+        public static CurrencyMatrixValue Create(double fixedValue)
         {
             return new CurrencyMatrixFixed(fixedValue);
         }

@@ -38,7 +38,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
             var start = end - TimeSpan.FromDays(7);
 
-            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, end, false);
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Create("DbHts", "3580"), start, false, end, false);
             AssertSane(series, start, end);
         }
 
@@ -50,12 +50,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
             var start = end - TimeSpan.FromDays(7);
 
-            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, end, false);
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Create("DbHts", "3580"), start, false, end, false);
             AssertSane(series, start, end);
             var lastIncluded = series.Values.Last().Item1;
-            ILocalDateDoubleTimeSeries seriesExclusive = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, lastIncluded, false);
+            ILocalDateDoubleTimeSeries seriesExclusive = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Create("DbHts", "3580"), start, false, lastIncluded, false);
             Assert.Equal(series.Values.Count - 1, seriesExclusive.Values.Count);
-            ILocalDateDoubleTimeSeries seriesInclusive = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"), start, false, lastIncluded, true);
+            ILocalDateDoubleTimeSeries seriesInclusive = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Create("DbHts", "3580"), start, false, lastIncluded, true);
             Assert.Equal(series.Values.Count, seriesInclusive.Values.Count);
         }
 
@@ -66,7 +66,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             var end = DateTimeOffset.Now;
 
-            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Of("DbHts", "3580"));
+            ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Create("DbHts", "3580"));
             AssertSane(series, end);
         }
 
