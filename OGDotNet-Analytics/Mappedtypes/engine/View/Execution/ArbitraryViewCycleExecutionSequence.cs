@@ -27,7 +27,7 @@ namespace OGDotNet.Mappedtypes.Engine.View.Execution
 
         public static ArbitraryViewCycleExecutionSequence Create(IEnumerable<DateTimeOffset> valuationTimes)
         {
-            var executionSequence = valuationTimes.Select(t => new ViewCycleExecutionOptions(t, new LiveMarketDataSpecification(string.Empty)));
+            var executionSequence = valuationTimes.Select(t => new ViewCycleExecutionOptions(t, new LiveMarketDataSpecification()));
             return new ArbitraryViewCycleExecutionSequence(executionSequence);
         }
 

@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Engine.MarketData.Spec
 {
@@ -16,13 +15,12 @@ namespace OGDotNet.Mappedtypes.Engine.MarketData.Spec
     {
         private readonly string _dataSource;
 
-        public LiveMarketDataSpecification() : this(string.Empty)
+        public LiveMarketDataSpecification() : this(null)
         {
         }
 
         public LiveMarketDataSpecification(string dataSource)
         {
-            ArgumentChecker.NotNull(dataSource, "dataSource");
             _dataSource = dataSource;
         }
 
