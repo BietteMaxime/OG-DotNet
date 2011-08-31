@@ -14,6 +14,7 @@ using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Context.MarketDataSnapshot.Warnings;
@@ -50,8 +51,10 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 
         public UpdateAction<ManageableUnstructuredMarketDataSnapshot> PrepareUpdateFrom(ManageableUnstructuredMarketDataSnapshot newSnapshot)
         {
-            var currValues = GetUpdateDictionary(_values);
-            var newValues = GetUpdateDictionary(newSnapshot.Values);
+            IEqualityComparer<MarketDataValueSpecification> comparer = CreateUpdateComparer(_values, newSnapshot.Values);
+
+            var currValues = new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(_values, comparer);
+            var newValues = new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(newSnapshot.Values, comparer);
 
             return currValues.ProjectStructure(newValues,
                                                PrepareUpdateFrom,
@@ -60,32 +63,77 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
                 ).Aggregate(UpdateAction<ManageableUnstructuredMarketDataSnapshot>.Empty, (a, b) => a.Concat(b));
         }
 
-        private static Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> GetUpdateDictionary(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> values)
+        private static IEqualityComparer<MarketDataValueSpecification> CreateUpdateComparer(params IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>[] values)
         {
-            return new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>(
-                values,
-                IgnoreVersionComparer.Instance
-                );
+            //LAP-30
+            var exclusions = new HashSet<ObjectID>();
+            foreach (var value in values)
+            {
+                IEnumerable<ObjectID> exclusionSet = CreateExclusionSet(value);
+                foreach (var objectID in exclusionSet)
+                {
+                    exclusions.Add(objectID);
+                }
+            }
+            
+            return IgnoreVersionComparer.Create(exclusions);
         }
+
+        private static IEnumerable<ObjectID> CreateExclusionSet(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> values)
+        {
+            //LAP-30
+            var excluded = new HashSet<ObjectID>();
+            var seen = new HashSet<ObjectID>();
+            foreach (var value in values.Keys)
+            {
+                ObjectID objectID = value.UniqueId.ObjectID;    
+                if (! seen.Add(objectID))
+                {
+                    excluded.Add(objectID);
+                }
+            }
+            return excluded;
+        }
+
         private class IgnoreVersionComparer : IEqualityComparer<MarketDataValueSpecification>
         {
-            public static readonly IEqualityComparer<MarketDataValueSpecification> Instance = new IgnoreVersionComparer();
+            private readonly HashSet<ObjectID> _exclusionsSet;
 
-            private IgnoreVersionComparer()
+            /// <param name="exclusions">Those UniqueIds for which version should be respected</param>
+            /// <returns></returns>
+            public static IEqualityComparer<MarketDataValueSpecification> Create(IEnumerable<ObjectID> exclusions)
             {
+                var exclusionsSet = new HashSet<ObjectID>(exclusions);
+                return new IgnoreVersionComparer(exclusionsSet);
+            }
+
+            private IgnoreVersionComparer(HashSet<ObjectID> exclusionsSet)
+            {
+                _exclusionsSet = exclusionsSet;
             }
 
             public bool Equals(MarketDataValueSpecification x, MarketDataValueSpecification y)
             {
-                return x.Type.Equals(y.Type)
-                       &&
-                       x.UniqueId.ToLatest().Equals(y.UniqueId.ToLatest()); //Ignore the version info
+                if (!x.Type.Equals(y.Type))
+                {
+                    return false;
+                }
+
+                //NOTE: Don't need to check y here
+                if (_exclusionsSet.Contains(x.UniqueId.ObjectID))
+                {
+                    return x.UniqueId.Equals(y.UniqueId);
+                }
+                else
+                {
+                    return x.UniqueId.ToLatest().Equals(y.UniqueId.ToLatest()); //Ignore the version info
+                }
             }
 
             public int GetHashCode(MarketDataValueSpecification obj)
             {
                 int result = obj.Type.GetHashCode();
-                result = (result * 397) ^ obj.UniqueId.ToLatest().GetHashCode(); //Ignore the version info
+                result = (result * 397) ^ obj.UniqueId.ToLatest().GetHashCode(); //Ignore the version info, inefficient in LAP-30, but that's rare
                 return result;
             }
         }

@@ -121,6 +121,7 @@
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />
     <Compile Include="Mappedtypes\Engine\marketdata\spec\LiveMarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\Engine\marketdata\spec\MarketDataSpecification.cs" />
+    <Compile Include="Mappedtypes\Id\ObjectID.cs" />
     <Compile Include="Mappedtypes\Id\VersionCorrection.cs" />
     <Compile Include="Mappedtypes\javax\time\calendar\LocalDate.cs" />
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\ManageableVolatilityCubeSnapshot.cs" />

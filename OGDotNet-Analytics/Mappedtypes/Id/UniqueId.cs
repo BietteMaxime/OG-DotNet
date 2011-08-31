@@ -129,6 +129,14 @@ namespace OGDotNet.Mappedtypes.Id
             return CompareTo(uniqueIdentifier);
         }
 
+        public ObjectID ObjectID
+        {
+            get
+            {
+                return ObjectID.Of(_scheme, _value);
+            }
+        }
+
         #region auto generated equality
 
         public int CompareTo(UniqueId other)
