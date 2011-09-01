@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -142,6 +143,11 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
                 .Concat(UpdateAction<ManageableMarketDataSnapshot>.Create(ycActions))
                 .Concat(UpdateAction<ManageableMarketDataSnapshot>.Create(cubeActions))
                 .Concat(UpdateAction<ManageableMarketDataSnapshot>.Create(surfaceActions));
+        }
+
+        public ManageableMarketDataSnapshot Clone()
+        {
+            throw new NotImplementedException();
         }
 
         private static UpdateAction<ManageableMarketDataSnapshot> PrepareCurveRemoveAction(YieldCurveKey key, ManageableYieldCurveSnapshot value)

@@ -13,5 +13,6 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
     public interface IUpdatableFrom<T>
     {
         UpdateAction<T> PrepareUpdateFrom(T newObject);
+        T Clone();
     }
 }
