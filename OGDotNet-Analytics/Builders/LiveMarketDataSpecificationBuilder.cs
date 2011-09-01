@@ -21,7 +21,10 @@ namespace OGDotNet.Builders
         protected override void SerializeImpl(LiveMarketDataSpecification obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
         {
             serializer.WriteTypeHeader(msg, obj.GetType());
-            msg.Add("dataSource", obj.DataSource);
+            if (obj.DataSource != null)
+            {
+                msg.Add("dataSource", obj.DataSource);
+            }
         }
 
         public override LiveMarketDataSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
