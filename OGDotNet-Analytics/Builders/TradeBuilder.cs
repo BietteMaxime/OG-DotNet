@@ -30,8 +30,8 @@ namespace OGDotNet.Builders
             var securityKey = deserializer.FromField<ExternalIdBundle>(ffc.GetByName("securityKey"));
 
             var counterPartyIdentifier = ExternalId.Parse(ffc.GetString("counterpartyKey") ?? ffc.GetString("counterparty")); //NOTE: this is a hack because we don't use proto yet
-            var quant = ffc.GetValue<long>("quantity");
-            return new SimpleTrade(uniqueIdentifier, tradeDate, securityKey, new CounterpartyImpl(counterPartyIdentifier), quant);
+            var quant = ffc.GetValue<string>("quantity");
+            return new SimpleTrade(uniqueIdentifier, tradeDate, securityKey, new CounterpartyImpl(counterPartyIdentifier), decimal.Parse(quant));
         }
     }
 }

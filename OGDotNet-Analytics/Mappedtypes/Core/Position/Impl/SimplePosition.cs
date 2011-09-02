@@ -5,6 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using Fudge.Serialization;
 using OGDotNet.Builders;
@@ -18,9 +19,9 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
         private readonly ExternalIdBundle _securityKey;
         private readonly IList<ITrade> _trades;
         private readonly UniqueId _identifier;
-        private readonly long _quantity;
+        private readonly decimal _quantity;
 
-        public SimplePosition(UniqueId identifier, long quantity, ExternalIdBundle securityKey, IList<ITrade> trades)
+        public SimplePosition(UniqueId identifier, decimal quantity, ExternalIdBundle securityKey, IList<ITrade> trades)
         {
             _securityKey = securityKey;
             _trades = trades;
@@ -33,7 +34,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             get { return _securityKey; }
         }
 
-        public long Quantity
+        public decimal Quantity
         {
             get { return _quantity; }
         }

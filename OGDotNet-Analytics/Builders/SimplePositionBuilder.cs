@@ -28,7 +28,7 @@ namespace OGDotNet.Builders
             var secKey = deserializer.FromField<ExternalIdBundle>(ffc.GetByName("securityKey"));
             var quant = ffc.GetValue<string>("quantity");
             var trades = deserializer.FromField<IList<ITrade>>(ffc.GetByName("trades")) ?? new List<ITrade>();
-            return new SimplePosition(id == null ? null : UniqueId.Parse(id), long.Parse(quant), secKey, trades);
+            return new SimplePosition(id == null ? null : UniqueId.Parse(id), decimal.Parse(quant), secKey, trades);
         }
     }
 }

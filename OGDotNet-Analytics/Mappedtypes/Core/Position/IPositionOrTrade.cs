@@ -5,6 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position
@@ -12,6 +13,6 @@ namespace OGDotNet.Mappedtypes.Core.Position
     public interface IPositionOrTrade : IUniqueIdentifiable
     {
         ExternalIdBundle SecurityKey { get; }
-        long Quantity { get; }
+        decimal Quantity { get; } //NOTE: this shuld be arbitrary precision, but Decimal's probably fine
     }
 }

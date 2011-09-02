@@ -19,9 +19,9 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
         private readonly DateTimeOffset _tradeDate;
         private readonly ExternalIdBundle _securityKey;
         private readonly CounterpartyImpl _counterparty;
-        private readonly long _quantity;
+        private readonly decimal _quantity;
 
-        public SimpleTrade(UniqueId uniqueId, DateTimeOffset tradeDate, ExternalIdBundle securityKey, CounterpartyImpl counterparty, long quantity)
+        public SimpleTrade(UniqueId uniqueId, DateTimeOffset tradeDate, ExternalIdBundle securityKey, CounterpartyImpl counterparty, decimal quantity)
         {
             _uniqueId = uniqueId;
             _quantity = quantity;
@@ -40,7 +40,7 @@ namespace OGDotNet.Mappedtypes.Core.Position.Impl
             get { return _securityKey; }
         }
 
-        public long Quantity
+        public decimal Quantity
         {
             get { return _quantity; }
         }

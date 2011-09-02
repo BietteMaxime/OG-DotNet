@@ -154,7 +154,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             private readonly ComputationTargetType _targetType;
             private readonly Func<ISecurity> _security;
             private readonly int _depth;
-            private readonly long _quantity;
+            private readonly decimal _quantity;
 
             private string _name;
 
@@ -166,7 +166,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 _depth = depth;
             }
 
-            public TreeNode(UniqueId identifier, ComputationTargetType targetType, Func<ISecurity> security, int depth, long quantity)
+            public TreeNode(UniqueId identifier, ComputationTargetType targetType, Func<ISecurity> security, int depth, decimal quantity)
             {
                 _identifier = identifier;
                 _targetType = targetType;
