@@ -12,10 +12,18 @@ namespace OGDotNet.Mappedtypes.Financial.Security.Option
     /// <summary>
     /// TODO: kill these with the .proto replacement
     /// </summary>
-    class EquityOptionSecurity : FinancialSecurity
+    public class EquityOptionSecurity : FinancialSecurity
     {
-        public EquityOptionSecurity(string name, string securityType, UniqueId uniqueId, ExternalIdBundle identifiers) : base(name, securityType, uniqueId, identifiers)
+        private readonly ExternalId _underlyingIdentifier;
+
+        public EquityOptionSecurity(string name, string securityType, UniqueId uniqueId, ExternalIdBundle identifiers, ExternalId underlyingIdentifier) : base(name, securityType, uniqueId, identifiers)
         {
+            _underlyingIdentifier = underlyingIdentifier;
+        }
+
+        public ExternalId UnderlyingIdentifier
+        {
+            get { return _underlyingIdentifier; }
         }
     }
 }
