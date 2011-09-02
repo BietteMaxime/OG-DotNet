@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ObjectID.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="ObjectId.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -7,29 +7,37 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Text;
+using Fudge;
+using Fudge.Serialization;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Id
 {
-    public class ObjectID : IEquatable<ObjectID>
+    public class ObjectId : IEquatable<ObjectId>
     {
+        private const string Separator = "~";
+
+        private const string SchemeFudgeFieldName = "Scheme";
+        private const string ValueFudgeFieldName = "Value";
+
         //TODO the rest of this
 
         private readonly string _scheme;
         private readonly string _value;
 
-        private ObjectID(string scheme, string value)
+        private ObjectId(string scheme, string value)
         {
             _scheme = scheme;
             _value = value;
         }
 
-        public static ObjectID Create(string scheme, string value)
+        public static ObjectId Create(string scheme, string value)
         {
             ArgumentChecker.NotNull(scheme, "scheme");
             ArgumentChecker.NotNull(value, "value");
 
-            return new ObjectID(scheme, value);
+            return new ObjectId(scheme, value);
         }
 
         public string Scheme
@@ -42,7 +50,7 @@ namespace OGDotNet.Mappedtypes.Id
             get { return _value; }
         }
 
-        public bool Equals(ObjectID other)
+        public bool Equals(ObjectId other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -53,8 +61,8 @@ namespace OGDotNet.Mappedtypes.Id
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(ObjectID)) return false;
-            return Equals((ObjectID) obj);
+            if (obj.GetType() != typeof(ObjectId)) return false;
+            return Equals((ObjectId) obj);
         }
 
         public override int GetHashCode()
@@ -63,6 +71,45 @@ namespace OGDotNet.Mappedtypes.Id
             {
                 return (_scheme.GetHashCode() * 397) ^ _value.GetHashCode();
             }
+        }
+
+        public static ObjectId FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            string schema = null;
+            string value = null;
+
+            foreach (var field in ffc)
+            {
+                switch (field.Name)
+                {
+                    case SchemeFudgeFieldName:
+                        schema = (string)field.Value;
+                        break;
+                    case ValueFudgeFieldName:
+                        value = (string)field.Value;
+                        break;
+                    case null:
+                        if (field.Ordinal != 0)
+                            throw new ArgumentException();
+                        break;
+                    default:
+                        throw new ArgumentException();
+                }
+            }
+            return new ObjectId(schema, value);
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            a.Add(SchemeFudgeFieldName, Scheme);
+            a.Add(ValueFudgeFieldName, Value);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder buf = new StringBuilder()
+                .Append(_scheme).Append(Separator).Append(_value);
+            return buf.ToString();
         }
     }
 }

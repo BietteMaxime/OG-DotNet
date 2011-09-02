@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util;
 
@@ -17,15 +18,20 @@ namespace OGDotNet.Mappedtypes.Master.Security
         private readonly string _name;
         private readonly string _securityType;
         private readonly ExternalIdSearch _externalIdSearch;
-        //TODO private List<ObjectId> _securityIds
+        private readonly List<ObjectId> _objectIds;
 
         public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType) : this(pagingRequest, name, securityType, null)
         {
         }
 
-        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType, ExternalIdSearch externalIdSearch)
+        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType, ExternalIdSearch externalIdSearch) : this(pagingRequest, name, securityType, externalIdSearch, null)
+        {
+        }
+
+        public SecuritySearchRequest(PagingRequest pagingRequest, string name, string securityType, ExternalIdSearch externalIdSearch, List<ObjectId> objectIds)
         {
             _pagingRequest = pagingRequest;
+            _objectIds = objectIds;
             _externalIdSearch = externalIdSearch;
             _name = name;
             _securityType = securityType;
@@ -49,6 +55,11 @@ namespace OGDotNet.Mappedtypes.Master.Security
         public ExternalIdSearch ExternalIdSearch
         {
             get { return _externalIdSearch; }
+        }
+
+        public List<ObjectId> ObjectIds
+        {
+            get { return _objectIds; }
         }
     }
 }

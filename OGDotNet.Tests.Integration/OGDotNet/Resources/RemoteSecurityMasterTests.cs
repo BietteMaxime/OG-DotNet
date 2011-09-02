@@ -6,6 +6,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.Security;
@@ -113,6 +114,27 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                  return Context.SecurityMaster.Search(request).Paging.TotalItems;
                                              })
                 );
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanSearchWithObjectId()
+        {
+            const string type = "FUTURE";
+            var request = new SecuritySearchRequest(PagingRequest.First(1), "*", type);
+            var searchResult = Context.SecurityMaster.Search(request);
+            Assert.NotEmpty(searchResult.Documents);
+
+            var securitytoFind = searchResult.Documents.First();
+
+            request = new SecuritySearchRequest(PagingRequest.All, "*", type, null,
+                                                new List<ObjectId>() {securitytoFind.UniqueId.ObjectID});
+            var singleSearchResult = Context.SecurityMaster.Search(request);
+            Assert.NotEmpty(singleSearchResult.Documents);
+            //Assert.Single(singleSearchResult.Documents);
+            foreach (var securityDocument in singleSearchResult.Documents)
+            {
+                Assert.Equal(securityDocument.Security.UniqueId.ObjectID, securitytoFind.UniqueId.ObjectID);
+            }
         }
     }
 }

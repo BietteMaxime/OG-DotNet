@@ -66,10 +66,10 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
         private static IEqualityComparer<MarketDataValueSpecification> CreateUpdateComparer(params IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>[] values)
         {
             //LAP-30
-            var exclusions = new HashSet<ObjectID>();
+            var exclusions = new HashSet<ObjectId>();
             foreach (var value in values)
             {
-                IEnumerable<ObjectID> exclusionSet = CreateExclusionSet(value);
+                IEnumerable<ObjectId> exclusionSet = CreateExclusionSet(value);
                 foreach (var objectID in exclusionSet)
                 {
                     exclusions.Add(objectID);
@@ -79,14 +79,14 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
             return IgnoreVersionComparer.Create(exclusions);
         }
 
-        private static IEnumerable<ObjectID> CreateExclusionSet(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> values)
+        private static IEnumerable<ObjectId> CreateExclusionSet(IDictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>> values)
         {
             //LAP-30
-            var excluded = new HashSet<ObjectID>();
-            var seen = new HashSet<ObjectID>();
+            var excluded = new HashSet<ObjectId>();
+            var seen = new HashSet<ObjectId>();
             foreach (var value in values.Keys)
             {
-                ObjectID objectID = value.UniqueId.ObjectID;    
+                ObjectId objectID = value.UniqueId.ObjectID;    
                 if (! seen.Add(objectID))
                 {
                     excluded.Add(objectID);
@@ -97,17 +97,17 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 
         private class IgnoreVersionComparer : IEqualityComparer<MarketDataValueSpecification>
         {
-            private readonly HashSet<ObjectID> _exclusionsSet;
+            private readonly HashSet<ObjectId> _exclusionsSet;
 
             /// <param name="exclusions">Those UniqueIds for which version should be respected</param>
             /// <returns></returns>
-            public static IEqualityComparer<MarketDataValueSpecification> Create(IEnumerable<ObjectID> exclusions)
+            public static IEqualityComparer<MarketDataValueSpecification> Create(IEnumerable<ObjectId> exclusions)
             {
-                var exclusionsSet = new HashSet<ObjectID>(exclusions);
+                var exclusionsSet = new HashSet<ObjectId>(exclusions);
                 return new IgnoreVersionComparer(exclusionsSet);
             }
 
-            private IgnoreVersionComparer(HashSet<ObjectID> exclusionsSet)
+            private IgnoreVersionComparer(HashSet<ObjectId> exclusionsSet)
             {
                 _exclusionsSet = exclusionsSet;
             }

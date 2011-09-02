@@ -129,11 +129,11 @@ namespace OGDotNet.Mappedtypes.Id
             return CompareTo(uniqueIdentifier);
         }
 
-        public ObjectID ObjectID
+        public ObjectId ObjectID
         {
             get
             {
-                return ObjectID.Create(_scheme, _value);
+                return ObjectId.Create(_scheme, _value);
             }
         }
 
