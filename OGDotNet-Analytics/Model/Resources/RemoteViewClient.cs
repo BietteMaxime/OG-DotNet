@@ -26,13 +26,33 @@ namespace OGDotNet.Model.Resources
     /// </summary>
     public class RemoteViewClient : DisposableBase  //TODO IObservable
     {
+        private class ListenerReference
+        {
+            //DOTNET-24 : This makes sure that the ClientResultStream doesn't reference the RemoteViewClient
+            public readonly object ListenerLock = new object();
+            public IViewResultListener ResultListener;
+
+            public void ListenerResultReceived(object sender, ResultEvent e)
+            {
+                lock (ListenerLock)
+                {
+                    IViewResultListener viewResultListener = ResultListener;
+
+                    if (viewResultListener == null)
+                    {
+                        return;
+                    }
+                    e.ApplyTo(viewResultListener); // Needs to be done in the lock to maintain order
+                }
+            }
+        }
+
+        private readonly ListenerReference _listenerReference;
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly MQTemplate _mqTemplate;
         private readonly RestTarget _rest;
         private readonly HeartbeatSender _heartbeatSender;
 
-        private readonly object _listenerLock = new object();
-        private IViewResultListener _resultListener;
         private ClientResultStream _listenerResultStream;
 
         public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate)
@@ -40,35 +60,23 @@ namespace OGDotNet.Model.Resources
             _fudgeContext = fudgeContext;
             _mqTemplate = mqTemplate;
             _rest = clientUri;
+
+            _listenerReference = new ListenerReference();
             _heartbeatSender = new HeartbeatSender(TimeSpan.FromSeconds(10), _rest.Resolve("heartbeat"));
         }
         
         public void SetResultListener(IViewResultListener resultListener)
         {
-            lock (_listenerLock)
+            lock (_listenerReference.ListenerLock)
             {
-                if (_resultListener != null)
+                if (_listenerReference.ResultListener != null)
                 {
                     throw new InvalidOperationException("Result listener already set");
                 }
                 // NOTE: exception throwing call first
                 _listenerResultStream = StartResultStream();
-                _listenerResultStream.MessageReceived += ListenerResultReceived;
-                _resultListener = resultListener;
-            }
-        }
-
-        private void ListenerResultReceived(object sender, ResultEvent e)
-        {
-            lock (_listenerLock)
-            {
-                IViewResultListener viewResultListener = _resultListener;
-
-                if (viewResultListener == null)
-                {
-                    return;
-                }
-                e.ApplyTo(viewResultListener); // Needs to be done in the lock to maintain order
+                _listenerResultStream.MessageReceived += _listenerReference.ListenerResultReceived;
+                _listenerReference.ResultListener = resultListener;
             }
         }
 
@@ -80,9 +88,9 @@ namespace OGDotNet.Model.Resources
         private void RemoveResultListenerInner(bool throwOnNotSet)
         {
             ClientResultStream listenerResultStream;
-            lock (_listenerLock)
+            lock (_listenerReference.ListenerLock)
             {
-                if (_resultListener == null)
+                if (_listenerReference.ResultListener == null)
                 {
                     if (throwOnNotSet)
                     {
@@ -90,7 +98,7 @@ namespace OGDotNet.Model.Resources
                     }
                     return;
                 }
-                _resultListener = null;
+                _listenerReference.ResultListener = null;
 
                 listenerResultStream = _listenerResultStream;
                 _listenerResultStream = null;

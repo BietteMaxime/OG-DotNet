@@ -93,6 +93,52 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
+        public void HeartbeatWorks() //DOTNET-24
+        {
+            const string vdName = "Equity Option Test View 1";
+            using (var firstClient = Context.ViewProcessor.CreateClient())
+            {
+                var finished = new ManualResetEventSlim(false);
+                var eventViewResultListener = new EventViewResultListener();
+                eventViewResultListener.ProcessCompleted += delegate { finished.Set(); };
+                firstClient.SetResultListener(eventViewResultListener); //Make sure the active connection is made
+                firstClient.AttachToViewProcess(vdName, ExecutionOptions.SingleCycle);
+                finished.Wait(TimeSpan.FromMinutes(1));
+                Thread.Sleep(TimeSpan.FromMinutes(1));
+                Assert.NotNull(firstClient.GetUniqueId());
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanFailToDispose() //DOTNET-24
+        {
+            const string vdName = "Equity Option Test View 1";
+            WeakReference[] weakReferences = UseClient(vdName);
+            GC.Collect();
+            foreach (var weakReference in weakReferences)
+            {
+                if (weakReference.IsAlive)
+                {
+                    throw new Exception("Should have gced " + weakReference.Target);
+                }
+            }
+        }
+
+        private static WeakReference[] UseClient(string vdName)
+        {
+            var firstClient = Context.ViewProcessor.CreateClient(); //NOTE: no using
+            {
+                var finished = new ManualResetEventSlim(false);
+                var eventViewResultListener = new EventViewResultListener();
+                eventViewResultListener.ProcessCompleted += delegate { finished.Set(); };
+                firstClient.SetResultListener(eventViewResultListener); //Make sure the active connection is made
+                firstClient.AttachToViewProcess(vdName, ExecutionOptions.SingleCycle);
+                finished.Wait(TimeSpan.FromMinutes(1));
+                return new[] { new WeakReference(firstClient) };
+            }
+        }
+
+        [Xunit.Extensions.Fact]
         public void CanGetUid()
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
@@ -158,6 +204,28 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var results = resultsEnum.Take(5).ToList();
                 Assert.True(results.All(r => r != null));
+            }
+        }
+
+        [Xunit.Extensions.Theory]
+        [InlineData("Bloomberg Only")]
+        //[InlineData("ActivFeed Only")]
+        [InlineData("ActivFeed First")]
+        //[InlineData("Combined")]
+        public void CanSpecifyLiveData(string dataSource)
+        {
+            using (var remoteViewClient = Context.ViewProcessor.CreateClient())
+            {
+                var pSpec = new LiveMarketDataSpecification(dataSource);
+                var spec = pSpec;
+                var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled, null, new ViewCycleExecutionOptions(default(DateTimeOffset), spec));
+                //const string viewDefinitionName = "Primitives Only (Combined) 04f3f46f-15d5-48d9-a17e-848505d4246b";
+                const string viewDefinitionName = "Equity Option Test View 1";
+                var resultsEnum = remoteViewClient.GetResults(viewDefinitionName, options);
+
+                var results = resultsEnum.Take(1).ToList();
+                Assert.True(results.All(r => r != null));
+                Console.Out.WriteLine("{0}: {1}", dataSource, string.Join(",", results.SelectMany(r => r.AllLiveData.Select(d => d.Specification.TargetSpecification.Uid.ToString())).OrderBy(u => u)));
             }
         }
 
