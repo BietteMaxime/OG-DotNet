@@ -61,8 +61,12 @@ namespace OGDotNet.AnalyticsViewer.View
 
             _remoteViewProcessor = OGContext.ViewProcessor;
             var viewNames = _remoteViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
+            var liveDataSources = _remoteViewProcessor.LiveMarketDataSourceRegistry.GetDataSources();
+
             _remoteSecuritySource = OGContext.SecuritySource;
             viewSelector.DataContext = viewNames;
+
+            liveMarketDataSelector.DataContext = liveDataSources;
 
             WindowLocationPersister.InitAndPersistPosition(this, Settings);
 
@@ -77,12 +81,13 @@ namespace OGDotNet.AnalyticsViewer.View
             pauseToggle.IsChecked = false;
 
             var viewName = (string)viewSelector.SelectedItem;
+            var liveDataSource = (string) liveMarketDataSelector.SelectedItem;
 
             Settings.PreviousViewName = viewName;
 
             if (viewName != null)
             {
-                new Thread(() => RefreshMyData(viewName, _cancellationTokenSource.Token)) { Name = "MainWindow.RefreshMyData thread" }.Start();
+                new Thread(() => RefreshMyData(viewName, liveDataSource, _cancellationTokenSource.Token)) { Name = "MainWindow.RefreshMyData thread" }.Start();
             }
         }
 
@@ -98,11 +103,11 @@ namespace OGDotNet.AnalyticsViewer.View
             token.ThrowIfCancellationRequested();
         }
 
-        private void RefreshMyData(string viewName, CancellationToken cancellationToken)
+        private void RefreshMyData(string viewName, string liveDataSource, CancellationToken cancellationToken)
         {
             try
             {
-                RefreshMyDataImpl(viewName, cancellationToken);
+                RefreshMyDataImpl(viewName, liveDataSource, cancellationToken);
             }
             catch (Exception e)
             {
@@ -110,7 +115,7 @@ namespace OGDotNet.AnalyticsViewer.View
             }
         }
 
-        private void RefreshMyDataImpl(string viewName, CancellationToken cancellationToken)
+        private void RefreshMyDataImpl(string viewName, string liveDataSource, CancellationToken cancellationToken)
         {
             Invoke(delegate { resultsTableView.DataContext = null; }, cancellationToken);
 
@@ -194,7 +199,7 @@ namespace OGDotNet.AnalyticsViewer.View
                 SetStatus(string.Format("Waiting for compilation..."));
                 client.SetViewResultMode(ViewResultMode.FullThenDelta);
                 client.SetResultListener(eventViewResultListener);
-                client.AttachToViewProcess(viewName, ExecutionOptions.RealTime);
+                client.AttachToViewProcess(viewName, ExecutionOptions.GetRealTime(liveDataSource));
             }
         }
 

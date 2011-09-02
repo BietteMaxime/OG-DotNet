@@ -21,8 +21,13 @@ namespace OGDotNet.Mappedtypes.Engine.View.Execution
         {
             get
             {
-                return new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled, null, new ViewCycleExecutionOptions(default(DateTimeOffset), GetDefaultMarketDataSpec()));
+                return GetRealTime(null);
             }
+        }
+
+        public static IViewExecutionOptions GetRealTime(string liveDataSource)
+        {
+            return new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled, null, new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification(liveDataSource)));
         }
 
         public static IViewExecutionOptions SingleCycle

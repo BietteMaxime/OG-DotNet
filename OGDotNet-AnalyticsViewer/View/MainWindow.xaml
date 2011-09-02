@@ -12,11 +12,15 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0" Text="View:" Margin="3,0,10,0" VerticalAlignment="Center"/>
             <ComboBox Grid.Column="1" Name="viewSelector" ItemsSource="{Binding}" SelectionChanged="viewSelector_SelectionChanged" Width="Auto" VerticalAlignment="Center"/>
-            <ToggleButton Grid.Column="2" Name="pauseToggle" Content="Pause"/>
+            <TextBlock Grid.Column="2" Text="using" Margin="3,0,10,0" VerticalAlignment="Center"/>
+            <ComboBox Grid.Column="3" Name="liveMarketDataSelector" ItemsSource="{Binding}" SelectionChanged="viewSelector_SelectionChanged" Width="Auto" VerticalAlignment="Center"/>
+            <ToggleButton Grid.Column="4" Name="pauseToggle" Content="Pause"/>
         </Grid>
 
         <View:ComputationResultsTableView Grid.Row="1" x:Name="resultsTableView"/>
