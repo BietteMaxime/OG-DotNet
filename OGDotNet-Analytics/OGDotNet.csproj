@@ -141,6 +141,7 @@
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotLiveDataStreamInvalidater.cs" />
     <Compile Include="Model\Resources\RemoteAvailableOutputs.cs" />
     <Compile Include="Model\Resources\FudgeMessageDecoder.cs" />
+    <Compile Include="Model\Resources\RemoteLiveMarketDataSourceRegistry.cs" />
     <Compile Include="Model\Resources\RemoteMarketDataSnapshotter.cs" />
     <Compile Include="Model\Resources\RemoteVolatilityCubeDefinitionSource.cs" />
     <Compile Include="Builders\Streaming\StreamingFudgeBuilder.cs" />

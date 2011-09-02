@@ -6,6 +6,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
+using OGDotNet.Model.Resources;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
@@ -18,6 +20,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var remoteViewProcessor = Context.ViewProcessor;
             Assert.NotNull(remoteViewProcessor);
+        }
+
+        [Fact]
+        public void CanGetMarketDataSources()
+        {
+            var remoteViewProcessor = Context.ViewProcessor;
+            RemoteLiveMarketDataSourceRegistry remoteLiveMarketDataSourceRegistry = remoteViewProcessor.LiveMarketDataSourceRegistry;
+            IEnumerable<string> dataSources = remoteLiveMarketDataSourceRegistry.GetDataSources();
+            Assert.NotEmpty(dataSources);
+            Assert.Contains(null, dataSources);
+            Assert.Contains("Combined", dataSources);
         }
     }
 }

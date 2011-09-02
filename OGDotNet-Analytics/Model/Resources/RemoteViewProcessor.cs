@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
 
@@ -32,6 +31,14 @@ namespace OGDotNet.Model.Resources
             get
             {
                 return new RemoteViewDefinitionRepository(_rest.Resolve("definitions"));
+            }
+        }
+
+        public RemoteLiveMarketDataSourceRegistry LiveMarketDataSourceRegistry
+        {
+            get
+            {
+                return new RemoteLiveMarketDataSourceRegistry(_rest.Resolve("liveDataSourceRegistry"));
             }
         }
 
