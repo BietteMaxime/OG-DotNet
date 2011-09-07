@@ -12,7 +12,7 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Master.Portfolio
 {
-    public class ManageablePortfolio
+    public class ManageablePortfolio : IUniqueIdentifiable
     {
         //TODO this
         private readonly string _name;
