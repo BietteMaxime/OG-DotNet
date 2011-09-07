@@ -139,12 +139,14 @@
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStream.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStreamInvalidater.cs" />
     <Compile Include="Model\Context\MarketDataSnapshot\SnapshotLiveDataStreamInvalidater.cs" />
+    <Compile Include="Model\Resources\MsgEvent.cs" />
     <Compile Include="Model\Resources\RemoteAvailableOutputs.cs" />
     <Compile Include="Model\Resources\FudgeMessageDecoder.cs" />
     <Compile Include="Model\Resources\RemoteLiveMarketDataSourceRegistry.cs" />
     <Compile Include="Model\Resources\RemoteMarketDataSnapshotter.cs" />
     <Compile Include="Model\Resources\RemoteVolatilityCubeDefinitionSource.cs" />
     <Compile Include="Builders\Streaming\StreamingFudgeBuilder.cs" />
+    <Compile Include="Model\Resources\RestfulJmsResultConsumerBase.cs" />
     <Compile Include="Utils\GenericUtils.cs" />
     <Compile Include="Utils\SmallSet.cs" />
     <Compile Include="Mappedtypes\Engine\View\cache\MissingMarketDataSentinel.cs" />

@@ -15,15 +15,13 @@ namespace OGDotNet.Model.Resources
     {
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly RestTarget _rest;
-        private readonly string _activeMqSpec;
         private readonly MQTemplate _mqTemplate;
 
-        public RemoteViewProcessor(OpenGammaFudgeContext fudgeContext, RestTarget rest, string activeMqSpec)
+        public RemoteViewProcessor(OpenGammaFudgeContext fudgeContext, RestTarget rest, MQTemplate mqTemplate)
         {
             _fudgeContext = fudgeContext;
             _rest = rest;
-            _activeMqSpec = activeMqSpec;
-            _mqTemplate = new MQTemplate(_activeMqSpec);
+            _mqTemplate = mqTemplate;
         }
 
         public RemoteViewDefinitionRepository ViewDefinitionRepository

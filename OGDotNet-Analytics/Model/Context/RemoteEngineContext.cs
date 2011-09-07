@@ -32,6 +32,16 @@ namespace OGDotNet.Model.Context
             get { return _rootUri; }
         }
 
+        public MQTemplate MQTemplate
+        {
+            get { return new MQTemplate(_activeMQSpec); }
+        }
+
+        public OpenGammaFudgeContext FudgeContext
+        {
+            get { return _fudgeContext; }
+        }
+
         private RestTarget GetTarget(string service)
         {
             return new RestTarget(_fudgeContext, _serviceUris[service]);
@@ -46,7 +56,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteViewProcessor(_fudgeContext, GetTarget("viewProcessor"), _activeMQSpec);
+                return new RemoteViewProcessor(_fudgeContext, GetTarget("viewProcessor"), MQTemplate);
             }
         }
 

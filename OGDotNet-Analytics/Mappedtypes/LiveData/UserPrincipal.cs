@@ -35,7 +35,7 @@ namespace OGDotNet.Mappedtypes.LiveData
             _ipAddress = ipAddress;
         }
 
-        internal static UserPrincipal DefaultUser
+        public static UserPrincipal DefaultUser
         {
             get { return new UserPrincipal(Settings.Default.UserName, GetIP()); }
         }

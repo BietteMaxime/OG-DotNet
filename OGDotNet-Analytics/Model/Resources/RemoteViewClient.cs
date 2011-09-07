@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using Fudge;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Engine.View;
@@ -24,144 +23,43 @@ namespace OGDotNet.Model.Resources
     /// <summary>
     /// See DataViewClientResource on the java side
     /// </summary>
-    public class RemoteViewClient : DisposableBase  //TODO IObservable
+    public class RemoteViewClient : RestfulJmsResultConsumerBase<IViewResultListener>
     {
-        private class ListenerReference
+        public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate) : base(fudgeContext, clientUri, mqTemplate, (o, l) => new ResultEvent(o).ApplyTo(l))
         {
-            //DOTNET-24 : This makes sure that the ClientResultStream doesn't reference the RemoteViewClient
-            public readonly object ListenerLock = new object();
-            public IViewResultListener ResultListener;
-
-            public void ListenerResultReceived(object sender, ResultEvent e)
-            {
-                lock (ListenerLock)
-                {
-                    IViewResultListener viewResultListener = ResultListener;
-
-                    if (viewResultListener == null)
-                    {
-                        return;
-                    }
-                    e.ApplyTo(viewResultListener); // Needs to be done in the lock to maintain order
-                }
-            }
-        }
-
-        private readonly ListenerReference _listenerReference;
-        private readonly OpenGammaFudgeContext _fudgeContext;
-        private readonly MQTemplate _mqTemplate;
-        private readonly RestTarget _rest;
-        private readonly HeartbeatSender _heartbeatSender;
-
-        private ClientResultStream _listenerResultStream;
-
-        public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate)
-        {
-            _fudgeContext = fudgeContext;
-            _mqTemplate = mqTemplate;
-            _rest = clientUri;
-
-            _listenerReference = new ListenerReference();
-            _heartbeatSender = new HeartbeatSender(TimeSpan.FromSeconds(10), _rest.Resolve("heartbeat"));
         }
         
-        public void SetResultListener(IViewResultListener resultListener)
-        {
-            lock (_listenerReference.ListenerLock)
-            {
-                if (_listenerReference.ResultListener != null)
-                {
-                    throw new InvalidOperationException("Result listener already set");
-                }
-                // NOTE: exception throwing call first
-                _listenerResultStream = StartResultStream();
-                _listenerResultStream.MessageReceived += _listenerReference.ListenerResultReceived;
-                _listenerReference.ResultListener = resultListener;
-            }
-        }
-
-        public void RemoveResultListener()
-        {
-            RemoveResultListenerInner(true);
-        }
-
-        private void RemoveResultListenerInner(bool throwOnNotSet)
-        {
-            ClientResultStream listenerResultStream;
-            lock (_listenerReference.ListenerLock)
-            {
-                if (_listenerReference.ResultListener == null)
-                {
-                    if (throwOnNotSet)
-                    {
-                        throw new InvalidOperationException("Result listener not currently set");
-                    }
-                    return;
-                }
-                _listenerReference.ResultListener = null;
-
-                listenerResultStream = _listenerResultStream;
-                _listenerResultStream = null;
-                StopResultStream();
-            }
-            listenerResultStream.Dispose(); // If this is done in the lock then dispose can deadlock
-        }
         public void Pause()
         {
-            _rest.Resolve("pause").Post();
+            REST.Resolve("pause").Post();
         }
 
         public void Resume()
         {
-            _rest.Resolve("resume").Post();
+            REST.Resolve("resume").Post();
         }
 
         public void TriggerCycle()
         {
-            _rest.Resolve("triggerCycle").Post();
-        }
-
-        private void Shutdown()
-        {
-            _rest.Resolve("shutdown").Post();
-        }
-
-        private ClientResultStream StartResultStream()
-        {
-            var clientResultStream = new ClientResultStream(_fudgeContext, _mqTemplate);
-            try
-            {
-                _rest.Resolve("startJmsResultStream").PostFudge(new FudgeMsg (_fudgeContext) {{"destination", clientResultStream.QueueName}});
-                return clientResultStream;    
-            }
-            catch
-            {
-                clientResultStream.Dispose();
-                throw;
-            }
-        }
-
-        private void StopResultStream()
-        {
-            _rest.Resolve("endJmsResultStream").Post();
+            REST.Resolve("triggerCycle").Post();
         }
 
         public void SetUpdatePeriod(long periodMillis)
         {
-            _rest.Resolve("updatePeriod").Put(new FudgeMsg(_fudgeContext, new Field("updatePeriod", periodMillis)));
+            REST.Resolve("updatePeriod").Put(new FudgeMsg(FudgeContext, new Field("updatePeriod", periodMillis)));
         }
 
         public void SetViewResultMode(ViewResultMode mode)
         {
-            var fudgeMsg = new FudgeMsg(_fudgeContext) {{1, EnumBuilder<ViewResultMode>.GetJavaName(mode)}};
-            _rest.Resolve("resultMode").Put(fudgeMsg);
+            var fudgeMsg = new FudgeMsg(FudgeContext) {{1, EnumBuilder<ViewResultMode>.GetJavaName(mode)}};
+            REST.Resolve("resultMode").Put(fudgeMsg);
         }
 
         public bool IsAttached
         {
             get
             {
-                var reponse = _rest.Resolve("isAttached").GetFudge();
+                var reponse = REST.Resolve("isAttached").GetFudge();
                 return 1 == (sbyte)reponse.GetByName("value").Value;
             }
         }
@@ -171,25 +69,25 @@ namespace OGDotNet.Model.Resources
             ArgumentChecker.NotNull(viewDefinitionName, "viewDefinitionName");
             ArgumentChecker.NotNull(executionOptions, "executionOptions");
             var request = new AttachToViewProcessRequest(viewDefinitionName, executionOptions, newBatchProcess);
-            _rest.Resolve("attachSearch").Post(request);
+            REST.Resolve("attachSearch").Post(request);
         }
 
         public void AttachToViewProcess(UniqueId processId)
         {
             ArgumentChecker.NotNull(processId, "processId");
 
-            _rest.Resolve("attachDirect").Post(processId);
+            REST.Resolve("attachDirect").Post(processId);
         }
         public void DetachFromViewProcess()
         {
-            _rest.Resolve("detach").Post();
+            REST.Resolve("detach").Post();
         }
 
         public RemoteLiveDataInjector LiveDataOverrideInjector
         {
             get
             {
-                return new RemoteLiveDataInjector(_rest.Resolve("overrides"));
+                return new RemoteLiveDataInjector(REST.Resolve("overrides"));
             }
         }
 
@@ -197,7 +95,7 @@ namespace OGDotNet.Model.Resources
         {
             get
             {
-                var reponse = _rest.Resolve("resultAvailable").GetFudge();
+                var reponse = REST.Resolve("resultAvailable").GetFudge();
                 return 1 == (sbyte)reponse.GetByName("value").Value;
             }
         }
@@ -206,22 +104,22 @@ namespace OGDotNet.Model.Resources
         {
             get
             {
-                var reponse = _rest.Resolve("completed").GetFudge();
+                var reponse = REST.Resolve("completed").GetFudge();
                 return 1 == (sbyte)reponse.GetByName("value").Value;
             }
         }
 
         public bool GetViewCycleAccessSupported()
         {
-            var reponse = _rest.Resolve("viewCycleAccessSupported").GetFudge();
+            var reponse = REST.Resolve("viewCycleAccessSupported").GetFudge();
             return 1 == (sbyte)reponse.GetByName("value").Value;
         }
         public void SetViewCycleAccessSupported(bool isViewCycleAccessSupported)
         {
-            var msg = _fudgeContext.NewMessage(
+            var msg = FudgeContext.NewMessage(
                 new Field("isViewCycleAccessSupported", isViewCycleAccessSupported)
             );
-            _rest.Resolve("viewCycleAccessSupported").PostFudge(msg);
+            REST.Resolve("viewCycleAccessSupported").PostFudge(msg);
         }
 
         public IEngineResourceReference<IViewCycle> CreateLatestCycleReference()
@@ -231,46 +129,36 @@ namespace OGDotNet.Model.Resources
 
         public IEngineResourceReference<IViewCycle> CreateCycleReference(UniqueId cycleId)
         {
-            var location = _rest.Resolve("createLatestCycleReference").Create(cycleId);
+            var location = REST.Resolve("createLatestCycleReference").Create(cycleId);
             return location == null ? null : new RemoteViewCycleReference(location);
         }
 
         public IViewComputationResultModel GetLatestResult()
         {
-            return _rest.Resolve("latestResult").Get<IViewComputationResultModel>();
+            return REST.Resolve("latestResult").Get<IViewComputationResultModel>();
         }
 
         public ViewDefinition GetViewDefinition()
         {
-            return _rest.Resolve("viewDefinition").Get<ViewDefinition>();
+            return REST.Resolve("viewDefinition").Get<ViewDefinition>();
         }
 
         public VersionCorrection GetProcessVersionCorrection()
         {
-            return _rest.Resolve("processVersionCorrection").Get<VersionCorrection>();
+            return REST.Resolve("processVersionCorrection").Get<VersionCorrection>();
         }
 
         public UniqueId GetUniqueId()
         {
-            var restTarget = _rest.Resolve("id");
+            var restTarget = REST.Resolve("id");
             return restTarget.Get<UniqueId>();
         }
         public ViewClientState GetState()
         {
-            var target = _rest.Resolve("state");
+            var target = REST.Resolve("state");
             var msg = target.GetFudge();
 
             return EnumBuilder<ViewClientState>.Parse((string) msg.GetByOrdinal(1).Value);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _heartbeatSender.Dispose();
-            IgnoreDisposingExceptions(delegate
-            {
-                RemoveResultListenerInner(false);
-                Shutdown();
-            });
         }
     }
 }

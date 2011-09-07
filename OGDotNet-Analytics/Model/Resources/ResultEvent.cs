@@ -11,7 +11,7 @@ using OGDotNet.Mappedtypes.Engine.View.Listener;
 
 namespace OGDotNet.Model.Resources
 {
-    public class ResultEvent : EventArgs
+    public class ResultEvent
     {
         private readonly object _msg;
 

@@ -21,8 +21,8 @@ namespace OGDotNet.Model.Resources
         private readonly ISession _session;
         private readonly ITemporaryQueue _destination;
         private readonly IMessageConsumer _consumer;
-        
-        public event EventHandler<ResultEvent> MessageReceived;
+
+        public event EventHandler<MsgEvent> MessageReceived;
 
         public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate)
         {
@@ -37,7 +37,7 @@ namespace OGDotNet.Model.Resources
             _consumer = _session.CreateConsumer(_destination);
 
             _consumer.ConsumerTransformer = _fudgeMessageDecoder.FudgeDecodeMessage;
-            _consumer.Listener += msg => InvokeMessageReceived(new ResultEvent(((IObjectMessage) msg).Body));
+            _consumer.Listener += msg => InvokeMessageReceived(((IObjectMessage) msg).Body);
 
             _connection.Start();
         }
@@ -51,10 +51,10 @@ namespace OGDotNet.Model.Resources
             }
         }
 
-        private void InvokeMessageReceived(ResultEvent e)
+        private void InvokeMessageReceived(object msg)
         {
-            EventHandler<ResultEvent> handler = MessageReceived;
-            if (handler != null) handler(this, e);
+            EventHandler<MsgEvent> handler = MessageReceived;
+            if (handler != null) handler(this, new MsgEvent(msg));
         }
 
         protected override void Dispose(bool disposing)
