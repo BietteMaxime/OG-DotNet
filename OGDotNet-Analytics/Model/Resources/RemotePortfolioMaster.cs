@@ -25,5 +25,11 @@ namespace OGDotNet.Model.Resources
             string bean = _restTarget.EncodeBean(request);
             return _restTarget.Resolve(".", Tuple.Create("msg", bean)).Get<PortfolioSearchResult>();
         }
+
+        public PortfolioHistoryResult GetHistory(PortfolioHistoryRequest request)
+        {
+            string bean = _restTarget.EncodeBean(request);
+            return _restTarget.Resolve(request.ObjectId.ToString()).Resolve("versions", Tuple.Create("msg", bean)).Get<PortfolioHistoryResult>();
+        }
     }
 }

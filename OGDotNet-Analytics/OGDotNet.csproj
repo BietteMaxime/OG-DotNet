@@ -128,6 +128,8 @@
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\ManageableVolatilitySurfaceSnapshot.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\ManageablePortfolio.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\PortfolioDocument.cs" />
+    <Compile Include="Mappedtypes\Master\Portfolio\PortfolioHistoryRequest.cs" />
+    <Compile Include="Mappedtypes\Master\Portfolio\PortfolioHistoryResult.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\PortfolioSearchRequest.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\PortfolioSearchResult.cs" />
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
