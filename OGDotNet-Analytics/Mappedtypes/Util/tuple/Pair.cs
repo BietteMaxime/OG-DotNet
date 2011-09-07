@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
@@ -54,12 +55,30 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
 
         private static object FromField(IFudgeDeserializer deserializer, IFudgeFieldContainer ffc, string fieldName)
         {
-            var field = ffc.GetByName(fieldName);
-            if (field.Type != FudgeMsgFieldType.Instance)
+            var valueField = ffc.GetByName(fieldName);
+            return FromField(deserializer, valueField);
+        }
+
+        public static object FromField(IFudgeDeserializer deserializer, IFudgeField valueField)
+        {
+            if (valueField.Type != FudgeMsgFieldType.Instance)
             {
-                return field.Value;
+                return valueField.Value;
             }
-            return deserializer.FromField(field, null);
+
+            var fudgeFieldContainer = (IFudgeFieldContainer)valueField.Value;
+
+            foreach (var typeField in fudgeFieldContainer.GetAllByOrdinal(0))
+            {
+                switch (typeField.Value as string)
+                {
+                    case "java.lang.Number":
+                        return fudgeFieldContainer.GetValue("value");
+                    default:
+                        continue;
+                }
+            }
+            return deserializer.FromField(valueField, null);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
@@ -99,23 +118,19 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
         private static T FromField<T>(IFudgeDeserializer deserializer, IFudgeFieldContainer ffc, string fieldName)
         {
             var field = ffc.GetByName(fieldName);
-            if (field.Type != FudgeMsgFieldType.Instance)
+            object value = FromField(deserializer, field);
+            if (typeof(T) == typeof(long))
             {
-                var value = field.Value;
-                if (typeof(T) == typeof(long))
-                {
-                    return (T)(object)Convert.ToInt64(value);
-                }
-                else if (typeof(T) == typeof(int))
-                {
-                    return (T)(object)Convert.ToInt32(value);
-                }
-                else
-                {
-                    return (T)value;
-                }
+                return (T)(object)Convert.ToInt64(value);
             }
-            return (T)deserializer.FromField(field, typeof(T));
+            else if (typeof(T) == typeof(int))
+            {
+                return (T)(object)Convert.ToInt32(value);
+            }
+            else
+            {
+                return (T)value;
+            }
         }
 
         public new void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

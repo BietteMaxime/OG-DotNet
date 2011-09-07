@@ -11,6 +11,7 @@ using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Mappedtypes.Engine.Value;
+using OGDotNet.Mappedtypes.Util.Tuple;
 
 namespace OGDotNet.Builders
 {
@@ -29,18 +30,14 @@ namespace OGDotNet.Builders
 
         public static object GetValue(IFudgeDeserializer deserializer, IFudgeField valueField, ValueSpecification valueSpecification)
         {
-            if (valueField.Type != FudgeMsgFieldType.Instance)
-            {
-                return valueField.Value;
-            }
-
             if (valueSpecification.ValueName == "YieldCurveJacobian")
-            {//TODO I hope this gets a better type one day?
-                return
-                    ((IFudgeFieldContainer)valueField.Value).Where(f => !f.Ordinal.HasValue).Select(f => (double[])f.Value).ToList();
+            {
+                var fudgeFieldContainer = (IFudgeFieldContainer)valueField.Value;
+                //TODO I hope this gets a better type one day?
+                return fudgeFieldContainer.Where(f => !f.Ordinal.HasValue).Select(f => (double[])f.Value).ToList();
             }
 
-            return deserializer.FromField(valueField, null);
+            return Pair.FromField(deserializer, valueField);
         }
     }
 }
