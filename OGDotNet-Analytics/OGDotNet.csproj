@@ -126,6 +126,10 @@
     <Compile Include="Mappedtypes\javax\time\calendar\LocalDate.cs" />
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\ManageableVolatilityCubeSnapshot.cs" />
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\ManageableVolatilitySurfaceSnapshot.cs" />
+    <Compile Include="Mappedtypes\Master\Portfolio\ManageablePortfolio.cs" />
+    <Compile Include="Mappedtypes\Master\Portfolio\PortfolioDocument.cs" />
+    <Compile Include="Mappedtypes\Master\Portfolio\PortfolioSearchRequest.cs" />
+    <Compile Include="Mappedtypes\Master\Portfolio\PortfolioSearchResult.cs" />
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\math\matrix\DoubleMatrix1D.cs" />
     <Compile Include="Mappedtypes\math\surface\IDoublesSurface.cs" />
@@ -144,6 +148,7 @@
     <Compile Include="Model\Resources\FudgeMessageDecoder.cs" />
     <Compile Include="Model\Resources\RemoteLiveMarketDataSourceRegistry.cs" />
     <Compile Include="Model\Resources\RemoteMarketDataSnapshotter.cs" />
+    <Compile Include="Model\Resources\RemotePortfolioMaster.cs" />
     <Compile Include="Model\Resources\RemoteVolatilityCubeDefinitionSource.cs" />
     <Compile Include="Builders\Streaming\StreamingFudgeBuilder.cs" />
     <Compile Include="Model\Resources\RestfulJmsResultConsumerBase.cs" />

@@ -138,5 +138,13 @@ namespace OGDotNet.Model.Context
                 return new RemoteAvailableOutputs(new RestTarget(_fudgeContext, _rootUri).Resolve("availableOutputs")); //TODO less hard coded
             }
         }
+
+        public RemotePortfolioMaster PortfolioMaster
+        {
+            get
+            {
+                return new RemotePortfolioMaster(GetTarget("sharedPortfolioMaster"));
+            }
+        }
     }
 }

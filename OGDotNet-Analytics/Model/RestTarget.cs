@@ -50,7 +50,7 @@ namespace OGDotNet.Model
                 throw new ArgumentException("Failed to resolve uri sensibly", "method");
             }
             var segments = serviceUri.Segments;
-            if (segments[segments.Length - 1] != safeMethod)
+            if (segments[segments.Length - 1] != safeMethod && safeMethod != ".")
             {
                 throw new ArgumentException("Failed to resolve uri sensibly", "method");
             }
