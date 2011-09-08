@@ -73,6 +73,7 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
                 switch (typeField.Value as string)
                 {
                     case "java.lang.Number":
+                    case "java.lang.String":
                         return fudgeFieldContainer.GetValue("value");
                     default:
                         continue;
