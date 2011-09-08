@@ -75,6 +75,8 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
                     case "java.lang.Number":
                     case "java.lang.String":
                         return fudgeFieldContainer.GetValue("value");
+                    case "org.fudgemsg.StandardFudgeMsg":
+                        return valueField.Value; //TODO: this is not right
                     default:
                         continue;
                 }
