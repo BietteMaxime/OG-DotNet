@@ -70,7 +70,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var valuationTimes = new[]
                                      {
                                          DateTimeOffset.Now,
-                                         DateTimeOffset.Now + TimeSpan.FromDays(5),
+                                         DateTimeOffset.Now - TimeSpan.FromDays(15),
                                          DateTimeOffset.Now - TimeSpan.FromDays(5)
                                      };
 
