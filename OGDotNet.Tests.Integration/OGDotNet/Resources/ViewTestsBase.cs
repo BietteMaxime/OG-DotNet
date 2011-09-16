@@ -35,7 +35,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Multi-Currency Swap Test View (2)",
                                                                       "PoC Bond View",
                                                                       "PoC Bond View Implied",
-                                                                      "Equity Futures Test View",
                                                                       "Simple IR Future Option Test View" //PLAT-1459
                                                                   };
 
