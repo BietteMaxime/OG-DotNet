@@ -36,7 +36,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
             var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
-            var start = end - TimeSpan.FromDays(7);
+            var start = end - TimeSpan.FromDays(14);
 
             ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Create("DbHts", "3580"), start, false, end, false);
             AssertSane(series, start, end);
@@ -48,7 +48,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var timeSeriesSource = Context.HistoricalTimeSeriesSource;
 
             var end = DateTimeOffset.Now - TimeSpan.FromDays(1);
-            var start = end - TimeSpan.FromDays(7);
+            var start = end - TimeSpan.FromDays(14);
 
             ILocalDateDoubleTimeSeries series = timeSeriesSource.GetHistoricalTimeSeries(UniqueId.Create("DbHts", "3580"), start, false, end, false);
             AssertSane(series, start, end);
