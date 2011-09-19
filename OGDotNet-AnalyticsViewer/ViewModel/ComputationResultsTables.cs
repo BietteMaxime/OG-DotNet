@@ -18,7 +18,7 @@ using OGDotNet.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
-    public class ComputationResultsTables : PortfolioResultsTableBase
+    public class ComputationResultsTables : PortfolioResultsTableBase<PortfolioRow>
     {
         public event EventHandler ResultReceived;
 
@@ -151,6 +151,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         {
             EventHandler handler = ResultReceived;
             if (handler != null) handler(this, e);
+        }
+
+        protected override PortfolioRow WrapPortfolioRow(PortfolioViewTreeNode viewTreeNode)
+        {
+            return new PortfolioRow(viewTreeNode);
         }
     }
 }

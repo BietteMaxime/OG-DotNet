@@ -16,10 +16,10 @@ using OGDotNet.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
-    public class PortfolioResultsTableBase
+    public abstract class PortfolioResultsTableBase<T>
     {
         private readonly IPortfolio _portfolio;
-        private readonly List<PortfolioRow> _portfolioRows = new List<PortfolioRow>();
+        private readonly List<T> _portfolioRows = new List<T>();
         private readonly ActionFactory<ExternalIdBundle, ISecurity> _securityFactory;
 
         protected PortfolioResultsTableBase(ISecuritySource remoteSecuritySource, IPortfolio portfolio)
@@ -28,6 +28,8 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             _portfolio = portfolio;
             _portfolioRows = BuildPortfolioRows().ToList();
         }
+
+        protected abstract T WrapPortfolioRow(PortfolioViewTreeNode viewTreeNode);
 
         private IEnumerable<PortfolioViewTreeNode> GetPortfolioNodes()
         {
@@ -52,17 +54,14 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             }
         }
 
-        protected IEnumerable<PortfolioRow> BuildPortfolioRows()
+        protected IEnumerable<T> BuildPortfolioRows()
         {
             if (_portfolio == null)
-                yield break;
-            foreach (var position in GetPortfolioNodes())
-            {
-                yield return new PortfolioRow(position);
-            }
+                return new T[] { };
+            return GetPortfolioNodes().Select(WrapPortfolioRow);
         }
 
-        public List<PortfolioRow> PortfolioRows
+        public List<T> PortfolioRows
         {
             get { return _portfolioRows; }
         }
