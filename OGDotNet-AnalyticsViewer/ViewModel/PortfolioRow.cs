@@ -13,10 +13,10 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 {
     public class PortfolioRow : DynamicRow
     {
-        private readonly ComputationResultsTables.TreeNode _treeNode;
+        private readonly PortfolioViewTreeNode _treeNode;
         private string _name;
 
-        public PortfolioRow(ComputationResultsTables.TreeNode treeNode)
+        public PortfolioRow(PortfolioViewTreeNode treeNode)
         {
             _treeNode = treeNode;
         }

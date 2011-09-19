@@ -72,6 +72,7 @@
     <Compile Include="ViewModel\ActionFactory.cs" />
     <Compile Include="ViewModel\ColumnHeader.cs" />
     <Compile Include="ViewModel\DynamicRow.cs" />
+    <Compile Include="ViewModel\PortfolioResultsTableBase.cs" />
     <Compile Include="View\CellTemplates\CellTemplateSelector.xaml.cs" />
     <Compile Include="View\CellTemplates\GenericVolatilitySurfaceCell.xaml.cs">
       <DependentUpon>GenericVolatilitySurfaceCell.xaml</DependentUpon>
