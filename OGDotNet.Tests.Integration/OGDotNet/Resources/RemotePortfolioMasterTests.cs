@@ -5,7 +5,9 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System.Collections.Generic;
 using System.Linq;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.Portfolio;
 using OGDotNet.Mappedtypes.Util;
 using Xunit;
@@ -25,6 +27,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Equal(portfolioDocument.UniqueId, portfolioDocument.Portfolio.UniqueId);
                 Assert.NotEmpty(portfolioDocument.Portfolio.Name);
             }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetByUid()
+        {
+            var all = Context.PortfolioMaster.Search(new PortfolioSearchRequest(PagingRequest.All, "*"));
+            PortfolioDocument doc = all.Documents.First();
+            PortfolioSearchResult singleResult = Context.PortfolioMaster.Search(new PortfolioSearchRequest(PagingRequest.All, new List<ObjectId>{doc.UniqueId.ObjectID}, null));
+            Assert.Equal(1, singleResult.Documents.Count);
+            Assert.Equal(doc.UniqueId, singleResult.Documents.Single().UniqueId);
         }
 
         [Xunit.Extensions.Fact]
