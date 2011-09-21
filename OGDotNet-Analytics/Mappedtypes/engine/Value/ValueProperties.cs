@@ -77,6 +77,11 @@ namespace OGDotNet.Mappedtypes.Engine.Value
             {
                 return ReferenceEquals(Instance, other);
             }
+
+            public override ValueProperties With(string propertyName, string propertyValue)
+            {
+                return new FiniteValueProperties(new Dictionary<string, ISet<string>>() { { propertyName, SmallSet<string>.Create(propertyValue) } }, null);
+            }
         }
 
         internal class FiniteValueProperties : ValueProperties
@@ -126,7 +131,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                             //wildcards
                             continue;
                         }
-                        if (! propertyValue.Value.IsSubsetOf(other))
+                        if (!propertyValue.Value.IsSubsetOf(other))
                         {
                             return false;
                         }
@@ -203,7 +208,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 {
                     return false;
                 }
-                if (_optional != null && ! _optional.SetEquals(finiteOther._optional))
+                if (_optional != null && !_optional.SetEquals(finiteOther._optional))
                 {
                     return false;
                 }
@@ -219,7 +224,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                     {
                         return false;
                     }
-                    if (! value.SetEquals(otherValue))
+                    if (!value.SetEquals(otherValue))
                     {
                         return false;
                     }
@@ -279,6 +284,11 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 }
                 a.Add("with", withMessage);
             }
+
+            public override ValueProperties With(string propertyName, string propertyValue)
+            {
+                return new FiniteValueProperties(new Dictionary<string, ISet<string>>(PropertyValues) { { propertyName, SmallSet<string>.Create(propertyValue) } }, _optional);
+            }
         }
 
         internal class InfiniteValueProperties : ValueProperties
@@ -316,6 +326,11 @@ namespace OGDotNet.Mappedtypes.Engine.Value
             {
                 return ReferenceEquals(other, Instance);
             }
+
+            public override ValueProperties With(string propertyName, string propertyValue)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         internal class NearlyInfiniteValueProperties : ValueProperties
@@ -342,7 +357,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
             {
                 return InfiniteValueProperties.Instance.IsSatisfiedBy(properties) ||
                        (properties is NearlyInfiniteValueProperties &&
-                       ((NearlyInfiniteValueProperties) properties).Without.IsSubsetOf(Without));
+                       ((NearlyInfiniteValueProperties)properties).Without.IsSubsetOf(Without));
             }
 
             public override ISet<string> GetValues(string propertyName)
@@ -364,8 +379,14 @@ namespace OGDotNet.Mappedtypes.Engine.Value
                 }
                 return nearlyInfiniteValueProperties.Without.SetEquals(nearlyInfiniteValueProperties.Without);
             }
+
+            public override ValueProperties With(string propertyName, string propertyValue)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public abstract bool Equals(ValueProperties other);
+        public abstract ValueProperties With(string propertyName, string propertyValue);
     }
 }
