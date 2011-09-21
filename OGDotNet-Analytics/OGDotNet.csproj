@@ -97,6 +97,7 @@
     <Compile Include="Mappedtypes\Engine\function\resolver\SimpleResolutionRuleTransform.cs" />
     <Compile Include="Mappedtypes\Engine\marketdata\spec\CombinedMarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\Engine\marketdata\spec\UserMarketDataSpecification.cs" />
+    <Compile Include="Mappedtypes\Engine\value\ValuePropertyNames.cs" />
     <Compile Include="Mappedtypes\Engine\value\ValueRequirementNames.cs" />
     <Compile Include="Mappedtypes\Engine\View\DeltaDefinition.cs" />
     <Compile Include="Mappedtypes\Engine\View\Execution\ViewExecutionFlags.cs" />
