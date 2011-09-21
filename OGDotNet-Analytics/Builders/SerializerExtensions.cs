@@ -12,7 +12,7 @@ using Fudge.Serialization;
 
 namespace OGDotNet.Builders
 {
-    static class SerializerExtensions
+    public static class SerializerExtensions
     {
         public static void WriteTypeHeader(this IFudgeSerializer s, IAppendingFudgeFieldContainer a, Type type)
         {
