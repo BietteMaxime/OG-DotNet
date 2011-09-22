@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -107,57 +108,64 @@ namespace OGDotNet.Model.Context
         {
             var validServiceUris = new Dictionary<string, Uri>();
 
-            var asyncRequests = new List<Tuple<string, HttpWebRequest, IAsyncResult>>();
-
-            foreach (var potentialServiceId in potentialServiceIds)
+            var requestsByHttpRequest = new Dictionary<HttpWebRequest, Tuple<string, HttpWebRequest, IAsyncResult>>();
+            using (var finishedRequests = new BlockingCollection<HttpWebRequest>())
             {
-                var serviceId = potentialServiceId.Key;
-                foreach (var uri in potentialServiceId.Value)
+                foreach (var potentialServiceId in potentialServiceIds)
                 {
-                    var webRequest = (HttpWebRequest)WebRequest.Create(uri);
-                    webRequest.Method = "HEAD";
-                    var result = webRequest.BeginGetResponse(null, serviceId);
-                    asyncRequests.Add(new Tuple<string, HttpWebRequest, IAsyncResult>(serviceId, webRequest, result));
-                }
-            }
-
-            while (asyncRequests.Any())
-            {
-                var waitHandles = asyncRequests.Select(kvp => kvp.Item3.AsyncWaitHandle).ToArray();
-
-                var index = WaitHandle.WaitAny(waitHandles, 5000); //Have to timeout by hand, see http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx
-                if (index == WaitHandle.WaitTimeout)
-                {
-                    var requestLogMessage = string.Join(",", asyncRequests.Select(a => string.Format("{0}-{1}", a.Item1, a.Item2.RequestUri)));
-                    Logger.Warn("Timed out when choosing services: {0}", requestLogMessage);
-                    foreach (var req in asyncRequests)
+                    var serviceId = potentialServiceId.Key;
+                    foreach (var uri in potentialServiceId.Value)
                     {
-                        req.Item2.Abort();
-                    }
-                    continue;
-                }
-
-                var completedRequest = asyncRequests[index];
-                asyncRequests.RemoveAt(index);
-
-                if (IsValidResponse(completedRequest))
-                {
-                    Logger.Info("Resolved {0} for service {1}", completedRequest.Item2.RequestUri, completedRequest.Item1);
-                    validServiceUris[completedRequest.Item1] = completedRequest.Item2.RequestUri;
-
-                    foreach (var req in asyncRequests.Where(r => r.Item1 == completedRequest.Item1))
-                    {
-                        Logger.Debug("Ignoring candidate {0} for service {1}", completedRequest.Item2.RequestUri, completedRequest.Item1);
-                        req.Item2.Abort();
+                        var webRequest = (HttpWebRequest)WebRequest.Create(uri);
+                        webRequest.Method = "HEAD";
+                        var result = webRequest.BeginGetResponse(delegate { finishedRequests.Add(webRequest); }, serviceId);
+                        var tuple = new Tuple<string, HttpWebRequest, IAsyncResult>(serviceId, webRequest, result);
+                        requestsByHttpRequest.Add(webRequest, tuple);
                     }
                 }
-            }
 
-            if (!validServiceUris.Any())
-            {
-                throw new WebException("Failed to get any service Uris");
+                while (requestsByHttpRequest.Any() || finishedRequests.Any())
+                {
+                    HttpWebRequest completedHttpReq;
+                    if (!finishedRequests.TryTake(out completedHttpReq, 5000))
+                    {
+                        //NOTE Can't use WaitHandle.WaitAny On some implementations, if more that 64 handles are passed, a NotSupportedException is thrown, see http://msdn.microsoft.com/en-us/library/cc189983.aspx
+                        //Have to timeout by hand, see http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx
+                        var requestLogMessage = string.Join(",",
+                                                            requestsByHttpRequest.Values.Select(
+                                                                a =>
+                                                                string.Format("{0}-{1}", a.Item1, a.Item2.RequestUri)));
+                        Logger.Warn("Timed out when choosing services: {0}", requestLogMessage);
+                        foreach (var r in requestsByHttpRequest.Keys)
+                        {
+                            r.Abort();
+                        }
+                        continue;
+                    }
+
+                    Tuple<string, HttpWebRequest, IAsyncResult> completedRequest = requestsByHttpRequest[completedHttpReq];
+                    requestsByHttpRequest.Remove(completedHttpReq);
+
+                    if (IsValidResponse(completedRequest))
+                    {
+                        Logger.Info("Resolved {0} for service {1}", completedRequest.Item2.RequestUri, completedRequest.Item1);
+                        validServiceUris[completedRequest.Item1] = completedRequest.Item2.RequestUri;
+
+                        foreach (var req in requestsByHttpRequest.Values.Where(r => r.Item1 == completedRequest.Item1))
+                        {
+                            Logger.Debug("Ignoring candidate {0} for service {1}", completedRequest.Item2.RequestUri,
+                                         completedRequest.Item1);
+                            req.Item2.Abort();
+                        }
+                    }
+                }
+
+                if (!validServiceUris.Any())
+                {
+                    throw new WebException("Failed to get any service Uris");
+                }
+                return validServiceUris;
             }
-            return validServiceUris;
         }
 
         private static bool IsValidResponse(Tuple<string, HttpWebRequest, IAsyncResult> tuple)
