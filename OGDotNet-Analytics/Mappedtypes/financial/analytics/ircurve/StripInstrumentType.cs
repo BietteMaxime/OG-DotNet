@@ -19,7 +19,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
         TenorSwap,
         BasisSwap,
         OisSwap,
-        Euirbor,
+        Euribor,
         Fras3M,
         Fra6M,
         Swap3M,
