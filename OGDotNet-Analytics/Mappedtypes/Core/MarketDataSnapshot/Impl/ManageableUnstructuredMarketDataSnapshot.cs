@@ -300,7 +300,6 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
             return new ManageableUnstructuredMarketDataSnapshot(Values.ToDictionary(k => k.Key, k => Clone(k.Value)));
         }
 
-
         public void Add(MarketDataValueSpecification spec, string valueName)
         {
             IDictionary<string, ValueSnapshot> entry;
