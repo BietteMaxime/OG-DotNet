@@ -46,7 +46,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             foreach (var fixedIncomeStrip in reqDef.Strips)
             {
                 var matches = interpolatedYieldCurveSpecification.ResolvedStrips.Where(
-                    s => fixedIncomeStrip.CurveNodePointTime == s.Maturity && s.InstrumentType == fixedIncomeStrip.InstrumentType
+                    s => fixedIncomeStrip.CurveNodePointTime == s.Strip.CurveNodePointTime && s.Strip.InstrumentType == fixedIncomeStrip.InstrumentType
                     ).ToList();
                 Assert.Single(matches);
                 var fixedIncomeStripWithIdentifier = matches.First();
@@ -55,7 +55,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var security = Context.SecuritySource.GetSecurity(new ExternalIdBundle(fixedIncomeStripWithIdentifier.Security));
                 if (fixedIncomeStrip.InstrumentType == StripInstrumentType.Future)
                 {
-                    Assert.Equal(EnumBuilder<StripInstrumentType>.GetJavaName(fixedIncomeStripWithIdentifier.InstrumentType), security.SecurityType);
+                    Assert.Equal(EnumBuilder<StripInstrumentType>.GetJavaName(fixedIncomeStripWithIdentifier.Strip.InstrumentType), security.SecurityType);
                 }
                 else
                 {

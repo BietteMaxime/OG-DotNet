@@ -6,37 +6,43 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using Fudge;
+using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.Util.Time;
 
 namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 {
     public class FixedIncomeStripWithIdentifier 
     {
-        private readonly StripInstrumentType _instrumentType;
-        private readonly Tenor _maturity;
+        private readonly FixedIncomeStrip _strip;
         private readonly ExternalId _security;
 
-        public FixedIncomeStripWithIdentifier(StripInstrumentType instrumentType, Tenor maturity, ExternalId security)
+        public FixedIncomeStripWithIdentifier(ExternalId security, FixedIncomeStrip strip)
         {
-            _instrumentType = instrumentType;
-            _maturity = maturity;
             _security = security;
+            _strip = strip;
         }
 
-        public StripInstrumentType InstrumentType
+        public FixedIncomeStrip Strip
         {
-            get { return _instrumentType; }
-        }
-
-        public Tenor Maturity
-        {
-            get { return _maturity; }
+            get { return _strip; }
         }
 
         public ExternalId Security
         {
             get { return _security; }
+        }
+
+        public static FixedIncomeStripWithIdentifier FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            return new FixedIncomeStripWithIdentifier(ExternalId.Parse(ffc.GetString("identifier")), deserializer.FromField<FixedIncomeStrip>(ffc.GetByName("strip")));
+        }
+
+        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+        {
+            s.WriteInline(a, "identifier", _security);
+            s.WriteInline(a, "strip", _strip);
         }
     }
 }

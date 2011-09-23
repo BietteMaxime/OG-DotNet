@@ -72,21 +72,14 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             var region = ExternalId.Parse(ffc.GetString("region"));
             var resolvedStripFields = ffc.GetAllByName("resolvedStrips");
 
-            var resolvedStrips = resolvedStripFields.Select(deserializer.FromField<FixedIncomeStripWithIdentifierFudge>)
-                .Select(s => new FixedIncomeStripWithIdentifier(EnumBuilder<StripInstrumentType>.Parse(s.Type), new Tenor(s.Tenor), ExternalId.Parse(s.Identifier))).
-                ToList();
+            var resolvedStrips = resolvedStripFields.Select(deserializer.FromField<FixedIncomeStripWithIdentifier>)
+                .ToList();
             return new InterpolatedYieldCurveSpecification(curveDate, name, currency, resolvedStrips, region);
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
         {
             throw new NotImplementedException();
-        }
-        private class FixedIncomeStripWithIdentifierFudge
-        {
-            public string Type { get; set; }
-            public string Tenor { get; set; }
-            public string Identifier { get; set; }
         }
     }
 }
