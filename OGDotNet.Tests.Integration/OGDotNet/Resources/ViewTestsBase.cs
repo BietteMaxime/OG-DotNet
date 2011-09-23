@@ -26,7 +26,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "10K USD Swap Test View",
 
                                                                       // Broken
-                                                                      "OvernightBatchTestView",
                                                                       "Cash Equity Detailed Test View",
                                                                       "Cash Equity Test View",
                                                                       "European Corporate Bond View",
