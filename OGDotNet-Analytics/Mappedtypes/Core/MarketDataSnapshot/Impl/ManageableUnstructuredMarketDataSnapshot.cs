@@ -299,5 +299,18 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
         {
             return new ManageableUnstructuredMarketDataSnapshot(Values.ToDictionary(k => k.Key, k => Clone(k.Value)));
         }
+
+
+        public void Add(MarketDataValueSpecification spec, string valueName)
+        {
+            IDictionary<string, ValueSnapshot> entry;
+            if (!Values.TryGetValue(spec, out entry))
+            {
+                entry = new Dictionary<string, ValueSnapshot>();
+                Values.Add(spec, entry);
+            }
+            entry.Add(valueName, new ValueSnapshot(null));
+            InvokePropertyChanged("Values");
+        }
     }
 }
