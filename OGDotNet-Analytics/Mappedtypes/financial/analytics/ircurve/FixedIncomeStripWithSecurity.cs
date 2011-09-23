@@ -18,44 +18,29 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 {
     public class FixedIncomeStripWithSecurity
     {
-        private readonly StripInstrumentType _instrumentType;
-        private readonly Tenor _tenor;
+        private readonly FixedIncomeStrip _originalStrip;        
         private readonly Tenor _resolvedTenor;
-        private readonly int _nthFutureFromTenor;
-
         private readonly DateTimeOffset _maturity;
         private readonly ExternalId _securityIdentifier;
         private readonly ISecurity _security;
 
-        private FixedIncomeStripWithSecurity(StripInstrumentType instrumentType, Tenor tenor, Tenor resolvedTenor, int nthFutureFromTenor, DateTimeOffset maturity, ExternalId securityIdentifier, ISecurity security)
+        private FixedIncomeStripWithSecurity(FixedIncomeStrip originalStrip, Tenor resolvedTenor, DateTimeOffset maturity, ExternalId securityIdentifier, ISecurity security)
         {
-            _instrumentType = instrumentType;
-            _tenor = tenor;
             _resolvedTenor = resolvedTenor;
-            _nthFutureFromTenor = nthFutureFromTenor;
+            _originalStrip = originalStrip;
             _maturity = maturity;
             _securityIdentifier = securityIdentifier;
             _security = security;
         }
 
-        public StripInstrumentType InstrumentType
+        public FixedIncomeStrip OriginalStrip
         {
-            get { return _instrumentType; }
-        }
-
-        public Tenor Tenor
-        {
-            get { return _tenor; }
+            get { return _originalStrip; }
         }
 
         public Tenor ResolvedTenor
         {
             get { return _resolvedTenor; }
-        }
-
-        public int NthFutureFromTenor
-        {
-            get { return _nthFutureFromTenor; }
         }
 
         public DateTimeOffset Maturity
@@ -75,22 +60,17 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 
         public static FixedIncomeStripWithSecurity FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var ret =
-                new FixedIncomeStripWithSecurity(
-                    EnumBuilder<StripInstrumentType>.Parse((string)ffc.GetByName("type").Value),
-                    new Tenor(ffc.GetString("tenor")),
-                    new Tenor(ffc.GetString("resolvedTenor")),
-                    ffc.GetInt("numFutures").GetValueOrDefault(-1),
-                    GetDateTime(ffc.GetByName("maturity")),
-                    ExternalId.Parse(ffc.GetString("identifier")),
-                    deserializer.FromField<ISecurity>(ffc.GetByName("security"))
-                    );
-
-            if ((ret._instrumentType == StripInstrumentType.Future) != ret._nthFutureFromTenor >= 0)
-            {
-                throw new ArgumentException("Mismatched future options");
-            }
-            return ret;
+            var originalstrip = deserializer.FromField<FixedIncomeStrip>(ffc.GetByName("strip"));
+            var resolvedTenor = new Tenor(ffc.GetString("resolvedTenor"));
+            DateTimeOffset maturity = GetDateTime(ffc.GetByName("maturity"));
+            ExternalId securityIdentifier = ExternalId.Parse(ffc.GetString("identifier"));
+            var security = deserializer.FromField<ISecurity>(ffc.GetByName("security"));
+            return new FixedIncomeStripWithSecurity(originalstrip, 
+                                                    resolvedTenor,
+                                                    maturity,
+                                                    securityIdentifier,
+                                                    security
+                );
         }
 
         private static DateTimeOffset GetDateTime(IFudgeField zonedDateTimeField)

@@ -31,7 +31,6 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             {
                 ret.NthFutureFromTenor = ffc.GetValue<int>("numFutures");
             }
-
             return ret;
         }
 

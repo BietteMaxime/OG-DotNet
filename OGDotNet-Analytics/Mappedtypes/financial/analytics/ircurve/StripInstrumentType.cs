@@ -14,9 +14,18 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
         Cash,
         FRA,
         Future,
+        BankersAcceptance,
         Swap,
         TenorSwap,
         BasisSwap,
-        OisSwap
+        OisSwap,
+        Euirbor,
+        Fras3M,
+        Fra6M,
+        Swap3M,
+        Swap6M,
+        CDOR,
+        CIBOR,
+        STIBOR
     }
 }

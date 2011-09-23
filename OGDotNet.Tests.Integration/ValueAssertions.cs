@@ -483,7 +483,7 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(strip.SecurityIdentifier);
             //These securities are weird AssertSensibleValue(strip.Security);
             Assert.NotNull(strip.Security);
-            AssertSensibleValue(strip.Tenor);
+            AssertSensibleValue(strip.OriginalStrip.CurveNodePointTime);
         }
 
         public static void AssertSensibleValue(FuturePriceCurveData data)
