@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ComputationResultsTableView.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -81,9 +81,9 @@ namespace OGDotNet.AnalyticsViewer.View
                                     {
                                         Width = Double.NaN,
                                         Header = column,
-                                        HeaderTemplate = CellTemplateSelector.BuildTemplate(column, typeof(ColumnHeader))
+                                        HeaderTemplate = TemplateTypeSelector.BuildTemplate(column, typeof(ColumnHeader))
                                     };
-            gridViewColumn.CellTemplateSelector = new CellTemplateSelector(column, gridViewColumn);
+            gridViewColumn.CellTemplateSelector = new DirectlyIndexedCellTemplateSelector<ColumnHeader>(column, gridViewColumn);
             return gridViewColumn;
         }
 

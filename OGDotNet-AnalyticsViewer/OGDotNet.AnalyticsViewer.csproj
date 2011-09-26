@@ -73,13 +73,14 @@
     <Compile Include="ViewModel\ColumnHeader.cs" />
     <Compile Include="ViewModel\DynamicRow.cs" />
     <Compile Include="ViewModel\PortfolioResultsTableBase.cs" />
-    <Compile Include="View\CellTemplates\CellTemplateSelector.xaml.cs" />
+    <Compile Include="View\CellTemplates\DirectlyIndexedCellTemplateSelector.cs" />
     <Compile Include="View\CellTemplates\GenericVolatilitySurfaceCell.xaml.cs">
       <DependentUpon>GenericVolatilitySurfaceCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CellTemplates\HeaderCell.xaml.cs">
       <DependentUpon>HeaderCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CellTemplates\CellTemplateSelector.cs" />
     <Compile Include="View\CellTemplates\LabelledMatrix1DCell.xaml.cs">
       <DependentUpon>LabelledMatrix1DCell.xaml</DependentUpon>
     </Compile>
@@ -92,6 +93,7 @@
     <Compile Include="View\CellTemplates\LabelledMatrix2DCell.xaml.cs">
       <DependentUpon>LabelledMatrix2DCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CellTemplates\TemplateTypeSelector.xaml.cs" />
     <Compile Include="View\CellTemplates\VolatilitySurfaceCell.xaml.cs">
       <DependentUpon>VolatilitySurfaceCell.xaml</DependentUpon>
     </Compile>
