@@ -12,9 +12,9 @@ using System.Windows.Data;
 using OGDotNet.Utils;
 using OGDotNet.WPFUtils;
 
-namespace OGDotNet.AnalyticsViewer.View.CellTemplates
+namespace OGDotNet.AnalyticsViewer.View.CellTemplateSelection
 {
-    public class DirectlyIndexedCellTemplateSelector<T> : CellTemplateSelector
+    public class DirectlyIndexedCellTemplateSelector<T> : GridViewCellTemplateSelector
     {
         private readonly T _index;
 

@@ -9,7 +9,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace OGDotNet.AnalyticsViewer.View.CellTemplates
+namespace OGDotNet.AnalyticsViewer.View.CellTemplateSelection
 {
     /// <summary>
     /// This class exists so that <see cref="CellTemplateSelector"/> can defer decisions if it's only seen nulls so far
@@ -21,11 +21,11 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty CellTemplateSelectorProperty = DependencyProperty.RegisterAttached("CellTemplateSelector", typeof(CellTemplateSelector), typeof(NullCell));
+        public static readonly DependencyProperty CellTemplateSelectorProperty = DependencyProperty.RegisterAttached("CellTemplateSelector", typeof(CellTemplateSelectorBase), typeof(NullCell));
 
-        private CellTemplateSelector CellTemplateSelector
+        private CellTemplateSelectorBase CellTemplateSelector
         {
-            get { return (CellTemplateSelector) GetValue(CellTemplateSelectorProperty); }
+            get { return (CellTemplateSelectorBase) GetValue(CellTemplateSelectorProperty); }
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

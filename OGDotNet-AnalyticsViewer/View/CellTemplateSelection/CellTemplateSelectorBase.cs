@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="CellTemplateSelector.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="CellTemplateSelectorBase.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -11,21 +11,14 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using OGDotNet.Utils;
 
-namespace OGDotNet.AnalyticsViewer.View.CellTemplates
+namespace OGDotNet.AnalyticsViewer.View.CellTemplateSelection
 {
     /// <summary>
     /// This allows you to bind cell template according to type of bound values, late bound.
     /// Once the template has been selected this selector gets out of the way for this column, and the template doesn't change
     /// </summary>
-    public abstract class CellTemplateSelector : DataTemplateSelector
+    public abstract class CellTemplateSelectorBase : DataTemplateSelector
     {
-        private readonly GridViewColumn _gridViewColumn;
-
-        protected CellTemplateSelector(GridViewColumn gridViewColumn)
-        {
-            _gridViewColumn = gridViewColumn;
-        }
-
         internal void UpdateNullTemplate(object item)
         {
             SetCellTemplate(item);
@@ -33,7 +26,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (!ReferenceEquals(this, _gridViewColumn.CellTemplateSelector))
+            if (!ReferenceEquals(this, GetCurrentCellTemplateSelector()))
                 throw new ArgumentException("I'm about to twiddle the wrong selector");
 
             object cellValue = GetCellValue(item);
@@ -52,6 +45,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             }
         }
 
+        protected abstract DataTemplateSelector GetCurrentCellTemplateSelector();
+        protected abstract void SetCurrentCellTemplateSelector(DataTemplateSelector selector);
+        protected abstract void SetCurrentCellTemplate(DataTemplate template);
         protected abstract Binding Binding { get; }
 
         /// <summary>
@@ -65,8 +61,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
             var template = BuildIndexedTemplate(type);
 
-            _gridViewColumn.CellTemplateSelector = null;
-            _gridViewColumn.CellTemplate = template;
+            SetCurrentCellTemplateSelector(null);
+            SetCurrentCellTemplate(template);
         }
 
         private static readonly Memoizer<Binding, Type, DataTemplate> DefaultIndexedTemplateMemoizer = new Memoizer<Binding, Type, DataTemplate>(BuildIndexedTemplateImpl);

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="TemplateTypeSelector.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="TemplateTypeSelector.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using OGDotNet.AnalyticsViewer.View.CellTemplates;
 using OGDotNet.AnalyticsViewer.ViewModel;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Financial.Analytics;
@@ -18,7 +19,7 @@ using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;
 
-namespace OGDotNet.AnalyticsViewer.View.CellTemplates
+namespace OGDotNet.AnalyticsViewer.View.CellTemplateSelection
 {
     public class TemplateTypeSelector
     {
