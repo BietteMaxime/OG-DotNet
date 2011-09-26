@@ -21,8 +21,6 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
     {
         private readonly GridViewColumn _gridViewColumn;
 
-        private static readonly Memoizer<Binding, Type, DataTemplate> TemplateMemoizer = new Memoizer<Binding, Type, DataTemplate>(BuildIndexedTemplate);
-
         protected CellTemplateSelector(GridViewColumn gridViewColumn)
         {
             _gridViewColumn = gridViewColumn;
@@ -65,13 +63,24 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             var type = cellValue.GetType();
 
-            var template = TemplateMemoizer.Get(Binding, type);
+            var template = BuildIndexedTemplate(type);
 
             _gridViewColumn.CellTemplateSelector = null;
             _gridViewColumn.CellTemplate = template;
         }
 
-        private static DataTemplate BuildIndexedTemplate(Binding binding, Type cellType)
+        private static readonly Memoizer<Binding, Type, DataTemplate> DefaultIndexedTemplateMemoizer = new Memoizer<Binding, Type, DataTemplate>(BuildIndexedTemplateImpl);
+        
+        /// <summary>
+        /// Virtual to allow templates to be embedded etc.
+        /// NOTE: this needs to be fast
+        /// </summary>
+        protected virtual DataTemplate BuildIndexedTemplate(Type cellType)
+        {
+            return DefaultIndexedTemplateMemoizer.Get(Binding, cellType);
+        }
+
+        private static DataTemplate BuildIndexedTemplateImpl(Binding binding, Type cellType)
         {
             return TemplateTypeSelector.BuildBoundTemplate(binding, cellType);
         }

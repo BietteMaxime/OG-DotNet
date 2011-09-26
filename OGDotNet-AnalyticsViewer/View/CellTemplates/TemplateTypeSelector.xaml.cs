@@ -73,16 +73,13 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 var comboFactory = new FrameworkElementFactory(templateType);
                 comboFactory.SetValue(FrameworkElement.DataContextProperty, context);
 
-                var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
-
-                return itemsTemplate;
+                return new DataTemplate { VisualTree = comboFactory };
             }
             else
             {
                 var comboFactory = new FrameworkElementFactory(typeof(TextBlock));
                 comboFactory.SetValue(TextBlock.TextProperty, context);
-                var itemsTemplate = new DataTemplate { VisualTree = comboFactory };
-                return itemsTemplate;
+                return new DataTemplate { VisualTree = comboFactory };
             }
         }
 
