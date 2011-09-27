@@ -26,7 +26,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplateSelection
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (!ReferenceEquals(this, GetCurrentCellTemplateSelector()))
+            DataTemplateSelector currentCellTemplateSelector = GetCurrentCellTemplateSelector();
+            if (currentCellTemplateSelector != null && !ReferenceEquals(this, currentCellTemplateSelector))
                 throw new ArgumentException("I'm about to twiddle the wrong selector");
 
             object cellValue = GetCellValue(item);
