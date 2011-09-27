@@ -70,12 +70,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var valuationTimes = new[]
                                      {
                                          DateTimeOffset.Now,
-                                         DateTimeOffset.Now - TimeSpan.FromDays(15),
-                                         DateTimeOffset.Now - TimeSpan.FromDays(5)
+                                         DateTimeOffset.Now - TimeSpan.FromDays(5),
+                                         DateTimeOffset.Now - TimeSpan.FromDays(1)
                                      };
 
             var runToCompletion = RunToCompletion(ExecutionOptions.Batch(ArbitraryViewCycleExecutionSequence.Create(valuationTimes)));
 
+            Assert.Equal(valuationTimes.Count(), runToCompletion.Item2.Count());
             foreach (var t in runToCompletion.Item2.Zip(valuationTimes, Tuple.Create))
             {
                 DateTimeOffset expected = t.Item2;
