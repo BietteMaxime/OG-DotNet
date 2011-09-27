@@ -30,24 +30,39 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
 
                 var mappingStrategy = (IFudgeTypeMappingStrategy)openGammaFudgeContext.GetProperty(ContextProperties.TypeMappingStrategyProperty);
 
-                var mappedtype = mappingStrategy.GetType(typeHint);
+                var mappedtype = mappingStrategy.GetType(typeHint) ?? typeof(object);
 
-                object hydratedObject;
+                var hintType = typeof(TestWrapper<>).MakeGenericType(mappedtype);
 
-                if (mappedtype != null)
-                {
-                    hydratedObject = Deserialize(fudgeSerializer, mappedtype, fudgeEncodedStreamReader);
-                }
-                else
-                {
-                    hydratedObject = fudgeSerializer.Deserialize(fudgeEncodedStreamReader);
-                }
+                var wrapper = (ITestWrapper) Deserialize(fudgeSerializer, hintType, fudgeEncodedStreamReader);
 
+                object hydratedObject = wrapper.TestObject;
                 CheckEqualityIfAppropriate(hydratedObject, mappedtype);
 
-                fudgeSerializer.Serialize(fudgeEncodedStreamWriter, hydratedObject);
+                fudgeSerializer.Serialize(fudgeEncodedStreamWriter, wrapper);
 
                 openStandardOutput.Flush();
+            }
+        }
+
+        public interface ITestWrapper
+        {
+            object TestObject { get; }
+        }
+        public class TestWrapper<T> : ITestWrapper where T : class
+        {
+            public object TestObject { get { return Test; } }
+            T Test { get; set; }
+
+            public static TestWrapper<T> FromFudgeMsg(IFudgeFieldContainer ffc,
+                                         IFudgeDeserializer deserializer)
+            {
+                return new TestWrapper<T>() { Test = deserializer.FromField<T>(ffc.GetByName("test")) };
+            }
+
+            public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
+            {
+                s.WriteInline(a, "test", Test);
             }
         }
 
