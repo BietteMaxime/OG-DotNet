@@ -41,7 +41,7 @@ namespace OGDotNet.Builders
             return JavaNamesTable.Get(value);
         }
 
-        static readonly Regex HumpExp = new Regex("([a-z])([A-Z])", RegexOptions.Compiled);
+        static readonly Regex HumpExp = new Regex("([a-z])([A-Z0-9])", RegexOptions.Compiled);
         private static string GetJavaNameImpl(T value)
         {
             var netName = value.ToString();

@@ -20,6 +20,7 @@ namespace OGDotNet.Tests.OGDotNet.Builders
             AComplexName,
             ComplexName,
             ANABBREVIATION,
+            Abc6A,
         }
         [Theory]
         [EnumValuesData]
@@ -28,7 +29,7 @@ namespace OGDotNet.Tests.OGDotNet.Builders
             var javaName = EnumBuilder<MyEnum>.GetJavaName(e);
             foreach (var c in javaName)
             {
-                Assert.True(char.IsUpper(c) || c == '_');
+                Assert.True(char.IsUpper(c) || c == '_' || char.IsNumber(c));
             }
             var roundTripped = EnumBuilder<MyEnum>.Parse(javaName);
             Assert.Equal(e, roundTripped);
