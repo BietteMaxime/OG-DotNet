@@ -29,8 +29,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Cash Equity Detailed Test View",
                                                                       "Cash Equity Test View",
                                                                       "Multi-Currency Swap Test View (2)",
-                                                                      "PoC Bond View",
-                                                                      "PoC Bond View Implied",
                                                                       "Simple IR Future Option Test View" //PLAT-1459
                                                                   };
 
