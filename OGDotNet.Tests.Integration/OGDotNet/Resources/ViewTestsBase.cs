@@ -28,9 +28,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       // Broken
                                                                       "Cash Equity Detailed Test View",
                                                                       "Cash Equity Test View",
-                                                                      "European Corporate Bond View",
-                                                                      "European Corporate Bond View - test",
-                                                                      "Random Matrix",
                                                                       "Multi-Currency Swap Test View (2)",
                                                                       "PoC Bond View",
                                                                       "PoC Bond View Implied",
