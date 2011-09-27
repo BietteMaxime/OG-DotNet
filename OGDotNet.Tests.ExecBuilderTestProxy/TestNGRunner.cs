@@ -99,10 +99,11 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
         {
             get
             {
+                //TODO @"com.opengamma.core.position.TradeFudgeEncodingTest"
                 return new Dictionary<string, string[]>
                            {
                                {"OG-Engine", new[] {@"com.opengamma.engine.fudgemsg.ValuePropertiesBuilderTest", @"com.opengamma.engine.fudgemsg.ValueSpecificationBuilderTest", @"com.opengamma.engine.fudgemsg.ViewDefinitionBuilderTest", @"com.opengamma.engine.fudgemsg.SimpleResolutionRuleTransformBuilderTest"}},
-                               {"OG-Core", new[] {@"com.opengamma.core.position.PortfolioNodeAndPositionFudgeEncodingTest", @"com.opengamma.core.position.TradeFudgeEncodingTest"}}
+                               {"OG-Core", new[] {@"com.opengamma.core.position.PortfolioNodeAndPositionFudgeEncodingTest"}}
                            };
             }
         }
