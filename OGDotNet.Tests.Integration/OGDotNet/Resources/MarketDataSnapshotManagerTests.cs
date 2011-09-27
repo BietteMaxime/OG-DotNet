@@ -115,8 +115,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 }
                 if (viewDefinition.Name == "Equity Option Test View 1")
                 {
-                    Assert.Equal(1, manageableMarketDataSnapshot.YieldCurves.Count);
-                    var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves.Single();
+                    Assert.Equal(2, manageableMarketDataSnapshot.YieldCurves.Count);
+                    var yieldCurveSnapshot = manageableMarketDataSnapshot.YieldCurves.First();
                     Assert.NotNull(yieldCurveSnapshot);
                     Assert.NotEmpty(yieldCurveSnapshot.Value.Values.Values);
                 }
