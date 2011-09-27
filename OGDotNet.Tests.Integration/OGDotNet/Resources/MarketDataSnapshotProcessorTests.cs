@@ -154,12 +154,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
 
-                ValueSnapshot value = ycSnapshot.Values.Values.First().Value.First().Value;
-                value.OverrideValue = value.MarketValue * -1000;
+                foreach (var value in ycSnapshot.Values.Values)
+                {
+                    foreach (var vs in value.Value.Values)
+                    {
+                        vs.OverrideValue = vs.MarketValue * -1000;        
+                    }
+                }
 
                 var afterCurves = dataSnapshotProcessor.GetYieldCurves();
                 Assert.Equal(beforeCurves.Count, afterCurves.Count);
-                Assert.Equal(beforeCurves.Where(c => c.Value != null).Count() - 1, afterCurves.Where(c => c.Value != null).Count());
+                Assert.Equal(0, afterCurves.Where(c => c.Value != null).Count());
             }
         }
 
