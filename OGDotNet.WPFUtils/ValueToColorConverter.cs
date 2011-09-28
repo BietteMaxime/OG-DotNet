@@ -5,14 +5,11 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using System.Globalization;
-using System.Windows.Data;
 using System.Windows.Media;
 
 namespace OGDotNet.WPFUtils
 {
-    public class ValueToColorConverter : IValueConverter
+    public class ValueToColorConverter : DoubleToColorConverterBase
     {
         private static readonly Color DefaultMinColor = Colors.Yellow;
         private static readonly Color DefaultMaxColor = Colors.Red;
@@ -31,44 +28,15 @@ namespace OGDotNet.WPFUtils
             _maxColor = maxColor;
         }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value != null && !(value is double))
-                throw new NotImplementedException();
-
-            if (targetType == typeof(Color))
-            {
-                if (value == null)
-                    return Colors.White;
-                var colorQuotient = (double)value;
-                return GetColor(colorQuotient / _range);
-            }
-
-            if (targetType == typeof(Brush))
-            {
-                var color = (Color)Convert(value, typeof(Color), parameter, culture);
-                return new SolidColorBrush(color);
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public static Color GetColor(double colorQuotientDouble, Color minColor, Color maxColor)
         {
             return new ValueToColorConverter(1, minColor, maxColor).GetColor(colorQuotientDouble);
         }
 
-        public Color GetColor(double colorQuotientDouble)
+        public override Color GetColor(double value)
         {
-            var colorQuotient = (float)colorQuotientDouble;
+            var colorQuotient = (float)(value / _range);
             return _minColor * (1 - colorQuotient) + _maxColor * colorQuotient;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }
