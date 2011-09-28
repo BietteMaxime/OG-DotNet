@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------
 // <copyright file="ClientResultStream.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//     Copyright Â© 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
 // </copyright>
@@ -25,10 +25,15 @@ namespace OGDotNet.Model.Resources
         public event EventHandler<MsgEvent> MessageReceived;
 
         public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate)
+            : this(fudgeContext, mqTemplate, true)
+        {
+        }
+
+        public ClientResultStream(OpenGammaFudgeContext fudgeContext, MQTemplate mqTemplate, bool checkSeqNumber)
         {
             _mqTemplate = mqTemplate;
 
-            _fudgeMessageDecoder = new FudgeMessageDecoder(fudgeContext);
+            _fudgeMessageDecoder = new FudgeMessageDecoder(fudgeContext, checkSeqNumber);
             _connection = _mqTemplate.CreateConnection();
             _session = _connection.CreateSession();
 

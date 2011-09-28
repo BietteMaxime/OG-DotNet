@@ -17,12 +17,13 @@ namespace OGDotNet.Model.Resources
     public class FudgeMessageDecoder
     {
         private readonly OpenGammaFudgeContext _fudgeContext;
-
+        private readonly bool _checkSeqNumber;
         private long _lastSequenceNumber = -1;
 
-        public FudgeMessageDecoder(OpenGammaFudgeContext fudgeContext)
+        public FudgeMessageDecoder(OpenGammaFudgeContext fudgeContext, bool checkSeqNumber)
         {
             _fudgeContext = fudgeContext;
+            _checkSeqNumber = checkSeqNumber;
         }
 
         public IMessage FudgeDecodeMessage(ISession session, IMessageConsumer consumer, IMessage message)
@@ -33,24 +34,27 @@ namespace OGDotNet.Model.Resources
             }
             catch (Exception e)
             {
-                return new ActiveMQObjectMessage {Body = e};
+                return new ActiveMQObjectMessage { Body = e };
             }
         }
 
         private object DecodeObject(IMessage message)
         {
             FudgeMsgEnvelope fudgeMsgEnvelope = GetMessage(message);
-            long? seqNumber = fudgeMsgEnvelope.Message.GetLong("#");
-            if (!seqNumber.HasValue)
+            if (_checkSeqNumber)
             {
-                throw new ArgumentException("Couldn't find sequence number");
+                long? seqNumber = fudgeMsgEnvelope.Message.GetLong("#");
+                if (!seqNumber.HasValue)
+                {
+                    throw new ArgumentException("Couldn't find sequence number");
+                }
+                long expectedSeqNumber = Interlocked.Increment(ref _lastSequenceNumber);
+                if (expectedSeqNumber != seqNumber.Value)
+                {
+                    throw new ArgumentException(string.Format("Unexpected SEQ number {0} expected {1}", seqNumber,
+                                                              expectedSeqNumber));
+                }
             }
-            long expectedSeqNumber = Interlocked.Increment(ref _lastSequenceNumber);
-            if (expectedSeqNumber != seqNumber.Value)
-            {
-                throw new ArgumentException(string.Format("Unexpected SEQ number {0} expected {1}", seqNumber, expectedSeqNumber));
-            }
-
             return _fudgeContext.DeFudgeSerialize(fudgeMsgEnvelope.Message);
         }
 
