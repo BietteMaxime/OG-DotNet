@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using Fudge.Types;
 using OGDotNet.Mappedtypes.Util.Timeseries.Fast;
 
 namespace OGDotNet.Mappedtypes.JavaX.Time
@@ -19,6 +20,11 @@ namespace OGDotNet.Mappedtypes.JavaX.Time
         {
             _epochSeconds = epochSeconds;
             _nanoOfSecond = nanoOfSecond;
+        }
+
+        public Instant(FudgeDateTime versionInstant)
+            : this((long)(versionInstant.ToDateTime() - new DateTimeOffset(DateTimeNumericEncoding.Epoch)).TotalSeconds, versionInstant.Nanoseconds)
+        {
         }
 
         public DateTimeOffset ToDateTimeOffset()

@@ -49,7 +49,7 @@ namespace OGDotNet.Model.Context
 
         public RemoteClient CreateUserClient()
         {
-            return new RemoteClient(GetTarget("userData"));
+            return new RemoteClient(GetTarget("userData"), _activeMQSpec, FudgeContext);
         }
 
         public RemoteViewProcessor ViewProcessor
@@ -95,7 +95,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteMarketDataSnapshotMaster(GetTarget("sharedMarketDataSnapshotMaster"));
+                return new RemoteMarketDataSnapshotMaster(GetTarget("sharedMarketDataSnapshotMaster"), _activeMQSpec, FudgeContext);
             }
         }
 

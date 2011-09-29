@@ -18,10 +18,14 @@ namespace OGDotNet.Model.Resources
     public class RemoteMarketDataSnapshotMaster
     {
         private readonly RestTarget _restTarget;
+        private readonly string _activeMQSpec;
+        private readonly OpenGammaFudgeContext _fudgeContext;
 
-        public RemoteMarketDataSnapshotMaster(RestTarget restTarget)
+        public RemoteMarketDataSnapshotMaster(RestTarget restTarget, string activeMQSpec, OpenGammaFudgeContext fudgeContext)
         {
             _restTarget = restTarget;
+            _fudgeContext = fudgeContext;
+            _activeMQSpec = activeMQSpec;
         }
 
         public SearchResult<MarketDataSnapshotDocument> Search(string name, PagingRequest pagingRequest)
@@ -71,6 +75,14 @@ namespace OGDotNet.Model.Resources
             document.Snapshot.UniqueId = uid;
 
             return document;
+        }
+
+        public RemoteChangeManger ChangeManager
+        {
+            get
+            {
+                return new RemoteChangeManger(_restTarget.Resolve("changeManager"), _activeMQSpec, _fudgeContext);
+            }
         }
 
         public MarketDataSnapshotDocument Get(UniqueId uniqueId)

@@ -88,6 +88,10 @@
     <Compile Include="Builders\ValuePropertiesBuilder.cs" />
     <Compile Include="Builders\VersionCorrectionBuilder.cs" />
     <Compile Include="Builders\VolatilitySurfaceDataBuilder.cs" />
+    <Compile Include="Mappedtypes\Core\Change\AggregatingChangeListener.cs" />
+    <Compile Include="Mappedtypes\Core\Change\ChangeEvent.cs" />
+    <Compile Include="Mappedtypes\Core\Change\ChangeType.cs" />
+    <Compile Include="Mappedtypes\Core\Change\IChangeListener.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\SimplePosition.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\Engine\function\IFunctionDefinition.cs" />
@@ -149,6 +153,7 @@
     <Compile Include="Model\Resources\MsgEvent.cs" />
     <Compile Include="Model\Resources\RemoteAvailableOutputs.cs" />
     <Compile Include="Model\Resources\FudgeMessageDecoder.cs" />
+    <Compile Include="Model\Resources\RemoteChangeManger.cs" />
     <Compile Include="Model\Resources\RemoteLiveMarketDataSourceRegistry.cs" />
     <Compile Include="Model\Resources\RemoteMarketDataSnapshotter.cs" />
     <Compile Include="Model\Resources\RemotePortfolioMaster.cs" />

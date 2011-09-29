@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using OGDotNet.Mappedtypes.Core.Change;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
@@ -148,18 +150,41 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static void CanAddAndGet(RemoteMarketDataSnapshotMaster snapshotMaster)
         {
-            var name = TestUtils.GetUniqueName();
+            var changeManager = snapshotMaster.ChangeManager;
+            var aggregatingChangeListener = new AggregatingChangeListener();
+            changeManager.AddChangeListener(aggregatingChangeListener);
+            try
+            {
+                var name = TestUtils.GetUniqueName();
 
-            var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));
+                var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));
 
-            var retDoc = snapshotMaster.Get(marketDataSnapshotDocument.UniqueId);
-            Assert.NotNull(retDoc);
-            Assert.NotEqual(DateTimeOffset.MinValue, retDoc.VersionFromInstant);
-            Assert.NotEqual(DateTimeOffset.MinValue, retDoc.CorrectionFromInstant);
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                List<ChangeEvent> events = aggregatingChangeListener.GetAndClearEvents();
+                var addEvent = events.Where(e => e.Type == ChangeType.Added && e.AfterId.Equals(marketDataSnapshotDocument.UniqueId)).Single();
 
-            AssertEqual(retDoc, marketDataSnapshotDocument);
-            
-            snapshotMaster.Remove(marketDataSnapshotDocument.UniqueId);
+                var retDoc = snapshotMaster.Get(marketDataSnapshotDocument.UniqueId);
+                Assert.NotNull(retDoc);
+                Assert.NotEqual(DateTimeOffset.MinValue, retDoc.VersionFromInstant);
+                Assert.NotEqual(DateTimeOffset.MinValue, retDoc.CorrectionFromInstant);
+
+                Assert.Equal(retDoc.VersionFromInstant, addEvent.VersionInstant.ToDateTimeOffset());
+
+                AssertEqual(retDoc, marketDataSnapshotDocument);
+
+                snapshotMaster.Remove(marketDataSnapshotDocument.UniqueId);
+
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                events = aggregatingChangeListener.GetAndClearEvents();
+                var removeEvent = events.Where(e => e.Type == ChangeType.Removed && e.BeforeId.Equals(marketDataSnapshotDocument.UniqueId)).Single();
+
+                var deleted = snapshotMaster.Get(marketDataSnapshotDocument.UniqueId);
+                Assert.Equal(deleted.VersionToInstant, removeEvent.VersionInstant.ToDateTimeOffset());
+            }
+            finally
+            {
+                changeManager.RemoveChangeListener(aggregatingChangeListener);
+            }
         }
 
         [Xunit.Extensions.Fact]
