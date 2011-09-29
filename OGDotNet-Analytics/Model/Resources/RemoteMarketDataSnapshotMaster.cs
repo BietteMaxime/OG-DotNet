@@ -15,7 +15,7 @@ using OGDotNet.Mappedtypes.Util;
 
 namespace OGDotNet.Model.Resources
 {
-    public class RemoteMarketDataSnapshotMaster
+    public class RemoteMarketDataSnapshotMaster : IMaster<MarketDataSnapshotDocument>
     {
         private readonly RestTarget _restTarget;
         private readonly string _activeMQSpec;

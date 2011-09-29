@@ -237,7 +237,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        private static MarketDataSnapshotDocument GetDocument(string name)
+        public static MarketDataSnapshotDocument GetDocument(string name)
         {
             return new MarketDataSnapshotDocument(null,
                 new ManageableMarketDataSnapshot("SomeView",
