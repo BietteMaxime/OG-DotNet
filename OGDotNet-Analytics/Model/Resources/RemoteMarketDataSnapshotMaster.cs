@@ -100,5 +100,10 @@ namespace OGDotNet.Model.Resources
             _restTarget.Resolve("snapshots").Resolve(uniqueId.ToString()).Delete();
         }
         //TODO correct
+
+        public MarketDataSnapshotHistoryResult History(MarketDataSnapshotHistoryRequest request)
+        {
+            return _restTarget.Resolve("history").Post<MarketDataSnapshotHistoryResult>(request);
+        }
     }
 }

@@ -9,19 +9,10 @@ using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Master.Portfolio
 {
-    public class PortfolioHistoryRequest
+    public class PortfolioHistoryRequest : AbstractHistoryRequest
     {
-        //TODO this, and base class
-        private readonly ObjectId _objectId;
-
-        public PortfolioHistoryRequest(ObjectId objectId)
+        public PortfolioHistoryRequest(ObjectId objectId) : base(objectId)
         {
-            _objectId = objectId;
-        }
-
-        public ObjectId ObjectId
-        {
-            get { return _objectId; }
         }
     }
 }

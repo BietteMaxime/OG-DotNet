@@ -131,6 +131,9 @@
     <Compile Include="Mappedtypes\javax\time\calendar\LocalDate.cs" />
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\ManageableVolatilityCubeSnapshot.cs" />
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\ManageableVolatilitySurfaceSnapshot.cs" />
+    <Compile Include="Mappedtypes\Master\AbstractHistoryRequest.cs" />
+    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotHistoryRequest.cs" />
+    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotHistoryResult.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\ManageablePortfolio.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\PortfolioDocument.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\PortfolioHistoryRequest.cs" />

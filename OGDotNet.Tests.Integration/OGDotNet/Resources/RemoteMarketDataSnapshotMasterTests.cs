@@ -188,6 +188,34 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
+        public void CanGetHistory()
+        {
+            var snapshotMaster = Context.MarketDataSnapshotMaster;
+
+            var name = TestUtils.GetUniqueName();
+
+            var marketDataSnapshotDocument = snapshotMaster.Add(GetDocument(name));
+            UniqueId init = marketDataSnapshotDocument.UniqueId;
+            Assert.True(init.IsVersioned);
+            Assert.Equal("0", init.Version);
+            Assert.Equal(marketDataSnapshotDocument.UniqueId, marketDataSnapshotDocument.Snapshot.UniqueId);
+
+            snapshotMaster.Update(marketDataSnapshotDocument);
+
+            UniqueId afterUpdate = marketDataSnapshotDocument.UniqueId;
+            Assert.True(afterUpdate.IsVersioned);
+            Assert.Equal("1", afterUpdate.Version);
+            Assert.Equal(marketDataSnapshotDocument.UniqueId, marketDataSnapshotDocument.Snapshot.UniqueId);
+
+            snapshotMaster.Remove(afterUpdate);
+
+            var marketDataSnapshotHistoryResult = snapshotMaster.History(new MarketDataSnapshotHistoryRequest(init.ObjectID, false));
+            Assert.Equal(2, marketDataSnapshotHistoryResult.Documents.Count);
+            Assert.Equal(init, marketDataSnapshotHistoryResult.Documents.Last().UniqueId);
+            Assert.Equal(afterUpdate, marketDataSnapshotHistoryResult.Documents.First().UniqueId);
+        }
+
+        [Xunit.Extensions.Fact]
         public void CanUpdate()
         {
             var snapshotMaster = Context.MarketDataSnapshotMaster;
