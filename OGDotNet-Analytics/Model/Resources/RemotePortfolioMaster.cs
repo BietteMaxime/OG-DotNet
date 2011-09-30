@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.Portfolio;
 
 namespace OGDotNet.Model.Resources
@@ -34,6 +35,16 @@ namespace OGDotNet.Model.Resources
         {
             string bean = _restTarget.EncodeBean(request);
             return _restTarget.Resolve(request.ObjectId.ToString()).Resolve("versions", Tuple.Create("msg", bean)).Get<PortfolioHistoryResult>();
+        }
+
+        public PortfolioDocument Get(UniqueId uniqueId)
+        {
+            var resp = _restTarget.Resolve(uniqueId.ToString()).Get<PortfolioDocument>();
+            if (resp == null || resp.UniqueId == null || resp.Portfolio == null)
+            {
+                throw new ArgumentException("Not found", "uniqueId");
+            }
+            return resp;
         }
 
         public RemoteChangeManger ChangeManager
