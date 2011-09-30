@@ -17,7 +17,7 @@ namespace OGDotNet.WPFUtils
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value != null && !(value is double))
-                throw new NotImplementedException();
+                return null;
 
             if (targetType == typeof(Color))
             {
@@ -33,7 +33,7 @@ namespace OGDotNet.WPFUtils
             }
             else
             {
-                throw new NotImplementedException();
+                return null;
             }
         }
 
