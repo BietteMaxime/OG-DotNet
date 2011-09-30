@@ -14,10 +14,14 @@ namespace OGDotNet.Model.Resources
     {
         //TODO: this 
         private readonly RestTarget _restTarget;
+        private readonly string _activeMQSpec;
+        private readonly OpenGammaFudgeContext _fudgeContext;
 
-        public RemotePortfolioMaster(RestTarget restTarget)
+        public RemotePortfolioMaster(RestTarget restTarget, string activeMQSpec, OpenGammaFudgeContext fudgeContext)
         {
             _restTarget = restTarget;
+            _fudgeContext = fudgeContext;
+            _activeMQSpec = activeMQSpec;
         }
 
         public PortfolioSearchResult Search(PortfolioSearchRequest request)
@@ -30,6 +34,14 @@ namespace OGDotNet.Model.Resources
         {
             string bean = _restTarget.EncodeBean(request);
             return _restTarget.Resolve(request.ObjectId.ToString()).Resolve("versions", Tuple.Create("msg", bean)).Get<PortfolioHistoryResult>();
+        }
+
+        public RemoteChangeManger ChangeManager
+        {
+            get
+            {
+                return new RemoteChangeManger(_restTarget.Resolve("changeManager"), _activeMQSpec, _fudgeContext);
+            }
         }
     }
 }

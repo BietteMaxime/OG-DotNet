@@ -5,8 +5,10 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using OGDotNet.Mappedtypes.Core.Change;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.Portfolio;
 using OGDotNet.Mappedtypes.Util;
@@ -52,6 +54,22 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     Assert.Equal(doc.UniqueId.ObjectID, portfolioDocument.UniqueId.ObjectID);
                 }
                 Assert.True(portfolioHistoryResult.Documents.Any(d => d.UniqueId.Equals(portfolioDocument.UniqueId)));
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetChangeManager()
+        {
+            var remoteChangeManger = Context.PortfolioMaster.ChangeManager;
+            var changeListener = new AggregatingChangeListener();
+            remoteChangeManger.AddChangeListener(changeListener);
+            try
+            {
+                Assert.Empty(changeListener.GetAndClearEvents());
+            }
+            finally
+            {
+                remoteChangeManger.RemoveChangeListener(changeListener);
             }
         }
     }
