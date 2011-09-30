@@ -32,6 +32,11 @@ namespace OGDotNet.Mappedtypes.Id
             return new UniqueId(scheme, value, version);
         }
 
+        public static UniqueId Create(ObjectId objectId, string version = null)
+        {
+            return Create(objectId.Scheme, objectId.Value, version);
+        }
+
         public static UniqueId Parse(string uidStr)
         {
             ArgumentChecker.NotEmpty(uidStr, "uidStr");
@@ -95,7 +100,7 @@ namespace OGDotNet.Mappedtypes.Id
                 return this;
             }
         }
-        
+
         public ExternalId ToIdentifier()
         {
             return ExternalId.Create("UID", ToString());
@@ -198,7 +203,7 @@ namespace OGDotNet.Mappedtypes.Id
 
         public static UniqueId FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            string schema = null; 
+            string schema = null;
             string value = null;
             string version = null;
 
@@ -207,10 +212,10 @@ namespace OGDotNet.Mappedtypes.Id
                 switch (field.Name)
                 {
                     case SchemeFudgeFieldName:
-                        schema = (string) field.Value;
+                        schema = (string)field.Value;
                         break;
                     case ValueFudgeFieldName:
-                        value = (string) field.Value;
+                        value = (string)field.Value;
                         break;
                     case VersionFudgeFieldName:
                         version = (string)field.Value;
