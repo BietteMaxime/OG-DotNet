@@ -82,11 +82,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
             {
-                Thread.Sleep(1000);
                 var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
                 var beforeCurve = beforeCurves.First().Value.Item1.Curve;
-
-                Thread.Sleep(1000);
 
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
                 var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
@@ -94,10 +91,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 ValueSnapshot value = ycSnapshot.Values.Values.First().Value.First().Value;
                 value.OverrideValue = value.MarketValue * 1.01;
 
-                Thread.Sleep(1000);
                 var afterCurves = dataSnapshotProcessor.GetYieldCurves();
                 Assert.NotEmpty(afterCurves);
-                Thread.Sleep(1000);
                 var afterCurve = afterCurves.First().Value.Item1.Curve;
 
                 //Curve should change Ys but not x
