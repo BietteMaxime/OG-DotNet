@@ -29,6 +29,9 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
             return new Pair<TFirst, TSecond>(first, second);
         }
 
+        internal abstract object FirstObj { get; }
+        internal abstract object SecondObj { get; }
+
         public static Pair FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             var first = FromField(deserializer, ffc, "first");
@@ -90,6 +93,24 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
         }
     }
 
+    /// <summary>
+    /// This is here for Fudge.
+    /// TODO: should use a builder so this can return a typed Pair
+    /// </summary>
+    public class ObjectsPair : Pair<object, object>
+    {
+        public ObjectsPair(object first, object second)
+            : base(first, second)
+        {
+        }
+
+        public static new ObjectsPair FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        {
+            var pair = Pair.FromFudgeMsg(ffc, deserializer);
+            return new ObjectsPair(pair.FirstObj, pair.SecondObj);
+        }
+    }
+
     public class Pair<TFirst, TSecond> : Pair, IEquatable<Pair<TFirst, TSecond>>, IPair<TFirst, TSecond>, IComparable, IComparable<Pair<TFirst, TSecond>>
     {
         private readonly TFirst _first;
@@ -134,6 +155,16 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
             {
                 return (T)value;
             }
+        }
+
+        internal override object FirstObj
+        {
+            get { return First; }
+        }
+
+        internal override object SecondObj
+        {
+            get { return Second; }
         }
 
         public new void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
