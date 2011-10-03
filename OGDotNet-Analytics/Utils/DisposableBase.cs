@@ -17,6 +17,10 @@ namespace OGDotNet.Utils
         private bool _disposed = false;
         ~DisposableBase()
         {
+            lock (_disposingLock)
+            {
+                _disposed = true;
+            }
             Dispose(false);
         }
         public void Dispose()
