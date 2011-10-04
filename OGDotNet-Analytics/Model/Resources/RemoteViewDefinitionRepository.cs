@@ -25,7 +25,7 @@ namespace OGDotNet.Model.Resources
 
         public IEnumerable<string> GetDefinitionNames()
         {
-            return GetDefinitionEntries().Values;
+            return GetDefinitionEntries().Values.OrderBy(s => s).ToList();
         }
 
         public IEnumerable<UniqueId> GetDefinitionIDs()
