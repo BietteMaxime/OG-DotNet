@@ -13,7 +13,7 @@
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="Auto" Header="Label" DisplayMemberBinding="{Binding Path=Label}"/>
-                        <GridViewColumn Width="Auto" Header="Value" DisplayMemberBinding="{Binding Path=Value}"/>
+                        <GridViewColumn Width="Auto" Header="Value" DisplayMemberBinding="{Binding Path=Value, StringFormat={}{0:N2}}" />
                     </GridView>
                 </ListView.View>
             </ListView>

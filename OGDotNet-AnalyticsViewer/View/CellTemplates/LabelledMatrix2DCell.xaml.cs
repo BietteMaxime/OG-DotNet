@@ -55,7 +55,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                         new Binding(".Key")
                                         {
                                             Mode = BindingMode.OneWay,
-                                            Path = GetPath(x)
+                                            Path = GetPath(x),
+                                            StringFormat = "{0:N2}"
                                         }
                     });
                 }
