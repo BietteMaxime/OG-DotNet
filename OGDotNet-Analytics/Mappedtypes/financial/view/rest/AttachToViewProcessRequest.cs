@@ -6,25 +6,26 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using OGDotNet.Mappedtypes.Engine.View.Execution;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Financial.View.Rest
 {
     class AttachToViewProcessRequest
     {
-        private readonly string _viewDefinitionName;
+        private readonly UniqueId _viewDefinitionId;
         private readonly IViewExecutionOptions _executionOptions;
         private readonly bool _newBatchProcess;
 
-        public AttachToViewProcessRequest(string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
+        public AttachToViewProcessRequest(UniqueId viewDefinitionId, IViewExecutionOptions executionOptions, bool newBatchProcess)
         {
-            _viewDefinitionName = viewDefinitionName;
+            _viewDefinitionId = viewDefinitionId;
             _executionOptions = executionOptions;
             _newBatchProcess = newBatchProcess;
         }
 
-        public string ViewDefinitionName
+        public UniqueId ViewDefinitionId
         {
-            get { return _viewDefinitionName; }
+            get { return _viewDefinitionId; }
         }
 
         public IViewExecutionOptions ExecutionOptions

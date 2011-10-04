@@ -44,7 +44,7 @@ namespace OGDotNet.Model.Resources
         {
             var clientUri = _rest.Resolve("clients").Create(userPrincipal);
 
-            return new RemoteViewClient(_fudgeContext, clientUri, _mqTemplate);
+            return new RemoteViewClient(_fudgeContext, clientUri, _mqTemplate, this);
         }
         public RemoteViewClient CreateClient()
         {

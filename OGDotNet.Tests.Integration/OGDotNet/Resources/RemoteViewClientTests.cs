@@ -42,7 +42,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                Assert.Throws<ArgumentNullException>(() => remoteViewClient.AttachToViewProcess(null, ExecutionOptions.RealTime));
+                Assert.Throws<ArgumentNullException>(() => remoteViewClient.AttachToViewProcess((string) null, ExecutionOptions.RealTime));
+                Assert.Throws<ArgumentNullException>(() => remoteViewClient.AttachToViewProcess((UniqueId)null, ExecutionOptions.RealTime));
                 Assert.Throws<ArgumentNullException>(() => remoteViewClient.AttachToViewProcess("SomeView", null));
             }
         }

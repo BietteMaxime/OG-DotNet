@@ -6,8 +6,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using System.Linq;
 using Fudge;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Calc;
 using OGDotNet.Mappedtypes.Engine.View.Client;
@@ -25,10 +28,13 @@ namespace OGDotNet.Model.Resources
     /// </summary>
     public class RemoteViewClient : RestfulJmsResultConsumerBase<IViewResultListener>
     {
-        public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate) : base(fudgeContext, clientUri, mqTemplate, (o, l) => new ResultEvent(o).ApplyTo(l))
+        private readonly RemoteViewProcessor _viewProcessor;
+
+        public RemoteViewClient(OpenGammaFudgeContext fudgeContext, RestTarget clientUri, MQTemplate mqTemplate, RemoteViewProcessor viewProcessor) : base(fudgeContext, clientUri, mqTemplate, (o, l) => new ResultEvent(o).ApplyTo(l))
         {
+            _viewProcessor = viewProcessor;
         }
-        
+
         public void Pause()
         {
             REST.Resolve("pause").Post();
@@ -64,11 +70,28 @@ namespace OGDotNet.Model.Resources
             }
         }
 
+        //TODO [Obsolete("Use the view UniqueId")]
         public void AttachToViewProcess(string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess = false)
         {
             ArgumentChecker.NotNull(viewDefinitionName, "viewDefinitionName");
+            var matching = _viewProcessor.ViewDefinitionRepository.GetDefinitionEntries().Where(k => k.Value == viewDefinitionName).ToList();
+            switch (matching.Count )
+            {
+                case 0:
+                    throw new DataNotFoundException("No such view");
+                case 1:
+                    AttachToViewProcess(matching.Single().Key, executionOptions, newBatchProcess);
+                    break;
+                default:
+                    throw new DataNotFoundException("Ambiguous view");
+            }
+        }
+
+        public void AttachToViewProcess(UniqueId viewDefinitionId, IViewExecutionOptions executionOptions, bool newBatchProcess = false)
+        {
+            ArgumentChecker.NotNull(viewDefinitionId, "viewDefinitionId");
             ArgumentChecker.NotNull(executionOptions, "executionOptions");
-            var request = new AttachToViewProcessRequest(viewDefinitionName, executionOptions, newBatchProcess);
+            var request = new AttachToViewProcessRequest(viewDefinitionId, executionOptions, newBatchProcess);
             REST.Resolve("attachSearch").Post(request);
         }
 
