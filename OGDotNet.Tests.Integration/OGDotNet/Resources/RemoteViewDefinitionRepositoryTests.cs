@@ -31,9 +31,22 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.DoesNotContain(string.Empty, viewNames);
         }
 
+        [Xunit.Extensions.Fact]
+        public void CanGetViewById()
+        {
+            var remoteViewProcessor = Context.ViewProcessor;
+            var views = remoteViewProcessor.ViewDefinitionRepository.GetDefinitionEntries();
+            foreach (var view in views)
+            {
+                var viewDefinition = remoteViewProcessor.ViewDefinitionRepository.GetViewDefinition(view.Key);
+                Assert.NotNull(viewDefinition);
+                Assert.Equal(view.Value, viewDefinition.Name);
+            }
+        }
+
         [Theory]
         [TypedPropertyData("DefinitionNames")]
-        public void CanGetViewDefinitions(string viewName)
+        public void CanGetViewDefinition(string viewName)
         {
             var remoteViewResource = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(viewName);
             Assert.NotNull(remoteViewResource);

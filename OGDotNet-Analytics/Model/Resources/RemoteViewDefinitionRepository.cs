@@ -8,7 +8,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Engine.View;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Model.Resources
 {
@@ -23,13 +25,26 @@ namespace OGDotNet.Model.Resources
 
         public IEnumerable<string> GetDefinitionNames()
         {
-            var fudgeMsg = _rest.GetFudge();
+            return GetDefinitionEntries().Values;
+        }
 
-            return fudgeMsg.GetAllByOrdinal(1).Select(fudgeField => (string)fudgeField.Value).ToList();
+        public IEnumerable<UniqueId> GetDefinitionIDs()
+        {
+            return GetDefinitionEntries().Keys;
+        }
+
+        public Dictionary<UniqueId, string> GetDefinitionEntries()
+        {
+            var fudgeMsg = _rest.GetFudge();
+            return MapBuilder.FromFudgeMsg(fudgeMsg, f => UniqueId.Parse((string)f.Value), f => (string)f.Value);
         }
         public ViewDefinition GetViewDefinition(string definitionName)
         {
-            return _rest.Resolve(definitionName).Get<ViewDefinition>();
+            return _rest.Resolve("name").Resolve(definitionName).Get<ViewDefinition>();
+        }
+        public ViewDefinition GetViewDefinition(UniqueId id)
+        {
+            return _rest.Resolve("id").Resolve(id.ToString()).Get<ViewDefinition>();
         }
     }
 }
