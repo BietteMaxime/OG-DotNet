@@ -6,32 +6,46 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Financial.View;
+using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Model.Resources
 {
-    public class RemoteManagableViewDefinitionRepository
+    public class RemoteManagableViewDefinitionRepository : RemoteViewDefinitionRepository
     {
         private readonly RestTarget _rest;
 
-        public RemoteManagableViewDefinitionRepository(RestTarget rest)
+        public RemoteManagableViewDefinitionRepository(RestTarget rest) : base(rest)
         {
             _rest = rest;
         }
 
         public void AddViewDefinition(AddViewDefinitionRequest request)
         {
-            _rest.Resolve("viewDefinitions").Post(request);
+            _rest.Post(request);
         }
 
         public void UpdateViewDefinition(UpdateViewDefinitionRequest request)
         {
-            _rest.Resolve("viewDefinitions").Resolve(request.Name).Put(request);
+            _rest.Resolve(request.Name).Put(request);
         }
 
+        //TODO [Obsolete("Use the view UniqueId")]
         public void RemoveViewDefinition(string name)
         {
-            _rest.Resolve("viewDefinitions").Resolve(name).Delete();
+            var viewDefinition = GetViewDefinition(name);
+            if (viewDefinition == null)
+            {
+                throw new DataNotFoundException();
+            }
+            var uid = viewDefinition.UniqueID;
+            RemoveViewDefinition(uid);
+        }
+
+        public void RemoveViewDefinition(UniqueId id)
+        {
+            _rest.Resolve("id").Resolve(id.ToString()).Delete();
         }
     }
 }

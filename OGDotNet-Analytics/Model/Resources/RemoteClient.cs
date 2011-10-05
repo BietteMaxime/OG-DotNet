@@ -62,7 +62,7 @@ namespace OGDotNet.Model.Resources
         {
             get
             {
-                return new RemoteManagableViewDefinitionRepository(_rest);
+                return new RemoteManagableViewDefinitionRepository(_rest.Resolve("viewDefinitions"));
             }
         }
 

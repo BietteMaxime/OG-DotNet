@@ -30,7 +30,8 @@ namespace OGDotNet.Model.Resources
 
         public IEnumerable<UniqueId> GetDefinitionIDs()
         {
-            return GetDefinitionEntries().Keys;
+            var fudgeMsg = _rest.Resolve("ids").GetFudge();
+            return fudgeMsg.GetAllByOrdinal(1).Select(f => (string) f.Value).Select(f => UniqueId.Parse(f)).ToList();
         }
 
         public Dictionary<UniqueId, string> GetDefinitionEntries()

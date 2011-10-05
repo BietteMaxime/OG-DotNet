@@ -6,6 +6,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Linq;
+using System.Threading;
+using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
@@ -17,28 +20,41 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanGet()
         {
-            var repo = Context.ViewProcessor.ViewDefinitionRepository;
+            var repo = GetRepository();
             Assert.NotNull(repo);
+        }
+
+        protected RemoteViewDefinitionRepository GetRepository()
+        {
+            return Context.ViewProcessor.ViewDefinitionRepository;
         }
 
         [Xunit.Extensions.Fact]
         public void CanGetNames()
         {
-            var remoteViewProcessor = Context.ViewProcessor;
-            var viewNames = remoteViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
+            var viewNames = GetRepository().GetDefinitionNames();
             Assert.NotEmpty(viewNames);
             Assert.DoesNotContain(null, viewNames);
             Assert.DoesNotContain(string.Empty, viewNames);
         }
 
         [Xunit.Extensions.Fact]
+        public void CanGetIds()
+        {
+            var ids = GetRepository().GetDefinitionIDs();
+            Assert.NotEmpty(ids);
+            Assert.DoesNotContain(null, ids);
+            Assert.NotNull(GetRepository().GetViewDefinition(ids.First()));
+            Assert.Equal(ids.Count(), ids.Select(i => i.ToLatest()).Distinct().Count());
+        }
+
+        [Xunit.Extensions.Fact]
         public void CanGetViewById()
         {
-            var remoteViewProcessor = Context.ViewProcessor;
-            var views = remoteViewProcessor.ViewDefinitionRepository.GetDefinitionEntries();
+            var views = GetRepository().GetDefinitionEntries();
             foreach (var view in views)
             {
-                var viewDefinition = remoteViewProcessor.ViewDefinitionRepository.GetViewDefinition(view.Key);
+                var viewDefinition = GetRepository().GetViewDefinition(view.Key);
                 Assert.NotNull(viewDefinition);
                 Assert.Equal(view.Value, viewDefinition.Name);
             }
@@ -48,7 +64,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("DefinitionNames")]
         public void CanGetViewDefinition(string viewName)
         {
-            var remoteViewResource = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(viewName);
+            var remoteViewResource = GetRepository().GetViewDefinition(viewName);
             Assert.NotNull(remoteViewResource);
             Assert.Equal(viewName, remoteViewResource.Name);
             Assert.NotNull(remoteViewResource.UniqueID);
