@@ -134,12 +134,12 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 using (var remoteClient = Context.CreateUserClient())
                 {
-                    viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, TestUtils.GetUniqueName());
+                    viewDefinition.Name = viewDefinition.Name;
 
                     remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                     try
                     {
-                        AssertEquivalent(Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(viewDefinition.Name), viewDefinition);
+                        AssertEquivalent(Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(viewDefinition.UniqueID), viewDefinition);
                         using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                         {
                             Assert.NotNull(remoteViewClient.GetResults(viewDefinition.Name, ExecutionOptions.SingleCycle).First());
