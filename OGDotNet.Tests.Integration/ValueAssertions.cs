@@ -99,6 +99,11 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(tuple.Key);
             AssertSensibleValue(tuple.Value);
         }
+        public static void AssertSensibleValue(ObjectsPair tuple)
+        {
+            AssertSensibleValue(tuple.First);
+            AssertSensibleValue(tuple.Second);
+        }
         public static void AssertSensibleValue<TKey, TValue>(Pair<TKey, TValue> tuple)
         {
             AssertSensibleValue(tuple.First);
