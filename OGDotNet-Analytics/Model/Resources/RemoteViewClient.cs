@@ -74,6 +74,7 @@ namespace OGDotNet.Model.Resources
         public void AttachToViewProcess(string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess = false)
         {
             ArgumentChecker.NotNull(viewDefinitionName, "viewDefinitionName");
+            ArgumentChecker.NotNull(executionOptions, "executionOptions");
             var matching = _viewProcessor.ViewDefinitionRepository.GetDefinitionEntries().Where(k => k.Value == viewDefinitionName).ToList();
             switch (matching.Count )
             {
