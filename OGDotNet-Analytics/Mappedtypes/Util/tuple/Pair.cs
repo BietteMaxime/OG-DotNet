@@ -93,21 +93,28 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
         }
     }
 
-    /// <summary>
-    /// This is here for Fudge.
-    /// TODO: should use a builder so this can return a typed Pair
-    /// </summary>
-    public class ObjectsPair : Pair<object, object>
+    public class ObjectsPairBuilder : BuilderBase<Pair>
     {
-        public ObjectsPair(object first, object second)
-            : base(first, second)
+        public ObjectsPairBuilder(FudgeContext context, Type type) : base(context, type)
         {
         }
 
-        public static new ObjectsPair FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
+        public override Pair DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            var pair = Pair.FromFudgeMsg(ffc, deserializer);
-            return new ObjectsPair(pair.FirstObj, pair.SecondObj);
+            return Pair.FromFudgeMsg(msg, deserializer);
+        }
+    }
+
+    /// <summary>
+    /// Only here for fudge
+    /// </summary>
+    [FudgeSurrogate(typeof(ObjectsPairBuilder))]
+    internal class ObjectsPair : Pair<object, object>
+    {
+        private ObjectsPair(object first, object second)
+            : base(first, second)
+        {
+            throw new OpenGammaException("Should never be called");
         }
     }
 
