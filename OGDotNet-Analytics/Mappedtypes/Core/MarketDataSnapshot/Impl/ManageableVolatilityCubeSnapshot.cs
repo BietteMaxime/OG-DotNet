@@ -209,7 +209,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 
         private static Tenor DeserializeTenor(IFudgeField fudgeField, string fieldName)
         {
-            var fieldContainer = ((IFudgeFieldContainer) fudgeField.Value);
+            var fieldContainer = (IFudgeFieldContainer) fudgeField.Value;
             var value = fieldContainer.GetString(fieldName);
             if (value == null)
             {
