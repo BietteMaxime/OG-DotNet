@@ -60,9 +60,10 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot
 
         public static MarketDataValueSpecification FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
+            var marketDataValueType = EnumBuilder<MarketDataValueType>.Parse(ffc.GetString("type"));
             return new MarketDataValueSpecification(
-                EnumBuilder<MarketDataValueType>.Parse(ffc.GetMessage("type").GetString(1)),
-                deserializer.FromField<UniqueId>(ffc.GetByName("uniqueId"))
+                marketDataValueType,
+                UniqueId.Parse(ffc.GetString("uniqueId"))
                 );
         }
 
