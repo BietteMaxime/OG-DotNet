@@ -90,7 +90,7 @@
   </Target>
 
 
-  <Target Name="DeployZip" DependsOnTargets="Clean;Build" >
+  <Target Name="DeployZip" DependsOnTargets="Rebuild" >
     <ItemGroup>
       <ZipFiles Include="$(OutputPath)\*.*" />
     </ItemGroup>
