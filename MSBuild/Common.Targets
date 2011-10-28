@@ -80,17 +80,23 @@
 
 
   <!-- Build deploy zips -->
-  <Target Name="DeployZips">
+  <Target Name="DeployZips" DependsOnTargets="Rebuild;DeployZipsFast">
+  </Target>
+  
+    <Target Name="DeployZipsFast">
     <ItemGroup>
       <ConfigList Condition=" '@(ConfigList)' == '' and $(Config) != '' " Include="$(Config.Split('+'))" />
       <ConfigList Condition=" '@(ConfigList)' == '' " Include="Debug;Release" />
       <!-- if no configurations were specified, default to both standard -->
     </ItemGroup>
-    <MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=%(ConfigList.Identity)" Targets="DeployZip" />
+    <MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=%(ConfigList.Identity)" Targets="DeployZipFast" />
   </Target>
 
 
-  <Target Name="DeployZip" DependsOnTargets="Rebuild" >
+  <Target Name="DeployZip" DependsOnTargets="Rebuild;DeployZipFast" >
+  </Target>
+  
+  <Target Name="DeployZipFast" >
     <ItemGroup>
       <ZipFiles Include="$(OutputPath)\*.*" />
     </ItemGroup>
