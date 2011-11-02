@@ -27,6 +27,7 @@ using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.SABR;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
 using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
+using OGDotNet.Mappedtypes.Financial.Model.Option.Definition;
 using OGDotNet.Mappedtypes.Financial.Model.Volatility.Surface;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.JavaX.Time.Calendar;
@@ -491,6 +492,17 @@ namespace OGDotNet.Tests.Integration
         {
             Assert.NotNull(data.DefinitionName);
             Assert.NotNull(data.SpecificationName);
+        }
+
+        public static void AssertSensibleValue(SmileDeltaTermStructureParameter param)
+        {
+            Assert.NotNull(param);
+            //TODO
+        }
+        public static void AssertSensibleValue(InterestRateCurveSensitivity sensitivity)
+        {
+            Assert.NotNull(sensitivity);
+            //TODO
         }
     }
 }
