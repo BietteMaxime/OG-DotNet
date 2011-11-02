@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
@@ -39,6 +40,22 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.Equal(1, runToCompletion.Item1.Count());
             Assert.Equal(1, runToCompletion.Item2.Count());
             AssertApproximatelyEqual(req.ExecutionSequence.Next.ValuationTime, runToCompletion.Item2.Single().FullResult.ValuationTime);
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanRunSingleCycleBatchParallel()
+        {
+            //TODO this is not the right place for this test
+            Parallel.For(1, 20, new ParallelOptions { MaxDegreeOfParallelism = 4 }, delegate(int i)
+            {
+                IViewExecutionOptions req = ExecutionOptions.SingleCycle;
+                var runToCompletion = RunToCompletion(req);
+                Assert.Equal(1, runToCompletion.Item1.Count());
+                Assert.Equal(1, runToCompletion.Item2.Count());
+                AssertApproximatelyEqual(req.ExecutionSequence.Next.ValuationTime,
+                                         runToCompletion.Item2.Single().FullResult.
+                                             ValuationTime);
+            });
         }
 
         [Xunit.Extensions.Fact]
