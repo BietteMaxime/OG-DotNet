@@ -60,6 +60,7 @@
     <Compile Include="Builders\AvailableOutputsImplBuilder.cs" />
     <Compile Include="Builders\BuilderBase.cs" />
     <Compile Include="Builders\CombinedMarketDataSpecificationBuilder.cs" />
+    <Compile Include="Builders\CompiledViewCalculationConfigurationBuilder.cs" />
     <Compile Include="Builders\ComputationCacheQueryBuilder.cs" />
     <Compile Include="Builders\ComputationCacheResponseBuilder.cs" />
     <Compile Include="Builders\ComputationTargetBuilder.cs" />

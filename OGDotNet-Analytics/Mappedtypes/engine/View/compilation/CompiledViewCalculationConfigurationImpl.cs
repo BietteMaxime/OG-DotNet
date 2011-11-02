@@ -48,17 +48,6 @@ namespace OGDotNet.Mappedtypes.Engine.View.Compilation
         public HashSet<ValueSpecification> TerminalOutputSpecifications
         {
             get { return _terminalOutputSpecifications; }
-        }
-
-        public static CompiledViewCalculationConfigurationImpl FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            return new CompiledViewCalculationConfigurationImpl(ffc.GetString("name"), MapBuilder.FromFudgeMsg<ValueRequirement, ValueSpecification>(ffc.GetMessage("marketDataRequirements"), deserializer), new HashSet<ComputationTarget>(ffc.GetMessage("computationTargets").GetAllByOrdinal(1).Select(deserializer.FromField<ComputationTarget>)),
-                new HashSet<ValueSpecification>(ffc.GetMessage("terminalOutputSpecifications").GetAllByOrdinal(1).Select(deserializer.FromField<ValueSpecification>)));
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            throw new NotImplementedException();
-        }   
+        } 
     }
 }

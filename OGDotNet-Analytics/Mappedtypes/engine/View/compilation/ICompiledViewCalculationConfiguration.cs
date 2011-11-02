@@ -6,10 +6,13 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.Collections.Generic;
+using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Engine.Value;
 
 namespace OGDotNet.Mappedtypes.Engine.View.Compilation
 {
+    [FudgeSurrogate(typeof(CompiledViewCalculationConfigurationBuilder))]
     public interface ICompiledViewCalculationConfiguration
     {
         string Name { get; }
