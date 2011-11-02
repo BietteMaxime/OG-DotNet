@@ -288,6 +288,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         private static void SetTemporaryName(ViewDefinition viewDefinition)
         {
             viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, TestUtils.GetUniqueName());
+            viewDefinition.UniqueID = null;
         }
 
         [Xunit.Extensions.Fact]
