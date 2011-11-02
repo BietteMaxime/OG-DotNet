@@ -6,6 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Configuration;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +17,6 @@ using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
 using Castle.Windsor.Installer;
 using OGDotNet.Model.Context;
-using Configuration = Castle.Windsor.Installer.Configuration;
 
 namespace OGDotNet.WPFUtils.Windsor
 {
@@ -31,7 +31,15 @@ namespace OGDotNet.WPFUtils.Windsor
         {
             get
             {
-                return _container.Resolve<RemoteEngineContext>();
+                try
+                {
+                    return _container.Resolve<RemoteEngineContext>();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(string.Format("Failed to connect to remote server:\n\t{0}\nHave you updated app.config?", e.Message), "Failed to connect to server");
+                    throw;
+                }
             }
         }
         public RemoteEngineContextFactory OGContextFactory
@@ -58,7 +66,7 @@ namespace OGDotNet.WPFUtils.Windsor
             _container.Register();
 
             //Give all of the windows the opportunity to pick up context
-            Style windowStyle = new Style(typeof(Window));
+            var windowStyle = new Style(typeof(Window));
 
             windowStyle.Setters.Add(new Setter(OGContextProperty, new Binding("OGContext") { Source = this }));
             windowStyle.Setters.Add(new Setter(OGContextFactoryProperty, new Binding("OGContextFactory") { Source = this }));
