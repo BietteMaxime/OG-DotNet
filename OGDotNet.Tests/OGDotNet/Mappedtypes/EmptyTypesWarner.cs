@@ -13,6 +13,8 @@ using System.Reflection;
 using OGDotNet.Mappedtypes.Engine.Function;
 using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
+using OGDotNet.Mappedtypes.Financial.InterestRate;
+using OGDotNet.Mappedtypes.Financial.Model.Option.Definition;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
@@ -40,9 +42,13 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes
         {
             if (mappedType == typeof(ProcessCompletedCall))
                 return;
-            if (mappedType == typeof(EmptyFunctionParameters))
-                return;
             if (mappedType == typeof(MarketDataSpecification))
+                return;
+            if (mappedType == typeof(InterestRateCurveSensitivity))
+                return;
+            if (mappedType == typeof(SmileDeltaTermStructureParameter))
+                return;
+            if (mappedType.GetCustomAttributes(false).Length > 0)
                 return;
             if (mappedType.IsInterface)
                 return;

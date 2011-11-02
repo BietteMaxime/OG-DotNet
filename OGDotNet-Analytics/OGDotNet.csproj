@@ -120,7 +120,9 @@
     <Compile Include="Mappedtypes\financial\analytics\Volatility\sabr\SABRFittedSurfaces.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\BloombergFXOptionVolatilitySurfaceInstrumentProvider.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\FuturePriceCurveData.cs" />
+    <Compile Include="Mappedtypes\financial\interestrate\InterestRateCurveSensitivity.cs" />
     <Compile Include="Mappedtypes\financial\interestrate\PresentValueSensitivity.cs" />
+    <Compile Include="Mappedtypes\financial\model\Option\Definition\SmileDeltaTermStructureParameter.cs" />
     <Compile Include="Mappedtypes\financial\Security\equity\EquitySecurity.cs" />
     <Compile Include="Mappedtypes\financial\Security\option\EquityOptionSecurity.cs" />
     <Compile Include="Mappedtypes\financial\view\UpdateViewDefinitionRequest.cs" />
