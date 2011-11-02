@@ -7,6 +7,8 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Engine;
@@ -36,11 +38,16 @@ namespace OGDotNet.Builders
             ICompiledFunctionDefinition function = new CompiledFunctionDefinitionStub(target.Type, functionShortName, functionUniqueId);
             var parameterizedFunction = new ParameterizedFunction(function, functionParameters, parameterizedFunctionUniqueId);
 
-            var inputValues = deserializer.FromField<ValueSpecification[]>(ffc.GetByName("inputValues"));
-            var outputValues = deserializer.FromField<ValueSpecification[]>(ffc.GetByName("outputValues"));
-            var terminalOutputValues = deserializer.FromField<ValueSpecification[]>(ffc.GetByName("terminalOutputValues"));
+            var inputValues = DeserializeSet<ValueSpecification>(deserializer, ffc, "inputValues");
+            var outputValues = DeserializeSet<ValueSpecification>(deserializer, ffc, "outputValues");
+            var terminalOutputValues = DeserializeSet<ValueSpecification>(deserializer, ffc, "terminalOutputValues");
 
             return new DependencyNode(target, inputValues, outputValues, terminalOutputValues, parameterizedFunction);
+        }
+
+        private static HashSet<T> DeserializeSet<T>(IFudgeDeserializer deserializer, IFudgeFieldContainer ffc, string fieldName) where T : class
+        {
+            return new HashSet<T>(ffc.GetMessage(fieldName).GetAllByOrdinal(1).Select(deserializer.FromField<T>));
         }
 
         private class CompiledFunctionDefinitionStub : ICompiledFunctionDefinition

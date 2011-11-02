@@ -103,7 +103,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var dependencyGraph = dependencyGraphExplorer.GetWholeGraph();
                     var dependencyNodes = dependencyGraph.DependencyNodes;
                     var valueSpecifications = dependencyNodes.SelectMany(n => n.OutputValues).ToLookup(s => s).Select(g => g.Key).ToList();
-
+                    Assert.NotEmpty(valueSpecifications);
                     var first = cycle.QueryComputationCaches(new ComputationCacheQuery("Default", valueSpecifications)); 
                     Assert.InRange(allLiveData.Count(), 1, valueSpecifications.Count);
                     Assert.InRange(first.Results.Count, allLiveData.Count() + 1, valueSpecifications.Count);
