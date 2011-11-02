@@ -22,13 +22,14 @@ namespace OGDotNet.Mappedtypes.Engine.View
     {
         private readonly UniqueId _portfolioIdentifier;
         private readonly UserPrincipal _user;
-        private readonly UniqueId _uniqueID;
 
         private readonly ResultModelDefinition _resultModelDefinition;
 
         private readonly Currency _defaultCurrency;
 
         private readonly Dictionary<string, ViewCalculationConfiguration> _calculationConfigurationsByName;
+
+        private UniqueId _uniqueID;
 
         private string _name;
 
@@ -111,6 +112,7 @@ namespace OGDotNet.Mappedtypes.Engine.View
         public UniqueId UniqueID
         {
             get { return _uniqueID; }
+            set { _uniqueID = value; }
         }
 
         public override string ToString()
