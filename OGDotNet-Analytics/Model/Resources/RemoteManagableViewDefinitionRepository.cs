@@ -6,7 +6,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using OGDotNet.Mappedtypes;
+using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Id;
 
@@ -34,7 +36,15 @@ namespace OGDotNet.Model.Resources
         //TODO [Obsolete("Use the view UniqueId")]
         public void RemoveViewDefinition(string name)
         {
-            var viewDefinition = GetViewDefinition(name);
+            ViewDefinition viewDefinition;
+            try
+            {
+                viewDefinition = GetViewDefinition(name);
+            }
+            catch (NullReferenceException)
+            {
+                throw new DataNotFoundException();
+            }
             if (viewDefinition == null)
             {
                 throw new DataNotFoundException();
