@@ -8,6 +8,7 @@
 
 using System.Linq;
 using System.Threading;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
@@ -44,8 +45,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var ids = GetRepository().GetDefinitionIDs();
             Assert.NotEmpty(ids);
             Assert.DoesNotContain(null, ids);
-            Assert.NotNull(GetRepository().GetViewDefinition(ids.First()));
-            Assert.Equal(ids.Count(), ids.Select(i => i.ToLatest()).Distinct().Count());
+            Assert.NotNull(GetRepository().GetViewDefinition(UniqueId.Create(ids.First())));
+            Assert.Equal(ids.Count(), ids.Distinct().Count());
         }
 
         [Xunit.Extensions.Fact]

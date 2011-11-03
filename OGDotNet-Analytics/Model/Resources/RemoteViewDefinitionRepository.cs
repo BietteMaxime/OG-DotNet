@@ -28,10 +28,10 @@ namespace OGDotNet.Model.Resources
             return GetDefinitionEntries().Values.OrderBy(s => s).ToList();
         }
 
-        public IEnumerable<UniqueId> GetDefinitionIDs()
+        public IEnumerable<ObjectId> GetDefinitionIDs()
         {
             var fudgeMsg = _rest.Resolve("ids").GetFudge();
-            return fudgeMsg.GetAllByOrdinal(1).Select(f => (string) f.Value).Select(f => UniqueId.Parse(f)).ToList();
+            return fudgeMsg.GetAllByOrdinal(1).Select(f => (string)f.Value).Select(ObjectId.Parse).ToList();
         }
 
         public Dictionary<UniqueId, string> GetDefinitionEntries()
