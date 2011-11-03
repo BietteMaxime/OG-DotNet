@@ -17,6 +17,7 @@ namespace OGDotNet.Mappedtypes.Id
     public class ObjectId : IEquatable<ObjectId>
     {
         private const string Separator = "~";
+        static readonly string[] SeparatorArray = new[] { Separator };
 
         private const string SchemeFudgeFieldName = "Scheme";
         private const string ValueFudgeFieldName = "Value";
@@ -38,6 +39,18 @@ namespace OGDotNet.Mappedtypes.Id
             ArgumentChecker.NotNull(value, "value");
 
             return new ObjectId(scheme, value);
+        }
+
+        public static ObjectId Parse(string uidStr)
+        {
+            ArgumentChecker.NotEmpty(uidStr, "uidStr");
+            string[] split = uidStr.Split(SeparatorArray, StringSplitOptions.None);
+            switch (split.Length)
+            {
+                case 2:
+                    return Create(split[0], split[1]);
+            }
+            throw new ArgumentException("Invalid identifier format: " + uidStr);
         }
 
         public string Scheme
