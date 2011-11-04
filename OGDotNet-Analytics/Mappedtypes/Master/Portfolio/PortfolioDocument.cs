@@ -6,12 +6,13 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Master.Portfolio
 {
+    [FudgeSurrogate(typeof(PortfolioDocumentBuilder))]
     public class PortfolioDocument : AbstractDocument
     {
         private readonly ManageablePortfolio _portfolio;
@@ -33,30 +34,6 @@ namespace OGDotNet.Mappedtypes.Master.Portfolio
         public ManageablePortfolio Portfolio
         {
             get { return _portfolio; }
-        }
-
-        public static PortfolioDocument FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            DateTimeOffset versionToInstant;
-            DateTimeOffset correctionFromInstant;
-            DateTimeOffset correctionToInstant;
-            DateTimeOffset versionFromInstant = GetDocumentValues(ffc, out versionToInstant, out correctionFromInstant, out correctionToInstant);
-
-            var uid = (ffc.GetString("uniqueId") != null) ? UniqueId.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueId>(ffc.GetByName("uniqueId"));
-            var portfolio = deserializer.FromField<ManageablePortfolio>(ffc.GetByName("portfolio"));
-
-            return new PortfolioDocument(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant, uid, portfolio);
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            WriteDocumentFields(a);
-
-            if (UniqueId != null)
-            {
-                a.Add("uniqueId", UniqueId.ToString());
-            }
-            a.Add("portfolio", Portfolio);
         }
     }
 }

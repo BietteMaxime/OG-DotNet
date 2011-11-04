@@ -5,13 +5,13 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Master.Portfolio
 {
+    [FudgeSurrogate(typeof(ManageablePortfolioBuilder))]
     public class ManageablePortfolio : IUniqueIdentifiable
     {
         //TODO this
@@ -32,16 +32,6 @@ namespace OGDotNet.Mappedtypes.Master.Portfolio
         public UniqueId UniqueId
         {
             get { return _uniqueId; }
-        }
-
-        public static ManageablePortfolio FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
-        {
-            return new ManageablePortfolio(ffc.GetString("name"), UniqueId.Parse(ffc.GetString("uniqueId")));
-        }
-
-        public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -53,7 +53,7 @@ namespace OGDotNet.Mappedtypes.Master
             get { return _correctionToInstant; }
         }
 
-        protected static DateTimeOffset GetDocumentValues(IFudgeFieldContainer ffc, out DateTimeOffset versionToInstant, out DateTimeOffset correctionFromInstant, out DateTimeOffset correctionToInstant)
+        public static DateTimeOffset GetDocumentValues(IFudgeFieldContainer ffc, out DateTimeOffset versionToInstant, out DateTimeOffset correctionFromInstant, out DateTimeOffset correctionToInstant)
         {
             var versionFromInstant = ffc.GetValue<FudgeDateTime>("versionFromInstant").ToDateTimeOffsetWithDefault();
             correctionFromInstant = ffc.GetValue<FudgeDateTime>("correctionFromInstant").ToDateTimeOffsetWithDefault();
@@ -62,7 +62,7 @@ namespace OGDotNet.Mappedtypes.Master
             return versionFromInstant;
         }
 
-        protected void WriteDocumentFields(IAppendingFudgeFieldContainer a)
+        public void WriteDocumentFields(IAppendingFudgeFieldContainer a)
         {
             AddDateTimeOffsetWithDefault(a, "versionFromInstant", VersionFromInstant);
             AddDateTimeOffsetWithDefault(a, "correctionFromInstant", CorrectionFromInstant);
