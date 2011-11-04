@@ -77,10 +77,12 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
             for (int xIndex = 0; xIndex < XLabels.Count; xIndex++)
             {
                 var xLabel = XLabels[xIndex];
+                var xKey = XKeys[xIndex];
                 for (int yIndex = 0; yIndex < YLabels.Count; yIndex++)
                 {
                     var yLabel = YLabels[yIndex];
-                    yield return new LabelledMatrixEntry2D(xLabel, yLabel, Values[yIndex][xIndex]);
+                    var yKey = YKeys[yIndex];
+                    yield return new LabelledMatrixEntry2D(xLabel, yLabel, xKey, yKey, Values[yIndex][xIndex]);
                 }
             }
         }

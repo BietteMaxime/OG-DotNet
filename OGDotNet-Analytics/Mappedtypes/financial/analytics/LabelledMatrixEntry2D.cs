@@ -13,12 +13,16 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
     {
         private readonly object _xLabel;
         private readonly object _yLabel;
+        private readonly object _xKey;
+        private readonly object _yKey;
         private readonly double _value;
 
-        public LabelledMatrixEntry2D(object xLabel, object yLabel, double value)
+        public LabelledMatrixEntry2D(object xLabel, object yLabel, object xKey, object yKey, double value)
         {
             _xLabel = xLabel;
             _yLabel = yLabel;
+            _xKey = xKey;
+            _yKey = yKey;
             _value = value;
         }
 
@@ -30,6 +34,16 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
         public object YLabel
         {
             get { return _yLabel; }
+        }
+
+        public object XKey
+        {
+            get { return _xKey; }
+        }
+
+        public object YKey
+        {
+            get { return _yKey; }
         }
 
         public double Value

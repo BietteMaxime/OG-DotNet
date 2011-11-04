@@ -53,7 +53,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                     double value;
                     if (volatilitySurfaceData.TryGet(x, y, out value))
                     {
-                        yield return new LabelledMatrixEntry2D(x, y, value);
+                        yield return new LabelledMatrixEntry2D(x, y, x, y, value);
                     }
                 }
             }
