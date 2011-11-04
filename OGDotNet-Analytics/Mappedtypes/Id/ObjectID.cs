@@ -16,8 +16,8 @@ namespace OGDotNet.Mappedtypes.Id
 {
     public class ObjectId : IEquatable<ObjectId>
     {
-        private const string Separator = "~";
-        static readonly string[] SeparatorArray = new[] { Separator };
+        private const char Separator = '~';
+        static readonly char[] SeparatorArray = new[] { Separator };
 
         private const string SchemeFudgeFieldName = "Scheme";
         private const string ValueFudgeFieldName = "Value";
