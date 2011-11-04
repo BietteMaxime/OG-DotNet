@@ -11,8 +11,16 @@ namespace OGDotNet.Mappedtypes.Master.Portfolio
 {
     public class PortfolioHistoryRequest : AbstractHistoryRequest
     {
-        public PortfolioHistoryRequest(ObjectId objectId) : base(objectId)
+        private readonly int _depth;
+
+        public PortfolioHistoryRequest(ObjectId objectId, int depth = -1) : base(objectId)
         {
+            _depth = depth;
+        }
+
+        public int Depth
+        {
+            get { return _depth; }
         }
     }
 }

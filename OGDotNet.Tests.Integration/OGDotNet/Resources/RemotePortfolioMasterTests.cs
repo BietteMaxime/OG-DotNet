@@ -58,6 +58,22 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Fact]
+        public void CanGetBigHistory()
+        {
+            var result = Context.PortfolioMaster.Search(new PortfolioSearchRequest(PagingRequest.First(10), "web*"));
+            foreach (var portfolioDocument in result.Documents)
+            {
+                PortfolioHistoryResult portfolioHistoryResult = Context.PortfolioMaster.GetHistory(new PortfolioHistoryRequest(portfolioDocument.UniqueId.ObjectID, 0));
+                Assert.NotEmpty(portfolioHistoryResult.Documents);
+                foreach (var doc in portfolioHistoryResult.Documents)
+                {
+                    Assert.Equal(doc.UniqueId.ObjectID, portfolioDocument.UniqueId.ObjectID);
+                }
+                Assert.True(portfolioHistoryResult.Documents.Any(d => d.UniqueId.Equals(portfolioDocument.UniqueId)));
+            }
+        }
+
+        [Xunit.Extensions.Fact]
         public void CanGetChangeManager()
         {
             var remoteChangeManger = Context.PortfolioMaster.ChangeManager;
