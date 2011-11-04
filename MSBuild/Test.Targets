@@ -8,8 +8,11 @@
 
 
   <Target Name="RunTests" >
-    <ItemGroup>
+    <ItemGroup Condition=" '$(TestAssembly)' == '' ">
       <TestAssemblies Include="$(OutputPath)\*.Tests*dll" />
+    </ItemGroup>
+	<ItemGroup Condition=" '$(TestAssembly)' != '' ">
+      <TestAssemblies Include="$(OutputPath)\$(TestAssembly)" />
     </ItemGroup>
     <MakeDir Directories="test-reports" />
 
