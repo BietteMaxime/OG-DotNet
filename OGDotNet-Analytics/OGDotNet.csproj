@@ -112,6 +112,7 @@
     <Compile Include="Mappedtypes\Engine\View\Helper\AvailableOutputsImpl.cs" />
     <Compile Include="Mappedtypes\Engine\View\Helper\IAvailableOutputs.cs" />
     <Compile Include="Mappedtypes\Engine\View\IDeltaComparer.cs" />
+    <Compile Include="Mappedtypes\Engine\View\listener\JobResultReceivedCall.cs" />
     <Compile Include="Mappedtypes\Engine\View\NumberDeltaComparer.cs" />
     <Compile Include="Mappedtypes\financial\analytics\DoubleLabelledMatrix2D.cs" />
     <Compile Include="Mappedtypes\financial\analytics\LabelledMatrixEntry2D.cs" />

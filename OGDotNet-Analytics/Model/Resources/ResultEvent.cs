@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using OGDotNet.Mappedtypes.Engine.View.listener;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
 
 namespace OGDotNet.Model.Resources
@@ -24,6 +25,7 @@ namespace OGDotNet.Model.Resources
         {
             var defnCompiled = _msg as ViewDefinitionCompiledCall;
             var compileFailedCall = _msg as ViewDefinitionCompilationFailedCall;
+            var jobResultReceivedCall = _msg as JobResultReceivedCall;
             var cycleCompletedCall = _msg as CycleCompletedCall;
             var cycleFailedCall = _msg as CycleExecutionFailedCall;
 
@@ -55,6 +57,10 @@ namespace OGDotNet.Model.Resources
             else if (terminatedCall != null)
             {
                 resultListener.ProcessTerminated(terminatedCall.ExecutionInterrupted);
+            }
+            else if (jobResultReceivedCall != null)
+            {
+                //TODO DOTNET-37
             }
             else if (exception != null)
             {
