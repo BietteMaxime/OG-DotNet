@@ -10,10 +10,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
+using Fudge.Types;
 using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Builders.ViewResultModel
 {
@@ -25,14 +27,12 @@ namespace OGDotNet.Builders.ViewResultModel
 
         public override T DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            var viewProcIdStr = msg.GetString("viewProcessId");
-            UniqueId viewProcessId = UniqueId.Parse(viewProcIdStr);
-            var viewCycleIdStr = msg.GetString("viewCycleId");
-            UniqueId viewCycleId = UniqueId.Parse(viewCycleIdStr);
+            UniqueId viewProcessId = GetUniqueId(msg, "viewProcessId");
+            UniqueId viewCycleId = GetUniqueId(msg, "viewCycleId");
 
-            var inputDataTimestamp = msg.GetValue<DateTimeOffset>("valuationTime");
-            var resultTimestamp = msg.GetValue<DateTimeOffset>("calculationTime");
-            TimeSpan calculationDuration = DurationBuilder.Build(msg.GetMessage("calculationDuration"));
+            var inputDataTimestamp = GetToDateTimeOffsetWithDefault(msg, "valuationTime"); 
+            var resultTimestamp = GetToDateTimeOffsetWithDefault(msg, "calculationTime");
+            TimeSpan calculationDuration = DurationBuilder.Build(msg.GetMessage("calculationDuration")).GetValueOrDefault(); //TODO strict once PLAT-1683
             var configurationMap = new Dictionary<string, ViewCalculationResultModel>();
             var keys = new Queue<string>();
             var values = new Queue<ViewCalculationResultModel>();
@@ -85,6 +85,23 @@ namespace OGDotNet.Builders.ViewResultModel
             }
 
             return BuildObject(msg, deserializer, configurationMap, viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, calculationDuration);
+        }
+
+        private DateTimeOffset GetToDateTimeOffsetWithDefault(IFudgeFieldContainer msg, string fieldName)
+        {
+            //TODO strict once [PLAT-1683] is fixed
+            if (msg.GetByName(fieldName).Type == IndicatorFieldType.Instance)
+            {
+                return new DateTimeOffset();
+            }
+            return msg.GetValue<DateTimeOffset>(fieldName);
+        }
+
+        private static UniqueId GetUniqueId(IFudgeFieldContainer msg, string fieldName)
+        {
+            //TODO: remove this once PLAT-1683 is fixed
+            var uidStr = msg.GetString(fieldName);
+            return uidStr == string.Empty ? null : UniqueId.Parse(uidStr);
         }
 
         protected abstract T BuildObject(IFudgeFieldContainer msg, IFudgeDeserializer deserializer, Dictionary<string, ViewCalculationResultModel> configurationMap, UniqueId viewProcessId, UniqueId viewCycleId, DateTimeOffset inputDataTimestamp, DateTimeOffset resultTimestamp, TimeSpan calculationDuration);

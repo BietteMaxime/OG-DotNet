@@ -289,7 +289,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
-                remoteViewClient.SetViewResultMode(mode);
+                remoteViewClient.SetResultMode(mode);
 
                 var options = ExecutionOptions.RealTime;
                 var resultsEnum = remoteViewClient.GetCycles("Equity Option Test View 1", options);

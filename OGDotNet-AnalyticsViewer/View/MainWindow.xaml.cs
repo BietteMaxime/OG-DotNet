@@ -197,7 +197,7 @@ namespace OGDotNet.AnalyticsViewer.View
                     };
 
                 SetStatus(string.Format("Waiting for compilation..."));
-                client.SetViewResultMode(ViewResultMode.FullThenDelta);
+                client.SetResultMode(ViewResultMode.FullThenDelta);
                 client.SetResultListener(eventViewResultListener);
                 client.AttachToViewProcess(viewName, ExecutionOptions.GetRealTime(liveDataSource));
             }

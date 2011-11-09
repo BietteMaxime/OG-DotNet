@@ -55,10 +55,15 @@ namespace OGDotNet.Model.Resources
             REST.Resolve("updatePeriod").Put(new FudgeMsg(FudgeContext, new Field("updatePeriod", periodMillis)));
         }
 
-        public void SetViewResultMode(ViewResultMode mode)
+        public void SetResultMode(ViewResultMode mode)
         {
             var fudgeMsg = new FudgeMsg(FudgeContext) {{1, EnumBuilder<ViewResultMode>.GetJavaName(mode)}};
             REST.Resolve("resultMode").Put(fudgeMsg);
+        }
+        public void SetJobResultMode(ViewResultMode mode)
+        {
+            var fudgeMsg = new FudgeMsg(FudgeContext) { { 1, EnumBuilder<ViewResultMode>.GetJavaName(mode) } };
+            REST.Resolve("jobResultMode").Put(fudgeMsg);
         }
 
         public bool IsAttached

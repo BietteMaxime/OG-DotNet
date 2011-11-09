@@ -12,8 +12,12 @@ namespace OGDotNet.Builders
 {
     static class DurationBuilder
     {
-        public static TimeSpan Build(IFudgeFieldContainer msg)
+        public static TimeSpan? Build(IFudgeFieldContainer msg)
         {
+            if (msg == null)
+            {
+                return null;
+            }
             return TimeSpan.FromSeconds(msg.GetLong("seconds").Value) + TimeSpan.FromTicks(msg.GetLong("nanos").Value / 100);
         }
     }
