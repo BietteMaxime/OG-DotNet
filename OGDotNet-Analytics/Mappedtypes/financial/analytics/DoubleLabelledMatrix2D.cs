@@ -23,8 +23,11 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
         private readonly IList<object> _xLabels;
         private readonly IList<object> _yLabels;
         private readonly double[][] _values;
+        private readonly string _xTitle;
+        private readonly string _yTitle;
+        private readonly string _valuesTitle;
 
-        public DoubleLabelledMatrix2D(IList<double> xKeys, IList<double> yKeys, IList<object> xLabels, IList<object> yLabels, double[][] values)
+        public DoubleLabelledMatrix2D(IList<double> xKeys, IList<double> yKeys, IList<object> xLabels, IList<object> yLabels, double[][] values, string xTitle, string yTitle, string valuesTitle)
         {
             ArgumentChecker.NotNull(xKeys, "xKeys");
             ArgumentChecker.NotNull(xLabels, "xLabels");
@@ -45,6 +48,9 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
             _xLabels = xLabels;
             _yLabels = yLabels;
             _values = values;
+            _xTitle = xTitle;
+            _yTitle = yTitle;
+            _valuesTitle = valuesTitle;
         }
 
         public IList<double> XKeys
@@ -71,7 +77,22 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
         {
             get { return _values; }
         }
-       
+
+        public string XTitle
+        {
+            get { return _xTitle; }
+        }
+
+        public string YTitle
+        {
+            get { return _yTitle; }
+        }
+
+        public string ValuesTitle
+        {
+            get { return _valuesTitle; }
+        }
+
         private IEnumerable<LabelledMatrixEntry2D> GetEntrys()
         {
             for (int xIndex = 0; xIndex < XLabels.Count; xIndex++)

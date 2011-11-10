@@ -138,7 +138,7 @@ namespace OGDotNet.Builders
                     valuesArray[i][j] = values[i][j];
                 }
             }
-            return new DoubleLabelledMatrix2D(xKeysArray, yKeysArray, xLabelsArray, yLabelsArray, valuesArray);
+            return new DoubleLabelledMatrix2D(xKeysArray, yKeysArray, xLabelsArray, yLabelsArray, valuesArray, xTitle, yTitle, valuesTitle);
         }
 
         /// <remarks>
