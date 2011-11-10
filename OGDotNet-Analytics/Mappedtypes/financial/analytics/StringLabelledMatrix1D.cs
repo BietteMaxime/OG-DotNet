@@ -16,7 +16,8 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
     [FudgeSurrogate(typeof(StringLabelledMatrix1DBuilder))]
     public class StringLabelledMatrix1D : LabelledMatrix1D<string>
     {
-        public StringLabelledMatrix1D(IList<string> keys, IList<object> labels, IList<double> values) : base(keys, keys.Cast<object>().ToList(), values)
+        public StringLabelledMatrix1D(IList<string> keys, IList<object> labels, IList<double> values, string labelsTitle = null, string valuesTitle = null)
+            : base(keys, keys.Cast<object>().ToList(), values, labelsTitle, valuesTitle)
         {
             ArgumentChecker.Not(labels.Any(), "Didn't expect separate labels");
         }

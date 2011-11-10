@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Financial.Analytics;
@@ -37,6 +38,9 @@ namespace OGDotNet.Builders
 
         public override TMatrix DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
+            string labelsTitle = ffc.GetString("labelsTitle");
+            string valuesTitle = ffc.GetString("valuesTitle");
+
             var msg = ffc.GetMessage(MatrixField);
 
             var labelTypes = new Queue<string>();
@@ -102,9 +106,11 @@ namespace OGDotNet.Builders
                                                                      {
                                                                          typeof(IList<TKey>),
                                                                          typeof(IList<object>), //TODO type up this (if the java side does)
-                                                                         typeof(IList<double>)
+                                                                         typeof(IList<double>),
+                                                                         typeof(string),
+                                                                         typeof(string),
                                                                      });
-            return (TMatrix)constructorInfo.Invoke(new object[] { keys, labels, values });
+            return (TMatrix)constructorInfo.Invoke(new object[] { keys, labels, values, labelsTitle, valuesTitle});
         }
 
         protected virtual TKey GetKey(IFudgeField field)

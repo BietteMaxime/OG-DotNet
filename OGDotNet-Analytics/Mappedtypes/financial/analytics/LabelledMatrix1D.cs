@@ -19,7 +19,10 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
         private readonly IList<object> _labels;
         private readonly IList<double> _values;
 
-        public LabelledMatrix1D(IList<TKey> keys, IList<object> labels, IList<double> values)
+        private readonly string _labelsTitle;
+        private readonly string _valuesTitle;
+
+        public LabelledMatrix1D(IList<TKey> keys, IList<object> labels, IList<double> values, string labelsTitle = null, string valuesTitle = null)
         {
             ArgumentChecker.NotNull(keys, "keys");
             ArgumentChecker.NotNull(labels, "labels");
@@ -28,6 +31,8 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
             ArgumentChecker.Not( keys.Count != values.Count, "Labelled matrix is the wrong shape");
             
             _keys = keys;
+            _valuesTitle = valuesTitle;
+            _labelsTitle = labelsTitle;
             _labels = labels;
             _values = values;
         }
@@ -45,6 +50,16 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
         public IList<double> Values
         {
             get { return _values; }
+        }
+
+        public string LabelsTitle
+        {
+            get { return _labelsTitle; }
+        }
+
+        public string ValuesTitle
+        {
+            get { return _valuesTitle; }
         }
 
         public IEnumerator<LabelledMatrixEntry> GetEnumerator()

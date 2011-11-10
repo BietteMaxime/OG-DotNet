@@ -15,8 +15,8 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
     [FudgeSurrogate(typeof(CurrencyLabelledMatrix1DBuilder))]
     public class CurrencyLabelledMatrix1D : LabelledMatrix1D<Currency>
     {
-        public CurrencyLabelledMatrix1D(IList<Currency> keys, IList<object> labels, IList<double> values)
-            : base(keys, labels, values)
+        public CurrencyLabelledMatrix1D(IList<Currency> keys, IList<object> labels, IList<double> values, string labelsTitle = null, string valuesTitle = null)
+            : base(keys, labels, values, labelsTitle, valuesTitle)
         {
         }
     }

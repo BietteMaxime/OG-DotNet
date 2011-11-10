@@ -16,7 +16,8 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics
     [FudgeSurrogate(typeof(LabelledMatrix1DBuilder<FudgeDate, LocalDateLabelledMatrix1D>))]
     public class LocalDateLabelledMatrix1D : LabelledMatrix1D<FudgeDate>
     {
-        public LocalDateLabelledMatrix1D(IList<FudgeDate> keys, IList<object> labels, IList<double> values) : base(keys, labels, values)
+        public LocalDateLabelledMatrix1D(IList<FudgeDate> keys, IList<object> labels, IList<double> values, string labelsTitle = null, string valuesTitle = null)
+            : base(keys, labels, values, labelsTitle, valuesTitle)
         {
         }
     }
