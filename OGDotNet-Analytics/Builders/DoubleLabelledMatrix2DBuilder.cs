@@ -33,6 +33,10 @@ namespace OGDotNet.Builders
 
         public override DoubleLabelledMatrix2D DeserializeImpl(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
+            string xTitle = ffc.GetString("xTitle");
+            string yTitle = ffc.GetString("yTitle");
+            string valuesTitle = ffc.GetString("valuesTitle");
+
             IFudgeFieldContainer msg = ffc.GetMessage(MatrixField);
 
             var xLabelTypes = new Queue<string>();
