@@ -103,7 +103,8 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
                 return new Dictionary<string, string[]>
                            {
                                {"OG-Engine", new[] {@"com.opengamma.engine.fudgemsg.ValuePropertiesBuilderTest", @"com.opengamma.engine.fudgemsg.ValueSpecificationBuilderTest", @"com.opengamma.engine.fudgemsg.ViewDefinitionBuilderTest", @"com.opengamma.engine.fudgemsg.SimpleResolutionRuleTransformBuilderTest"}},
-                               {"OG-Core", new[] {@"com.opengamma.core.position.PortfolioNodeAndPositionFudgeEncodingTest"}}
+                               {"OG-Core", new[] {@"com.opengamma.core.position.PortfolioNodeAndPositionFudgeEncodingTest"}},
+                               {"OG-Financial", new[] {@"com.opengamma.financial.analytics.fudgemsg.LabelledMatrix1DBuilderTest", @"com.opengamma.financial.analytics.fudgemsg.LabelledMatrix2DBuilderTest"}}
                            };
             }
         }
