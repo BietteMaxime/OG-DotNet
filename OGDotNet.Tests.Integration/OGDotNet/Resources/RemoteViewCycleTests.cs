@@ -430,7 +430,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var dependencyNode = dependencyNodes[index];
                     string shape = dependencyNode.TerminalOutputValues.Any() ? "doubleoctagon" : "ellipse";
                     streamWriter.WriteLine(string.Format("{0} [label=\"{1}\", shape=\"{2}\"];", index,
-                        string.Join(",", dependencyNode.OutputValues.Select(v => string.Format("{0} - {1}", v.TargetSpecification.Uid, v.ValueName))), shape));
+                        string.Join(",", dependencyNode.OutputValues.Select(v => v.ValueName).Distinct()), shape));
                 }
 
                 for (int index = 0; index < dependencyNodes.Count; index++)
@@ -438,7 +438,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var dependencyNode = dependencyNodes[index];
                     foreach (var inputNode in dependencyNode.InputNodes)
                     {
-                        streamWriter.WriteLine(string.Format("{0} -> {1} [label=\"{2}\"];", map[inputNode], index, string.Empty));
+                        var labels = inputNode.OutputValues.Intersect(dependencyNode.InputValues).Select(v => v.ValueName).Distinct();
+                        var edgelabel = string.Join(",", labels);
+                        streamWriter.WriteLine(string.Format("{0} -> {1} [label=\"{2}\"];", map[inputNode], index, edgelabel));
                     }
                 }
                 streamWriter.WriteLine("}");
