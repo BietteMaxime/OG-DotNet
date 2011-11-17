@@ -25,6 +25,7 @@ using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.SABR;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface;
+using OGDotNet.Mappedtypes.Financial.Forex.Method;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
 using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Financial.Model.Option.Definition;
@@ -500,6 +501,11 @@ namespace OGDotNet.Tests.Integration
             //TODO
         }
         public static void AssertSensibleValue(InterestRateCurveSensitivity sensitivity)
+        {
+            Assert.NotNull(sensitivity);
+            //TODO
+        }
+        public static void AssertSensibleValue(MultipleCurrencyInterestRateCurveSensitivity sensitivity)
         {
             Assert.NotNull(sensitivity);
             //TODO
