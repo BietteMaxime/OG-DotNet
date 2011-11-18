@@ -23,7 +23,7 @@ using OGDotNet.Mappedtypes.Engine.View.Compilation;
 using OGDotNet.Mappedtypes.Financial.Analytics;
 using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
-using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.SABR;
+using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.FittedResults;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.Financial.Forex.Method;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
