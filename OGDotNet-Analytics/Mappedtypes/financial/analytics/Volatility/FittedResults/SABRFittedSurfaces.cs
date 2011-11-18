@@ -11,7 +11,7 @@ using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Financial.Model.Volatility.Surface;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
-namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.SABR
+namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.FittedResults
 {
     public class SABRFittedSurfaces
     {
