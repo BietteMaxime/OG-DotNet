@@ -27,14 +27,14 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface.Fitting
             get { return _data; }
         }
 
-        public static readonly String T_FIELD_NAME = "t field";
-        public static readonly String K_FIELD_NAME = "k field";
+        public static readonly string T_FIELD_NAME = "t field";
+        public static readonly string K_FIELD_NAME = "k field";
 
         public static SurfaceFittedSmileDataPoints FromFudgeMsg(IFudgeFieldContainer message, IFudgeDeserializer deserializer)
         {
             IList<IFudgeField> tFields = message.GetAllByName(T_FIELD_NAME);
             IList<IFudgeField> kFields = message.GetAllByName(K_FIELD_NAME);
-            Dictionary<Double, List<Double>> map = new Dictionary<Double, List<Double>>();
+            var map = new Dictionary<double, List<double>>();
             for (int i = 0; i < tFields.Count; i++)
             {
                 var t = (double)tFields[i].Value;
