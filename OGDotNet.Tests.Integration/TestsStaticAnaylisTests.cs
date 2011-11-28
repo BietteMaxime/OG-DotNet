@@ -17,7 +17,6 @@ using OGDotNet.Tests.Integration.OGDotNet.Resources;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
 using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
-using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
 
 namespace OGDotNet.Tests.Integration
 {
