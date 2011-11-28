@@ -20,11 +20,14 @@ using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Cache;
 using OGDotNet.Mappedtypes.Engine.View.Compilation;
+using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.Financial.Analytics;
 using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
+using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube.Fitting;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.FittedResults;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface;
+using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface.Fitting;
 using OGDotNet.Mappedtypes.Financial.Forex.Method;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
 using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
@@ -494,6 +497,27 @@ namespace OGDotNet.Tests.Integration
             Assert.NotNull(data.DefinitionName);
             Assert.NotNull(data.SpecificationName);
         }
+        public static void AssertSensibleValue(FittedSmileDataPoints points)
+        {
+            Assert.NotNull(points);
+            Assert.NotEmpty(points.ExternalIds);
+            Assert.NotEmpty(points.RelativeStrikes);
+            foreach (var entry in points.ExternalIds)
+            {
+                Assert.NotNull(entry.Key.First);
+                Assert.NotNull(entry.Key.Second);
+                Assert.NotEmpty(entry.Value);
+            }
+        }
+        public static void AssertSensibleValue(SurfaceFittedSmileDataPoints points)
+        {
+            Assert.NotNull(points);
+            Assert.NotEmpty(points.Data);
+            foreach (var entry in points.Data)
+            {
+                Assert.NotEmpty(entry.Value);
+            }
+        }
 
         public static void AssertSensibleValue(SmileDeltaTermStructureParameter param)
         {
@@ -508,6 +532,11 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(MultipleCurrencyInterestRateCurveSensitivity sensitivity)
         {
             Assert.NotNull(sensitivity);
+            //TODO
+        }
+        public static void AssertSensibleValue(DoubleLabelledMatrix3D matrix)
+        {
+            Assert.NotNull(matrix);
             //TODO
         }
     }
