@@ -125,7 +125,6 @@
     <Compile Include="Mappedtypes\financial\analytics\Volatility\cube\VolatilitySurfaceKey.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\FittedResults\SABRFittedSurfaces.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\BloombergFXOptionVolatilitySurfaceInstrumentProvider.cs" />
-    <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\Fitting\SurfaceFittedSmileDataPoint.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\FuturePriceCurveData.cs" />
     <Compile Include="Mappedtypes\financial\analytics\Volatility\Surface\Fitting\SurfaceFittedSmileDataPoints.cs" />
     <Compile Include="Mappedtypes\financial\Forex\Method\MultipleCurrencyInterestRateCurveSensitivity.cs" />
