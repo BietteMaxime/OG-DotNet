@@ -13,6 +13,7 @@ using System.Reflection;
 using OGDotNet.Mappedtypes.Engine.Function;
 using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
+using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.Financial.Forex.Method;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
 using OGDotNet.Mappedtypes.Financial.Model.Option.Definition;
@@ -37,20 +38,23 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes
 
         private static readonly int LeastUseful = typeof(object).GetProperties().Count() + typeof(object).GetMethods().Count();
 
+        private static readonly HashSet<Type> KnownEmptyTypes = new HashSet<Type>
+                                                                    {
+                                                                        typeof(ProcessCompletedCall),
+                                                                        typeof(MarketDataSpecification),
+                                                                        typeof(InterestRateCurveSensitivity),
+                                                                        typeof(MultipleCurrencyInterestRateCurveSensitivity),
+                                                                        typeof(SmileDeltaTermStructureParameter),
+                                                                        typeof(DoubleLabelledMatrix3D)
+                                                                    };
         [Theory]
         [TypedPropertyData("MappedTypes")]
         public void TypesArentUseless(Type mappedType)
         {
-            if (mappedType == typeof(ProcessCompletedCall))
+            if (KnownEmptyTypes.Contains(mappedType))
+            {
                 return;
-            if (mappedType == typeof(MarketDataSpecification))
-                return;
-            if (mappedType == typeof(InterestRateCurveSensitivity))
-                return;
-            if (mappedType == typeof(MultipleCurrencyInterestRateCurveSensitivity))
-                return;
-            if (mappedType == typeof(SmileDeltaTermStructureParameter))
-                return;
+            }
             if (mappedType.GetCustomAttributes(false).Length > 0)
                 return;
             if (mappedType.IsInterface)
