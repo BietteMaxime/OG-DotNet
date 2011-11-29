@@ -20,7 +20,6 @@ using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Cache;
 using OGDotNet.Mappedtypes.Engine.View.Compilation;
-using OGDotNet.Mappedtypes.financial.analytics;
 using OGDotNet.Mappedtypes.Financial.Analytics;
 using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;

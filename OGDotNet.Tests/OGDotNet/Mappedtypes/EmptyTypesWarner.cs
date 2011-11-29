@@ -13,7 +13,7 @@ using System.Reflection;
 using OGDotNet.Mappedtypes.Engine.Function;
 using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
-using OGDotNet.Mappedtypes.financial.analytics;
+using OGDotNet.Mappedtypes.Financial.Analytics;
 using OGDotNet.Mappedtypes.Financial.Forex.Method;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
 using OGDotNet.Mappedtypes.Financial.Model.Option.Definition;
