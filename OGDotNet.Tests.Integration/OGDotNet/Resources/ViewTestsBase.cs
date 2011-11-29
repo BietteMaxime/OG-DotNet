@@ -22,9 +22,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         protected static readonly HashSet<string> BannedViews = new HashSet<string>
                                                                   {
-                                                                      // Slow
-                                                                      "10K USD Swap Test View",
-
                                                                       // Broken
                                                                       "Cash Equity Detailed Test View",
                                                                       "Cash Equity Test View",
