@@ -12,6 +12,7 @@ using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Util.Tuple
@@ -24,6 +25,10 @@ namespace OGDotNet.Mappedtypes.Util.Tuple
 
     public abstract class Pair
     {
+        public static Pair<TFirst, TSecond> Create<TFirst, TSecond>(Tuple<TFirst, TSecond> t)
+        {
+            return Create(t.Item1, t.Item2);
+        }
         public static Pair<TFirst, TSecond> Create<TFirst, TSecond>(TFirst first, TSecond second)
         {
             return new Pair<TFirst, TSecond>(first, second);

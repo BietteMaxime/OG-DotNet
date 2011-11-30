@@ -24,8 +24,20 @@ namespace OGDotNet.Builders
 
         public override CompiledViewCalculationConfigurationImpl DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            return new CompiledViewCalculationConfigurationImpl(msg.GetString("name"), MapBuilder.FromFudgeMsg<ValueRequirement, ValueSpecification>(msg.GetMessage("marketDataRequirements"), deserializer), new HashSet<ComputationTarget>(msg.GetMessage("computationTargets").GetAllByOrdinal(1).Select(deserializer.FromField<ComputationTarget>)),
-                new HashSet<ValueSpecification>(msg.GetMessage("terminalOutputSpecifications").GetAllByOrdinal(1).Select(deserializer.FromField<ValueSpecification>)));
+            string name = msg.GetString("name");
+            Dictionary<ValueRequirement, ValueSpecification> marketDataRequirements = MapBuilder.FromFudgeMsg<ValueRequirement, ValueSpecification>(msg.GetMessage("marketDataRequirements"), deserializer);
+            var computationTargets = new HashSet<ComputationTarget>(msg.GetMessage("computationTargets").GetAllByOrdinal(1).Select(deserializer.FromField<ComputationTarget>));
+
+            IFudgeFieldContainer specMessage = msg.GetMessage("terminalOutputSpecifications");
+            Dictionary<ValueSpecification, HashSet<ValueRequirement>> terminalOutputSpecifications = MapBuilder.FromFudgeMsg(specMessage, deserializer.FromField<ValueSpecification>, f => GetRequirementSet(f, deserializer));
+
+            return new CompiledViewCalculationConfigurationImpl(name, marketDataRequirements, computationTargets, terminalOutputSpecifications);
+        }
+
+        private static HashSet<ValueRequirement> GetRequirementSet(IFudgeField field, IFudgeDeserializer deserializer)
+        {
+            var msg = (IFudgeFieldContainer) field.Value;
+            return new HashSet<ValueRequirement>(msg.GetAllByOrdinal(1).Select(deserializer.FromField<ValueRequirement>));
         }
     }
 }

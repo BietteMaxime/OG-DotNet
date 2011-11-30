@@ -10,10 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.Engine;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Compilation;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Util.Tuple;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
@@ -76,12 +78,12 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             var columns = new HashSet<ColumnHeader>();
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
-                var terminalOutputSpecifications = compiledViewDefinition.CompiledCalculationConfigurations[configuration.Key].TerminalOutputSpecifications.ToLookup(k => Tuple.Create(k.ValueName, k.TargetSpecification));
-
+                Dictionary<ValueSpecification, HashSet<ValueRequirement>> specs = compiledViewDefinition.CompiledCalculationConfigurations[configuration.Key].TerminalOutputSpecifications;
+                
                 foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.TargetSpecification.Type == ComputationTargetType.Primitive))
                 {
-                    var outputSpec = terminalOutputSpecifications[Tuple.Create(req.ValueName, req.TargetSpecification)].Where(s => req.IsSatisfiedBy(s));
-                    if (outputSpec.Any())
+                    //TODO less slow
+                    if (Satisfies(specs, Tuple.Create(req.ValueName, req.Constraints)))
                     {
                         columns.Add(new ColumnHeader(configuration.Key, req.ValueName, req.Constraints));
                     }
@@ -95,13 +97,13 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
             var columns = new HashSet<ColumnHeader>();
             foreach (var configuration in viewDefinition.CalculationConfigurationsByName)
             {
-                var terminalOutputSpecifications = compiledViewDefinition.CompiledCalculationConfigurations[configuration.Key].TerminalOutputSpecifications.ToLookup(k => Tuple.Create(k.ValueName));
+                Dictionary<ValueSpecification, HashSet<ValueRequirement>> specs = compiledViewDefinition.CompiledCalculationConfigurations[configuration.Key].TerminalOutputSpecifications;
 
                 foreach (var secType in configuration.Value.PortfolioRequirementsBySecurityType)
                 {
                     foreach (var req in secType.Value)
                     {
-                        if (terminalOutputSpecifications.Contains(Tuple.Create(req.Item1)))
+                        if (Satisfies(specs, req))
                         {
                             columns.Add(new ColumnHeader(configuration.Key, req.Item1, req.Item2));
                         }
@@ -109,6 +111,11 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 }
             }
             return columns;
+        }
+
+        private static bool Satisfies(Dictionary<ValueSpecification, HashSet<ValueRequirement>> specs, Tuple<string, ValueProperties> req)
+        {
+            return specs.Where(s => s.Key.ValueName.Equals(req.Item1) && s.Value.Any(r => r.Constraints.IsSatisfiedBy(req.Item2))).Any();
         }
 
         private IEnumerable<PrimitiveRow> BuildPrimitiveRows()

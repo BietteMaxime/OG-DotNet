@@ -7,32 +7,54 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Engine.Value;
+using OGDotNet.Mappedtypes.Util.Tuple;
 
 namespace OGDotNet.Mappedtypes.Engine.View.Compilation
 {
+    [FudgeSurrogate(typeof(CompiledViewCalculationConfigurationBuilder))]
     class CompiledViewCalculationConfigurationImpl : ICompiledViewCalculationConfiguration
     {
         private readonly string _name;
         private readonly Dictionary<ValueRequirement, ValueSpecification> _marketDataRequirements;
         private readonly HashSet<ComputationTarget> _computationTargets;
-        private readonly HashSet<ValueSpecification> _terminalOutputSpecifications;
+        private readonly Dictionary<ValueSpecification, HashSet<ValueRequirement>> _terminalOutputSpecifications;
+        private readonly HashSet<Pair<string, ValueProperties>> _terminalOutputValues;
 
-        public CompiledViewCalculationConfigurationImpl(string name, Dictionary<ValueRequirement, ValueSpecification> marketDataRequirements, HashSet<ComputationTarget> computationTargets, HashSet<ValueSpecification> terminalOutputSpecifications)
+        public CompiledViewCalculationConfigurationImpl(string name, Dictionary<ValueRequirement, ValueSpecification> marketDataRequirements, HashSet<ComputationTarget> computationTargets, Dictionary<ValueSpecification, HashSet<ValueRequirement>> terminalOutputSpecifications)
         {
             _name = name;
             _marketDataRequirements = marketDataRequirements;
             _computationTargets = computationTargets;
             _terminalOutputSpecifications = terminalOutputSpecifications;
+            _terminalOutputValues = BuildTerminalOutputValues(terminalOutputSpecifications);
+        }
+
+        private static HashSet<Pair<string, ValueProperties>> BuildTerminalOutputValues(Dictionary<ValueSpecification, HashSet<ValueRequirement>> terminalOutputSpecifications)
+        {
+            var ret = new HashSet<Pair<string, ValueProperties>>();
+            foreach (var key in terminalOutputSpecifications.Keys)
+            {
+                ret.Add(Pair.Create(key.ValueName, key.Properties));
+            }
+            return ret;
         }
 
         public string Name
         {
             get { return _name; }
+        }
+
+        public Dictionary<ValueSpecification, HashSet<ValueRequirement>> TerminalOutputSpecifications
+        {
+            get { return _terminalOutputSpecifications; }
+        }
+
+        public HashSet<Pair<string, ValueProperties>> TerminalOutputValues
+        {
+            get { return _terminalOutputValues; }
         }
 
         public Dictionary<ValueRequirement, ValueSpecification> MarketDataRequirements
@@ -44,10 +66,5 @@ namespace OGDotNet.Mappedtypes.Engine.View.Compilation
         {
             get { return _computationTargets; }
         }
-
-        public HashSet<ValueSpecification> TerminalOutputSpecifications
-        {
-            get { return _terminalOutputSpecifications; }
-        } 
     }
 }
