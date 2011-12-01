@@ -95,6 +95,7 @@
     <Compile Include="Mappedtypes\Core\Change\ChangeEvent.cs" />
     <Compile Include="Mappedtypes\Core\Change\ChangeType.cs" />
     <Compile Include="Mappedtypes\Core\Change\IChangeListener.cs" />
+    <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\SnapshotExtensionMethods.cs" />
     <Compile Include="Mappedtypes\Core\Position\Impl\SimplePosition.cs" />
     <Compile Include="Mappedtypes\Core\Position\IPositionOrTrade.cs" />
     <Compile Include="Mappedtypes\Engine\function\IFunctionDefinition.cs" />

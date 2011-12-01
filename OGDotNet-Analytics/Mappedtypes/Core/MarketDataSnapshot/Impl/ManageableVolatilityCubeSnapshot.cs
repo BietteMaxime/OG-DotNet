@@ -23,12 +23,21 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
         private readonly IDictionary<VolatilityPoint, ValueSnapshot> _values;
         private readonly ManageableUnstructuredMarketDataSnapshot _otherValues;
         private readonly IDictionary<Pair<Tenor, Tenor>, ValueSnapshot> _strikes;
+        
         public ManageableVolatilityCubeSnapshot(ManageableUnstructuredMarketDataSnapshot otherValues)
         {
             ArgumentChecker.NotNull(otherValues, "otherValues");
             _values = new Dictionary<VolatilityPoint, ValueSnapshot>();
             _otherValues = otherValues;
             _strikes = new Dictionary<Pair<Tenor, Tenor>, ValueSnapshot>();
+        }
+
+        public ManageableVolatilityCubeSnapshot(ManageableUnstructuredMarketDataSnapshot otherValues, IDictionary<VolatilityPoint, ValueSnapshot> values, IDictionary<Pair<Tenor, Tenor>, ValueSnapshot> strikes)
+        {
+            ArgumentChecker.NotNull(otherValues, "otherValues");
+            _values = values;
+            _otherValues = otherValues;
+            _strikes = strikes;
         }
 
         private ManageableVolatilityCubeSnapshot(IDictionary<VolatilityPoint, ValueSnapshot> values, ManageableUnstructuredMarketDataSnapshot otherValues, IDictionary<Pair<Tenor, Tenor>, ValueSnapshot> strikes)

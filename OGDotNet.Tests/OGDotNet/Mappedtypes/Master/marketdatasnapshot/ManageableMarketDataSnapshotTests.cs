@@ -58,6 +58,22 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
             Assert.Equal(12, valueSnapshot.MarketValue);
         }
 
+        [Fact]
+        public void CanSubtract()
+        {
+            var manageableUnstructuredMarketDataSnapshot = new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>());
+            var manageableVolatilitySurfaceSnapshots = GetManageableVolatilitySurfaceSnapshots();
+            var manageableYieldCurveSnapshots = GetManageableYieldCurveSnapshots();
+            var manageableVolatilityCubeSnapshots = GetManageableVolatilityCubeSnapshots();
+            var manageableMarketDataSnapshot = new ManageableMarketDataSnapshot("SomeView", manageableUnstructuredMarketDataSnapshot, manageableYieldCurveSnapshots, manageableVolatilityCubeSnapshots, manageableVolatilitySurfaceSnapshots);
+
+            var marketDataSnapshot = manageableMarketDataSnapshot.Substract(manageableMarketDataSnapshot);
+            var valueSnapshot = marketDataSnapshot.YieldCurves.Values.Single().Values.Values.Single().Value.Single().Value;
+            Assert.Equal(0.0, valueSnapshot.MarketValue);
+            Assert.Equal(0.0, valueSnapshot.OverrideValue);
+            //TODO the rest
+        }
+
         private static Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot> GetManageableVolatilityCubeSnapshots()
         {
             return new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>
