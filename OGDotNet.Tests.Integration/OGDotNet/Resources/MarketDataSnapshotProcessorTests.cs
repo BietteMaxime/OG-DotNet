@@ -163,7 +163,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var afterCurves = dataSnapshotProcessor.GetYieldCurves();
                 Assert.Equal(beforeCurves.Count, afterCurves.Count);
-                Assert.Equal(0, afterCurves.Where(c => c.Value != null).Count());
+                Assert.Equal(beforeCurves.Where(c => c.Value != null).Count() - 1, afterCurves.Where(c => c.Value != null).Count());
             }
         }
 
@@ -172,7 +172,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
 
-            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition("Equity Option Test View 1"))
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
             {
                 var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
                 YieldCurveKey curveKey = beforeCurves.Keys.First();
