@@ -83,7 +83,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
             ValueSnapshot ret;
             if (a.MarketValue.HasValue && b.MarketValue.HasValue)
             {
-                ret = new ValueSnapshot(a.MarketValue - b.MarketValue);
+                ret = new ValueSnapshot(Subtract(a.MarketValue, b.MarketValue));
             }
             else
             {
@@ -93,7 +93,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
             {
                 if (b.OverrideValue.HasValue || b.MarketValue.HasValue)
                 {
-                    ret.OverrideValue = a.OverrideValue - GetValue(b);
+                    ret.OverrideValue = Subtract(a.OverrideValue, GetValue(b));
                 }
                 else
                 {
@@ -101,6 +101,16 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
                 }
             }
             return ret;
+        }
+
+        private static double Subtract(double? x, double? y)
+        {
+            return Subtract(x.Value, y.Value);
+        }
+        private static double Subtract(double x, double y)
+        {
+            //This goes some way to stopping getting stupid recurring decimals
+            return (double)(((decimal)x) - ((decimal)y));
         }
 
         private static Dictionary<TKey, TValue> SubtractF<TKey, TValue>(IDictionary<TKey, TValue> a, IDictionary<TKey, TValue> b, Func<TValue, TValue, TValue> subtract)
