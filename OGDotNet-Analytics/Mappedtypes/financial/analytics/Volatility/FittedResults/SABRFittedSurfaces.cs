@@ -9,20 +9,23 @@ using System;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Financial.Model.Volatility.Surface;
+using OGDotNet.Mappedtypes.Math.Surface;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 
 namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.FittedResults
 {
     public class SABRFittedSurfaces
     {
-        private readonly VolatilitySurface _alphaSurface;
-        private readonly VolatilitySurface _betaSurface;
-        private readonly VolatilitySurface _nuSurface;
-        private readonly VolatilitySurface _rhoSurface;
+        //TODO inverseJacobian
+
+        private readonly InterpolatedDoublesSurface _alphaSurface;
+        private readonly InterpolatedDoublesSurface _betaSurface;
+        private readonly InterpolatedDoublesSurface _nuSurface;
+        private readonly InterpolatedDoublesSurface _rhoSurface;
         private readonly Currency _currency;
         private readonly string _dayCountName;
 
-        public SABRFittedSurfaces(VolatilitySurface alphaSurface, VolatilitySurface betaSurface, VolatilitySurface nuSurface, VolatilitySurface rhoSurface, Currency currency, string dayCountName)
+        public SABRFittedSurfaces(InterpolatedDoublesSurface alphaSurface, InterpolatedDoublesSurface betaSurface, InterpolatedDoublesSurface nuSurface, InterpolatedDoublesSurface rhoSurface, Currency currency, string dayCountName)
         {
             _alphaSurface = alphaSurface;
             _betaSurface = betaSurface;
@@ -32,22 +35,22 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.FittedResults
             _dayCountName = dayCountName;
         }
 
-        public VolatilitySurface AlphaSurface
+        public InterpolatedDoublesSurface AlphaSurface
         {
             get { return _alphaSurface; }
         }
 
-        public VolatilitySurface BetaSurface
+        public InterpolatedDoublesSurface BetaSurface
         {
             get { return _betaSurface; }
         }
 
-        public VolatilitySurface NuSurface
+        public InterpolatedDoublesSurface NuSurface
         {
             get { return _nuSurface; }
         }
 
-        public VolatilitySurface RhoSurface
+        public InterpolatedDoublesSurface RhoSurface
         {
             get { return _rhoSurface; }
         }
@@ -65,10 +68,10 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.FittedResults
         public static SABRFittedSurfaces FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
             return new SABRFittedSurfaces(
-                deserializer.FromField<VolatilitySurface>(ffc.GetByName("AlphaSurface")),
-                deserializer.FromField<VolatilitySurface>(ffc.GetByName("BetaSurface")),
-                deserializer.FromField<VolatilitySurface>(ffc.GetByName("NuSurface")),
-                deserializer.FromField<VolatilitySurface>(ffc.GetByName("RhoSurface")),
+                deserializer.FromField<InterpolatedDoublesSurface>(ffc.GetByName("AlphaSurface")),
+                deserializer.FromField<InterpolatedDoublesSurface>(ffc.GetByName("BetaSurface")),
+                deserializer.FromField<InterpolatedDoublesSurface>(ffc.GetByName("NuSurface")),
+                deserializer.FromField<InterpolatedDoublesSurface>(ffc.GetByName("RhoSurface")),
                 Currency.Create(ffc.GetString("Currency")),
                 ffc.GetString("DayCountName")
                 );
