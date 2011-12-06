@@ -8,6 +8,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context
@@ -44,7 +46,16 @@ namespace OGDotNet.Model.Context
 
         private RestTarget GetTarget(string service)
         {
-            return new RestTarget(_fudgeContext, _serviceUris[service]);
+            Uri serviceUri;
+            if (_serviceUris.TryGetValue(service, out serviceUri))
+            {
+                return new RestTarget(_fudgeContext, serviceUri);
+            }
+            else
+            {
+                var servicesDump = String.Join(",", _serviceUris.Select(kvp => kvp.Key + "=>" + kvp.Value));
+                throw new OpenGammaException(string.Format("Configuration did not include service {0}, {1}", service, servicesDump));
+            }
         }
 
         public RemoteClient CreateUserClient()
