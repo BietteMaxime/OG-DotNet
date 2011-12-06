@@ -11,7 +11,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using Fudge;
 using OGDotNet.Mappedtypes;
 using OGDotNet.Utils;
@@ -164,6 +163,8 @@ namespace OGDotNet.Model.Context
                 {
                     throw new WebException("Failed to get any service Uris");
                 }
+                var missingKeys = potentialServiceIds.Keys.Except(validServiceUris.Keys);
+                Logger.Warn("Failed to load services {0}", missingKeys);
                 return validServiceUris;
             }
         }
