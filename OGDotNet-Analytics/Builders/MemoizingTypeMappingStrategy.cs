@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using System.Collections.Concurrent;
 using System.Threading;
 using Fudge.Serialization;
 using OGDotNet.Utils;
