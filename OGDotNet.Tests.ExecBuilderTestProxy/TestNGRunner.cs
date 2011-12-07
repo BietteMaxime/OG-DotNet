@@ -104,7 +104,8 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
                            {
                                {"OG-Engine", new[] {@"com.opengamma.engine.fudgemsg.ValuePropertiesBuilderTest", @"com.opengamma.engine.fudgemsg.ValueSpecificationBuilderTest", @"com.opengamma.engine.fudgemsg.ViewDefinitionBuilderTest", @"com.opengamma.engine.fudgemsg.SimpleResolutionRuleTransformBuilderTest"}},
                                {"OG-Core", new[] {@"com.opengamma.core.position.PortfolioNodeAndPositionFudgeEncodingTest"}},
-                               {"OG-Financial", new[] {@"com.opengamma.financial.analytics.fudgemsg.LabelledMatrix1DBuilderTest", @"com.opengamma.financial.analytics.fudgemsg.LabelledMatrix2DBuilderTest"}}
+                               {"OG-Financial", new[] {@"com.opengamma.financial.analytics.fudgemsg.LabelledMatrix1DBuilderTest", @"com.opengamma.financial.analytics.fudgemsg.LabelledMatrix2DBuilderTest"}},
+                               {"OG-LiveData", new string[] {}}
                            };
             }
         }
