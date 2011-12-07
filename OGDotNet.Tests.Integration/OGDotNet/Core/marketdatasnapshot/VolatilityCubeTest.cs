@@ -53,7 +53,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Core.marketdatasnapshot
                 {
                     using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                     {
-                        var viewComputationResultModels = remoteViewClient.GetResults(defn.Name, new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.AwaitMarketData | ViewExecutionFlags.TriggersEnabled, null, new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification())));
+                        var viewComputationResultModels = remoteViewClient.GetResults(defn.UniqueID, new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.AwaitMarketData | ViewExecutionFlags.TriggersEnabled, null, new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification())));
                         int i = 0;
 
                         foreach (var viewComputationResultModel in viewComputationResultModels)

@@ -239,7 +239,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var sequence = ArbitraryViewCycleExecutionSequence.Create(Enumerable.Range(0, cyclesCount).Select(i => DateTimeOffset.Now + TimeSpan.FromHours(i)));
                 var options = new ExecutionOptions(sequence, ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, null, new ViewCycleExecutionOptions(default(DateTimeOffset), ExecutionOptions.GetDefaultMarketDataSpec()));
 
-                remoteViewClient.AttachToViewProcess(defn.Name, options);
+                remoteViewClient.AttachToViewProcess(defn.UniqueID, options);
                 
                 TimeSpan timeout = TimeSpan.FromMinutes(5);
                 if (! mre.WaitOne(timeout))

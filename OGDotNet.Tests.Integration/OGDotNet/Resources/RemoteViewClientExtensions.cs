@@ -12,28 +12,34 @@ using System.Linq;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public static class RemoteViewClientExtensions
     {
-        public static IEnumerable<IViewComputationResultModel> GetResults(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions)
-        {
-            return client.GetResults(viewDefinitionName, executionOptions, false);
-        }
-
-        public static IEnumerable<IViewComputationResultModel> GetResults(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
+        public static IEnumerable<IViewComputationResultModel> GetResults(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess = false)
         {
             return GetCycles(client, viewDefinitionName, executionOptions, newBatchProcess).Select(e => e.FullResult);
         }
 
-        public static IEnumerable<CycleCompletedArgs> GetCycles(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions)
+        public static IEnumerable<CycleCompletedArgs> GetCycles(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess = false)
         {
-            return GetCycles(client, viewDefinitionName, executionOptions, false);
+            return GetCycles(client, rvc => rvc.AttachToViewProcess(viewDefinitionName, executionOptions, newBatchProcess));
         }
 
-        public static IEnumerable<CycleCompletedArgs> GetCycles(this RemoteViewClient client, string viewDefinitionName, IViewExecutionOptions executionOptions, bool newBatchProcess)
+        public static IEnumerable<IViewComputationResultModel> GetResults(this RemoteViewClient client, UniqueId viewDefinitionId, IViewExecutionOptions executionOptions, bool newBatchProcess = false)
+        {
+            return GetCycles(client, viewDefinitionId, executionOptions, newBatchProcess).Select(e => e.FullResult);
+        }
+
+        public static IEnumerable<CycleCompletedArgs> GetCycles(this RemoteViewClient client, UniqueId viewDefinitionId, IViewExecutionOptions executionOptions, bool newBatchProcess = false)
+        {
+            return GetCycles(client, rvc => rvc.AttachToViewProcess(viewDefinitionId, executionOptions, newBatchProcess));
+        }
+
+        public static IEnumerable<CycleCompletedArgs> GetCycles(this RemoteViewClient client, Action<RemoteViewClient> attachAction)
         {
             using (var resultQueue = new BlockingCollection<object>(new ConcurrentQueue<object>()))
             using (var otherQueue = new BlockingCollection<object>(new ConcurrentQueue<object>()))
@@ -47,7 +53,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 client.SetResultListener(resultListener);
 
-                client.AttachToViewProcess(viewDefinitionName, executionOptions, newBatchProcess);
+                attachAction(client);
 
                 TimeSpan timeout = TimeSpan.FromMinutes(1);
 
@@ -63,7 +69,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         }
                         else
                         {
-                            var detailMessage = string.Format("for {0} after {1}\n state {2} is completed {3}", viewDefinitionName, timeout, client.GetState(), client.IsCompleted);
+                            var detailMessage = string.Format("for {0} after {1}\n state {2} is completed {3}", client.GetViewDefinition().Name, timeout, client.GetState(), client.IsCompleted);
                             switch (index)
                             {
                                 case 0:

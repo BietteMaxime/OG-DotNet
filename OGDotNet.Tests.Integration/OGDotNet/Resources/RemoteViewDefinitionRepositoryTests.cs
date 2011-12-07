@@ -7,11 +7,8 @@
 //-----------------------------------------------------------------------
 
 using System.Linq;
-using System.Threading;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Model.Resources;
-using OGDotNet.Tests.Integration.Xunit.Extensions;
-using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
@@ -62,10 +59,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        [Theory]
-        [TypedPropertyData("DefinitionNames")]
-        public void CanGetViewDefinition(string viewName)
+        [Xunit.Extensions.Fact]
+        public void CanGetViewDefinitionByName()
         {
+            const string viewName = "Equity Option Test View 1";
             var remoteViewResource = GetRepository().GetViewDefinition(viewName);
             Assert.NotNull(remoteViewResource);
             Assert.Equal(viewName, remoteViewResource.Name);

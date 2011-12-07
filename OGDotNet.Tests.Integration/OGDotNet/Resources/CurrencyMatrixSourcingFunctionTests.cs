@@ -70,7 +70,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 {
                     using (var viewClient = Context.ViewProcessor.CreateClient())
                     {
-                        var viewComputationResultModel = viewClient.GetResults(viewDefinition.Name, ExecutionOptions.SingleCycle).First();
+                        var viewComputationResultModel = viewClient.GetResults(viewDefinition.UniqueID, ExecutionOptions.SingleCycle).First();
                         return (double)viewComputationResultModel["Default", req].Value;
                     }
                 }

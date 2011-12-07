@@ -53,32 +53,30 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             return false;
         }
 
-        public static IEnumerable<string> DefinitionNames
-        {
-            get
-            {
-                var envViews = Environment.GetEnvironmentVariable(EnvVarName);
-                if (envViews != null)
-                {
-                    return envViews.Split(';');
-                }
-                var remoteEngineContext = Context;
-                var definitionNames = remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
-                var ret = InterestingView == null ? definitionNames.Where(IsNotBanned) : Enumerable.Repeat(InterestingView, 1);
-                if (ret.Any(e => e == null))
-                {
-                    throw new ArgumentException();
-                }
-                return ret;
-            }
-        }
-
         public static IEnumerable<ViewDefinition> ViewDefinitions
         {
             get
             {
+                HashSet<string> selectedNames = null;
+                var envViews = Environment.GetEnvironmentVariable(EnvVarName);
+                if (envViews != null)
+                {
+                    selectedNames = new HashSet<string>(envViews.Split(';'));
+                }
+                if (InterestingView != null)
+                {
+                    selectedNames = new HashSet<string> { InterestingView };
+                }
+
                 var remoteEngineContext = Context;
-                return DefinitionNames.Select(n => remoteEngineContext.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(n));
+                var definitionRepository = remoteEngineContext.ViewProcessor.ViewDefinitionRepository;
+                var included = definitionRepository
+                    .GetDefinitionEntries()
+                    .Where(e => selectedNames == null ? IsNotBanned(e.Value) : selectedNames.Contains(e.Value));
+                var definitions = included
+                    .Select(o => definitionRepository.GetViewDefinition(o.Key))
+                    .ToList();
+                return definitions;
             }
         }
 

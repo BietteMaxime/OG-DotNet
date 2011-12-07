@@ -55,7 +55,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 Assert.False(remoteViewClient.IsAttached);
-                remoteViewClient.AttachToViewProcess(vd.Name, ExecutionOptions.RealTime);
+                remoteViewClient.AttachToViewProcess(vd.UniqueID, ExecutionOptions.RealTime);
                 Assert.True(remoteViewClient.IsAttached);
                 remoteViewClient.DetachFromViewProcess();
                 Assert.False(remoteViewClient.IsAttached);
@@ -166,7 +166,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("ViewDefinitions")]
         public void CanStartAndGetAResult(ViewDefinition definition)
         {
-            Assert.NotNull(GetOneResultCache.Get(definition.Name));
+            Assert.NotNull(GetOneResultCache.Get(definition.UniqueID));
         }
 
         [Xunit.Extensions.Theory]
@@ -184,7 +184,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     (sender, e) => compilationResult.Add(e.Exception);
 
                 remoteViewClient.SetResultListener(eventViewResultListener);
-                remoteViewClient.AttachToViewProcess(definition.Name, ExecutionOptions.GetCompileOnly());
+                remoteViewClient.AttachToViewProcess(definition.UniqueID, ExecutionOptions.GetCompileOnly());
 
                 var result = compilationResult.Take();
                 Assert.IsNotType(typeof(Exception), result);
@@ -201,7 +201,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 var options = ExecutionOptions.RealTime;
-                var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
+                var resultsEnum = remoteViewClient.GetResults(viewDefinition.UniqueID, options);
 
                 var results = resultsEnum.Take(5).ToList();
                 Assert.True(results.All(r => r != null));
@@ -237,7 +237,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 var options = new ExecutionOptions(new InfiniteViewCycleExecutionSequence(), ViewExecutionFlags.TriggersEnabled | ViewExecutionFlags.AwaitMarketData, defaultExecutionOptions:new ViewCycleExecutionOptions(default(DateTimeOffset), new LiveMarketDataSpecification()));
-                var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options);
+                var resultsEnum = remoteViewClient.GetResults(viewDefinition.UniqueID, options);
 
                 var results = resultsEnum.Take(3).ToList();
                 Assert.True(results.All(r => r != null));
@@ -261,7 +261,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                 {
                     var options = ExecutionOptions.SingleCycle;
-                    var resultsEnum = remoteViewClient.GetResults(viewDefinition.Name, options, true);
+                    var resultsEnum = remoteViewClient.GetResults(viewDefinition.UniqueID, options, true);
 
                     var results = resultsEnum.Take(1).ToList();
                     var result = results.Single();
@@ -444,13 +444,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
-        static readonly Memoizer<string, IViewComputationResultModel> GetOneResultCache = new Memoizer<string, IViewComputationResultModel>(GetOneResult);
-        private static IViewComputationResultModel GetOneResult(string viewDefinitionName)
+        static readonly Memoizer<UniqueId, IViewComputationResultModel> GetOneResultCache = new Memoizer<UniqueId, IViewComputationResultModel>(GetOneResult);
+        private static IViewComputationResultModel GetOneResult(UniqueId viewDefinitionId)
         {
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
             {
                 var options = ExecutionOptions.SingleCycle;
-                return remoteViewClient.GetResults(viewDefinitionName, options).First();
+                return remoteViewClient.GetResults(viewDefinitionId, options).First();
             }
         }
 
@@ -462,7 +462,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 ICompiledViewDefinition compiledViewDefinition = null;
                 IViewComputationResultModel viewComputationResultModel = null;
-                ManualResetEvent resultsReady = new ManualResetEvent(false);
+                var resultsReady = new ManualResetEvent(false);
 
                 var listener = new EventViewResultListener();
                 listener.ViewDefinitionCompiled += delegate(object sender, ViewDefinitionCompiledArgs e)
@@ -476,7 +476,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                };
                 remoteViewClient.SetResultListener(listener);
 
-                remoteViewClient.AttachToViewProcess(viewDefinition.Name, ExecutionOptions.RealTime);
+                remoteViewClient.AttachToViewProcess(viewDefinition.UniqueID, ExecutionOptions.RealTime);
 
                 if (!resultsReady.WaitOne(TimeSpan.FromMinutes(2)))
                     throw new TimeoutException("Failed to get results for " + viewDefinition.Name + " client " + remoteViewClient.GetUniqueId());
@@ -547,7 +547,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("ViewDefinitions")]
         public void ViewResultsHaveSaneValues(ViewDefinition definition)
         {
-            var viewComputationResultModel = GetOneResultCache.Get(definition.Name);
+            var viewComputationResultModel = GetOneResultCache.Get(definition.UniqueID);
 
             foreach (var viewResultEntry in viewComputationResultModel.AllResults)
             {

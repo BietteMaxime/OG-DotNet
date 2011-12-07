@@ -30,7 +30,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
+                remoteClient.AttachToViewProcess(defn.UniqueID, ExecutionOptions.RealTime);
                 remoteClient.LiveDataOverrideInjector.AddValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, BloombergUid)), 100.0);
             }
         }
@@ -41,7 +41,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
+                remoteClient.AttachToViewProcess(defn.UniqueID, ExecutionOptions.RealTime);
                 remoteClient.LiveDataOverrideInjector.AddValue(BloombergId, "Market_Value", 100.0);
             }
         }
@@ -52,7 +52,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
+                remoteClient.AttachToViewProcess(defn.UniqueID, ExecutionOptions.RealTime);
                 remoteClient.LiveDataOverrideInjector.RemoveValue(new ValueRequirement("Market_Value", new ComputationTargetSpecification(ComputationTargetType.Primitive, BloombergUid)));
             }
         }
@@ -63,7 +63,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var defn = GetViewDefinition();
             using (var remoteClient = Context.ViewProcessor.CreateClient())
             {
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
+                remoteClient.AttachToViewProcess(defn.UniqueID, ExecutionOptions.RealTime);
                 remoteClient.LiveDataOverrideInjector.RemoveValue(BloombergId, "Market_Value");
             }
         }
@@ -88,7 +88,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                    mre.Set();
                                                };
                 remoteClient.SetResultListener(listener);
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
+                remoteClient.AttachToViewProcess(defn.UniqueID, ExecutionOptions.RealTime);
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);
 
                 mre.WaitOne();
@@ -118,7 +118,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     mre.Set();
                 };
                 remoteClient.SetResultListener(listener);
-                remoteClient.AttachToViewProcess(defn.Name, ExecutionOptions.RealTime);
+                remoteClient.AttachToViewProcess(defn.UniqueID, ExecutionOptions.RealTime);
                 liveDataOverrideInjector.AddValue(valueRequirement, newValue);
                 liveDataOverrideInjector.RemoveValue(valueRequirement);
                 
