@@ -34,24 +34,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Simple IR Future Option Test View" //PLAT-1459
                                                                   };
 
-        private static bool IsSlowTicking(string definitionName)
-        {
-            if (definitionName == InterestingView)
-                return false;
-            if (definitionName == "Primitives Only")
-                return true;
-            if (definitionName == "Bond Future Test View")
-                return true;
-            if (definitionName == "Bond View")
-                return true;
-            if (definitionName == "Bond View 2")
-                return true;
-            if (definitionName.StartsWith("Cash Equity"))
-                return true;
-            if (definitionName.StartsWith("GlobeOp Bond View"))
-                return true;
-            return false;
-        }
+        protected static readonly HashSet<string> FastTickingViews = new HashSet<string>
+                                                                  {
+                                                                      "Equity Option Test View 1",
+                                                                      "Demo Equity Option Test View",
+                                                                      "Simple Swap Test View",
+                                                                      "Simple Swaption Test View",
+                                                                      "Simple FRA Test View"
+                                                                  };
 
         public static IEnumerable<ViewDefinition> ViewDefinitions
         {
@@ -95,7 +85,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             get
             {
-                return ViewDefinitions.Where(n => !IsSlowTicking(n.Name));
+                return ViewDefinitions.Where(n => FastTickingViews.Contains(n.Name));
             }
         }
     }
