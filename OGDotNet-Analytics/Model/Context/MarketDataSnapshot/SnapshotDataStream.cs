@@ -40,7 +40,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
 
         protected override void AttachToViewProcess(RemoteViewClient remoteViewClient)
         {
-            remoteViewClient.AttachToViewProcess(_viewDefinition.Name, ExecutionOptions.Snapshot(_snapshotId));
+            remoteViewClient.AttachToViewProcess(_viewDefinition.UniqueID, ExecutionOptions.Snapshot(_snapshotId));
         }
 
         public Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> GetYieldCurves(DateTimeOffset waitFor, CancellationToken ct)

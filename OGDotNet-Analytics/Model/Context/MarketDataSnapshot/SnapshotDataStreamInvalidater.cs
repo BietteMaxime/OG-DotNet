@@ -54,8 +54,9 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                                                                             specs = _remoteEngineContext.MarketDataSnapshotter.GetYieldCurveRequirements(liveDataStream.RemoteViewClient, cycle);
                                                                             viewDefinition = GetViewDefinition(specs);
                                                                             viewDefinition.Name = tempViewName;
-                                                                            _remoteClient.ViewDefinitionRepository.
+                                                                            var uid = _remoteClient.ViewDefinitionRepository.
                                                                                 AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
+                                                                            viewDefinition.UniqueID = uid;
                                                                         }));
             return new SnapshotDataStream(viewDefinition, _remoteEngineContext, _snapshotId.ToLatest(), specs);
         }
