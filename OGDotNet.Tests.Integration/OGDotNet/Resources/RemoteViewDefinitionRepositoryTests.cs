@@ -37,6 +37,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Assert.NotEmpty(viewNames);
             Assert.DoesNotContain(null, viewNames);
             Assert.DoesNotContain(string.Empty, viewNames);
+            Assert.Contains("Equity Option Test View 1", viewNames);
         }
 
         [Xunit.Extensions.Fact]
