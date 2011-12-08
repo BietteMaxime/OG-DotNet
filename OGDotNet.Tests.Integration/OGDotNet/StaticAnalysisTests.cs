@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Fudge;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -47,7 +46,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                     case "Identifier":
                     case "Id":
                     case "UniqueIdentifier":
-                        throw new Exception(string.Format("{0} has property {1}, use UniqeId instead (And {2})", mappedType.Name, propertyInfo.Name, typeof(IUniqueIdentifiable).Name));
+                        throw new Exception(string.Format("{0} has property {1}, use UniqueId instead (And {2})", mappedType.Name, propertyInfo.Name, typeof(IUniqueIdentifiable).Name));
                 }
             }
         }
@@ -198,11 +197,22 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                     //Some fancy pants dynamic call
                     return;
                 }
+                var ldArg = ldStr.Previous;
+
                 string argName = (string)ldStr.Operand;
                 if (argName.Contains("."))
                 {
+                    //TODO multiple .s
                     //Some fancy pants fishing call
-                    return;
+                    var callVirt = ldArg;
+                    ldArg = callVirt.Previous;
+                    Assert.Equal(OpCodes.Callvirt, callVirt.OpCode);
+                    var operand = (MethodReference)callVirt.Operand;
+
+                    var property = argName.Substring(argName.IndexOf(".") + 1);
+                    Assert.Equal(operand.Name, "get_" + property);
+                    
+                    argName = argName.Substring(0, argName.IndexOf("."));
                 }
 
                 if (!method.Parameters.Cast<ParameterDefinition>().Any(p => p.Name == argName))
@@ -212,7 +222,6 @@ namespace OGDotNet.Tests.Integration.OGDotNet
 
                 if (methodReference.Name != "Not")
                 {//Only things which should be called directly on an arg
-                    var ldArg = ldStr.Previous;
                     ParameterDefinition parameterDefinition = GetParameterDefinition(method, ldArg);
                     if (parameterDefinition == null)
                     {
