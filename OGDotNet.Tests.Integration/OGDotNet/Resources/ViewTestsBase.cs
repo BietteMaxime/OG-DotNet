@@ -18,7 +18,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
     {
         const string EnvVarName = "GDotNet.Tests.Integration.DefinitionNames";
 
-        private static readonly string InterestingView = null; // Useful for debugging
+        protected static readonly string InterestingView = null; // Useful for debugging
 
         protected static readonly HashSet<string> BannedViews = new HashSet<string>
                                                                   {
