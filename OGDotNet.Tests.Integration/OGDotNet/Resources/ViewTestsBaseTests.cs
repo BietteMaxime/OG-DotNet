@@ -20,5 +20,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Contains(bannedView, definitionNames);
             }
         }
+
+        [Xunit.Extensions.Fact]
+        public void InterestingViewNotSet()
+        {
+            Assert.Null(InterestingView);
+        }
     }
 }
