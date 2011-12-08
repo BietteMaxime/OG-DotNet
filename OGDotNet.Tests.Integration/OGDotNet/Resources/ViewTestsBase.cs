@@ -26,6 +26,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Cash Equity Detailed Test View",
                                                                       "Cash Equity Test View",
                                                                       "Multi-Currency Swap Test View (2)",
+                                                                      "Equity Futures View TradelessPosition but Trade TargetType",
+                                                                      "Simple CMS Cap/Floor Test View",
+                                                                      "Multi-currency Equity Option Test View",
+                                                                      "Simple Ibor Cap/Floor Test View",
+                                                                      "Simple IR Future Option Test View (2)",
                                                                       "Simple IR Future Option Test View" //PLAT-1459
                                                                   };
 
