@@ -195,6 +195,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                 if (ldStr.OpCode != OpCodes.Ldstr)
                 {
                     //Some fancy pants dynamic call
+                    Assert.Equal(typeof(ArgumentChecker).FullName, method.DeclaringType.FullName);
                     return;
                 }
                 var ldArg = ldStr.Previous;
