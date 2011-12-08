@@ -65,7 +65,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var viewCalculationConfiguration = new ViewCalculationConfiguration("Default", new List<ValueRequirement> { req }, new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>());
                 viewDefinition.CalculationConfigurationsByName.Add("Default", viewCalculationConfiguration);
-                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
+                var uid = remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
+                viewDefinition.UniqueID = uid;
                 try
                 {
                     using (var viewClient = Context.ViewProcessor.CreateClient())

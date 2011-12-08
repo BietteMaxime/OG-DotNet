@@ -48,7 +48,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Core.marketdatasnapshot
                                    new Dictionary<string, ViewCalculationConfiguration> {{"Default", viewCalculationConfiguration}}, maxFullCalcPeriod:TimeSpan.FromSeconds(1));
             using (var remoteClient = Context.CreateUserClient())
             {
-                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(defn));
+                var uid = remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(defn));
+                defn.UniqueID = uid;
                 try
                 {
                     using (var remoteViewClient = Context.ViewProcessor.CreateClient())

@@ -27,7 +27,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             viewDefinition.CalculationConfigurationsByName.Add("Default", new ViewCalculationConfiguration("Default", new List<ValueRequirement> { valueRequirement }, new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>()));
             using (var remoteClient = context.CreateUserClient())
             {
-                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
+                var uid = remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
+                viewDefinition.UniqueID = uid;
             }
             _createdViews.Enqueue(Tuple.Create(context, viewDefinition.Name));
             return viewDefinition;

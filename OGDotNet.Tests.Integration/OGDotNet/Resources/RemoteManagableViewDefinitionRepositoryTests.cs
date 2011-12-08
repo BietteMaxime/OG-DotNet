@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Engine.Value;
@@ -112,7 +111,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName());
 
-                remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
+                var uid = remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(vd));
+                Assert.NotNull(uid);
+                vd.UniqueID = uid;
 
                 using (var remoteViewClient = Context.ViewProcessor.CreateClient())
                 {

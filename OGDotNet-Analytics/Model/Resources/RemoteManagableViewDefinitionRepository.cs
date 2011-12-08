@@ -23,9 +23,10 @@ namespace OGDotNet.Model.Resources
             _rest = rest;
         }
 
-        public void AddViewDefinition(AddViewDefinitionRequest request)
+        public UniqueId AddViewDefinition(AddViewDefinitionRequest request)
         {
-            _rest.Post(request);
+            var target = _rest.Create(request);
+            return target.Get<ViewDefinition>().UniqueID;
         }
 
         public void UpdateViewDefinition(UpdateViewDefinitionRequest request)
