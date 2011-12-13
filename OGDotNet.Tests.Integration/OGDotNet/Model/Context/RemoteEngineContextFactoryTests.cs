@@ -8,6 +8,7 @@
 
 using System;
 using System.Net;
+using Castle.Core.Logging;
 using OGDotNet.Mappedtypes;
 using OGDotNet.Model;
 using OGDotNet.Model.Context;
@@ -58,7 +59,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Model.Context
         private static RemoteEngineContextFactory GetContextFactory(Uri serviceUri, string configId)
         {
             var fudgeContext = new OpenGammaFudgeContext();
-            return new RemoteEngineContextFactory(fudgeContext, serviceUri, configId);
+            return new RemoteEngineContextFactory(fudgeContext, serviceUri, configId)
+                       {
+                           GlobalLogger = new ConsoleLogger(LoggerLevel.Debug)
+                       };
         }
     }
 }
