@@ -163,7 +163,7 @@ namespace OGDotNet.Model.Context
                 {
                     throw new WebException("Failed to get any service Uris");
                 }
-                var missingKeys = potentialServiceIds.Keys.Except(validServiceUris.Keys);
+                var missingKeys = potentialServiceIds.Keys.Except(validServiceUris.Keys).ToArray();
                 Logger.Warn("Failed to load services {0}", missingKeys);
                 return validServiceUris;
             }
