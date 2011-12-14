@@ -188,7 +188,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var result = compilationResult.Take();
                 Assert.IsNotType(typeof(Exception), result);
-                Assert.IsType(typeof(ICompiledViewDefinition), result);
+                Assert.IsAssignableFrom(typeof(ICompiledViewDefinition), result);
 
                 var viewDefin = (ICompiledViewDefinition)result;
                 ValueAssertions.AssertSensibleValue(viewDefin);
