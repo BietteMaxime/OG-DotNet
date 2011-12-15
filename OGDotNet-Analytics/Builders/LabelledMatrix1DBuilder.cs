@@ -12,6 +12,7 @@ using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Financial.Analytics;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;
 
@@ -75,29 +76,35 @@ namespace OGDotNet.Builders
                     string labelTypeName = labelTypes.Dequeue();
                     IFudgeField labelValue = labelValues.Dequeue();
 
-                    if (labelTypeName == "java.lang.String")
+                    switch (labelTypeName)
                     {
-                        var value = (string)labelValue.Value;
-                        labels.Add(value);
-                    }
-                    else if (labelTypeName == "com.opengamma.util.time.Tenor")
-                    {
-                        //TODO DOTNET-14 this is serialized as a string here
-                        string period = (string)labelValue.Value;
-                        labels.Add(new Tenor(period));
-                    }
-                    else if (labelTypeName == "com.opengamma.util.money.Currency")
-                    {
-                        string iso = (string) labelValue.Value;
-                        labels.Add(Currency.Create(iso));
-                    }
-                    else
-                    {//TODO work out whether this is right (and fast enough) in the general case
-                        var typeMapper = (IFudgeTypeMappingStrategy)Context.GetProperty(ContextProperties.TypeMappingStrategyProperty);
-                        Type labelType = typeMapper.GetType(labelTypeName);
+                        case "java.lang.String":
+                            var value = (string) labelValue.Value;
+                            labels.Add(value);
+                            break;
+                        case "com.opengamma.util.time.Tenor":
+                            //TODO DOTNET-14 this is serialized as a string here
+                            string period = (string) labelValue.Value;
+                            labels.Add(new Tenor(period));
+                            break;
+                        case "com.opengamma.util.money.Currency":
+                            string iso = (string) labelValue.Value;
+                            labels.Add(Currency.Create(iso));
+                            break;
+                        case "com.opengamma.id.ExternalId":
+                            string str = (string) labelValue.Value;
+                            labels.Add(ExternalId.Parse(str));
+                            break;
+                        default:
+                            //TODO work out whether this is right (and fast enough) in the general case
+                            var typeMapper =
+                                (IFudgeTypeMappingStrategy)
+                                Context.GetProperty(ContextProperties.TypeMappingStrategyProperty);
+                            Type labelType = typeMapper.GetType(labelTypeName);
 
-                        object label = deserializer.FromField(labelValue, labelType);
-                        labels.Add(label);
+                            object label = deserializer.FromField(labelValue, labelType);
+                            labels.Add(label);
+                            break;
                     }
                 }
             }
