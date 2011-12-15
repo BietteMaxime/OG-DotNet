@@ -274,7 +274,12 @@ namespace OGDotNet.Model
 
         private HttpWebRequest GetBasicRequest()
         {
-            var request = (HttpWebRequest)WebRequest.Create(_serviceUri);
+            return CreateBasicRequest(_serviceUri);
+        }
+
+        public static HttpWebRequest CreateBasicRequest(Uri requestUriString)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(requestUriString);
             request.Accept = FudgeMimeType;
             request.ContentType = FudgeMimeType;
             var uaAssembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();

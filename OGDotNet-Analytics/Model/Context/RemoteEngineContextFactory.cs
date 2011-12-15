@@ -115,8 +115,7 @@ namespace OGDotNet.Model.Context
                     var serviceId = potentialServiceId.Key;
                     foreach (var uri in potentialServiceId.Value)
                     {
-                        var webRequest = (HttpWebRequest)WebRequest.Create(uri);
-                        webRequest.Method = "HEAD";
+                        var webRequest = CreateTestRequest(uri);
                         var result = webRequest.BeginGetResponse(delegate { finishedRequests.Add(webRequest); }, serviceId);
                         var tuple = new Tuple<string, HttpWebRequest, IAsyncResult>(serviceId, webRequest, result);
                         requestsByHttpRequest.Add(webRequest, tuple);
@@ -167,6 +166,13 @@ namespace OGDotNet.Model.Context
                 Logger.Warn("Failed to load services {0}", missingKeys);
                 return validServiceUris;
             }
+        }
+
+        private static HttpWebRequest CreateTestRequest(string uri)
+        {
+            var webRequest = RestTarget.CreateBasicRequest(new Uri(uri));
+            webRequest.Method = "HEAD";
+            return webRequest;
         }
 
         private static bool IsValidResponse(Tuple<string, HttpWebRequest, IAsyncResult> tuple)
