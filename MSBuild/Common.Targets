@@ -56,7 +56,7 @@
                     OutputFile="$(VersionFileName)"
                     AssemblyVersion="$(VersionString)"
                     AssemblyFileVersion="$(VersionString)"
-                    AssemblyInformationalVersion="$(VersionString) $(BuildName)"
+                    AssemblyInformationalVersion="$(VersionString) $(BuildName) $(Configuration)"
                   />
 
     <ItemGroup>
