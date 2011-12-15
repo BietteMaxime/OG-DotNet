@@ -44,7 +44,7 @@
     <Warning Text="Not setting version information from command line due to missing MSBuild.Community.Tasks.targets" Condition="! exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets')" />
     <Warning Text="Not setting version information from command line due to no revision being specified" Condition="'$(Revision)' == '' " />
   </Target>
-  <Target Name="SetVersionTarget" Condition=" ('$(BuildingInsideVisualStudio)'!='true') and exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets') and '$(Revision)' != ''" >
+  <Target Name="SetVersionTarget" Condition=" exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets') and '$(Revision)' != ''" >
     <PropertyGroup>
       <VersionString>1.0.0.$(Revision)</VersionString>
       <VersionFileName>Properties\VersionInfo.cs</VersionFileName>
