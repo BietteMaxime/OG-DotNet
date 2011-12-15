@@ -51,6 +51,7 @@
     <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="Castle.Windsor, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="Fudge, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="log4net" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -91,6 +92,8 @@
     <Compile Include="Builders\ValuePropertiesBuilder.cs" />
     <Compile Include="Builders\VersionCorrectionBuilder.cs" />
     <Compile Include="Builders\VolatilitySurfaceDataBuilder.cs" />
+    <Compile Include="log4net\ApplicationNamePatternConverter.cs" />
+    <Compile Include="log4net\SpecialFolderPatternConverter.cs" />
     <Compile Include="Mappedtypes\Core\Change\AggregatingChangeListener.cs" />
     <Compile Include="Mappedtypes\Core\Change\ChangeEvent.cs" />
     <Compile Include="Mappedtypes\Core\Change\ChangeType.cs" />
@@ -393,6 +396,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="log4net\log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
