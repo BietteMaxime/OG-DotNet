@@ -92,8 +92,8 @@
     <Compile Include="Builders\ValuePropertiesBuilder.cs" />
     <Compile Include="Builders\VersionCorrectionBuilder.cs" />
     <Compile Include="Builders\VolatilitySurfaceDataBuilder.cs" />
-    <Compile Include="log4net\ApplicationNamePatternConverter.cs" />
-    <Compile Include="log4net\SpecialFolderPatternConverter.cs" />
+    <Compile Include="Log4net\ApplicationNamePatternConverter.cs" />
+    <Compile Include="Log4net\SpecialFolderPatternConverter.cs" />
     <Compile Include="Mappedtypes\Core\Change\AggregatingChangeListener.cs" />
     <Compile Include="Mappedtypes\Core\Change\ChangeEvent.cs" />
     <Compile Include="Mappedtypes\Core\Change\ChangeType.cs" />
@@ -396,7 +396,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="log4net\log4net.config">
+    <None Include="Log4net\log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">

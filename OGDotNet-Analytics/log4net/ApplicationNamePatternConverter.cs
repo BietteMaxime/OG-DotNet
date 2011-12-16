@@ -8,7 +8,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace OGDotNet.log4net
+namespace OGDotNet.Log4net
 {
     public class ApplicationNamePatternConverter : global::log4net.Util.PatternConverter
     {

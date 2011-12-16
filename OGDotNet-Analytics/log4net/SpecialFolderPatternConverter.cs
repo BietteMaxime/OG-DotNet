@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 using System;
 
-namespace OGDotNet.log4net
+namespace OGDotNet.Log4net
 {
     public class SpecialFolderPatternConverter : global::log4net.Util.PatternConverter
     {
