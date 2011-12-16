@@ -33,9 +33,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 return;
             }
-            Context.RemoteAvailableOutputs.MaxNodes = 100;
-            Context.RemoteAvailableOutputs.MaxPositions = 100;
-            var availableOutputs = Context.RemoteAvailableOutputs.GetPortfolioOutputs(portfolio);
+            var remoteAvailableOutputs = Context.RemoteAvailableOutputs;
+            remoteAvailableOutputs.MaxNodes = 20;
+            remoteAvailableOutputs.MaxPositions = 20;
+            var availableOutputs = remoteAvailableOutputs.GetPortfolioOutputs(portfolio);
             Assert.NotNull(availableOutputs);
             foreach (var securityType in availableOutputs.SecurityTypes)
             {
