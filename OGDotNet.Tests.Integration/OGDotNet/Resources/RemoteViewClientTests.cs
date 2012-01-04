@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
 using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
+using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Client;
 using OGDotNet.Mappedtypes.Engine.View.Compilation;
@@ -231,6 +232,28 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
         }
 
+        public void AssertNumberOfResultsIsConsistentOnRecompile(IEnumerable<IViewComputationResultModel> results)
+        {
+            HashSet<Tuple<string, ValueSpecification>> values = null;
+            foreach (var result in results)
+            {
+                Assert.NotNull(result);
+                var newValues = new HashSet<Tuple<string, ValueSpecification>>(result.AllResults.Select(r => Tuple.Create(r.CalculationConfiguration, r.ComputedValue.Specification)));
+                if (values != null)
+                {
+                    if (!values.SetEquals(newValues))
+                    {
+                        var missing = values.Except(newValues).ToList();
+                        var added = newValues.Except(values).ToList();
+                        throw new Exception(string.Format("Previously missing {0} results, now {1}. Missing {2}. Added {3}", values.Count, newValues.Count, String.Join(",", missing), String.Join(",", added)));
+                    }
+                }
+                else
+                {
+                    values = newValues;
+                }
+            }
+        }
         [Xunit.Extensions.Theory]
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void NumberOfResultsIsConsistent(ViewDefinition viewDefinition)
@@ -241,13 +264,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var resultsEnum = remoteViewClient.GetResults(viewDefinition.UniqueID, options);
 
                 var results = resultsEnum.Take(3).ToList();
-                Assert.True(results.All(r => r != null));
-                var counts = results.Select(r => r.AllResults.Count());
-                if (counts.Distinct().Count() != 1)
-                {
-                    throw new Exception(string.Format("Inconsistent number of results for {0} {1}", viewDefinition.Name, string.Join(",", counts.Select(c => c.ToString()))));
-                }
-                Assert.Equal(1, counts.Distinct().Count());
+                AssertNumberOfResultsIsConsistentOnRecompile(results);
             }
         }
 
@@ -255,7 +272,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [TypedPropertyData("FastTickingViewDefinitions")]
         public void NumberOfResultsIsConsistentOnRecompile(ViewDefinition viewDefinition)
         {
-            int? counts = null;
+            var results = new List<IViewComputationResultModel>();
             var viewProcess = new HashSet<UniqueId>();
             for (int i = 0; i < 10; i++)
             {
@@ -264,24 +281,15 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     var options = ExecutionOptions.SingleCycle;
                     var resultsEnum = remoteViewClient.GetResults(viewDefinition.UniqueID, options, true);
 
-                    var results = resultsEnum.Take(1).ToList();
-                    var result = results.Single();
+                    var result = resultsEnum.Take(1).ToList().Single();
                     if (!viewProcess.Add(result.ViewProcessId))
                     {
                         throw new Exception("Shared process");
                     }
-                    Assert.NotNull(result);
-                    int newCount = result.AllResults.Count();
-                    if (counts.HasValue)
-                    {
-                        Assert.Equal(counts.Value, newCount);
-                    }
-                    else
-                    {
-                        counts = newCount;
-                    }
+                    results.Add(result);
                 }
             }
+            AssertNumberOfResultsIsConsistentOnRecompile(results);
         }
 
         [Xunit.Extensions.Theory]
