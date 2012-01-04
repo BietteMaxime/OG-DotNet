@@ -154,7 +154,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemotePortfolioMaster(GetTarget("sharedPortfolioMaster"), _activeMQSpec, FudgeContext);
+                return new RemotePortfolioMaster(GetTarget("portfolioMaster"), _activeMQSpec, FudgeContext);
             }
         }
     }
