@@ -370,11 +370,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                         ((Task)task).ContinueWith(t => { var ignore = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
                         task.Start();
 
-                        Assert.False(task.Wait(TimeSpan.FromSeconds(5)));
+                        Assert.False(task.Wait(TimeSpan.FromSeconds(15)));
 
                         action(proc);
 
-                        return task.Wait(TimeSpan.FromSeconds(5));
+                        return task.Wait(TimeSpan.FromSeconds(15));
                     }
                 }
             }
