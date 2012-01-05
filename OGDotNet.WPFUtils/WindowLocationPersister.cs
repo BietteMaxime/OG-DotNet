@@ -35,6 +35,7 @@ namespace OGDotNet.WPFUtils
                 Dictionary<string, object> data = GetData((string)settings[settingName], id);
                 PickleWindow(window, data);
                 settings[settingName] = SaveData(data, id);
+                settings.Save();
             };
         }
 
