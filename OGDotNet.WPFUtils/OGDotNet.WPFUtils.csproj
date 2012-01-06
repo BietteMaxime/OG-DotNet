@@ -57,6 +57,9 @@
   <ItemGroup>
     <Compile Include="BindingUtils.cs" />
     <Compile Include="DoubleToColorConverterBase.cs" />
+    <Compile Include="FutureControl.xaml.cs">
+      <DependentUpon>FutureControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NonGenericCollectionsExtensionMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueToColorConverter.cs" />
@@ -69,6 +72,12 @@
       <Project>{D0AA326F-E93D-42D2-9E4E-A000406350BA}</Project>
       <Name>OGDotNet</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="FutureControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
