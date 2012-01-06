@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Xunit.Sdk;
 using TimeoutException = Xunit.Sdk.TimeoutException;
@@ -45,6 +46,10 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
 
         private static T WithRetry<T>(int shortAttempts, int maxAttempts, Func<T> action)
         {
+            if (Debugger.IsAttached)
+            {
+                return action();
+            }
             var es = new List<Exception>();
             int succcess = 0;
             for (int i = 0; i < maxAttempts; i++)
