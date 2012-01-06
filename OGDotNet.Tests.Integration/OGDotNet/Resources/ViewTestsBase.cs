@@ -31,6 +31,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Multi-currency Equity Option Test View",
                                                                       "Simple Ibor Cap/Floor Test View",
                                                                       "Simple IR Future Option Test View (2)",
+                                                                      "Simple IR Future Option Test View (3)",
                                                                       "Test Bond View",
                                                                       "Mixed Test View With Equity",
                                                                       "Mixed Test View",
