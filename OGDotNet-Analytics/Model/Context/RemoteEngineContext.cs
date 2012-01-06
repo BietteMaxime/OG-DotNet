@@ -91,7 +91,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteSecurityMaster(GetTarget("sharedSecurityMaster"));
+                return new RemoteSecurityMaster(GetTarget("securityMaster"));
             }
         }
 
@@ -106,7 +106,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteMarketDataSnapshotMaster(GetTarget("sharedMarketDataSnapshotMaster"), _activeMQSpec, FudgeContext);
+                return new RemoteMarketDataSnapshotMaster(GetTarget("marketDataSnapshotMaster"), _activeMQSpec, FudgeContext);
             }
         }
 
