@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Castle.Core.Logging;
 using Castle.Core.Resource;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -74,6 +75,7 @@ namespace OGDotNet.WPFUtils.Windsor
             FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), 
                 new FrameworkPropertyMetadata { DefaultValue = windowStyle }
                 );
+            FreezeDetector.HookUp(Dispatcher, _container.Resolve<ILogger>());
         }
 
         protected override void OnExit(ExitEventArgs e)
