@@ -13,10 +13,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OGDotNet.Mappedtypes;
+using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
+using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
+using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.Context;
@@ -71,6 +74,60 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     Context.MarketDataSnapshotMaster.Remove(proc.Snapshot.UniqueId);
                 }
             }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanCombineSnapshots()
+        {
+            ViewDefinition vd = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(@"Demo Equity Option Test View");
+            var snapshotManager = Context.MarketDataSnapshotManager;
+            Tuple<ManageableMarketDataSnapshot, ManageableMarketDataSnapshot> snaps;
+            using (var proc = snapshotManager.CreateFromViewDefinition(vd.Name))
+            {
+                var snapshot = proc.Snapshot;
+                snaps = Halve(snapshot);
+
+                snaps.Item1.Name = TestUtils.GetUniqueName();
+                snaps.Item2.Name = TestUtils.GetUniqueName();
+
+                Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, snaps.Item1));
+                Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, snaps.Item2));
+            }
+
+            try
+            {
+                var snapOptions = ExecutionOptions.GetSingleCycle(new CombinedMarketDataSpecification(new UserMarketDataSpecification(snaps.Item2.UniqueId), new UserMarketDataSpecification(snaps.Item1.UniqueId)));
+                var withSnapshot = GetFirstResult(snapOptions, vd.Name);
+
+                var options = ExecutionOptions.SingleCycle;
+                IViewComputationResultModel withoutSnapshot = GetFirstResult(options, vd.Name);
+
+                var withoutCount = CountResults(withoutSnapshot);
+                var withCount = CountResults(withSnapshot);
+                if (withoutCount != withCount)
+                {
+                    var withSpecs = new HashSet<ValueSpecification>(withSnapshot.AllResults.Select(r => r.ComputedValue.Specification));
+                    var withoutSpecs = new HashSet<ValueSpecification>(withoutSnapshot.AllResults.Select(r => r.ComputedValue.Specification));
+                    withoutSpecs.SymmetricExceptWith(withSpecs);
+                    Assert.True(false, string.Format("Running snapshot of {0} only had {1}, live had {2}", vd.Name, withCount, withoutCount));
+                }
+
+                Assert.Equal(withoutCount, withCount);
+            }
+            finally
+            {
+                Context.MarketDataSnapshotMaster.Remove(snaps.Item1.UniqueId);
+                Context.MarketDataSnapshotMaster.Remove(snaps.Item2.UniqueId);
+            }
+        }
+
+        private static Tuple<ManageableMarketDataSnapshot, ManageableMarketDataSnapshot> Halve(ManageableMarketDataSnapshot snapshot)
+        {
+            var structured = new ManageableMarketDataSnapshot(snapshot.BasisViewName, new ManageableUnstructuredMarketDataSnapshot(new Dictionary<MarketDataValueSpecification, IDictionary<string, ValueSnapshot>>()), snapshot.YieldCurves,
+                                                                                snapshot.VolatilityCubes, snapshot.VolatilitySurfaces);
+            var unstructured = new ManageableMarketDataSnapshot(snapshot.BasisViewName, snapshot.GlobalValues, new Dictionary<YieldCurveKey, ManageableYieldCurveSnapshot>(),
+                                                                                new Dictionary<VolatilityCubeKey, ManageableVolatilityCubeSnapshot>(), new Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>());
+            return Tuple.Create(structured, unstructured);
         }
 
         //TOD: Test that we haven't included market data globally which should only be in the structured objects
