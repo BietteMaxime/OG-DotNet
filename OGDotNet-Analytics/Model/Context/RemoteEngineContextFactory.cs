@@ -50,6 +50,7 @@ namespace OGDotNet.Model.Context
             {
                 throw new OpenGammaException("Missing config " + _configId);
             }
+            Logger.Debug("Config {0} {1}", _rootUri, msg);
             return msg;
         }
 
