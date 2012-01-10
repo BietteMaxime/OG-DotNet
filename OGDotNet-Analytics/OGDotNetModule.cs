@@ -29,7 +29,7 @@ namespace OGDotNet
             container.Resolve<LoggingUtils>().Init();
         }
 
-        public class LoggingUtils : LoggingClassBase, IDisposable
+        public sealed class LoggingUtils : LoggingClassBase, IDisposable
         {
             public LoggingUtils()
             {
