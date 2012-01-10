@@ -51,7 +51,7 @@ namespace OGDotNet.WPFUtils.Windsor
             {
                 _idleReached = false;
                 Thread.Sleep(MaxBusy);
-                if (! _idleReached)
+                if (! _idleReached && ! Debugger.IsAttached)
                 {
                     //Make sure we don't see our own post monitoring!
                     //TODO: should we sample more than once?
