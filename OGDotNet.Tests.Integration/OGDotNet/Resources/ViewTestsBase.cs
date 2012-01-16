@@ -40,6 +40,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "ETest",
                                                                       "ETest1",
                                                                       "ETest2",
+                                                                      "Afshin's Test View",
                                                                       "Simple IR Future Option Test View" //PLAT-1459
                                                                   };
 
