@@ -34,11 +34,11 @@ namespace OGDotNet.Model.Context
         private readonly ManageableMarketDataSnapshot _snapshot;
         private readonly RemoteMarketDataSnapshotMaster _marketDataSnapshotMaster;
         private readonly SnapshotLiveDataStreamInvalidater _liveDataStream;
-        private readonly SnapshotDataStreamInvalidater _snapshotDataStream;
+        private readonly Lazy<SnapshotDataStreamInvalidater> _snapshotDataStream;
 
         private readonly object _snapshotUidLock = new object();
         private readonly RemoteClient _remoteClient;
-        private UniqueId _temporarySnapshotUid;
+        private Lazy<UniqueId> _temporarySnapshotUid;
 
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, CancellationToken ct)
         {
@@ -61,8 +61,8 @@ namespace OGDotNet.Model.Context
             _remoteClient = remoteEngineContext.CreateUserClient();
             _marketDataSnapshotMaster = _remoteClient.MarketDataSnapshotMaster;
             _liveDataStream = liveDataStream;
-            _temporarySnapshotUid = _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, GetShallowCloneSnapshot())).UniqueId;
-            _snapshotDataStream = new SnapshotDataStreamInvalidater(_liveDataStream, remoteEngineContext, _temporarySnapshotUid);
+            _temporarySnapshotUid = new Lazy<UniqueId>(() => _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, GetShallowCloneSnapshot())).UniqueId);
+            _snapshotDataStream = new Lazy<SnapshotDataStreamInvalidater>(() => new SnapshotDataStreamInvalidater(_liveDataStream, remoteEngineContext, _temporarySnapshotUid.Value));
         }
 
         public ManageableMarketDataSnapshot Snapshot
@@ -92,13 +92,13 @@ namespace OGDotNet.Model.Context
             ManageableMarketDataSnapshot shallowClone = GetShallowCloneSnapshot();
             lock (_snapshotUidLock)
             {
-                shallowClone.UniqueId = _temporarySnapshotUid;
-                var snapshot = _marketDataSnapshotMaster.Update(new MarketDataSnapshotDocument(_temporarySnapshotUid, shallowClone));
-                _temporarySnapshotUid = snapshot.UniqueId;
+                shallowClone.UniqueId = _temporarySnapshotUid.Value;
+                var snapshot = _marketDataSnapshotMaster.Update(new MarketDataSnapshotDocument(_temporarySnapshotUid.Value, shallowClone));
+                _temporarySnapshotUid = new Lazy<UniqueId>(() => snapshot.UniqueId);
 
-                waitFor = _marketDataSnapshotMaster.Get(_temporarySnapshotUid).CorrectionFromInstant;
+                waitFor = _marketDataSnapshotMaster.Get(_temporarySnapshotUid.Value).CorrectionFromInstant;
             }
-            return _snapshotDataStream.With(ct, s => s.GetYieldCurves(waitFor, ct));
+            return _snapshotDataStream.Value.With(ct, s => s.GetYieldCurves(waitFor, ct));
         }
 
         private ManageableMarketDataSnapshot GetShallowCloneSnapshot()
@@ -114,9 +114,9 @@ namespace OGDotNet.Model.Context
         {
             if (disposing)
             {
-                _snapshotDataStream.Dispose();
+                _snapshotDataStream.Value.Dispose();
                 _liveDataStream.Dispose();
-                _marketDataSnapshotMaster.Remove(_temporarySnapshotUid.ToLatest());
+                _marketDataSnapshotMaster.Remove(_temporarySnapshotUid.Value.ToLatest());
                 _remoteClient.Dispose();
             }
         }
