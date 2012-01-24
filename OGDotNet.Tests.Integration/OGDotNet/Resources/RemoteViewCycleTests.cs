@@ -183,7 +183,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 remoteViewClient.SetResultListener(listener);
                 remoteViewClient.SetViewCycleAccessSupported(true);
                 var options = ExecutionOptions.RealTime;
-                remoteViewClient.AttachToViewProcess("Equity Option Test View 1", options);
+                remoteViewClient.AttachToViewProcess("Demo Equity Option Test View", options);
 
                 var cyclesList = new List<IEngineResourceReference<IViewCycle>>();
 
@@ -482,7 +482,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             });
         }
 
-        public static void WithViewCycle(Action<ViewDefinitionCompiledArgs, IViewCycle, RemoteViewClient> action, string viewName = "Equity Option Test View 1")
+        public static void WithViewCycle(Action<ViewDefinitionCompiledArgs, IViewCycle, RemoteViewClient> action, string viewName = "Demo Equity Option Test View")
         {
             using (var executedMre = new ManualResetEventSlim(false))
             using (var remoteViewClient = Context.ViewProcessor.CreateClient())
