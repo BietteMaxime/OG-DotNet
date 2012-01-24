@@ -86,6 +86,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 && !n.Contains("web form test") 
                 && !n.Contains("web test")
                 && !n.EndsWith("(afshin)")
+                && n.IndexOf("afshin", StringComparison.InvariantCultureIgnoreCase) < 0
                 && !n.Contains("Sandbox")
                 && n.Any(c => char.IsLower(c));
         }
