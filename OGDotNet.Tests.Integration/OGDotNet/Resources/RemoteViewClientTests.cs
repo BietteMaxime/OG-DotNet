@@ -61,6 +61,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 remoteViewClient.DetachFromViewProcess();
                 Assert.False(remoteViewClient.IsAttached);
             }
+            Thread.Sleep(TimeSpan.FromSeconds(10)); //[PLAT-1904] Try and wait for the compile to finish
         }
 
         [Xunit.Extensions.Fact]
