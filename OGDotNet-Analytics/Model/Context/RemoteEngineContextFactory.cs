@@ -126,7 +126,7 @@ namespace OGDotNet.Model.Context
                 while (requestsByHttpRequest.Any() || finishedRequests.Any())
                 {
                     HttpWebRequest completedHttpReq;
-                    if (!finishedRequests.TryTake(out completedHttpReq, 5000))
+                    if (!finishedRequests.TryTake(out completedHttpReq, 10000))
                     {
                         //NOTE Can't use WaitHandle.WaitAny On some implementations, if more that 64 handles are passed, a NotSupportedException is thrown, see http://msdn.microsoft.com/en-us/library/cc189983.aspx
                         //Have to timeout by hand, see http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx
