@@ -8,6 +8,7 @@
 using System;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.Portfolio;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {
@@ -15,31 +16,34 @@ namespace OGDotNet.Model.Resources
     {
         //TODO: this 
         private readonly RestTarget _restTarget;
+        private readonly RestTarget _portfoliosTarget;
         private readonly string _activeMQSpec;
         private readonly OpenGammaFudgeContext _fudgeContext;
 
         public RemotePortfolioMaster(RestTarget restTarget, string activeMQSpec, OpenGammaFudgeContext fudgeContext)
         {
             _restTarget = restTarget;
+            _portfoliosTarget = _restTarget.Resolve("portfolios");
             _fudgeContext = fudgeContext;
             _activeMQSpec = activeMQSpec;
         }
 
         public PortfolioSearchResult Search(PortfolioSearchRequest request)
         {
-            string bean = _restTarget.EncodeBean(request);
-            return _restTarget.Resolve(".", Tuple.Create("msg", bean)).Get<PortfolioSearchResult>();
+            string bean = _portfoliosTarget.EncodeBean(request);
+            return _portfoliosTarget.Resolve(".", Tuple.Create("msg", bean)).Get<PortfolioSearchResult>();
         }
 
         public PortfolioHistoryResult GetHistory(PortfolioHistoryRequest request)
         {
-            string bean = _restTarget.EncodeBean(request);
-            return _restTarget.Resolve(request.ObjectId.ToString()).Resolve("versions", Tuple.Create("msg", bean)).Get<PortfolioHistoryResult>();
+            string bean = _portfoliosTarget.EncodeBean(request);
+            return _portfoliosTarget.Resolve(request.ObjectId.ToString()).Resolve("versions", Tuple.Create("msg", bean)).Get<PortfolioHistoryResult>();
         }
 
         public PortfolioDocument Get(UniqueId uniqueId)
         {
-            var resp = _restTarget.Resolve(uniqueId.ToString()).Get<PortfolioDocument>();
+            ArgumentChecker.NotNull(uniqueId, "uniqueId");
+            var resp = _portfoliosTarget.Resolve(uniqueId.ToString()).Get<PortfolioDocument>();
             if (resp == null || resp.UniqueId == null || resp.Portfolio == null)
             {
                 throw new ArgumentException("Not found", "uniqueId");
@@ -51,7 +55,7 @@ namespace OGDotNet.Model.Resources
         {
             get
             {
-                return new RemoteChangeManger(_restTarget.Resolve("changeManager"), _activeMQSpec, _fudgeContext);
+                return new RemoteChangeManger(_portfoliosTarget.Resolve("changeManager"), _activeMQSpec, _fudgeContext);
             }
         }
     }
