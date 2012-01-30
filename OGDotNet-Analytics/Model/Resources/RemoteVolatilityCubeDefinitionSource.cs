@@ -20,7 +20,7 @@ namespace OGDotNet.Model.Resources
 
         public VolatilityCubeDefinition GetDefinition(Currency currency, string name)
         {
-            return _restTarget.Resolve(currency.ISOCode).Resolve(name).Get<VolatilityCubeDefinition>("definition");
+            return _restTarget.Resolve("definitions", "searchSingle").WithParam("currency", currency.ISOCode).WithParam("name", name).Get<VolatilityCubeDefinition>();
         }
     }
 }

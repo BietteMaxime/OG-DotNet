@@ -14,6 +14,7 @@ using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Financial.currency;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -59,7 +60,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             if (req.TargetSpecification.Type != ComputationTargetType.Primitive)
                 throw new NotImplementedException();
 
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 var viewDefinition = new ViewDefinition(TestUtils.GetUniqueName());
 

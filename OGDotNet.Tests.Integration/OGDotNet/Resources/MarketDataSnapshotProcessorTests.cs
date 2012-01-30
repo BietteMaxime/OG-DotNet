@@ -17,6 +17,7 @@ using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
 using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Math.Curve;
 using OGDotNet.Model.Context;
@@ -261,7 +262,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var snapshotManager = Context.MarketDataSnapshotManager;
 
             var viewDefinition = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(ViewDefinitionName);
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 SetTemporaryName(viewDefinition);
 
@@ -297,7 +298,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var snapshotManager = Context.MarketDataSnapshotManager;
 
             var viewDefinition = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(ViewDefinitionName);
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 SetTemporaryName(viewDefinition);
 
@@ -333,7 +334,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var snapshotManager = Context.MarketDataSnapshotManager;
 
             var viewDefinition = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(ViewDefinitionName);
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 SetTemporaryName(viewDefinition);
 
@@ -369,7 +370,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var snapshotManager = Context.MarketDataSnapshotManager;
 
             var viewDefinition = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(ViewDefinitionName);
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 SetTemporaryName(viewDefinition);
 

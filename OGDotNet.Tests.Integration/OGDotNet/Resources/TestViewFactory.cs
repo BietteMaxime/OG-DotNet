@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Model.Context;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
@@ -25,7 +26,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var viewDefinition = new ViewDefinition(TestUtils.GetUniqueName());
             viewDefinition.CalculationConfigurationsByName.Add("Default", new ViewCalculationConfiguration("Default", new List<ValueRequirement> { valueRequirement }, new Dictionary<string, HashSet<Tuple<string, ValueProperties>>>()));
-            using (var remoteClient = context.CreateUserClient())
+            using (var remoteClient = context.CreateFinancialClient())
             {
                 var uid = remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                 viewDefinition.UniqueID = uid;
@@ -39,7 +40,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             Tuple<RemoteEngineContext, string> tup;
             while (_createdViews.TryDequeue(out tup))
             {
-                using (var remoteClient = tup.Item1.CreateUserClient())
+                using (var remoteClient = tup.Item1.CreateFinancialClient())
                 {
                     remoteClient.ViewDefinitionRepository.RemoveViewDefinition(tup.Item2);
                 }

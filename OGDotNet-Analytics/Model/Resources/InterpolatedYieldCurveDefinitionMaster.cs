@@ -23,32 +23,39 @@ namespace OGDotNet.Model.Resources
 
         public YieldCurveDefinitionDocument Add(YieldCurveDefinitionDocument document)
         {
-            return PostDefinition(document, "add");
-        }
-
-        public YieldCurveDefinitionDocument AddOrUpdate(YieldCurveDefinitionDocument document)
-        {
-            return PostDefinition(document, "addOrUpdate");
-        }
-
-        private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
-        {
-            var respMsg = _restTarget.Resolve(path).Post<UniqueId>(document, "uniqueId");
-            var uid = respMsg;
-            if (uid == null)
+            var created = _restTarget.Resolve("definitions").Post<YieldCurveDefinitionDocument>(document);
+            if (created.UniqueId == null)
             {
                 throw new ArgumentException("No UID returned");
             }
 
-            document.UniqueId = uid;
+            document.UniqueId = created.UniqueId;
+
+            return document;
+        }
+
+        public YieldCurveDefinitionDocument AddOrUpdate(YieldCurveDefinitionDocument document)
+        {
+            return PostDefinition(document, "save");
+        }
+
+        private YieldCurveDefinitionDocument PostDefinition(YieldCurveDefinitionDocument document, string path)
+        {
+            var created = _restTarget.Resolve("definitions").Resolve("save").Post<YieldCurveDefinitionDocument>(document);
+            if (created.UniqueId == null)
+            {
+                throw new ArgumentException("No UID returned");
+            }
+
+            document.UniqueId = created.UniqueId;
 
             return document;
         }
 
         public YieldCurveDefinitionDocument Get(UniqueId uniqueId)
         {
-            var resp = _restTarget.Resolve("curves", uniqueId.ToString()).Get<YieldCurveDefinitionDocument>();
-            if (resp == null || resp.UniqueId == null || resp.Definition == null)
+            var resp = _restTarget.Resolve("definitions", uniqueId.ToString()).Get<YieldCurveDefinitionDocument>();
+            if (resp == null || resp.UniqueId == null || resp.YieldCurveDefinition == null)
             {
                 throw new ArgumentException("Not found", "uniqueId");
             }
@@ -57,7 +64,7 @@ namespace OGDotNet.Model.Resources
 
         public void Remove(UniqueId uniqueId)
         {
-            _restTarget.Resolve("curves").Resolve(uniqueId.ToString()).Delete();
+            _restTarget.Resolve("definitions").Resolve(uniqueId.ToString()).Delete();
         }
         //TODO Update, correct
     }

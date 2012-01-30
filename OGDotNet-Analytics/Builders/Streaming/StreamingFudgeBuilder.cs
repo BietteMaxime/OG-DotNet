@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Fudge.Encodings;
+using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Model;
 
 namespace OGDotNet.Builders.Streaming
@@ -23,7 +24,7 @@ namespace OGDotNet.Builders.Streaming
     {
         static readonly Dictionary<Type, IStreamingFudgeBuilder> Builders = new IStreamingFudgeBuilder[]
                                                                                 {
-                                                                                    new SecuritiesResponseStreamingBuilder(),
+                                                                                    new FudgeListWrapperStreamingBuilder<ISecurity>(), //TODO genericize
                                                                                     new DependencyGraphStreamingBuilder()
                                                                                 }.ToDictionary(b => b.Type);
 

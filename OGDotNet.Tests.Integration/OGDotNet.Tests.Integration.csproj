@@ -86,7 +86,7 @@
     <Compile Include="OGDotNet\Resources\InterpolatedYieldCurveSpecificationBuilderTests.cs" />
     <Compile Include="OGDotNet\Resources\MarketDataSnapshotManagerTests.cs" />
     <Compile Include="OGDotNet\Resources\MarketDataSnapshotProcessorTests.cs" />
-    <Compile Include="OGDotNet\Resources\RemoteClientTests.cs" />
+    <Compile Include="OGDotNet\Resources\FinancialClientTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteCurrencyMatrixSourceTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteHistoricalTimeSeriesSourceTests.cs" />
     <Compile Include="OGDotNet\Resources\RemoteLiveDataInjectorTests.cs" />

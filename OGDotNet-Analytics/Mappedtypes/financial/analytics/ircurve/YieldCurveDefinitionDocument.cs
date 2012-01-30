@@ -24,7 +24,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
         {
         }
 
-        public YieldCurveDefinition Definition { get; set; }
+        public YieldCurveDefinition YieldCurveDefinition { get; set; }
 
         public override UniqueId UniqueId { get; set; }
 
@@ -36,9 +36,9 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             DateTimeOffset versionFromInstant = GetDocumentValues(ffc, out versionToInstant, out correctionFromInstant, out correctionToInstant);
 
             var uid = (ffc.GetString("uniqueId") != null) ? UniqueId.Parse(ffc.GetString("uniqueId")) : deserializer.FromField<UniqueId>(ffc.GetByName("uniqueId"));
-            var definition  = deserializer.FromField<YieldCurveDefinition>(ffc.GetByName("definition"));
+            var definition  = deserializer.FromField<YieldCurveDefinition>(ffc.GetByName("yieldCurveDefinition"));
 
-            return new YieldCurveDefinitionDocument(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant) { Definition = definition, UniqueId = uid};
+            return new YieldCurveDefinitionDocument(versionFromInstant, versionToInstant, correctionFromInstant, correctionToInstant) { YieldCurveDefinition = definition, UniqueId = uid};
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
@@ -49,7 +49,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
             {
                 a.Add("uniqueId", UniqueId.ToString());
             }
-            a.Add("definition", Definition);
+            a.Add("yieldCurveDefinition", YieldCurveDefinition);
         }
     }
 }

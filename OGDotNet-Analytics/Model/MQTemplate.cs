@@ -27,5 +27,10 @@ namespace OGDotNet.Model
         {
             return _factory.CreateConnection();
         }
+
+        public string ActiveMqSpec
+        {
+            get { return _activeMqSpec; }
+        }
     }
 }

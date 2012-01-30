@@ -15,6 +15,7 @@ using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;
@@ -46,7 +47,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Core.marketdatasnapshot
             var defn = new ViewDefinition(vdName, new ResultModelDefinition(ResultOutputMode.TerminalOutputs),
                                calculationConfigurationsByName:
                                    new Dictionary<string, ViewCalculationConfiguration> {{"Default", viewCalculationConfiguration}}, maxFullCalcPeriod:TimeSpan.FromSeconds(1));
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 var uid = remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(defn));
                 defn.UniqueID = uid;

@@ -40,6 +40,14 @@ namespace OGDotNet.Model.Resources
             }
         }
 
+        public RemoteMarketDataSnapshotter MarketDataSnapshotter
+        {
+            get
+            {
+                return new RemoteMarketDataSnapshotter(_rest.Resolve("marketDataSnapshotter"));
+            }
+        }
+
         public RemoteViewClient CreateClient(UserPrincipal userPrincipal)
         {
             var clientUri = _rest.Resolve("clients").Create(userPrincipal);

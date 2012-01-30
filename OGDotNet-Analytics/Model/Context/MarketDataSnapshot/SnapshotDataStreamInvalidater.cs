@@ -12,12 +12,9 @@ using System.Threading;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
-using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.Math.Curve;
-using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context.MarketDataSnapshot
 {
@@ -27,14 +24,14 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
         private readonly SnapshotLiveDataStreamInvalidater _liveStream;
         private readonly RemoteEngineContext _remoteEngineContext;
         private readonly UniqueId _snapshotId;
-        private readonly RemoteClient _remoteClient;
+        private readonly FinancialClient _financialClient;
 
         public SnapshotDataStreamInvalidater(SnapshotLiveDataStreamInvalidater liveStream, RemoteEngineContext remoteEngineContext, UniqueId snapshotId)
         {
             _liveStream = liveStream;
             _remoteEngineContext = remoteEngineContext;
             _snapshotId = snapshotId;
-            _remoteClient = remoteEngineContext.CreateUserClient();
+            _financialClient = remoteEngineContext.CreateFinancialClient();
             _liveStream.GraphChanged += OnGraphChanged;
             
             _constructedEvent.Set();
@@ -51,10 +48,10 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
                                                                     (cycle, results) =>
                                                                         {
                                                                             var tempViewName = string.Format("{0}-{1}", typeof(SnapshotDataStream).Name, Guid.NewGuid());
-                                                                            specs = _remoteEngineContext.MarketDataSnapshotter.GetYieldCurveRequirements(liveDataStream.RemoteViewClient, cycle);
+                                                                            specs = _remoteEngineContext.ViewProcessor.MarketDataSnapshotter.GetYieldCurveRequirements(liveDataStream.RemoteViewClient, cycle);
                                                                             viewDefinition = GetViewDefinition(specs);
                                                                             viewDefinition.Name = tempViewName;
-                                                                            var uid = _remoteClient.ViewDefinitionRepository.
+                                                                            var uid = _financialClient.ViewDefinitionRepository.
                                                                                 AddViewDefinition(new AddViewDefinitionRequest(viewDefinition));
                                                                             viewDefinition.UniqueID = uid;
                                                                         }));
@@ -81,7 +78,7 @@ namespace OGDotNet.Model.Context.MarketDataSnapshot
             if (disposing)
             {
                 _liveStream.GraphChanged -= OnGraphChanged;
-                _remoteClient.Dispose();
+                _financialClient.Dispose();
             }
         }
     }

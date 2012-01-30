@@ -14,6 +14,7 @@ using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
 using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Math.Curve;
@@ -37,7 +38,7 @@ namespace OGDotNet.Model.Context
         private readonly Lazy<SnapshotDataStreamInvalidater> _snapshotDataStream;
 
         private readonly object _snapshotUidLock = new object();
-        private readonly RemoteClient _remoteClient;
+        private readonly FinancialClient _financialClient;
         private Lazy<UniqueId> _temporarySnapshotUid;
 
         internal static MarketDataSnapshotProcessor Create(RemoteEngineContext context, ViewDefinition definition, CancellationToken ct)
@@ -58,8 +59,8 @@ namespace OGDotNet.Model.Context
         private MarketDataSnapshotProcessor(ManageableMarketDataSnapshot snapshot, RemoteEngineContext remoteEngineContext, SnapshotLiveDataStreamInvalidater liveDataStream)
         {
             _snapshot = snapshot;
-            _remoteClient = remoteEngineContext.CreateUserClient();
-            _marketDataSnapshotMaster = _remoteClient.MarketDataSnapshotMaster;
+            _financialClient = remoteEngineContext.CreateFinancialClient();
+            _marketDataSnapshotMaster = _financialClient.MarketDataSnapshotMaster;
             _liveDataStream = liveDataStream;
             _temporarySnapshotUid = new Lazy<UniqueId>(() => _marketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, GetShallowCloneSnapshot())).UniqueId);
             _snapshotDataStream = new Lazy<SnapshotDataStreamInvalidater>(() => new SnapshotDataStreamInvalidater(_liveDataStream, remoteEngineContext, _temporarySnapshotUid.Value));
@@ -117,7 +118,7 @@ namespace OGDotNet.Model.Context
                 _snapshotDataStream.Value.Dispose();
                 _liveDataStream.Dispose();
                 _marketDataSnapshotMaster.Remove(_temporarySnapshotUid.Value.ToLatest());
-                _remoteClient.Dispose();
+                _financialClient.Dispose();
             }
         }
     }

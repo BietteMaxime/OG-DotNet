@@ -14,6 +14,7 @@ using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;
@@ -29,7 +30,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanGet()
         {
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 Assert.NotNull(remoteClient.ViewDefinitionRepository);
             }
@@ -48,7 +49,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             ValueRequirement req = GetRequirement();
 
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName() + hardUriPart);
 
@@ -72,7 +73,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             ValueRequirement req = GetRequirement();
 
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName() + "UPDATE");
 
@@ -96,7 +97,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CantRemoveMissingView()
         {
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 Assert.Throws<DataNotFoundException>(() => remoteClient.ViewDefinitionRepository.RemoveViewDefinition(TestUtils.GetUniqueName()));
             }
@@ -107,7 +108,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             ValueRequirement req = GetRequirement();
 
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 ViewDefinition vd = GetViewDefinition(req, TestUtils.GetUniqueName());
 
@@ -133,7 +134,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             [TypedPropertyData("FastTickingViewDefinitions")]
             public void RoundTrippedViewsInit(ViewDefinition viewDefinition)
             {
-                using (var remoteClient = Context.CreateUserClient())
+                using (var remoteClient = Context.CreateFinancialClient())
                 {
                     viewDefinition.Name = viewDefinition.Name;
 

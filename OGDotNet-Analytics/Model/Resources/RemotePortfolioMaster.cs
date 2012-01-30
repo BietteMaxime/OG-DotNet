@@ -14,36 +14,34 @@ namespace OGDotNet.Model.Resources
 {
     public class RemotePortfolioMaster
     {
-        //TODO: this 
         private readonly RestTarget _restTarget;
-        private readonly RestTarget _portfoliosTarget;
-        private readonly string _activeMQSpec;
         private readonly OpenGammaFudgeContext _fudgeContext;
 
-        public RemotePortfolioMaster(RestTarget restTarget, string activeMQSpec, OpenGammaFudgeContext fudgeContext)
+        public RemotePortfolioMaster(RestTarget restTarget, OpenGammaFudgeContext fudgeContext)
         {
             _restTarget = restTarget;
-            _portfoliosTarget = _restTarget.Resolve("portfolios");
             _fudgeContext = fudgeContext;
-            _activeMQSpec = activeMQSpec;
         }
 
         public PortfolioSearchResult Search(PortfolioSearchRequest request)
         {
-            string bean = _portfoliosTarget.EncodeBean(request);
-            return _portfoliosTarget.Resolve(".", Tuple.Create("msg", bean)).Get<PortfolioSearchResult>();
+            return _restTarget.Resolve("portfolioSearches").Post<PortfolioSearchResult>(request);
         }
 
         public PortfolioHistoryResult GetHistory(PortfolioHistoryRequest request)
         {
-            string bean = _portfoliosTarget.EncodeBean(request);
-            return _portfoliosTarget.Resolve(request.ObjectId.ToString()).Resolve("versions", Tuple.Create("msg", bean)).Get<PortfolioHistoryResult>();
+            //request
+            return _restTarget.Resolve("portfolios").Resolve(request.ObjectId.ToString()).Resolve("versions")
+                //TODO fudge
+                .WithParam("objectId", request.ObjectId.ToString())
+                .WithParam("depth", request.Depth.ToString())
+                .Get<PortfolioHistoryResult>();
         }
 
         public PortfolioDocument Get(UniqueId uniqueId)
         {
             ArgumentChecker.NotNull(uniqueId, "uniqueId");
-            var resp = _portfoliosTarget.Resolve(uniqueId.ToString()).Get<PortfolioDocument>();
+            var resp = _restTarget.Resolve("portfolios").Resolve(uniqueId.ObjectID.ToString()).Get<PortfolioDocument>();
             if (resp == null || resp.UniqueId == null || resp.Portfolio == null)
             {
                 throw new ArgumentException("Not found", "uniqueId");
@@ -55,7 +53,7 @@ namespace OGDotNet.Model.Resources
         {
             get
             {
-                return new RemoteChangeManger(_portfoliosTarget.Resolve("changeManager"), _activeMQSpec, _fudgeContext);
+                return new RemoteChangeManger(_restTarget.Resolve("portfolios", "changeManager"), _fudgeContext);
             }
         }
     }

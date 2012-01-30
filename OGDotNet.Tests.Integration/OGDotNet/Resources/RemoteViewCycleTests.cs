@@ -489,6 +489,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             {
                 ViewDefinitionCompiledArgs compiled = null;
                 CycleCompletedArgs cycle = null;
+                JavaException error = null;
                 var listener = new EventViewResultListener();
                 listener.ProcessCompleted += delegate { executedMre.Set(); };
                 listener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
@@ -497,6 +498,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                    executedMre.Set();
                                                };
                 listener.ViewDefinitionCompiled += delegate(object sender, ViewDefinitionCompiledArgs e) { compiled = e; };
+                listener.ViewDefinitionCompilationFailed += delegate(object sender, ViewDefinitionCompilationFailedArgs e)
+                                                                {
+                                                                    error = e.Exception; 
+                                                                    executedMre.Set(); 
+                                                                };
 
                 remoteViewClient.SetResultListener(listener);
                 remoteViewClient.SetViewCycleAccessSupported(true);
@@ -504,6 +510,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 Assert.Null(remoteViewClient.CreateLatestCycleReference());
 
                 executedMre.Wait(TimeSpan.FromMinutes(1));
+                Assert.Null(error);
                 Assert.NotNull(compiled);
                 Assert.NotNull(cycle);
 

@@ -68,6 +68,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 foreach (var doc in portfolioHistoryResult.Documents)
                 {
                     Assert.Equal(doc.UniqueId.ObjectID, portfolioDocument.UniqueId.ObjectID);
+                    //TODO assert depth respected
                 }
                 Assert.True(portfolioHistoryResult.Documents.Any(d => d.UniqueId.Equals(portfolioDocument.UniqueId)));
             }

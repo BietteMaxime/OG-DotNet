@@ -35,6 +35,27 @@ namespace OGDotNet.Model
                 return this;
             return Resolve(segments.First()).Resolve(segments.Skip(1).ToArray());
         }
+
+        public RestTarget WithParam(string param, bool value)
+        {
+            return WithParam(param, value.ToString());
+        }
+
+        public RestTarget WithParam(string param, string value)
+        {
+            var uriBuilder = new UriBuilder(_serviceUri);
+            uriBuilder.Query += "&" + string.Join("&", string.Format("{0}={1}", Uri.EscapeDataString(param), Uri.EscapeDataString(value)));
+            var serviceUri = uriBuilder.Uri;
+
+            UriHacks.LeaveDotsAndSlashesEscaped(serviceUri);
+            if (!_serviceUri.IsBaseOf(serviceUri))
+            {
+                throw new ArgumentException("Failed to resolve uri sensibly", "method");
+            }
+
+            return new RestTarget(_fudgeContext, serviceUri);
+        }
+
         public RestTarget Resolve(string method, params Tuple<string, string>[] queryParams)
         {
             var safeMethod = Uri.EscapeDataString(method);

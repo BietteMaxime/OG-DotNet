@@ -8,7 +8,9 @@
 
 using System;
 using System.Linq;
+using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.Model.Resources;
@@ -24,9 +26,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CanGet()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
-                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = financialClient.InterpolatedYieldCurveDefinitionMaster;
                 Assert.NotNull(interpolatedYieldCurveDefinitionMaster);
             }
         }
@@ -34,23 +36,23 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CanAdd()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
-                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = financialClient.InterpolatedYieldCurveDefinitionMaster;
                 var yieldCurveDefinitionDocument = GenerateDocument();
                 var newDoc = interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
 
                 Assert.True(ReferenceEquals(newDoc, yieldCurveDefinitionDocument));
-                Assert.True(ReferenceEquals(newDoc.Definition, yieldCurveDefinitionDocument.Definition));
+                Assert.True(ReferenceEquals(newDoc.YieldCurveDefinition, yieldCurveDefinitionDocument.YieldCurveDefinition));
                 Assert.NotNull(yieldCurveDefinitionDocument.UniqueId);
             }
         }
         [Fact]
         public void CantAddTwice()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
-                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = financialClient.InterpolatedYieldCurveDefinitionMaster;
                 var yieldCurveDefinitionDocument = GenerateDocument();
                 interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
                 var exception = Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument));
@@ -61,9 +63,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CantAddOrUpdate()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
-                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = financialClient.InterpolatedYieldCurveDefinitionMaster;
                 var yieldCurveDefinitionDocument = GenerateDocument();
                 interpolatedYieldCurveDefinitionMaster.AddOrUpdate(yieldCurveDefinitionDocument);
             }
@@ -71,9 +73,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CantAddOrUpdateAfterAdd()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
-                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = financialClient.InterpolatedYieldCurveDefinitionMaster;
                 var yieldCurveDefinitionDocument = GenerateDocument();
                 interpolatedYieldCurveDefinitionMaster.Add(yieldCurveDefinitionDocument);
                 interpolatedYieldCurveDefinitionMaster.AddOrUpdate(yieldCurveDefinitionDocument);
@@ -83,9 +85,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CanAddAndGet()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
-                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = financialClient.InterpolatedYieldCurveDefinitionMaster;
 
                 YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
 
@@ -96,27 +98,25 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CantGetMissing()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
-                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
-
-                var argumentException = Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Get(UniqueId.Create("XX", "Mising" + Guid.NewGuid())));
-                Assert.True(argumentException.Message.StartsWith("Not found"));
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = financialClient.InterpolatedYieldCurveDefinitionMaster;
+                Assert.Throws<DataNotFoundException>(() => interpolatedYieldCurveDefinitionMaster.Get(UniqueId.Create("InMemoryInterpolatedYieldCurveDefinition", long.MaxValue.ToString())));
             }
         }
 
         [Fact]
         public void CanAddAndGetRegions()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
-                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = financialClient.InterpolatedYieldCurveDefinitionMaster;
 
                 foreach (ExternalId region in new[] { null, new ExternalId("XX", "12"), new ExternalId("asd", "asd") })
                 {
                     YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
 
-                    yieldCurveDefinitionDocument.Definition.Region = region;
+                    yieldCurveDefinitionDocument.YieldCurveDefinition.Region = region;
                     AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
                 }
             }
@@ -125,10 +125,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CanAddAndGetAllInstrumentTypes()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
                 InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster =
-                    remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                    financialClient.InterpolatedYieldCurveDefinitionMaster;
                 YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
 
                 foreach (StripInstrumentType stripInstrumentType in Enum.GetValues(typeof(StripInstrumentType)))
@@ -142,7 +142,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                     if (stripInstrumentType == StripInstrumentType.Future)
                         fixedIncomeStrip.NthFutureFromTenor = 12;
 
-                    yieldCurveDefinitionDocument.Definition.AddStrip(fixedIncomeStrip);
+                    yieldCurveDefinitionDocument.YieldCurveDefinition.AddStrip(fixedIncomeStrip);
                 }
 
                 AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
@@ -152,17 +152,16 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Fact]
         public void CanAddAndRemove()
         {
-            using (RemoteClient remoteClient = Context.CreateUserClient())
+            using (FinancialClient financialClient = Context.CreateFinancialClient())
             {
-                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = remoteClient.InterpolatedYieldCurveDefinitionMaster;
+                InterpolatedYieldCurveDefinitionMaster interpolatedYieldCurveDefinitionMaster = financialClient.InterpolatedYieldCurveDefinitionMaster;
 
                 YieldCurveDefinitionDocument yieldCurveDefinitionDocument = GenerateDocument();
 
                 AssertRoundTrip(interpolatedYieldCurveDefinitionMaster, yieldCurveDefinitionDocument);
                 interpolatedYieldCurveDefinitionMaster.Remove(yieldCurveDefinitionDocument.UniqueId);
 
-                var argumentException = Assert.Throws<ArgumentException>(() => interpolatedYieldCurveDefinitionMaster.Get(yieldCurveDefinitionDocument.UniqueId));
-                Assert.True(argumentException.Message.StartsWith("Not found"));
+                Assert.Throws<DataNotFoundException>(() => interpolatedYieldCurveDefinitionMaster.Get(yieldCurveDefinitionDocument.UniqueId));
             }
         }
 
@@ -172,9 +171,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             YieldCurveDefinitionDocument roundtrippedDoc = interpolatedYieldCurveDefinitionMaster.Get(yieldCurveDefinitionDocument.UniqueId);
 
-            YieldCurveDefinition roundTripped = roundtrippedDoc.Definition;
+            YieldCurveDefinition roundTripped = roundtrippedDoc.YieldCurveDefinition;
 
-            var yieldCurveDefinition = yieldCurveDefinitionDocument.Definition;
+            var yieldCurveDefinition = yieldCurveDefinitionDocument.YieldCurveDefinition;
             Assert.Equal(yieldCurveDefinition.Name, roundTripped.Name);
             Assert.Equal(yieldCurveDefinition.InterpolatorName, roundTripped.InterpolatorName);
             Assert.Equal(yieldCurveDefinition.Currency, roundTripped.Currency);
@@ -192,7 +191,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             yieldCurveDefinition.AddStrip(new FixedIncomeStrip { ConventionName = "DEFAULT", CurveNodePointTime = Tenor.TwoYears, InstrumentType = StripInstrumentType.Future, NthFutureFromTenor = 23 });
             return new YieldCurveDefinitionDocument
                        {
-                           Definition = yieldCurveDefinition
+                           YieldCurveDefinition = yieldCurveDefinition
                        };
         }
     }

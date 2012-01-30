@@ -141,7 +141,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanAddAndGetUser()
         {
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 var snapshotMaster = remoteClient.MarketDataSnapshotMaster;
                 CanAddAndGet(snapshotMaster);

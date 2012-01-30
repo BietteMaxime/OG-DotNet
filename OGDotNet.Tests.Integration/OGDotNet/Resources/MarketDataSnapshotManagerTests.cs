@@ -47,7 +47,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var proc = snapshotManager.CreateFromViewDefinition(vd.Name))
             {
                 proc.Snapshot.Name = TestUtils.GetUniqueName();
-                Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
+                var uid = Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot)).UniqueId;
 
                 try
                 {
@@ -71,7 +71,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 }
                 finally
                 {
-                    Context.MarketDataSnapshotMaster.Remove(proc.Snapshot.UniqueId);
+                    Context.MarketDataSnapshotMaster.Remove(uid);
                 }
             }
         }
@@ -409,10 +409,11 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
             using (var proc = snapshotManager.CreateFromViewDefinition(viewName))
             {
-                proc.Snapshot.Name = TestUtils.GetUniqueName();
-                Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, proc.Snapshot));
-
-                var options = optionsFactory(proc.Snapshot.UniqueId);
+                var manageableMarketDataSnapshot = proc.Snapshot;
+                manageableMarketDataSnapshot.Name = TestUtils.GetUniqueName();
+                var post = Context.MarketDataSnapshotMaster.Add(new MarketDataSnapshotDocument(null, manageableMarketDataSnapshot));
+                manageableMarketDataSnapshot = post.Snapshot;
+                var options = optionsFactory(manageableMarketDataSnapshot.UniqueId);
 
                 var noTickOptions = GetNoTickOptions(options);
 

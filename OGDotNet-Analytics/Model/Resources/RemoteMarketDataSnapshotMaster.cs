@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
@@ -18,14 +17,12 @@ namespace OGDotNet.Model.Resources
     public class RemoteMarketDataSnapshotMaster : IMaster<MarketDataSnapshotDocument>
     {
         private readonly RestTarget _restTarget;
-        private readonly string _activeMQSpec;
         private readonly OpenGammaFudgeContext _fudgeContext;
 
-        public RemoteMarketDataSnapshotMaster(RestTarget restTarget, string activeMQSpec, OpenGammaFudgeContext fudgeContext)
+        public RemoteMarketDataSnapshotMaster(RestTarget restTarget, OpenGammaFudgeContext fudgeContext)
         {
             _restTarget = restTarget;
             _fudgeContext = fudgeContext;
-            _activeMQSpec = activeMQSpec;
         }
 
         public SearchResult<MarketDataSnapshotDocument> Search(string name, PagingRequest pagingRequest)
@@ -36,12 +33,13 @@ namespace OGDotNet.Model.Resources
 
         public SearchResult<MarketDataSnapshotDocument> Search(MarketDataSnapshotSearchRequest request)
         {
-            return _restTarget.Resolve("search").Post<SearchResult<MarketDataSnapshotDocument>>(request);
+            return _restTarget.Resolve("snapshotSearches").Post<SearchResult<MarketDataSnapshotDocument>>(request);
         }
 
         public MarketDataSnapshotDocument Add(MarketDataSnapshotDocument document)
         {
-            return PostDefinition(document, "add");
+            var r = _restTarget.Resolve("snapshots").Post<MarketDataSnapshotDocument>(document);
+            return Update(document, r);
         }
 
         public MarketDataSnapshotDocument Update(MarketDataSnapshotDocument document)
@@ -50,44 +48,33 @@ namespace OGDotNet.Model.Resources
             {
                 throw new ArgumentException();
             }
-            return PutDefinition(document, "snapshots", document.UniqueId.ToString());
+            var r = _restTarget.Resolve("snapshots", document.UniqueId.ObjectID.ToString()).Post<MarketDataSnapshotDocument>(document);
+            return Update(document, r);
         }
 
-        private MarketDataSnapshotDocument PutDefinition(MarketDataSnapshotDocument document, params string[] pathParts)
+        private static MarketDataSnapshotDocument Update(MarketDataSnapshotDocument req, MarketDataSnapshotDocument resp)
         {
-            return ReqDefinition((t, d, f) => t.Put<UniqueId>(d, f), document, pathParts);
-        }
-        private MarketDataSnapshotDocument PostDefinition(MarketDataSnapshotDocument document, params string[] pathParts)
-        {
-            return ReqDefinition((t, d, f) => t.Post<UniqueId>(d, f), document, pathParts);
-        }
-
-        private MarketDataSnapshotDocument ReqDefinition(Func<RestTarget, MarketDataSnapshotDocument, string, UniqueId> reqFunc, MarketDataSnapshotDocument document, params string[] pathParts)
-        {
-            var target = pathParts.Aggregate(_restTarget, (r, p) => r.Resolve(p));
-            var uid = reqFunc(target, document, "uniqueId");
-            if (uid == null)
-            {
-                throw new ArgumentException("No UID returned");
-            }
-
-            document.UniqueId = uid;
-            document.Snapshot.UniqueId = uid;
-
-            return document;
+            req.UniqueId = resp.UniqueId;
+            req.Snapshot.UniqueId = resp.UniqueId;
+            return req;
         }
 
         public RemoteChangeManger ChangeManager
         {
             get
             {
-                return new RemoteChangeManger(_restTarget.Resolve("changeManager"), _activeMQSpec, _fudgeContext);
+                return new RemoteChangeManger(_restTarget.Resolve("snapshots", "changeManager"), _fudgeContext);
             }
         }
 
         public MarketDataSnapshotDocument Get(UniqueId uniqueId)
         {
-            var resp = _restTarget.Resolve("snapshots").Resolve(uniqueId.ToString()).Get<MarketDataSnapshotDocument>();
+            var target = _restTarget.Resolve("snapshots").Resolve(uniqueId.ObjectID.ToString());
+            if (uniqueId.IsVersioned)
+            {
+                target = target.Resolve("versions", uniqueId.Version);
+            }
+            var resp = target.Get<MarketDataSnapshotDocument>();
             if (resp == null || resp.UniqueId == null || resp.Snapshot == null)
             {
                 throw new ArgumentException("Not found", "uniqueId");
@@ -97,13 +84,16 @@ namespace OGDotNet.Model.Resources
 
         public void Remove(UniqueId uniqueId)
         {
-            _restTarget.Resolve("snapshots").Resolve(uniqueId.ToString()).Delete();
+            _restTarget.Resolve("snapshots").Resolve(uniqueId.ObjectID.ToString()).Delete();
         }
         //TODO correct
 
         public MarketDataSnapshotHistoryResult History(MarketDataSnapshotHistoryRequest request)
         {
-            return _restTarget.Resolve("history").Post<MarketDataSnapshotHistoryResult>(request);
+            return _restTarget.Resolve("snapshots", request.ObjectId.ToString(), "versions")
+                .WithParam("includeData", request.IncludeData)
+                .WithParam("objectId", request.ObjectId.ToString())
+                .Get<MarketDataSnapshotHistoryResult>();
         }
     }
 }

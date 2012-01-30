@@ -20,7 +20,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanGetSnapshot()
         {
-            RemoteMarketDataSnapshotter snapshotter = Context.MarketDataSnapshotter;
+            RemoteMarketDataSnapshotter snapshotter = Context.ViewProcessor.MarketDataSnapshotter;
             RemoteViewCycleTests.WithViewCycle(
            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
                {
@@ -32,7 +32,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void CanGetYieldCurveSpecs()
         {
-            RemoteMarketDataSnapshotter snapshotter = Context.MarketDataSnapshotter;
+            RemoteMarketDataSnapshotter snapshotter = Context.ViewProcessor.MarketDataSnapshotter;
             RemoteViewCycleTests.WithViewCycle(
            delegate(ViewDefinitionCompiledArgs compiled, IViewCycle cycle, RemoteViewClient client)
            {

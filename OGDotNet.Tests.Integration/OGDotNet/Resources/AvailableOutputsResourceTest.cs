@@ -66,7 +66,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         [Xunit.Extensions.Fact]
         public void UberView()
         {
-            var defn = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition(" Mixed View");
+            var defn = Context.ViewProcessor.ViewDefinitionRepository.GetViewDefinition("Mixed Instrument VaR View");
             UniqueId portfolio = defn.PortfolioIdentifier;
 
             var remoteAvailableOutputs = Context.RemoteAvailableOutputs;
@@ -94,7 +94,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var viewCalculationConfiguration = GetDefaultCalculations(valueNames);
             var newDefn = new ViewDefinition(TestUtils.GetUniqueName(), portfolioIdentifier: portfolio, defaultCurrency: defn.DefaultCurrency, calculationConfigurationsByName: new Dictionary<string, ViewCalculationConfiguration>() { { "Default", viewCalculationConfiguration } });
 
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 remoteClient.ViewDefinitionRepository.AddViewDefinition(new AddViewDefinitionRequest(newDefn));
                 RemoteViewCycleTests.WithViewCycle(delegate(ViewDefinitionCompiledArgs comp, IViewCycle cycle, RemoteViewClient client)

@@ -1,17 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IFinancialSecuritySource.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="FinancialUserServices.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-
-using System.Collections.Generic;
-using OGDotNet.Mappedtypes.Core.Security;
-
-namespace OGDotNet.Model.Resources
+namespace OGDotNet.Mappedtypes.Financial.User
 {
-    public interface IFinancialSecuritySource : ISecuritySource
+    public class FinancialUserServices
     {
     }
 }

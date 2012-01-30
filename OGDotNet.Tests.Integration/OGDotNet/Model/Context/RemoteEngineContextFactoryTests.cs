@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteEngineContextFactoryTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -9,7 +9,6 @@
 using System;
 using System.Net;
 using Castle.Core.Logging;
-using OGDotNet.Mappedtypes;
 using OGDotNet.Model;
 using OGDotNet.Model.Context;
 using OGDotNet.Tests.Integration.Properties;
@@ -32,34 +31,26 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Model.Context
         [Fact(Timeout = 30000)]
         public void CreatingContextFromSlowUriThrows()
         {
-            var remoteEngineContextFactory = GetContextFactory(new Uri("http://1.1.1.1"), "SomeConfig");
+            var remoteEngineContextFactory = GetContextFactory(new Uri("http://1.1.1.1"));
             Assert.Throws<WebException>(() => remoteEngineContextFactory.CreateRemoteEngineContext());
         }
 
         [Fact]
-        public void CreatingContextFromBadConfigThrows()
-        {
-            var configId = Guid.NewGuid().ToString();
-            var remoteEngineContextFactory = GetContextFactory(new Uri(Settings.Default.ServiceUri), configId);
-            var exception = Assert.Throws<OpenGammaException>(() => remoteEngineContextFactory.CreateRemoteEngineContext());
-            Assert.Equal("Missing config " + configId, exception.Message);
-        }
-        [Fact]
         public void CreatingContextFromBadUriThrows()
         {
-            var remoteEngineContextFactory = GetContextFactory(BadUri, "SomeConfig");
+            var remoteEngineContextFactory = GetContextFactory(BadUri);
             Assert.Throws<WebException>(() => remoteEngineContextFactory.CreateRemoteEngineContext());
         }
 
         internal static RemoteEngineContextFactory GetContextFactory()
         {
-            return GetContextFactory(new Uri(Settings.Default.ServiceUri), Settings.Default.ConfigId);
+            return GetContextFactory(new Uri(Settings.Default.ServiceUri));
         }
 
-        private static RemoteEngineContextFactory GetContextFactory(Uri serviceUri, string configId)
+        private static RemoteEngineContextFactory GetContextFactory(Uri serviceUri)
         {
             var fudgeContext = new OpenGammaFudgeContext();
-            return new RemoteEngineContextFactory(fudgeContext, serviceUri, configId)
+            return new RemoteEngineContextFactory(fudgeContext, serviceUri)
                        {
                            GlobalLogger = new ConsoleLogger(LoggerLevel.Debug)
                        };

@@ -9,6 +9,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.View;
@@ -24,7 +25,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             //TODO: make this test resilient to other changes
 
-            using (var remoteClient = Context.CreateUserClient())
+            using (var remoteClient = Context.CreateFinancialClient())
             {
                 var snapshotMaster = remoteClient.MarketDataSnapshotMaster;
                 using (var view = MasterView.Create(snapshotMaster))

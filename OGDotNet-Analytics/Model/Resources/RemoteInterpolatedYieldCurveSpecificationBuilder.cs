@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="RemoteInterpolatedYieldCurveSpecificationBuilder.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
@@ -22,8 +22,8 @@ namespace OGDotNet.Model.Resources
 
         public InterpolatedYieldCurveSpecification BuildCurve(DateTimeOffset curveDate, YieldCurveDefinition curveDefinition)
         {
-            RestTarget target = _rest.Resolve(UriEncoding.ToString(curveDate));
-            return target.Post<InterpolatedYieldCurveSpecification>(new YieldCurveDefinitionDocument{Definition = curveDefinition}, "specification");
+            RestTarget target = _rest.Resolve("builder").Resolve(UriEncoding.ToString(curveDate));
+            return target.Post<InterpolatedYieldCurveSpecification>(curveDefinition);
         }
     }
 }

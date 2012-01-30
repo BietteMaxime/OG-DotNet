@@ -7,6 +7,9 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Fudge;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
@@ -27,48 +30,71 @@ namespace OGDotNet.Model.Resources
 
         public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueId uid)
         {
-            RestTarget target = _rest.Resolve("uid")
-                .Resolve(uid.ToString());
+            RestTarget target = _rest.Resolve("hts")
+                .Resolve(uid.ObjectID.ToString(), uid.IsVersioned ? new[] { Tuple.Create("version", uid.Version) } : new Tuple<string, string>[] { });
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
-        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueId uid, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool includeEnd)
+        public ILocalDateDoubleTimeSeries GetHistoricalTimeSeries(UniqueId uid, DateTimeOffset start, bool includeStart, DateTimeOffset end, bool includeEnd)
         {
-            RestTarget target = _rest.Resolve("uidByDate")
-                                      .Resolve(uid.ToString())
-                                      .Resolve(UriEncoding.ToString(start))
-                                      .Resolve(inclusiveStart.ToString())
-                                      .Resolve(UriEncoding.ToString(end))
-                                      .Resolve(includeEnd.ToString());
+            var args = new List<Tuple<string, string>>();
+            if (uid.IsVersioned)
+            {
+                args.Add(Tuple.Create(uid.ToString(), uid.Version));
+            }
+            if (start != default(DateTimeOffset))
+            {
+                args.Add(Tuple.Create("start", DateToString(start.Date)));
+                args.Add(Tuple.Create("includeStart", includeStart.ToString()));
+            }
+            if (end != default(DateTimeOffset))
+            {
+                args.Add(Tuple.Create("end", DateToString(end.Date)));
+                args.Add(Tuple.Create("includeEnd", includeEnd.ToString()));
+            }
+            RestTarget target = _rest.Resolve("hts")
+                                      .Resolve(uid.ObjectID.ToString(), args.ToArray());
             return target.Get<ILocalDateDoubleTimeSeries>("timeSeries");
         }
 
+        private static string DateToString(DateTimeOffset date)
+        {
+            //Matches LocalDate.parse
+            return string.Format("{0}-{1:00}-{2:00}", date.Year, date.Month, date.Day);
+        }
         public Tuple<UniqueId, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField)
         {
-            RestTarget target = _rest.Resolve("all")
-                          .Resolve(EncodeDate(identifierValidityDate))
-                          .Resolve(dataSource)
-                          .Resolve(dataProvider ?? "null")
-                          .Resolve(dataField,
-                            UriEncoding.GetParameters(identifierBundle));
-            return DecodePairMessage(target.GetFudge());
+            return GetHistoricalTimeSeries(identifierBundle, identifierValidityDate, dataSource, dataProvider, dataField, default(DateTimeOffset), false, default(DateTimeOffset), true);
         }
 
-        public Tuple<UniqueId, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField, DateTimeOffset start, bool inclusiveStart, DateTimeOffset end, bool includeEnd)
+        public Tuple<UniqueId, ILocalDateDoubleTimeSeries> GetHistoricalTimeSeries(ExternalIdBundle identifierBundle, DateTimeOffset identifierValidityDate, string dataSource, string dataProvider, string dataField, DateTimeOffset start, bool includeStart, DateTimeOffset end, bool includeEnd)
         {
-            ArgumentChecker.NotNull(identifierBundle, "identifierBundle");
-            ArgumentChecker.NotNull(dataSource, "dataSource");
-            ArgumentChecker.NotNull(dataField, "dataField");
-            
-            RestTarget target = _rest.Resolve("allByDate")
-                                .Resolve(EncodeDate(identifierValidityDate))
-                                .Resolve(dataSource)
-                                .Resolve(dataProvider ?? "null")
-                                .Resolve(dataField)
-                                .Resolve(EncodeDate(start))
-                                .Resolve(inclusiveStart.ToString())
-                                .Resolve(EncodeDate(end))
-                                .Resolve(includeEnd.ToString(), UriEncoding.GetParameters(identifierBundle));
+            RestTarget target = _rest.Resolve("htsSearches", "single");
+            target = identifierBundle.Identifiers.Aggregate(target, (current, id) => current.WithParam("id", id.ToString()));
+
+            target = target.WithParam("idValidityDate", identifierValidityDate != default(DateTimeOffset) ? EncodeDate(identifierValidityDate) : "ALL");
+            if (dataSource != null)
+            {
+                target = target.WithParam("dataSource", dataSource);
+            }
+            if (dataProvider != null)
+            {
+                target = target.WithParam("dataProvider", dataProvider);
+            }
+            if (dataField != null)
+            {
+                target = target.WithParam("dataField", dataField);
+            }
+            if (start != default(DateTimeOffset))
+            {
+                target = target.WithParam("start", EncodeDate(start));
+                target = target.WithParam("includeStart", includeStart);
+            }
+            if (end != default(DateTimeOffset))
+            {
+                target = target.WithParam("end", EncodeDate(end));
+                target = target.WithParam("includeEnd", includeEnd);
+            }
             return DecodePairMessage(target.GetFudge());
         }
 

@@ -29,7 +29,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var remoteInterpolatedYieldCurveSpecificationBuilder = Context.InterpolatedYieldCurveSpecificationBuilder;
             var yieldCurveDefinitionDocument = InterpolatedYieldCurveDefinitionMasterTests.GenerateDocument();
-            var reqDef = yieldCurveDefinitionDocument.Definition;
+            var reqDef = yieldCurveDefinitionDocument.YieldCurveDefinition;
 
             var reqDate = DateTimeOffset.Now.Date;
 

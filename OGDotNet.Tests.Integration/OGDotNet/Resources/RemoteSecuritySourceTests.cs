@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using OGDotNet.Mappedtypes.Id;
 using Xunit;
 using FactAttribute = OGDotNet.Tests.Integration.Xunit.Extensions.FactAttribute;
@@ -53,24 +54,20 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Fact]
-        public void CanGetBondsByIssuerName()
+        public void CanDoSingleBundleQuery()
         {
             var remoteSecuritySource = Context.SecuritySource;
-            var collection = remoteSecuritySource.GetBondsWithIssuerName("US TREASURY N/B");
-            Assert.NotEmpty(collection);
-            foreach (var security in collection)
-            {
-                ValueAssertions.AssertSensibleValue(security);
-                Assert.Equal("BOND", security.SecurityType);
-            }
+            var collection = remoteSecuritySource.GetSecurities(new ExternalIdBundle(ExternalId.Create("BLOOMBERG_TICKER", "AAPL US Equity")));
+            Assert.Equal(1, collection.Count);
+            Assert.True(collection.First().Name.IndexOf("Apple", StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
 
         [Fact]
-        public void CanGetNoBondsByIssuerName()
+        public void CanDoMultipleBundleQuery()
         {
             var remoteSecuritySource = Context.SecuritySource;
-            var collection = remoteSecuritySource.GetBondsWithIssuerName(Guid.NewGuid().ToString());
-            Assert.Empty(collection);
+            var collection = remoteSecuritySource.GetSecurities(new ExternalIdBundle(ExternalId.Create("BLOOMBERG_TICKER", "AAPL US Equity"), ExternalId.Create("BLOOMBERG_TICKER", "MSFT US Equity")));
+            Assert.Equal(2, collection.Count);
         }
 
         private static UniqueId StupidUid

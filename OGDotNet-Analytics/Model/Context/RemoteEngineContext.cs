@@ -7,9 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using OGDotNet.Mappedtypes;
+using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.Model.Context
@@ -18,15 +16,13 @@ namespace OGDotNet.Model.Context
     {
         private readonly OpenGammaFudgeContext _fudgeContext;
         private readonly Uri _rootUri;
-        private readonly string _activeMQSpec;
-        private readonly IDictionary<string, Uri> _serviceUris;
+        private readonly ComponentRepository _repository;
 
-        internal RemoteEngineContext(OpenGammaFudgeContext fudgeContext, Uri rootUri, string activeMQSpec, IDictionary<string, Uri> serviceUris)
+        internal RemoteEngineContext(OpenGammaFudgeContext fudgeContext, Uri rootUri, ComponentRepository repository)
         {
             _fudgeContext = fudgeContext;
             _rootUri = rootUri;
-            _activeMQSpec = activeMQSpec;
-            _serviceUris = serviceUris;
+            _repository = repository;
         }
 
         public Uri RootUri
@@ -34,48 +30,58 @@ namespace OGDotNet.Model.Context
             get { return _rootUri; }
         }
 
-        public MQTemplate MQTemplate
-        {
-            get { return new MQTemplate(_activeMQSpec); }
-        }
-
         public OpenGammaFudgeContext FudgeContext
         {
             get { return _fudgeContext; }
         }
 
-        private RestTarget GetTarget(string service)
+        private RestTarget GetTarget(string service, string classifier = "main")
         {
-            Uri serviceUri;
-            if (_serviceUris.TryGetValue(service, out serviceUri))
-            {
-                return new RestTarget(_fudgeContext, serviceUri);
-            }
-            else
-            {
-                var servicesDump = String.Join(",", _serviceUris.Select(kvp => kvp.Key + "=>" + kvp.Value));
-                throw new OpenGammaException(string.Format("Configuration did not include service {0}, {1}", service, servicesDump));
-            }
+            var componentInfo = _repository.GetComponentInfo(new ComponentKey(service, classifier));
+            return GetTarget(componentInfo);
         }
 
-        public RemoteClient CreateUserClient()
+        private RestTarget GetTarget(ComponentInfo componentInfo)
         {
-            return new RemoteClient(GetTarget("userData"), _activeMQSpec, FudgeContext);
+            return new RestTarget(_fudgeContext, componentInfo.Uri);
+        }
+
+        public static MQTemplate GetMQTemplate(ComponentInfo componentInfo)
+        {
+            var template = new MQTemplate(componentInfo.Attributes["jmsBrokerUri"]);
+            return template;
+        }
+
+        public static MQTopicTemplate GetMQTopic(ComponentInfo componentInfo)
+        {
+            var template = GetMQTemplate(componentInfo);
+            return new MQTopicTemplate(template, componentInfo.Attributes["jmsChangeManagerTopic"]);
+        }
+
+        public FinancialUser FinancialUser
+        {
+            get { return GetFinancialUser(Environment.UserName); }
+        }
+
+        private FinancialUser GetFinancialUser(string userName)
+        {
+            var restTarget = GetTarget("com.opengamma.financial.user.FinancialUserManager");
+            return new FinancialUser(_fudgeContext, restTarget.Resolve("users", userName), userName);
+        }
+
+        public FinancialClient CreateFinancialClient()
+        {
+            return FinancialUser.CreateClient();
         }
 
         public RemoteViewProcessor ViewProcessor
         {
             get
             {
-                return new RemoteViewProcessor(_fudgeContext, GetTarget("viewProcessor"), MQTemplate);
-            }
-        }
-
-        public RemoteMarketDataSnapshotter MarketDataSnapshotter
-        {
-            get
-            {
-                return new RemoteMarketDataSnapshotter(GetTarget("marketDataSnapshotter"));
+                var componentInfo = _repository.GetComponentInfo(new ComponentKey("com.opengamma.engine.view.ViewProcessor", "main"));
+                var viewProcessorId = componentInfo.Attributes["viewProcessorId"];
+                var restTarget = GetTarget(componentInfo).Resolve(viewProcessorId);
+                return new RemoteViewProcessor(_fudgeContext, restTarget, GetMQTemplate(componentInfo));
             }
         }
 
@@ -83,7 +89,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteSecuritySource(GetTarget("securitySource"));
+                return new RemoteSecuritySource(GetTarget("com.opengamma.core.security.SecuritySource", "combined"));
             }
         }
 
@@ -91,7 +97,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteSecurityMaster(GetTarget("securityMaster"));
+                return new RemoteSecurityMaster(GetTarget("com.opengamma.master.security.SecurityMaster", "central"));
             }
         }
 
@@ -106,7 +112,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteMarketDataSnapshotMaster(GetTarget("marketDataSnapshotMaster"), _activeMQSpec, FudgeContext);
+                return new RemoteMarketDataSnapshotMaster(GetTarget("com.opengamma.master.marketdatasnapshot.MarketDataSnapshotMaster", "central"), FudgeContext);
             }
         }
 
@@ -114,7 +120,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteInterpolatedYieldCurveSpecificationBuilder(GetTarget("interpolatedYieldCurveSpecificationBuilder"));
+                return new RemoteInterpolatedYieldCurveSpecificationBuilder(GetTarget("com.opengamma.financial.analytics.ircurve.InterpolatedYieldCurveSpecificationBuilder", "shared"));
             }
         }
 
@@ -122,7 +128,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteHistoricalTimeSeriesSource(_fudgeContext, GetTarget("historicalTimeSeriesSource"));
+                return new RemoteHistoricalTimeSeriesSource(_fudgeContext, GetTarget("com.opengamma.core.historicaltimeseries.HistoricalTimeSeriesSource", "shared"));
             }
         }
 
@@ -130,7 +136,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteCurrencyMatrixSource(GetTarget("currencyMatrixSource"));
+                return new RemoteCurrencyMatrixSource(GetTarget("com.opengamma.financial.currency.CurrencyMatrixSource", "shared"));
             }
         }
 
@@ -138,7 +144,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteVolatilityCubeDefinitionSource(GetTarget("volatilityCubeDefinitionSource"));
+                return new RemoteVolatilityCubeDefinitionSource(GetTarget("com.opengamma.financial.analytics.volatility.cube.VolatilityCubeDefinitionSource", "combined"));
             }
         }
 
@@ -146,7 +152,7 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemoteAvailableOutputs(new RestTarget(_fudgeContext, _rootUri).Resolve("availableOutputs")); //TODO less hard coded
+                return new RemoteAvailableOutputs(GetTarget("com.opengamma.engine.view.helper.AvailableOutputsProvider"));
             }
         }
 
@@ -154,7 +160,8 @@ namespace OGDotNet.Model.Context
         {
             get
             {
-                return new RemotePortfolioMaster(GetTarget("portfolioMaster"), _activeMQSpec, FudgeContext);
+                var componentInfo = _repository.GetComponentInfo(new ComponentKey("com.opengamma.master.portfolio.PortfolioMaster", "central"));
+                return new RemotePortfolioMaster(GetTarget(componentInfo), FudgeContext);
             }
         }
     }

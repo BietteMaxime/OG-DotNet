@@ -21,7 +21,7 @@ namespace OGDotNet.Model.Resources
 
         public ICurrencyMatrix GetCurrencyMatrix(string name)
         {
-            return _rest.Resolve(name).Get<ICurrencyMatrix>("matrix");
+            return _rest.Resolve("currencyMatrices").Resolve(name).Get<ICurrencyMatrix>();
         }
     }
 }

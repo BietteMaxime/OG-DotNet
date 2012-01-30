@@ -24,18 +24,28 @@ namespace OGDotNet.Model.Resources
         
         public SearchResult<SecurityDocument> Search(SecuritySearchRequest request)
         {
-            return _restTarget.Resolve("search").Post<SearchResult<SecurityDocument>>(request);
+            return _restTarget.Resolve("securitySearches").Post<SearchResult<SecurityDocument>>(request);
         }
 
         public ISecurity GetSecurity(UniqueId uid)
         {
-            SecurityDocument securityDocument = _restTarget.Resolve("security").Resolve(uid.ToString()).Get<SecurityDocument>();
-            return securityDocument.Security;
+            if (uid.IsLatest)
+            {
+                var securityDocument = _restTarget.Resolve("securities", uid.ToString()).Get<SecurityDocument>();
+                return securityDocument.Security;
+            }
+            else
+            {
+                var securityDocument = _restTarget.Resolve("securities", uid.ObjectID.ToString(), "versions", uid.Version).Get<SecurityDocument>();
+                return securityDocument.Security;
+            }
         }
 
         public SecurityMetaDataResult MetaData(SecurityMetaDataRequest request)
         {
-            return _restTarget.Resolve("metaData").Post<SecurityMetaDataResult>(request);
+            return _restTarget.Resolve("metaData")
+                .WithParam("securityTypes", request.SecurityTypes)
+                .Get<SecurityMetaDataResult>();
         }
     }
 }
