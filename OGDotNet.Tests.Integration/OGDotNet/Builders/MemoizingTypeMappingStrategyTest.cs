@@ -6,7 +6,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.IO;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using Fudge.Serialization;
 using OGDotNet.Builders;
@@ -51,14 +53,21 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Builders
             GC.Collect();
             Assert.True(weakName.IsAlive);
 
-            //Load some assembly
-            foreach (var referencedAssembly in Assembly.GetExecutingAssembly().GetReferencedAssemblies())
-            {
-                Assembly.Load(referencedAssembly);
-            }
+            LoadAnAssembly();
 
             GC.Collect();
             Assert.False(weakName.IsAlive);
+        }
+
+        private static void LoadAnAssembly()
+        {
+            //Emit an assembly to ensure that something is loaded
+            var an = new AssemblyName { Name = "EmptyAssembly" };
+            AppDomain ad = AppDomain.CurrentDomain;
+            AssemblyBuilder ab = ad.DefineDynamicAssembly(an, AssemblyBuilderAccess.Save);
+            var tempAssemblyName = Guid.NewGuid() + ".dll";
+            ab.Save(tempAssemblyName);
+            Assembly.LoadFrom(tempAssemblyName);
         }
 
         public class NullStrategy : IFudgeTypeMappingStrategy
