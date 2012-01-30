@@ -22,7 +22,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
     public class RemoteViewClientBatchTests : TestWithContextBase
     {
-        public const string ViewName = "Equity Option Test View 1";
+        public const string ViewName = "Demo Equity Option Test View";
 
         [Xunit.Extensions.Fact]
         public void CanRunZeroCycleBatch()
