@@ -20,9 +20,8 @@
       <Output TaskParameter="ExitCode" ItemName="XUnitExitCodes"/>
     </xunit>
 
-    <MSBuild.Community.Tasks.Xslt Inputs="test-reports\$(AssemblyName).xunit.xml" Xsl="..\lib\Universal\NUnitXml.xslt" RootTag="" RootAttributes="" Output="test-reports\$(AssemblyName).NUnit.xml" />
-
-    <MSBuild.Community.Tasks.Xslt Inputs="test-reports\$(AssemblyName).xunit.xml" Xsl="..\lib\Universal\HTML.xslt" RootTag="" RootAttributes="" Output="test-reports\$(AssemblyName).html" />
+	<XslTransformation XmlInputPaths="test-reports\$(AssemblyName).xunit.xml" XslInputPath="..\lib\Universal\NUnitXml.xslt" OutputPaths="test-reports\$(AssemblyName).NUnit.xml"/>
+    <XslTransformation XmlInputPaths="test-reports\$(AssemblyName).xunit.xml" XslInputPath="..\lib\Universal\HTML.xslt" OutputPaths="test-reports\$(AssemblyName).html"/>
 
     <!-- 
 	Proper build system integration doesn't need this
