@@ -137,6 +137,7 @@
     <Compile Include="Mappedtypes\Financial\model\Option\Definition\SmileDeltaTermStructureParameter.cs" />
     <Compile Include="Mappedtypes\Financial\Security\equity\EquitySecurity.cs" />
     <Compile Include="Mappedtypes\Financial\Security\option\EquityOptionSecurity.cs" />
+    <Compile Include="Mappedtypes\Master\Security\RawSecurity.cs" />
     <Compile Include="Mappedtypes\Financial\view\UpdateViewDefinitionRequest.cs" />
     <Compile Include="Mappedtypes\Engine\marketdata\spec\LiveMarketDataSpecification.cs" />
     <Compile Include="Mappedtypes\Engine\marketdata\spec\MarketDataSpecification.cs" />
