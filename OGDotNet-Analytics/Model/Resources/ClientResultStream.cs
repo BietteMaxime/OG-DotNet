@@ -86,7 +86,7 @@ namespace OGDotNet.Model.Resources
             }
             catch (Exception e)
             {
-                _startSignalReceivedEvent.Set();//Make sure we always get started
+                _startSignalReceivedEvent.Set(); //Make sure we always get started
                 InvokeMessageReceived(e);
             }
         }
