@@ -22,13 +22,13 @@ namespace OGDotNet.Builders
         protected override void SerializeImpl(CombinedMarketDataSpecification obj, IAppendingFudgeFieldContainer msg, IFudgeSerializer serializer)
         {
             serializer.WriteTypeHeader(msg, obj.GetType());
-            serializer.WriteInline(msg, "prefferedSpecification", obj.PrefferedSpecification);
+            serializer.WriteInline(msg, "preferredSpecification", obj.PreferredSpecification);
             serializer.WriteInline(msg, "fallbackSpecification", obj.FallbackSpecification);
         }
 
         public override CombinedMarketDataSpecification DeserializeImpl(IFudgeFieldContainer msg, IFudgeDeserializer deserializer)
         {
-            return new CombinedMarketDataSpecification(deserializer.FromField<MarketDataSpecification>(msg.GetByName("prefferedSpecification")),
+            return new CombinedMarketDataSpecification(deserializer.FromField<MarketDataSpecification>(msg.GetByName("preferredSpecification")),
                                                        deserializer.FromField<MarketDataSpecification>(msg.GetByName("fallbackSpecification")));
         }
     }
