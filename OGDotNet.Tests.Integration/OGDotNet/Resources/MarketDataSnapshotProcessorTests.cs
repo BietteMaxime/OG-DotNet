@@ -152,8 +152,8 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                 var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
 
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
-                var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
-
+                var key = beforeCurves.Where(c => c.Value != null).First().Key;
+                var ycSnapshot = manageableMarketDataSnapshot.YieldCurves[key];
                 foreach (var value in ycSnapshot.Values.Values)
                 {
                     foreach (var vs in value.Value.Values)
@@ -176,7 +176,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
             {
                 var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
-                YieldCurveKey curveKey = beforeCurves.Keys.First();
+                YieldCurveKey curveKey = beforeCurves.First(k => k.Value != null).Key;
                 var beforeCurve = beforeCurves[curveKey].Item1.Curve;
 
                 var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
