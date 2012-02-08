@@ -37,8 +37,13 @@ namespace OGDotNet.Model.Context
 
         private RestTarget GetTarget(string service, string classifier = "main")
         {
-            var componentInfo = _repository.GetComponentInfo(new ComponentKey(service, classifier));
+            var componentInfo = GetComponentInfo(service, classifier);
             return GetTarget(componentInfo);
+        }
+
+        public ComponentInfo GetComponentInfo(string service, string classifier)
+        {
+            return _repository.GetComponentInfo(new ComponentKey(service, classifier));
         }
 
         private RestTarget GetTarget(ComponentInfo componentInfo)
