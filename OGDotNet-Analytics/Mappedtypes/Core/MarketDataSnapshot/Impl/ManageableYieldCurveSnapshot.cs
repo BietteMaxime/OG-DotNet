@@ -10,8 +10,9 @@ using System;
 using System.ComponentModel;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
+using Fudge.Types;
 using OGDotNet.Model.Context.MarketDataSnapshot;
+using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 {
@@ -61,7 +62,7 @@ namespace OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl
 
         public static ManageableYieldCurveSnapshot FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            var valuationTime = ffc.GetValue<DateTimeOffset>("valuationTime");
+            var valuationTime = ffc.GetValue<FudgeDateTime>("valuationTime").ToDateTimeOffsetWithDefault();
             return new ManageableYieldCurveSnapshot(deserializer.FromField<ManageableUnstructuredMarketDataSnapshot>(ffc.GetByName("values")), valuationTime);
         }
 

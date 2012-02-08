@@ -30,7 +30,7 @@ namespace OGDotNet.Model.Resources
         {
             try
             {
-                return new ActiveMQObjectMessage { Body = DecodeObject(message) };
+                return new ActiveMQObjectMessage { Body = DecodeObject(GetMessage(message)) };
             }
             catch (Exception e)
             {
@@ -38,9 +38,8 @@ namespace OGDotNet.Model.Resources
             }
         }
 
-        private object DecodeObject(IMessage message)
+        public object DecodeObject(FudgeMsgEnvelope fudgeMsgEnvelope)
         {
-            FudgeMsgEnvelope fudgeMsgEnvelope = GetMessage(message);
             if (_checkSeqNumber)
             {
                 long? seqNumber = fudgeMsgEnvelope.Message.GetLong("#");
@@ -58,7 +57,7 @@ namespace OGDotNet.Model.Resources
             return _fudgeContext.DeFudgeSerialize(fudgeMsgEnvelope.Message);
         }
 
-        private FudgeMsgEnvelope GetMessage(IMessage message)
+        public FudgeMsgEnvelope GetMessage(IMessage message)
         {
             byte[] content = ((IBytesMessage)message).Content;
             using (var memoryStream = new MemoryStream(content))

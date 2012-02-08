@@ -106,6 +106,7 @@ namespace OGDotNet.Model.Resources
             try
             {
                 REST.Resolve("startJmsResultStream").PostFudge(new FudgeMsg(FudgeContext) { { "destination", clientResultStream.QueueName } });
+                clientResultStream.WaitForStartSignal();
                 return clientResultStream;
             }
             catch
