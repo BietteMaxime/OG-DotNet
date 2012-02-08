@@ -13,18 +13,18 @@ namespace OGDotNet.Mappedtypes.Engine.MarketData.Spec
     [FudgeSurrogate(typeof(CombinedMarketDataSpecificationBuilder))]
     public class CombinedMarketDataSpecification : MarketDataSpecification
     {
-        private readonly MarketDataSpecification _prefferedSpecification;
+        private readonly MarketDataSpecification _preferredSpecification;
         private readonly MarketDataSpecification _fallbackSpecification;
 
-        public CombinedMarketDataSpecification(MarketDataSpecification prefferedSpecification, MarketDataSpecification fallbackSpecification)
+        public CombinedMarketDataSpecification(MarketDataSpecification preferredSpecification, MarketDataSpecification fallbackSpecification)
         {
-            _prefferedSpecification = prefferedSpecification;
+            _preferredSpecification = preferredSpecification;
             _fallbackSpecification = fallbackSpecification;
         }
 
-        public MarketDataSpecification PrefferedSpecification
+        public MarketDataSpecification PreferredSpecification
         {
-            get { return _prefferedSpecification; }
+            get { return _preferredSpecification; }
         }
 
         public MarketDataSpecification FallbackSpecification
