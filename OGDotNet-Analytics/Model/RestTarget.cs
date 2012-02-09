@@ -115,35 +115,35 @@ namespace OGDotNet.Model
 
         public TRet Post<TRet>(object reqObj)
         {
-            FudgeMsg retMsg = Post(reqObj);
-            return retMsg == null ? default(TRet) : Deserialize<TRet>(retMsg);
-        }
-
-        public TRet Post<TRet>(object reqObj, string subMessageField)
-        {
-            FudgeMsg retMsg = Post(reqObj);
-            return ProjectSubMessage<TRet>(retMsg, subMessageField);
+            FudgeMsg reqMsg = GetReqMsg(reqObj);
+            return FudgeDeserializedRequestImpl<TRet>("POST", reqMsg);
         }
 
         public FudgeMsg Post(object reqObj = null)
         {
+            FudgeMsg reqMsg = GetReqMsg(reqObj);
+            return PostFudge(reqMsg);
+        }
+
+        private FudgeMsg GetReqMsg(object reqObj)
+        {
             if (reqObj is IFudgeFieldContainer)
                 throw new ArgumentException();
 
+            FudgeMsg reqMsg;
             if (reqObj == null)
             {
-                return PostFudge(null);
+                reqMsg = null;
             }
             else if (_fudgeContext.TypeDictionary.GetByCSharpType(reqObj.GetType()) != null)
             {
-                var reqMsg = _fudgeContext.NewMessage(new Field("value", reqObj));
-                return PostFudge(reqMsg);
+                reqMsg = _fudgeContext.NewMessage(new Field("value", reqObj));
             }
             else
             {
-                var reqMsg = _fudgeContext.GetSerializer().SerializeToMsg(reqObj);
-                return PostFudge(reqMsg);
+                reqMsg = _fudgeContext.GetSerializer().SerializeToMsg(reqObj);
             }
+            return reqMsg;
         }
 
         public void PostAsync(Action okCallback, Action<Exception> errorCallback)
