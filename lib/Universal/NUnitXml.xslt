@@ -2,8 +2,29 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output cdata-section-elements="message stack-trace"/>
 
-  <xsl:template match="/">
-    <xsl:apply-templates/>
+  <xsl:template match="/assemblies">
+    <test-results>
+      <xsl:attribute name="name">
+        <xsl:for-each select="assembly/@name"><xsl:value-of select="."/>, </xsl:for-each>
+      </xsl:attribute>
+      <xsl:attribute name="type">Assembly</xsl:attribute>
+      <xsl:attribute name="date">
+        <xsl:value-of select="assembly/@run-date[1]"/>
+      </xsl:attribute>
+      <xsl:attribute name="time">
+        <xsl:value-of select="assembly/@run-time[1]"/>
+      </xsl:attribute>
+      <xsl:attribute name="total">
+        <xsl:value-of select="sum(assembly/@total)"/>
+      </xsl:attribute>
+      <xsl:attribute name="failures">
+        <xsl:value-of select="sum(assembly/@failed)"/>
+      </xsl:attribute>
+      <xsl:attribute name="not-run">
+        <xsl:value-of select="sum(assembly/@skipped)"/>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+    </test-results>
   </xsl:template>
 
   <xsl:template match="assembly">
