@@ -7,11 +7,13 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Fudge.Encodings;
-using OGDotNet.Mappedtypes.Core.Security;
+using OGDotNet.Mappedtypes.Master;
+using OGDotNet.Mappedtypes.Util.FudgeMsg;
 using OGDotNet.Model;
 
 namespace OGDotNet.Builders.Streaming
@@ -22,11 +24,16 @@ namespace OGDotNet.Builders.Streaming
     /// </summary>
     class StreamingFudgeBuilder
     {
-        static readonly Dictionary<Type, IStreamingFudgeBuilder> Builders = new IStreamingFudgeBuilder[]
+        static readonly ConcurrentDictionary<Type, IStreamingFudgeBuilder> Builders = new ConcurrentDictionary<Type, IStreamingFudgeBuilder>(new IStreamingFudgeBuilder[]
                                                                                 {
-                                                                                    new FudgeListWrapperStreamingBuilder<ISecurity>(), //TODO genericize
                                                                                     new DependencyGraphStreamingBuilder()
-                                                                                }.ToDictionary(b => b.Type);
+                                                                                }.ToDictionary(b => b.Type));
+
+        private static readonly Dictionary<Type, Type> GenericBuilders = new Dictionary<Type, Type>
+                                                                             {
+                                                                                 {typeof(SearchResult<>), typeof(SearchResultStreamingBuilder<>) },
+                                                                                 {typeof(FudgeListWrapper<>), typeof(FudgeListWrapperStreamingBuilder<>) } //TODO generate keys
+                                                                             };
 
         private readonly OpenGammaFudgeContext _context;
 
@@ -38,13 +45,35 @@ namespace OGDotNet.Builders.Streaming
         public bool TryDeserialize<T>(Stream stream, out T t)
         {
             IStreamingFudgeBuilder builder;
-            if (Builders.TryGetValue(typeof(T), out builder))
+            var type = typeof(T);
+            if (Builders.TryGetValue(type, out builder))
             {
-                t = builder.Deserialize<T>(_context, new FudgeEncodedStreamReader(_context, stream), _context.GetSerializationTypeMap());
+                t = Build<T>(builder, stream);
+                return true;
+            }
+            Type genericBuilderType;
+            //Should normally fall at the first hurdle
+            if (type.IsGenericType && GenericBuilders.TryGetValue(type.GetGenericTypeDefinition(), out genericBuilderType))
+            {
+                //Add to dictionary to avoid repeated reflection
+                builder = Builders.GetOrAdd(type, _ => CreateBuilder(type, genericBuilderType));
+                t = Build<T>(builder, stream);
                 return true;
             }
             t = default(T);
             return false;
+        }
+
+        private static IStreamingFudgeBuilder CreateBuilder(Type type, Type genericBuilderType)
+        {
+            var closedType = genericBuilderType.MakeGenericType(type.GetGenericArguments());
+            var constructorInfo = closedType.GetConstructor(new Type[] {});
+            return (IStreamingFudgeBuilder) constructorInfo.Invoke(null);
+        }
+
+        private T Build<T>(IStreamingFudgeBuilder builder, Stream stream)
+        {
+            return builder.Deserialize<T>(_context, new FudgeEncodedStreamReader(_context, stream), _context.GetSerializationTypeMap());
         }
     }
 }

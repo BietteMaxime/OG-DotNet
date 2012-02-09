@@ -5,7 +5,6 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OGDotNet.Mappedtypes.Core.Change;
@@ -36,7 +35,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         {
             var all = Context.PortfolioMaster.Search(new PortfolioSearchRequest(PagingRequest.All, "*"));
             PortfolioDocument doc = all.Documents.First();
-            PortfolioSearchResult singleResult = Context.PortfolioMaster.Search(new PortfolioSearchRequest(PagingRequest.All, new List<ObjectId>{doc.UniqueId.ObjectID}, null));
+            var singleResult = Context.PortfolioMaster.Search(new PortfolioSearchRequest(PagingRequest.All, new List<ObjectId>{doc.UniqueId.ObjectID}, null));
             Assert.Equal(1, singleResult.Documents.Count);
             Assert.Equal(doc.UniqueId, singleResult.Documents.Single().UniqueId);
         }
@@ -47,7 +46,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var result = Context.PortfolioMaster.Search(new PortfolioSearchRequest(PagingRequest.First(10), "*"));
             foreach (var portfolioDocument in result.Documents)
             {
-                PortfolioHistoryResult portfolioHistoryResult = Context.PortfolioMaster.GetHistory(new PortfolioHistoryRequest(portfolioDocument.UniqueId.ObjectID));
+                var portfolioHistoryResult = Context.PortfolioMaster.GetHistory(new PortfolioHistoryRequest(portfolioDocument.UniqueId.ObjectID));
                 Assert.NotEmpty(portfolioHistoryResult.Documents);
                 foreach (var doc in portfolioHistoryResult.Documents)
                 {
@@ -63,7 +62,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var result = Context.PortfolioMaster.Search(new PortfolioSearchRequest(PagingRequest.First(10), "web*"));
             foreach (var portfolioDocument in result.Documents)
             {
-                PortfolioHistoryResult portfolioHistoryResult = Context.PortfolioMaster.GetHistory(new PortfolioHistoryRequest(portfolioDocument.UniqueId.ObjectID, 0));
+                var portfolioHistoryResult = Context.PortfolioMaster.GetHistory(new PortfolioHistoryRequest(portfolioDocument.UniqueId.ObjectID, 0));
                 Assert.NotEmpty(portfolioHistoryResult.Documents);
                 foreach (var doc in portfolioHistoryResult.Documents)
                 {

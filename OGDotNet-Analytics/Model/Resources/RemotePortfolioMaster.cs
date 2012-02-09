@@ -6,9 +6,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using Fudge.Serialization.Reflection;
-using Fudge.Types;
 using OGDotNet.Mappedtypes.Id;
+using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Master.Portfolio;
 using OGDotNet.Utils;
 
@@ -25,17 +24,17 @@ namespace OGDotNet.Model.Resources
             _fudgeContext = fudgeContext;
         }
 
-        public PortfolioSearchResult Search(PortfolioSearchRequest request)
+        public SearchResult<PortfolioDocument> Search(PortfolioSearchRequest request)
         {
-            return _restTarget.Resolve("portfolioSearches").Post<PortfolioSearchResult>(request);
+            return _restTarget.Resolve("portfolioSearches").Post<SearchResult<PortfolioDocument>>(request);
         }
 
-        public PortfolioHistoryResult GetHistory(PortfolioHistoryRequest request)
+        public SearchResult<PortfolioDocument> GetHistory(PortfolioHistoryRequest request)
         {
             //request
             var versionsTarget = _restTarget.Resolve("portfolios", request.ObjectId.ToString(), "versions");
             RestTarget target = RestUtils.EncodeQueryParams(versionsTarget, request);
-            return target.Get<PortfolioHistoryResult>();
+            return target.Get<SearchResult<PortfolioDocument>>();
         }
 
         public PortfolioDocument Get(UniqueId uniqueId)

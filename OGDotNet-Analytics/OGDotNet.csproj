@@ -83,6 +83,7 @@
     <Compile Include="Builders\PortfolioDocumentBuilder.cs" />
     <Compile Include="Builders\SimplePortfolioNodeBuilder.cs" />
     <Compile Include="Builders\SimplePositionBuilder.cs" />
+    <Compile Include="Builders\Streaming\SearchResultStreamingBuilder.cs" />
     <Compile Include="Builders\Streaming\DependencyGraphStreamingBuilder.cs" />
     <Compile Include="Builders\Streaming\IStreamingFudgeBuilder.cs" />
     <Compile Include="Builders\Streaming\FudgeListWrapperStreamingBuilder.cs" />
@@ -148,16 +149,11 @@
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\ManageableVolatilitySurfaceSnapshot.cs" />
     <Compile Include="Mappedtypes\Master\AbstractHistoryRequest.cs" />
     <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotHistoryRequest.cs" />
-    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotHistoryResult.cs" />
-    <Compile Include="Mappedtypes\Master\MarketDataSnapshot\MarketDataSnapshotSearchResult.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\ManageablePortfolio.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\PortfolioDocument.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\PortfolioHistoryRequest.cs" />
-    <Compile Include="Mappedtypes\Master\Portfolio\PortfolioHistoryResult.cs" />
     <Compile Include="Mappedtypes\Master\Portfolio\PortfolioSearchRequest.cs" />
-    <Compile Include="Mappedtypes\Master\Portfolio\PortfolioSearchResult.cs" />
     <Compile Include="Mappedtypes\Master\Security\RawSecurity.cs" />
-    <Compile Include="Mappedtypes\Master\Security\SecuritySearchResult.cs" />
     <Compile Include="Mappedtypes\math\curve\NodalDoublesCurve.cs" />
     <Compile Include="Mappedtypes\math\matrix\DoubleMatrix1D.cs" />
     <Compile Include="Mappedtypes\math\surface\IDoublesSurface.cs" />

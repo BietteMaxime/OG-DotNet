@@ -88,11 +88,11 @@ namespace OGDotNet.Model.Resources
         }
         //TODO correct
 
-        public MarketDataSnapshotHistoryResult History(MarketDataSnapshotHistoryRequest request)
+        public SearchResult<MarketDataSnapshotDocument> History(MarketDataSnapshotHistoryRequest request)
         {
             var versionsTarget = _restTarget.Resolve("snapshots", request.ObjectId.ToString(), "versions");
             return RestUtils.EncodeQueryParams(versionsTarget, request)
-                .Get<MarketDataSnapshotHistoryResult>();
+                .Get<SearchResult<MarketDataSnapshotDocument>>();
         }
     }
 }

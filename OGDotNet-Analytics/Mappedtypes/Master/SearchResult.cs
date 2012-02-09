@@ -11,7 +11,7 @@ using OGDotNet.Mappedtypes.Util;
 
 namespace OGDotNet.Mappedtypes.Master
 {
-    public class SearchResult<TDocument> //where TDocument extends Document
+    public class SearchResult<TDocument> where TDocument : AbstractDocument
     {
         private readonly Paging _paging;
         private readonly IList<TDocument> _documents;
