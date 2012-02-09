@@ -43,9 +43,8 @@ namespace OGDotNet.Model.Resources
 
         public SecurityMetaDataResult MetaData(SecurityMetaDataRequest request)
         {
-            return _restTarget.Resolve("metaData")
-                .WithParam("securityTypes", request.SecurityTypes)
-                .Get<SecurityMetaDataResult>();
+            var restTarget = _restTarget.Resolve("metaData");
+            return RestUtils.EncodeQueryParams(restTarget, request).Get<SecurityMetaDataResult>();
         }
     }
 }

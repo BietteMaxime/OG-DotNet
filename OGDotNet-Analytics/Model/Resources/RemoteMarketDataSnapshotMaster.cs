@@ -90,9 +90,8 @@ namespace OGDotNet.Model.Resources
 
         public MarketDataSnapshotHistoryResult History(MarketDataSnapshotHistoryRequest request)
         {
-            return _restTarget.Resolve("snapshots", request.ObjectId.ToString(), "versions")
-                .WithParam("includeData", request.IncludeData)
-                .WithParam("objectId", request.ObjectId.ToString())
+            var versionsTarget = _restTarget.Resolve("snapshots", request.ObjectId.ToString(), "versions");
+            return RestUtils.EncodeQueryParams(versionsTarget, request)
                 .Get<MarketDataSnapshotHistoryResult>();
         }
     }

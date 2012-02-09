@@ -187,6 +187,7 @@
     <Compile Include="Model\Resources\RemoteVolatilityCubeDefinitionSource.cs" />
     <Compile Include="Builders\Streaming\StreamingFudgeBuilder.cs" />
     <Compile Include="Model\Resources\RestfulJmsResultConsumerBase.cs" />
+    <Compile Include="Model\Resources\RestUtils.cs" />
     <Compile Include="Model\View\MasterView.cs" />
     <Compile Include="Utils\GenericUtils.cs" />
     <Compile Include="Utils\SmallSet.cs" />

@@ -29,6 +29,11 @@ namespace OGDotNet.Model
             _serviceUri = serviceUri;
         }
 
+        public OpenGammaFudgeContext FudgeContext
+        {
+            get { return _fudgeContext; }
+        }
+
         public RestTarget Resolve(params string[] segments)
         {
             if (!segments.Any())
@@ -40,7 +45,6 @@ namespace OGDotNet.Model
         {
             return WithParam(param, value.ToString());
         }
-
         public RestTarget WithParam(string param, string value)
         {
             var uriBuilder = new UriBuilder(_serviceUri);
