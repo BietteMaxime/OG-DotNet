@@ -84,8 +84,7 @@ namespace OGDotNet.Model.Context
             get
             {
                 var componentInfo = _repository.GetComponentInfo(new ComponentKey("com.opengamma.engine.view.ViewProcessor", "main"));
-                var viewProcessorId = componentInfo.Attributes["viewProcessorId"];
-                var restTarget = GetTarget(componentInfo).Resolve(viewProcessorId);
+                var restTarget = GetTarget(componentInfo);
                 return new RemoteViewProcessor(_fudgeContext, restTarget, GetMQTemplate(componentInfo));
             }
         }
