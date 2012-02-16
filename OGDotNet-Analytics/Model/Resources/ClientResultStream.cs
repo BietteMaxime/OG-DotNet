@@ -49,7 +49,7 @@ namespace OGDotNet.Model.Resources
 
         public void WaitForStartSignal()
         {
-            var timeout = TimeSpan.FromSeconds(10);
+            var timeout = TimeSpan.FromSeconds(30);
             if (! _startSignalReceivedEvent.Wait(timeout))
             {
                 throw new TimeoutException("No start signal received within " + timeout);
