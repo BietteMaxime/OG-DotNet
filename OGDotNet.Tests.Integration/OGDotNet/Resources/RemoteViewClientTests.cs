@@ -166,9 +166,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         [Xunit.Extensions.Theory]
         [TypedPropertyData("ViewDefinitions")]
-        public void CanStartAndGetAResult(ViewDefinition definition)
+        public void CanStartAndGetAResultOrCompilationFailure(ViewDefinition definition)
         {
-            Assert.NotNull(GetOneResultCache.Get(definition.UniqueID));
+            try
+            {
+                Assert.NotNull(GetOneResultCache.Get(definition.UniqueID));
+            }
+            catch (Exception ex)
+            {
+                //Compilation failure is allowed, we will check that some views run elsewhere
+                Assert.Contains("ViewDefinitionCompilationFailedArgs", ex.Message);
+            }
         }
 
         [Xunit.Extensions.Theory]
