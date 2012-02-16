@@ -12,7 +12,7 @@ using OGDotNet.Mappedtypes.Math.Curve;
 
 namespace OGDotNet.Mappedtypes.Financial.model.interestrate.curve
 {
-    class ForwardCurve
+    public class ForwardCurve
     {
         private readonly Curve _forwardCurve;
 

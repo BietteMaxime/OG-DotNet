@@ -133,8 +133,11 @@
     <Compile Include="Mappedtypes\Financial\Analytics\Volatility\Surface\FuturePriceCurveData.cs" />
     <Compile Include="Mappedtypes\Financial\Analytics\Volatility\Surface\Fitting\SurfaceFittedSmileDataPoints.cs" />
     <Compile Include="Mappedtypes\Financial\Forex\Method\MultipleCurrencyInterestRateCurveSensitivity.cs" />
+    <Compile Include="Mappedtypes\Financial\Greeks\BucketedGreekResultCollection.cs" />
+    <Compile Include="Mappedtypes\Financial\Greeks\PDEGreekResultCollection.cs" />
     <Compile Include="Mappedtypes\Financial\interestrate\InterestRateCurveSensitivity.cs" />
     <Compile Include="Mappedtypes\Financial\interestrate\PresentValueSensitivity.cs" />
+    <Compile Include="Mappedtypes\Financial\model\FiniteDifference\PdeFullResults1D.cs" />
     <Compile Include="Mappedtypes\Financial\model\interestrate\curve\ForwardCurve.cs" />
     <Compile Include="Mappedtypes\Financial\model\Option\Definition\SmileDeltaTermStructureParameter.cs" />
     <Compile Include="Mappedtypes\Financial\Security\equity\EquitySecurity.cs" />

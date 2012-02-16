@@ -15,7 +15,10 @@ using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Mappedtypes.Financial.Analytics;
 using OGDotNet.Mappedtypes.Financial.Forex.Method;
+using OGDotNet.Mappedtypes.Financial.Greeks;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
+using OGDotNet.Mappedtypes.Financial.model.FiniteDifference;
+using OGDotNet.Mappedtypes.Financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Financial.Model.Option.Definition;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Xunit.Extensions;
@@ -45,7 +48,11 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes
                                                                         typeof(InterestRateCurveSensitivity),
                                                                         typeof(MultipleCurrencyInterestRateCurveSensitivity),
                                                                         typeof(SmileDeltaTermStructureParameter),
-                                                                        typeof(DoubleLabelledMatrix3D)
+                                                                        typeof(DoubleLabelledMatrix3D),
+                                                                        typeof(PdeGreekResultCollection),
+                                                                        typeof(PdeFullResults1D),
+                                                                        typeof(BucketedGreekResultCollection),
+                                                                        typeof(ForwardCurve)
                                                                     };
         [Theory]
         [TypedPropertyData("MappedTypes")]

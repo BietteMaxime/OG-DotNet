@@ -28,7 +28,10 @@ using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.FittedResults;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface;
 using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface.Fitting;
 using OGDotNet.Mappedtypes.Financial.Forex.Method;
+using OGDotNet.Mappedtypes.Financial.Greeks;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
+using OGDotNet.Mappedtypes.Financial.model.FiniteDifference;
+using OGDotNet.Mappedtypes.Financial.model.interestrate.curve;
 using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Financial.Model.Option.Definition;
 using OGDotNet.Mappedtypes.Financial.Model.Volatility.Surface;
@@ -175,6 +178,11 @@ namespace OGDotNet.Tests.Integration
                 var discountFactor = value.GetDiscountFactor(value.Curve.XData[0]);
                 AssertSensibleValue(discountFactor);
             }
+        }
+        public static void AssertSensibleValue(ForwardCurve curve)
+        {
+            Assert.NotNull(curve);
+            AssertSensibleValue(curve.FwdCurve);
         }
         public static void AssertSensibleValue(Curve value)
         {
@@ -535,6 +543,21 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(DoubleLabelledMatrix3D matrix)
         {
             Assert.NotNull(matrix);
+            //TODO
+        }
+        public static void AssertSensibleValue(PdeGreekResultCollection o)
+        {
+            Assert.NotNull(o);
+            //TODO
+        }
+        public static void AssertSensibleValue(PdeFullResults1D o)
+        {
+            Assert.NotNull(o);
+            //TODO
+        }
+        public static void AssertSensibleValue(BucketedGreekResultCollection o)
+        {
+            Assert.NotNull(o);
             //TODO
         }
     }
