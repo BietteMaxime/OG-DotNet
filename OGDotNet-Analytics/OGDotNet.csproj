@@ -137,9 +137,9 @@
     <Compile Include="Mappedtypes\Financial\Greeks\PDEGreekResultCollection.cs" />
     <Compile Include="Mappedtypes\Financial\interestrate\InterestRateCurveSensitivity.cs" />
     <Compile Include="Mappedtypes\Financial\interestrate\PresentValueSensitivity.cs" />
-    <Compile Include="Mappedtypes\Financial\model\FiniteDifference\PdeFullResults1D.cs" />
-    <Compile Include="Mappedtypes\Financial\model\interestrate\curve\ForwardCurve.cs" />
-    <Compile Include="Mappedtypes\Financial\model\Option\Definition\SmileDeltaTermStructureParameter.cs" />
+    <Compile Include="Mappedtypes\Financial\Model\FiniteDifference\PdeFullResults1D.cs" />
+    <Compile Include="Mappedtypes\Financial\Model\Interestrate\Curve\ForwardCurve.cs" />
+    <Compile Include="Mappedtypes\Financial\Model\Option\Definition\SmileDeltaTermStructureParameter.cs" />
     <Compile Include="Mappedtypes\Financial\Security\equity\EquitySecurity.cs" />
     <Compile Include="Mappedtypes\Financial\Security\option\EquityOptionSecurity.cs" />
     <Compile Include="Mappedtypes\Financial\User\FinancialUser.cs" />
@@ -281,7 +281,7 @@
     <Compile Include="Mappedtypes\javax\time\Instant.cs" />
     <Compile Include="Mappedtypes\math\curve\CurveExtensionMethods.cs" />
     <Compile Include="Mappedtypes\math\surface\ConstantDoublesSurface.cs" />
-    <Compile Include="Mappedtypes\Financial\model\volatility\surface\VolatilitySurface.cs" />
+    <Compile Include="Mappedtypes\Financial\Model\volatility\surface\VolatilitySurface.cs" />
     <Compile Include="Mappedtypes\Master\AbstractDocument.cs" />
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\IUpdatableFrom.cs" />
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\ManageableMarketDataSnapshot.cs" />
@@ -293,7 +293,7 @@
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\Impl\ManageableYieldCurveSnapshot.cs" />
     <Compile Include="Mappedtypes\math\curve\Curve.cs" />
     <Compile Include="Mappedtypes\math\curve\FunctionalDoublesCurve.cs" />
-    <Compile Include="Mappedtypes\Financial\model\interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />
+    <Compile Include="Mappedtypes\Financial\Model\Interestrate\NelsonSiegelSvennsonBondCurveModel.cs" />
     <Compile Include="Mappedtypes\OpenGammaException.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\fast\longint\FastArrayLongDoubleTimeSeries.cs" />
     <Compile Include="Mappedtypes\Util\Timeseries\Localdate\ArrayLocalDateDoubleTimeSeries.cs" />
@@ -383,7 +383,7 @@
     <Compile Include="Mappedtypes\Engine\View\ResultModelDefinition.xaml.cs" />
     <Compile Include="Mappedtypes\Util\Time\Tenor.cs" />
     <Compile Include="Mappedtypes\Core\MarketDataSnapshot\VolatilitySurfaceData.cs" />
-    <Compile Include="Mappedtypes\Financial\model\interestrate\curve\YieldCurve.cs" />
+    <Compile Include="Mappedtypes\Financial\Model\Interestrate\Curve\YieldCurve.cs" />
     <Compile Include="Mappedtypes\Engine\View\ViewDefinition.cs" />
     <Compile Include="Mappedtypes\Engine\View\IViewTargetResultModel.cs" />
   </ItemGroup>

@@ -30,8 +30,7 @@ using OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Surface.Fitting;
 using OGDotNet.Mappedtypes.Financial.Forex.Method;
 using OGDotNet.Mappedtypes.Financial.Greeks;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
-using OGDotNet.Mappedtypes.Financial.model.FiniteDifference;
-using OGDotNet.Mappedtypes.Financial.model.interestrate.curve;
+using OGDotNet.Mappedtypes.Financial.Model.FiniteDifference;
 using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Financial.Model.Option.Definition;
 using OGDotNet.Mappedtypes.Financial.Model.Volatility.Surface;
@@ -130,6 +129,8 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(Currency currency)
         {
             Assert.NotNull(currency);
+            Assert.NotEmpty(currency.ISOCode);
+            AssertSensibleValue(currency.UniqueId);
         }
 
         public static void AssertSensibleValue(LabelledMatrixEntry value)
@@ -319,11 +320,13 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(IResolutionRuleTransform transform)
         {
             Assert.NotNull(transform);
+            Assert.True(transform is IdentityResolutionRuleTransform || transform is SimpleResolutionRuleTransform);
         }
 
         public static void AssertSensibleValue(ValueProperties props)
         {
             Assert.NotNull(props);
+            Assert.True(props.IsEmpty || props.Properties.Count > 0);
         }
 
         public static void AssertSensibleValue(IPortfolio portfolio)
@@ -374,11 +377,13 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(ExternalId identifier)
         {
             Assert.NotNull(identifier);
+            Assert.NotNull(identifier.Scheme);
         }
 
         public static void AssertSensibleValue(UniqueId identifier)
         {
             Assert.NotNull(identifier);
+            Assert.NotNull(identifier.Scheme);
         }
 
         public static void AssertSensibleValue(SnapshotDataBundle bundle)

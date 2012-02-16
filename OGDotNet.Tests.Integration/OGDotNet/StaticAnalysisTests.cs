@@ -17,6 +17,7 @@ using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
+using OGDotNet.Tests.OGDotNet.Mappedtypes;
 using OGDotNet.Tests.Xunit.Extensions;
 using OGDotNet.Utils;
 using Xunit;
@@ -131,6 +132,55 @@ namespace OGDotNet.Tests.Integration.OGDotNet
                 if (methodInfo.Name.StartsWith("Without"))
                 {
                     continue;
+                }
+            }
+        }
+
+        private static TypeDefinition GetValueAssertions()
+        {
+            var asm = typeof(ValueAssertions).Assembly;
+            foreach (ModuleDefinition module in AssemblyFactory.GetAssembly(asm.Location).Modules)
+            {
+                return module.Types[typeof(ValueAssertions).FullName];
+            }
+            throw new Exception();
+        }
+
+        [Xunit.Extensions.Fact]
+        public void ValueAssertionsArentUseless()
+        {
+            var knownUselessAssertions = new HashSet<string>
+                                             {
+                                                 typeof(string).FullName
+                                             };
+            foreach (var typeName in EmptyTypesWarner.KnownEmptyTypes.Select(t => t.FullName))
+            {
+                knownUselessAssertions.Add(typeName);
+            }
+
+            var valueAssertions = GetValueAssertions();
+            foreach (var method in valueAssertions.Methods.Cast<MethodDefinition>().Where(m => m.Name == "AssertSensibleValue" && m.Parameters.Count == 1))
+            {
+                Assert.NotNull(method);
+                var instructions = method.Body.Instructions.Cast<Instruction>().Where(i => i.OpCode != OpCodes.Nop).ToList();
+                if (instructions.Count > 3)
+                {
+                    continue;
+                }
+                string type = method.Parameters[0].ParameterType.FullName;
+                if (instructions.Count < 3)
+                {
+                    Assert.False(true, "Tiny body for assertion on " + type);
+                }
+                if (instructions[0].OpCode == OpCodes.Ldarg_0 && instructions[1].OpCode == OpCodes.Call && instructions[2].OpCode == OpCodes.Ret)
+                {
+                    var operand = instructions[1].Operand;
+                    Assert.Equal("NotNull", ((MethodReference) operand).Name);
+                    Assert.True(knownUselessAssertions.Contains(type), "Useless assertion on " + type);
+                }
+                else
+                {
+                    Assert.False(true, "Don't understand assertion on " + type);
                 }
             }
         }

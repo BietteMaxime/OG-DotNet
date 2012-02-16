@@ -8,27 +8,27 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Math.Curve;
+using CCurve = OGDotNet.Mappedtypes.Math.Curve.Curve;
 
-namespace OGDotNet.Mappedtypes.Financial.model.interestrate.curve
+namespace OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve
 {
     public class ForwardCurve
     {
-        private readonly Curve _forwardCurve;
+        private readonly CCurve _forwardCurve;
 
-        public ForwardCurve(Curve forwardCurve)
+        public ForwardCurve(CCurve forwardCurve)
         {
             _forwardCurve = forwardCurve;
         }
 
-        public Curve FwdCurve //NOTE: 'nice' name used in java not allowed here
+        public CCurve FwdCurve //NOTE: 'nice' name used in java not allowed here
         {
             get { return _forwardCurve; }
         }
 
         public static ForwardCurve FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new ForwardCurve(deserializer.FromField<Curve>(ffc.GetByName("forwardCurve")));
+            return new ForwardCurve(deserializer.FromField<CCurve>(ffc.GetByName("forwardCurve")));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

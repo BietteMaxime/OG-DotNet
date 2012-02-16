@@ -17,8 +17,8 @@ using OGDotNet.Mappedtypes.Financial.Analytics;
 using OGDotNet.Mappedtypes.Financial.Forex.Method;
 using OGDotNet.Mappedtypes.Financial.Greeks;
 using OGDotNet.Mappedtypes.Financial.InterestRate;
-using OGDotNet.Mappedtypes.Financial.model.FiniteDifference;
-using OGDotNet.Mappedtypes.Financial.model.interestrate.curve;
+using OGDotNet.Mappedtypes.Financial.Model.FiniteDifference;
+using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Financial.Model.Option.Definition;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Xunit.Extensions;
@@ -41,7 +41,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes
 
         private static readonly int LeastUseful = typeof(object).GetProperties().Count() + typeof(object).GetMethods().Count();
 
-        private static readonly HashSet<Type> KnownEmptyTypes = new HashSet<Type>
+        public static readonly HashSet<Type> KnownEmptyTypes = new HashSet<Type>
                                                                     {
                                                                         typeof(ProcessCompletedCall),
                                                                         typeof(MarketDataSpecification),

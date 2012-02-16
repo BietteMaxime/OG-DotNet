@@ -5,7 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace OGDotNet.Mappedtypes.Financial.model.FiniteDifference
+namespace OGDotNet.Mappedtypes.Financial.Model.FiniteDifference
 {
     public class PdeFullResults1D
     {
