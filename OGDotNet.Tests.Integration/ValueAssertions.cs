@@ -300,6 +300,15 @@ namespace OGDotNet.Tests.Integration
             foreach (var kvp in viewDefin.ViewDefinition.CalculationConfigurationsByName)
             {
                 Assert.Equal(kvp.Key, kvp.Value.Name);
+                AssertSensibleValue(kvp.Value);
+            }
+            var l = viewDefin.ViewDefinition.CalculationConfigurationsByName.Keys;
+            var r = viewDefin.CompiledCalculationConfigurations.Keys;
+            Assert.True(new HashSet<string>(l).SetEquals(r));
+            foreach (var kvp in viewDefin.CompiledCalculationConfigurations)
+            {
+                Assert.Equal(kvp.Key, kvp.Value.Name);
+                AssertSensibleValue(kvp.Value);
             }
 
             Assert.Equal(default(DateTimeOffset) == viewDefin.EarliestValidity, viewDefin.LatestValidity == default(DateTimeOffset));
@@ -315,6 +324,17 @@ namespace OGDotNet.Tests.Integration
             AssertSensibleValue(calculationConfiguration.SpecificRequirements);
             AssertSensibleValue(calculationConfiguration.PortfolioRequirementsBySecurityType);
             AssertSensibleValue(calculationConfiguration.ResolutionRuleTransform);
+        }
+
+        public static void AssertSensibleValue(ICompiledViewCalculationConfiguration calculationConfiguration)
+        {
+            AssertSensibleValue(calculationConfiguration.TerminalOutputSpecifications);
+            AssertSensibleValue(calculationConfiguration.TerminalOutputValues);
+            Assert.InRange(calculationConfiguration.TerminalOutputValues.Count, 0, calculationConfiguration.TerminalOutputSpecifications.Count);
+            AssertSensibleValue(calculationConfiguration.MarketDataRequirements);
+
+            Assert.NotEmpty(calculationConfiguration.MarketDataRequirements);
+            Assert.NotEmpty(calculationConfiguration.TerminalOutputValues);
         }
 
         public static void AssertSensibleValue(IResolutionRuleTransform transform)
