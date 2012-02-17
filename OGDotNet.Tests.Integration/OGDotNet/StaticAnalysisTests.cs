@@ -139,9 +139,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet
         private static TypeDefinition GetValueAssertions()
         {
             var asm = typeof(ValueAssertions).Assembly;
-            foreach (ModuleDefinition module in AssemblyFactory.GetAssembly(asm.Location).Modules)
+            try
             {
-                return module.Types[typeof(ValueAssertions).FullName];
+                foreach (ModuleDefinition module in AssemblyFactory.GetAssembly(asm.Location).Modules)
+                {
+                    return module.Types[typeof(ValueAssertions).FullName];
+                }
+            }
+            catch (ArgumentException ae)
+            {
+                Console.Out.WriteLine(string.Format("Cannot run cecil, perhaps the assembly is instrumented: {0}", ae));
+                return null;
             }
             throw new Exception();
         }
@@ -159,6 +167,10 @@ namespace OGDotNet.Tests.Integration.OGDotNet
             }
 
             var valueAssertions = GetValueAssertions();
+            if (valueAssertions == null)
+            {
+                return;
+            }
             foreach (var method in valueAssertions.Methods.Cast<MethodDefinition>().Where(m => m.Name == "AssertSensibleValue" && m.Parameters.Count == 1))
             {
                 Assert.NotNull(method);
