@@ -164,7 +164,7 @@
     <Compile Include="Mappedtypes\math\surface\InterpolatedDoublesSurface.cs" />
     <Compile Include="Mappedtypes\Util\FudgeMsg\FudgeListWrapper.cs" />
     <Compile Include="Mappedtypes\Util\money\CurrencyAmount.cs" />
-    <Compile Include="Mappedtypes\Financial\Analytics\Volatility\Surface\CurrencyLabelledMatrix1D.cs" />
+    <Compile Include="Mappedtypes\Financial\Analytics\CurrencyLabelledMatrix1D.cs" />
     <Compile Include="Mappedtypes\Util\money\MultipleCurrencyAmount.cs" />
     <Compile Include="Model\Context\ComponentInfo.cs" />
     <Compile Include="Model\Context\ComponentKey.cs" />
