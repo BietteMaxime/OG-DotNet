@@ -1,0 +1,35 @@
+<Configuration>
+  <CustomStructuralPatterns>
+    <Pattern Severity="WARNING">
+      <Comment>Use argumentChecker</Comment>
+      <ReplacePattern>OGDotNet.Utils.ArgumentChecker.NotNull($id$, $idString$);</ReplacePattern>
+      <SearchPattern>if ($id$ == null) throw new ArgumentNullException($idString$, 1);</SearchPattern>
+      <Params />
+      <Placeholders>
+        <IdentifierPlaceholder Name="id" Type="" ExactType="False" RegEx="" CaseSensitive="True" />
+        <ExpressionPlaceholder Name="idString" ExpressionType="System.String" ExactType="True" />
+      </Placeholders>
+    </Pattern>
+  </CustomStructuralPatterns>
+  <SharedSolutionTemplateManager>
+    <LiveTemplates>
+      <Template uid="c51061b7-bab8-41b2-8406-b4e85c5b157a" shortcut="fudgeMsg" description="Creates the to and from fudge msg methods" text="		public static $TYPE$ FromFudgeMsg(Fudge.IFudgeFieldContainer ffc, Fudge.Serialization.IFudgeDeserializer deserializer)&#xD;&#xA;        {&#xD;&#xA;            return new $TYPE$();&#xD;&#xA;        }&#xD;&#xA;&#xD;&#xA;        public void ToFudgeMsg(Fudge.IAppendingFudgeFieldContainer a, Fudge.Serialization.IFudgeSerializer s)&#xD;&#xA;        {&#xD;&#xA;            throw new NotImplementedException();&#xD;&#xA;        }" reformat="True" shortenQualifiedReferences="True">
+        <Context>
+          <CSharpContext context="TypeMember" minimumLanguageVersion="2.0" />
+        </Context>
+        <Categories />
+        <Variables>
+          <Variable name="TYPE" expression="typeName()" initialRange="-1" />
+        </Variables>
+        <CustomProperties />
+      </Template>
+      <Template uid="eee705e1-da93-4851-918d-dc1af4eb49f7" shortcut="header" description="Adds the appropriate copyright header" text="//-----------------------------------------------------------------------&#xD;&#xA;// &lt;copyright file=&quot;$FileName$&quot; company=&quot;OpenGamma Inc. and the OpenGamma group of companies&quot;&gt;&#xD;&#xA;//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies&#xD;&#xA;//&#xD;&#xA;//     Please see distribution for license.&#xD;&#xA;// &lt;/copyright&gt;&#xD;&#xA;//-----------------------------------------------------------------------&#xD;&#xA;" reformat="True" shortenQualifiedReferences="True">
+        <Categories />
+        <Variables>
+          <Variable name="FileName" expression="getFileName()" initialRange="-1" />
+        </Variables>
+        <CustomProperties />
+      </Template>
+    </LiveTemplates>
+  </SharedSolutionTemplateManager>
+</Configuration>

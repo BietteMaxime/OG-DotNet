@@ -13,7 +13,6 @@ Help/
 # ReSharper stuff
 _ReSharper.*
 *.ReSharper.user
-*.ReSharper
 test-reports
 StyleCop.Cache
 MSBuild/Extra.Targets
