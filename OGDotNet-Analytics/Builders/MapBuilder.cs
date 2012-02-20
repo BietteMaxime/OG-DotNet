@@ -43,7 +43,7 @@ namespace OGDotNet.Builders
             return entries.ToDictionary(t => keyFactory(t.Item1), t => valueFactory(t.Item2));
         }
 
-        public static FudgeMsg ToFudgeMsg<TKey, TValue>(IFudgeSerializer s, IDictionary<TKey, TValue> dict, Func<TKey, object> keyMsgGen = null, Func<TValue, object> valueMsgGen = null)
+        public static FudgeMsg ToFudgeMsg<TKey, TValue>(IFudgeSerializer s, IDictionary<TKey, TValue> dict, Func<TKey, object> keyMsgGen = null, Func<TValue, object> valueMsgGen = null) where TValue : class
         {
             var fudgeSerializer = new FudgeSerializer(s.Context);
 
