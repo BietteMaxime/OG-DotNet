@@ -267,31 +267,34 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         public void CanUpdateFromOtherView()
         {
             var snapshotManager = Context.MarketDataSnapshotManager;
-            using (var proc = snapshotManager.CreateFromViewDefinition("Simple Swaption Test View"))
+            const string firstViewName = "Simple Swap Test View";
+            using (var proc = snapshotManager.CreateFromViewDefinition(firstViewName))
             {
-                Assert.NotEqual(0, proc.Snapshot.VolatilityCubes.Count);
-                Assert.NotEqual(0, proc.Snapshot.YieldCurves.Count);
-                proc.Snapshot.BasisViewName = "Primitives Only";
+                Assert.Equal(0, proc.Snapshot.VolatilityCubes.Count);
+                var curvesBefore = proc.Snapshot.YieldCurves.Count;
+                Assert.NotEqual(0, curvesBefore);
+                proc.Snapshot.BasisViewName = "Multi-Asset strategies view";
                 Thread.Sleep(TimeSpan.FromSeconds(1));
                 var action = proc.PrepareUpdate();
                 action.Execute(proc.Snapshot);
 
                 Assert.Equal(0, proc.Snapshot.VolatilityCubes.Count);
-                Assert.Equal(0, proc.Snapshot.YieldCurves.Count);
+                Assert.NotEqual(0, proc.Snapshot.YieldCurves.Count);
+                Assert.NotEqual(curvesBefore, proc.Snapshot.YieldCurves.Count);
 
                 var changedPropertys = new HashSet<string>();
                 proc.Snapshot.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
                                                      { changedPropertys.Add(e.PropertyName); };
-                proc.Snapshot.BasisViewName = "Simple Swaption Test View";
+                proc.Snapshot.BasisViewName = firstViewName;
                 action = proc.PrepareUpdate();
                 action.Execute(proc.Snapshot);
 
-                Assert.NotEqual(0, proc.Snapshot.VolatilityCubes.Count);
-                Assert.NotEqual(0, proc.Snapshot.YieldCurves.Count);
-                Assert.Contains("VolatilityCubes", changedPropertys);
+                Assert.Equal(0, proc.Snapshot.VolatilityCubes.Count);
+                Assert.Equal(curvesBefore, proc.Snapshot.YieldCurves.Count);
+                Assert.DoesNotContain("VolatilityCubes", changedPropertys);
                 Assert.Contains("YieldCurves", changedPropertys);
                 Assert.Contains("BasisViewName", changedPropertys);
-                Assert.Equal(3, changedPropertys.Count());
+                Assert.Equal(2, changedPropertys.Count());
             }
         }
 
