@@ -29,7 +29,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Engine.Value
         [Fact]
         public void TestNearlyAllProperties()
         {//PLAT-1126
-            AssertEncodeDecodeCycle(ValueProperties.WithoutAny(new string[] {"SomeProp" }));
+            AssertEncodeDecodeCycle(ValueProperties.WithoutAny(new[] {"SomeProp" }));
         }
 
         [Fact]

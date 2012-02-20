@@ -57,7 +57,7 @@ namespace OGDotNet.Tests.ExecBuilderTestProxy
             public static TestWrapper<T> FromFudgeMsg(IFudgeFieldContainer ffc,
                                          IFudgeDeserializer deserializer)
             {
-                return new TestWrapper<T>() { Test = deserializer.FromField<T>(ffc.GetByName("test")) };
+                return new TestWrapper<T> { Test = deserializer.FromField<T>(ffc.GetByName("test")) };
             }
 
             public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)

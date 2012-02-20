@@ -322,9 +322,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
         private static Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot> GetSurfaces()
         {
-            return new Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>()
+            return new Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>
                        {
-                           {new VolatilitySurfaceKey(Currency.GBP.UniqueId, "TEST", "SOME INSTRUMENT TYPE"), new ManageableVolatilitySurfaceSnapshot(new Dictionary<Pair<object, object>, ValueSnapshot>(){
+                           {new VolatilitySurfaceKey(Currency.GBP.UniqueId, "TEST", "SOME INSTRUMENT TYPE"), new ManageableVolatilitySurfaceSnapshot(new Dictionary<Pair<object, object>, ValueSnapshot>{
                                                                                                                                                                                                      {
                                                                                                                                                                                                          new Pair<object, object>("A", "B"), new ValueSnapshot(12)},
                                                                                                                                                                                                      {new Pair<object, object>("A", "C"), new ValueSnapshot(12)}

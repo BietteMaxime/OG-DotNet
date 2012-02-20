@@ -54,7 +54,7 @@ namespace OGDotNet.Model
             UriHacks.LeaveDotsAndSlashesEscaped(serviceUri);
             if (!_serviceUri.IsBaseOf(serviceUri))
             {
-                throw new ArgumentException("Failed to resolve uri sensibly", "method");
+                throw new ArgumentException("Failed to resolve uri sensibly", "param");
             }
 
             return new RestTarget(_fudgeContext, serviceUri);

@@ -92,7 +92,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             }
 
             var viewCalculationConfiguration = GetDefaultCalculations(valueNames);
-            var newDefn = new ViewDefinition(TestUtils.GetUniqueName(), portfolioIdentifier: portfolio, defaultCurrency: defn.DefaultCurrency, calculationConfigurationsByName: new Dictionary<string, ViewCalculationConfiguration>() { { "Default", viewCalculationConfiguration } });
+            var newDefn = new ViewDefinition(TestUtils.GetUniqueName(), portfolioIdentifier: portfolio, defaultCurrency: defn.DefaultCurrency, calculationConfigurationsByName: new Dictionary<string, ViewCalculationConfiguration> { { "Default", viewCalculationConfiguration } });
 
             using (var remoteClient = Context.CreateFinancialClient())
             {

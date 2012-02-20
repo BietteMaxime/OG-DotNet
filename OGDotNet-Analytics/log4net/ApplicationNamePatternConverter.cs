@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace OGDotNet.Log4net
 {
-    public class ApplicationNamePatternConverter : global::log4net.Util.PatternConverter
+    public class ApplicationNamePatternConverter : log4net.Util.PatternConverter
     {
         protected override void Convert(TextWriter writer, object state)
         {

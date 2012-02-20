@@ -119,7 +119,7 @@ namespace OGDotNet.Mappedtypes.Financial.currency
             protected override bool EqualsInner(CurrencyMatrixValue other)
             {
                 var otherReq = (CurrencyMatrixValueRequirement)other;
-                return otherReq._valueRequirement == this.ValueRequirement && otherReq._reciprocal == this._reciprocal;
+                return otherReq._valueRequirement == ValueRequirement && otherReq._reciprocal == _reciprocal;
             }
         }
 
@@ -127,7 +127,7 @@ namespace OGDotNet.Mappedtypes.Financial.currency
         {
             if (other == null)
                 return false;
-            if (other.GetType() != this.GetType())
+            if (other.GetType() != GetType())
                 return false;
             return EqualsInner(other);
         }

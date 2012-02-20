@@ -127,7 +127,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
             var securitytoFind = searchResult.Documents.First();
 
             request = new SecuritySearchRequest(PagingRequest.All, "*", type, null,
-                                                new List<ObjectId>() {securitytoFind.UniqueId.ObjectID});
+                                                new List<ObjectId> {securitytoFind.UniqueId.ObjectID});
             var singleSearchResult = Context.SecurityMaster.Search(request);
             Assert.NotEmpty(singleSearchResult.Documents);
             //Assert.Single(singleSearchResult.Documents);

@@ -274,7 +274,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 new[] { new Point3D(0, 0, 0), new Point3D(1, 0, 0), new Point3D(0, 1, 0), new Point3D(1, 1, 0), });
             cuboid.TextureCoordinates = new PointCollection(cuboid.Positions.Select(p => new Point(p.X, p.Y)));
 
-            cuboid.TriangleIndices = new Int32Collection(new int[] { 0, 1, 2, 1, 3, 2 });
+            cuboid.TriangleIndices = new Int32Collection(new[] { 0, 1, 2, 1, 3, 2 });
 
             return new GeometryModel3D(cuboid, materialWithLabel)
             {

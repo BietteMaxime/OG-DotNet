@@ -18,7 +18,7 @@ namespace OGDotNet.Tests.Integration.Xunit.Extensions
         {
             //Tweaked from Xunit.Sdk.ExceptionUtility.RethrowWithNoStackTraceLoss
             (typeof(Exception).GetField("_remoteStackTraceString", BindingFlags.NonPublic | BindingFlags.Instance) ?? typeof(Exception).GetField("remote_stack_trace", BindingFlags.NonPublic | BindingFlags.Instance)).
-                SetValue(inner, timedOutTrace.ToString() + "$$RethrowMarker$$");
+                SetValue(inner, timedOutTrace + "$$RethrowMarker$$");
             return inner;
         }
 

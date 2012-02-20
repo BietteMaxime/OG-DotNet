@@ -80,7 +80,7 @@ namespace OGDotNet.Mappedtypes.Engine.Value
 
             public override ValueProperties With(string propertyName, string propertyValue)
             {
-                return new FiniteValueProperties(new Dictionary<string, ISet<string>>() { { propertyName, SmallSet<string>.Create(propertyValue) } }, null);
+                return new FiniteValueProperties(new Dictionary<string, ISet<string>> { { propertyName, SmallSet<string>.Create(propertyValue) } }, null);
             }
         }
 

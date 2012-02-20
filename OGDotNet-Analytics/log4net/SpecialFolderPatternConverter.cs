@@ -9,7 +9,7 @@ using System;
 
 namespace OGDotNet.Log4net
 {
-    public class SpecialFolderPatternConverter : global::log4net.Util.PatternConverter
+    public class SpecialFolderPatternConverter : log4net.Util.PatternConverter
     {
         protected override void Convert(System.IO.TextWriter writer, object state)
         {

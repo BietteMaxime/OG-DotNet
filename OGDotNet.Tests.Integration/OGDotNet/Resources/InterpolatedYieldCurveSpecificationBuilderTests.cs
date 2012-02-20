@@ -12,7 +12,7 @@ using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Integration.Xunit.Extensions;
-using Assert = global::Xunit.Assert;
+using Assert = Xunit.Assert;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
