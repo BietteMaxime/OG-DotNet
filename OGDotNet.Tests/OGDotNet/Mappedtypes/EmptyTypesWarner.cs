@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using OGDotNet.Mappedtypes.Engine.Function;
 using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Mappedtypes.Financial.Analytics;

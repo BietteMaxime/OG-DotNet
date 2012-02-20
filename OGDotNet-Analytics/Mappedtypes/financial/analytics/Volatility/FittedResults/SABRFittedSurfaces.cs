@@ -8,7 +8,6 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Mappedtypes.Financial.Model.Volatility.Surface;
 using OGDotNet.Mappedtypes.Math.Surface;
 using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
 

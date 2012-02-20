@@ -5,7 +5,6 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
 using OGDotNet.Mappedtypes.Id;
 
 namespace OGDotNet.Mappedtypes.Core.Position

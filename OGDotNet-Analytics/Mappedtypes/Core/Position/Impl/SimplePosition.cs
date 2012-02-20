@@ -5,7 +5,6 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using Fudge.Serialization;
 using OGDotNet.Builders;

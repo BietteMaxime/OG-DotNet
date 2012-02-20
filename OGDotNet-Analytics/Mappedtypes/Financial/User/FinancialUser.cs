@@ -7,7 +7,6 @@
 //-----------------------------------------------------------------------
 using System;
 using OGDotNet.Model;
-using OGDotNet.Model.Context;
 
 namespace OGDotNet.Mappedtypes.Financial.User
 {

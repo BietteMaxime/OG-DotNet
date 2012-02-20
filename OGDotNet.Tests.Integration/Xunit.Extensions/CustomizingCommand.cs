@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Xunit.Sdk;
-using TimeoutException = Xunit.Sdk.TimeoutException;
 
 namespace OGDotNet.Tests.Integration.Xunit.Extensions
 {

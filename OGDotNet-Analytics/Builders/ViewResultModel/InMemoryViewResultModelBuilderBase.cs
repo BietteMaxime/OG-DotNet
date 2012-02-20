@@ -15,7 +15,6 @@ using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Utils;
 
 namespace OGDotNet.Builders.ViewResultModel
 {
@@ -87,7 +86,7 @@ namespace OGDotNet.Builders.ViewResultModel
             return BuildObject(msg, deserializer, configurationMap, viewProcessId, viewCycleId, inputDataTimestamp, resultTimestamp, calculationDuration);
         }
 
-        private DateTimeOffset GetToDateTimeOffsetWithDefault(IFudgeFieldContainer msg, string fieldName)
+        private static DateTimeOffset GetToDateTimeOffsetWithDefault(IFudgeFieldContainer msg, string fieldName)
         {
             //TODO strict once [PLAT-1683] is fixed
             if (msg.GetByName(fieldName).Type == IndicatorFieldType.Instance)

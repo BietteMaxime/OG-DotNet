@@ -10,7 +10,6 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using OGDotNet.AnalyticsViewer.View.CellTemplates;
 using OGDotNet.AnalyticsViewer.View.CellTemplateSelection;
 using OGDotNet.AnalyticsViewer.ViewModel;
 using OGDotNet.SecurityViewer.View;

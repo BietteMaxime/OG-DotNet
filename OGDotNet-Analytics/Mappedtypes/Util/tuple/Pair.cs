@@ -6,13 +6,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using System.Linq;
 using System.Reflection;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Util.Tuple

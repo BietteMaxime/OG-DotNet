@@ -6,8 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using System.Linq;
-using System.Text;
 using Fudge;
 using Fudge.Serialization;
 using Fudge.Types;

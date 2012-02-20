@@ -14,7 +14,6 @@ using OGDotNet.Mappedtypes.Engine;
 using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
-using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.LiveData;

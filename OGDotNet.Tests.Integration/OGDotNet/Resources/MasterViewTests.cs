@@ -9,7 +9,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
-using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
 using OGDotNet.Model.View;

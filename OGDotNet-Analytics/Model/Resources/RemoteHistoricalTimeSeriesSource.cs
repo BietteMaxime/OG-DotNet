@@ -8,12 +8,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Fudge;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Timeseries.Localdate;
-using OGDotNet.Utils;
 
 namespace OGDotNet.Model.Resources
 {

@@ -6,7 +6,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Mappedtypes.Id;

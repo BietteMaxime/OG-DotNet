@@ -9,7 +9,6 @@
 using System;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Core.Security;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Time;

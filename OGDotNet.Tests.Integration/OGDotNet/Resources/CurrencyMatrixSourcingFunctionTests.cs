@@ -14,7 +14,6 @@ using OGDotNet.Mappedtypes.Engine.Value;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Execution;
 using OGDotNet.Mappedtypes.Financial.currency;
-using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Financial.View;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Tests.Integration.Xunit.Extensions;

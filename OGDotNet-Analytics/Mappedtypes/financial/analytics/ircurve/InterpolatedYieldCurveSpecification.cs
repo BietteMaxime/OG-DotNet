@@ -11,10 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge;
 using Fudge.Serialization;
-using OGDotNet.Builders;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Util.Money;
-using OGDotNet.Mappedtypes.Util.Time;
 
 namespace OGDotNet.Mappedtypes.Financial.Analytics.IRCurve
 {

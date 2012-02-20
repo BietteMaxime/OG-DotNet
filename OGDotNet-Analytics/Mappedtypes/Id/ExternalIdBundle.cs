@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Text;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Utils;
 
 namespace OGDotNet.Mappedtypes.Id
 {

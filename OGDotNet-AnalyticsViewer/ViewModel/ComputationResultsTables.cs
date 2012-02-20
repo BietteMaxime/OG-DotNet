@@ -15,7 +15,6 @@ using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Engine.View.Compilation;
 using OGDotNet.Mappedtypes.Engine.View.Listener;
 using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Mappedtypes.Util.Tuple;
 using OGDotNet.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
