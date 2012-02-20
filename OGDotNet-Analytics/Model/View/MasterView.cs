@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using OGDotNet.Mappedtypes;
 using OGDotNet.Mappedtypes.Core.Change;
 using OGDotNet.Mappedtypes.Id;
@@ -27,27 +26,33 @@ namespace OGDotNet.Model.View
             return new MasterView<T>(master);
         }
     }
-    public class MasterView<T> : DisposableBase, IChangeListener where T : AbstractDocument
+
+    /// <summary>
+    /// This class provides a view over the entries of a master which will stay 'Up to date'
+    /// In practice this normally means the view is some amount of time behind, with updates applied in order, but the consistency model is not really specified yet.
+    /// </summary>
+    /// <typeparam name="TDocument">The type of document</typeparam>
+    public class MasterView<TDocument> : DisposableBase, IChangeListener where TDocument : AbstractDocument
     {
         private readonly object _lock = new object();
-        private readonly IMaster<T> _master;
+        private readonly IMaster<TDocument> _master;
         private readonly RemoteChangeManger _changeManager;
         private readonly Dictionary<ObjectId, int> _indexOfObject;
-        private readonly ObservableCollection<T> _documents;
+        private readonly ObservableCollection<TDocument> _documents;
 
-        public MasterView(IMaster<T> master)
+        public MasterView(IMaster<TDocument> master)
         {
             lock (_lock)
             {
                 _master = master;
                 _changeManager = _master.ChangeManager;
                 _changeManager.AddChangeListener(this);
-                _documents = new ObservableCollection<T>(GetAllDocuments());
+                _documents = new ObservableCollection<TDocument>(GetAllDocuments());
                 _indexOfObject = GetIndex();
             }
         }
 
-        private IEnumerable<T> GetAllDocuments()
+        private IEnumerable<TDocument> GetAllDocuments()
         {
             return _master.Search("*", PagingRequest.All).Documents;
         }
@@ -57,7 +62,7 @@ namespace OGDotNet.Model.View
             return _documents.Select((d, i) => Tuple.Create(d.UniqueId.ObjectID, i)).ToDictionary(t => t.Item1, t => t.Item2);
         }
 
-        public ObservableCollection<T> Documents
+        public ObservableCollection<TDocument> Documents
         {
             get { return _documents; }
         }
