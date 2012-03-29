@@ -87,7 +87,7 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes.Master.marketdatasnapshot
         {
             return new Dictionary<VolatilitySurfaceKey, ManageableVolatilitySurfaceSnapshot>
                        {
-                           {new VolatilitySurfaceKey(UniqueId.Create("S", "V"), "N", "I"),
+                           {new VolatilitySurfaceKey(UniqueId.Create("S", "V"), "N", "I", "QT", "QU"),
                                new ManageableVolatilitySurfaceSnapshot(new Dictionary<Pair<object, object>, ValueSnapshot>
                                                                            {
                                                                                {
