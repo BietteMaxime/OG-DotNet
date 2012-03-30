@@ -9,15 +9,15 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using OGDotNet.Mappedtypes.Analytics.Financial.Model.Interestrate.Curve;
+using OGDotNet.Mappedtypes.Analytics.Math.Curve;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
 using OGDotNet.Mappedtypes.Core.MarketDataSnapshot.Impl;
 using OGDotNet.Mappedtypes.Engine.View;
 using OGDotNet.Mappedtypes.Financial.Analytics.IRCurve;
-using OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Financial.User;
 using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master.MarketDataSnapshot;
-using OGDotNet.Mappedtypes.Math.Curve;
 using OGDotNet.Model.Context.MarketDataSnapshot;
 using OGDotNet.Model.Resources;
 using OGDotNet.Utils;

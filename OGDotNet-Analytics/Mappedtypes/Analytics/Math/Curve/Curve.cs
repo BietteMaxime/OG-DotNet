@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using Fudge;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Math.Curve
+namespace OGDotNet.Mappedtypes.Analytics.Math.Curve
 {
     public abstract class Curve
     {

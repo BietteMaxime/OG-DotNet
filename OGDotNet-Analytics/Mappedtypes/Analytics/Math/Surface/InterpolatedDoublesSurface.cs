@@ -5,11 +5,12 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System;
 using Fudge;
 using Fudge.Serialization;
 
-namespace OGDotNet.Mappedtypes.Math.Surface
+namespace OGDotNet.Mappedtypes.Analytics.Math.Surface
 {
     public class InterpolatedDoublesSurface : IDoublesSurface
     {

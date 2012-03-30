@@ -12,9 +12,9 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Math.Curve
+namespace OGDotNet.Mappedtypes.Analytics.Math.Curve
 {
-    public class InterpolatedDoublesCurve : Curve
+    public class InterpolatedDoublesCurve : Analytics.Math.Curve.Curve
     {
         private readonly double[] _xData;
         private readonly double[] _yData;

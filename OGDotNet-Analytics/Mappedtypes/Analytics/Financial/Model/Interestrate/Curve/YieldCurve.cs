@@ -6,7 +6,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve
+namespace OGDotNet.Mappedtypes.Analytics.Financial.Model.Interestrate.Curve
 {
     public class YieldCurve
     {

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fudge.Serialization;
 using OGDotNet.Builders;
-using OGDotNet.Mappedtypes.Math.Curve;
+using OGDotNet.Mappedtypes.Analytics.Math.Curve;
 using OGDotNet.Mappedtypes.Util.Money;
 using OGDotNet.Mappedtypes.Util.Time;
 

@@ -6,9 +6,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.Math.Surface;
+using OGDotNet.Mappedtypes.Analytics.Math.Surface;
 
-namespace OGDotNet.Mappedtypes.Financial.Model.Volatility.Surface
+namespace OGDotNet.Mappedtypes.Analytics.Financial.Model.Volatility.Surface
 {
     public class VolatilitySurface
     {

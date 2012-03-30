@@ -5,6 +5,7 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,9 +13,9 @@ using Fudge;
 using Fudge.Serialization;
 using OGDotNet.Utils;
 
-namespace OGDotNet.Mappedtypes.Math.Curve
+namespace OGDotNet.Mappedtypes.Analytics.Math.Curve
 {
-    public class NodalDoublesCurve : Curve
+    public class NodalDoublesCurve : Analytics.Math.Curve.Curve
     {
         private readonly double[] _xData;
         private readonly double[] _yData;

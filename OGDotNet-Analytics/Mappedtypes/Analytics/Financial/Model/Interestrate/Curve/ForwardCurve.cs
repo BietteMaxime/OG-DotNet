@@ -5,30 +5,30 @@
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System;
 using Fudge;
 using Fudge.Serialization;
-using CCurve = OGDotNet.Mappedtypes.Math.Curve.Curve;
 
-namespace OGDotNet.Mappedtypes.Financial.Model.Interestrate.Curve
+namespace OGDotNet.Mappedtypes.Analytics.Financial.Model.Interestrate.Curve
 {
     public class ForwardCurve
     {
-        private readonly CCurve _forwardCurve;
+        private readonly Math.Curve.Curve _forwardCurve;
 
-        public ForwardCurve(CCurve forwardCurve)
+        public ForwardCurve(Math.Curve.Curve forwardCurve)
         {
             _forwardCurve = forwardCurve;
         }
 
-        public CCurve FwdCurve //NOTE: 'nice' name used in java not allowed here
+        public Math.Curve.Curve FwdCurve //NOTE: 'nice' name used in java not allowed here
         {
             get { return _forwardCurve; }
         }
 
         public static ForwardCurve FromFudgeMsg(IFudgeFieldContainer ffc, IFudgeDeserializer deserializer)
         {
-            return new ForwardCurve(deserializer.FromField<CCurve>(ffc.GetByName("forwardCurve")));
+            return new ForwardCurve(deserializer.FromField<Math.Curve.Curve>(ffc.GetByName("forwardCurve")));
         }
 
         public void ToFudgeMsg(IAppendingFudgeFieldContainer a, IFudgeSerializer s)
