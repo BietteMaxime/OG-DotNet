@@ -32,11 +32,11 @@ namespace OGDotNet.Model.Resources
             }
         }
 
-        public RemoteLiveMarketDataSourceRegistry LiveMarketDataSourceRegistry
+        public RemoteNamedMarketDataSpecificationRepository LiveMarketDataSourceRegistry
         {
             get
             {
-                return new RemoteLiveMarketDataSourceRegistry(_rest.Resolve("liveDataSourceRegistry"));
+                return new RemoteNamedMarketDataSpecificationRepository(_rest.Resolve("namedMarketDataSpecRepository"));
             }
         }
 

@@ -11,19 +11,18 @@ using Fudge.Types;
 
 namespace OGDotNet.Model.Resources
 {
-    public class RemoteLiveMarketDataSourceRegistry
+    public class RemoteNamedMarketDataSpecificationRepository
     {
         private readonly RestTarget _rest;
 
-        public RemoteLiveMarketDataSourceRegistry(RestTarget rest)
+        public RemoteNamedMarketDataSpecificationRepository(RestTarget rest)
         {
             _rest = rest;
         }
 
-        public IEnumerable<string> GetDataSources()
+        public IEnumerable<string> GetNames()
         {
-            var fudgeMsg = _rest.GetFudge();
-
+            var fudgeMsg = _rest.Resolve("names").GetFudge();
             return fudgeMsg.Select(fudgeField => fudgeField.Value == IndicatorType.Instance ? null : (string)fudgeField.Value).ToList();
         }
     }
