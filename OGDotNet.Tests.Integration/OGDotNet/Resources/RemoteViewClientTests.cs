@@ -25,6 +25,7 @@ using OGDotNet.Tests.Xunit.Extensions;
 using OGDotNet.Utils;
 using Xunit;
 using Xunit.Extensions;
+using System.Diagnostics;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {
@@ -198,6 +199,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 
                 var result = compilationResult.Take();
                 Assert.IsNotType(typeof(Exception), result);
+                Debug.WriteLine(definition.UniqueID);
                 Assert.IsAssignableFrom(typeof(ICompiledViewDefinition), result);
 
                 var viewDefin = (ICompiledViewDefinition)result;
@@ -220,9 +222,9 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Xunit.Extensions.Theory]
-        [InlineData("Bloomberg Only")]
+        [InlineData("Live market data (Bloomberg)")]
         //[InlineData("ActivFeed Only")]
-        [InlineData("ActivFeed First")]
+        [InlineData("Live market data (Activ, Bloomberg)")]
         //[InlineData("Combined")]
         public void CanSpecifyLiveData(string dataSource)
         {

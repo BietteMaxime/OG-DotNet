@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using OGDotNet.Builders;
+using OGDotNet.Mappedtypes.Analytics.Financial.Interestrate;
 using OGDotNet.Mappedtypes.Analytics.Financial.Model.FiniteDifference;
 using OGDotNet.Mappedtypes.Analytics.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Analytics.Financial.Model.Option.Definition;
@@ -259,6 +260,12 @@ namespace OGDotNet.Tests.Integration
                     AssertSensibleValue(d);    
                 }
             }
+        }
+
+        public static void AssertSensibleValue(VolatilitySurfaceSpecification value)
+        {
+            Assert.NotNull(value);
+            Assert.NotNull(value.Target);
         }
 
         public static void AssertSensibleValue(BloombergFXOptionVolatilitySurfaceInstrumentProvider.FXVolQuoteType type)
@@ -583,6 +590,21 @@ namespace OGDotNet.Tests.Integration
         public static void AssertSensibleValue(BucketedGreekResultCollection o)
         {
             Assert.NotNull(o);
+            //TODO
+        }
+        public static void AssertSensibleValue(BlackVolatilitySurfaceMoneyness value)
+        {
+            Assert.NotNull(value);
+            //TODO
+        }
+        public static void AssertSensibleValue(LocalVolatilitySurfaceMoneyness value)
+        {
+            Assert.NotNull(value);
+            //TODO
+        }
+        public static void AssertSensibleValue(ForwardCurveYieldImplied value)
+        {
+            Assert.NotNull(value);
             //TODO
         }
     }

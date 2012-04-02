@@ -23,14 +23,13 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
         }
 
         [Fact]
-        public void CanGetMarketDataSources()
+        public void CanGetNamedMarketDataSpecifications()
         {
             var remoteViewProcessor = Context.ViewProcessor;
-            RemoteLiveMarketDataSourceRegistry remoteLiveMarketDataSourceRegistry = remoteViewProcessor.LiveMarketDataSourceRegistry;
-            IEnumerable<string> dataSources = remoteLiveMarketDataSourceRegistry.GetDataSources();
-            Assert.NotEmpty(dataSources);
-            Assert.Contains(null, dataSources);
-            Assert.Contains("Combined", dataSources);
+            RemoteNamedMarketDataSpecificationRepository remoteNamedMarketDataSpecificationRepository = remoteViewProcessor.LiveMarketDataSourceRegistry;
+            IEnumerable<string> specificationNames = remoteNamedMarketDataSpecificationRepository.GetNames();
+            Assert.NotEmpty(specificationNames);
+            Assert.Contains("Live market data (Bloomberg, Activ)", specificationNames);
         }
     }
 }

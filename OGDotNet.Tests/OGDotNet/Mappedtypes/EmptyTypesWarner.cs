@@ -10,7 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using OGDotNet.Mappedtypes.Analytics.Financial.Interestrate;
 using OGDotNet.Mappedtypes.Analytics.Financial.Model.FiniteDifference;
+using OGDotNet.Mappedtypes.Analytics.Financial.Model.Interestrate;
 using OGDotNet.Mappedtypes.Analytics.Financial.Model.Interestrate.Curve;
 using OGDotNet.Mappedtypes.Analytics.Financial.Model.Option.Definition;
 using OGDotNet.Mappedtypes.Engine.MarketData.Spec;
@@ -23,6 +25,7 @@ using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Tests.Xunit.Extensions;
 using Xunit;
 using Xunit.Extensions;
+using OGDotNet.Mappedtypes.Analytics.Financial.Model.Volatility.Surface;
 
 namespace OGDotNet.Tests.OGDotNet.Mappedtypes
 {
@@ -51,7 +54,10 @@ namespace OGDotNet.Tests.OGDotNet.Mappedtypes
                                                                         typeof(PdeGreekResultCollection),
                                                                         typeof(PdeFullResults1D),
                                                                         typeof(BucketedGreekResultCollection),
-                                                                        typeof(ForwardCurve)
+                                                                        typeof(ForwardCurve),
+                                                                        typeof(BlackVolatilitySurfaceMoneyness),
+                                                                        typeof(LocalVolatilitySurfaceMoneyness),
+                                                                        typeof(ForwardCurveYieldImplied)
                                                                     };
         [Theory]
         [TypedPropertyData("MappedTypes")]

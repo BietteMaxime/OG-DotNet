@@ -40,7 +40,17 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "ETest",
                                                                       "ETest1",
                                                                       "ETest2",
-                                                                      "Simple IR Future Option Test View" //PLAT-1459
+                                                                      "Elaine - surface test",
+                                                                      "Simple IR Future Option Test View", //PLAT-1459
+                                                                      "Multi-Asset strategies view",
+                                                                      "Alan",
+                                                                      "Swaps with Market Data Shifts",
+                                                                      "Case Test View - IR future option",
+                                                                      "Simple IR Future Test View",
+                                                                      "Equity Option Test View 1 with market data shifts",
+                                                                      "Simple FRA Test View",
+                                                                      "Simple Swap Test View",
+                                                                      "Local Volatility Vanilla FX Option Test View"
                                                                   };
 
         protected static readonly HashSet<string> FastTickingViews = new HashSet<string>
