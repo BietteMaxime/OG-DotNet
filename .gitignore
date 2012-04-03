@@ -12,7 +12,8 @@ Help/
 
 # ReSharper stuff
 _ReSharper.*
-*.ReSharper.user
+*.ReSharper*
+*.DotSettings.user
 test-reports
 StyleCop.Cache
 MSBuild/Extra.Targets
