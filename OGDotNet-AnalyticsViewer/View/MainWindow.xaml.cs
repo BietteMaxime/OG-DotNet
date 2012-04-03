@@ -61,7 +61,7 @@ namespace OGDotNet.AnalyticsViewer.View
 
             _remoteViewProcessor = OGContext.ViewProcessor;
             var viewNames = _remoteViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
-            var liveDataSources = _remoteViewProcessor.LiveMarketDataSourceRegistry.GetDataSources();
+            var liveDataSources = _remoteViewProcessor.LiveMarketDataSourceRegistry.GetNames();
 
             _remoteSecuritySource = OGContext.SecuritySource;
             viewSelector.DataContext = viewNames;
