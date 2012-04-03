@@ -94,7 +94,7 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (VolatilitySurfaceKey)) return false;
+            if (obj.GetType() != typeof(VolatilitySurfaceKey)) return false;
             return Equals((VolatilitySurfaceKey) obj);
         }
 
@@ -102,11 +102,11 @@ namespace OGDotNet.Mappedtypes.Financial.Analytics.Volatility.Cube
         {
             unchecked
             {
-                int result = (_target != null ? _target.GetHashCode() : 0);
-                result = (result*397) ^ (_name != null ? _name.GetHashCode() : 0);
-                result = (result*397) ^ (_instrumentType != null ? _instrumentType.GetHashCode() : 0);
-                result = (result*397) ^ (_quoteType != null ? _quoteType.GetHashCode() : 0);
-                result = (result*397) ^ (_quoteUnits != null ? _quoteUnits.GetHashCode() : 0);
+                int result = _target != null ? _target.GetHashCode() : 0;
+                result = (result * 397) ^ (_name != null ? _name.GetHashCode() : 0);
+                result = (result * 397) ^ (_instrumentType != null ? _instrumentType.GetHashCode() : 0);
+                result = (result * 397) ^ (_quoteType != null ? _quoteType.GetHashCode() : 0);
+                result = (result * 397) ^ (_quoteUnits != null ? _quoteUnits.GetHashCode() : 0);
                 return result;
             }
         }

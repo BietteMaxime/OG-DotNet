@@ -332,8 +332,7 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                            {
                                new VolatilitySurfaceKey(Currency.GBP.UniqueId, "TEST", "SOME INSTRUMENT TYPE",
                                                         "QUOTE_TYPE", "QUOTE_UNITS"),
-                               new ManageableVolatilitySurfaceSnapshot(new Dictionary
-                                                                           <Pair<object, object>, ValueSnapshot>
+                               new ManageableVolatilitySurfaceSnapshot(new Dictionary<Pair<object, object>, ValueSnapshot>
                                                                            {
                                                                                {
                                                                                    new Pair<object, object>("A", "B"),

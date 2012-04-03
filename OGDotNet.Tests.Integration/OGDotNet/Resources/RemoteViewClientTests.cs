@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OGDotNet.Mappedtypes.Core.Position;
@@ -25,7 +26,6 @@ using OGDotNet.Tests.Xunit.Extensions;
 using OGDotNet.Utils;
 using Xunit;
 using Xunit.Extensions;
-using System.Diagnostics;
 
 namespace OGDotNet.Tests.Integration.OGDotNet.Resources
 {

@@ -27,7 +27,8 @@ namespace OGDotNet.Mappedtypes.Util.Money
             {
                 _ccy1 = ccy1;
                 _ccy2 = ccy2;
-            } else
+            }
+            else
             {
                 _ccy1 = ccy2;
                 _ccy2 = ccy1;

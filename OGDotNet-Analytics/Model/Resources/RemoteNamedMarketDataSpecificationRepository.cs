@@ -1,10 +1,11 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="RemoteLiveMarketDataSourceRegistry.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+// <copyright file="RemoteNamedMarketDataSpecificationRepository.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
 //     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
 //
 //     Please see distribution for license.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Linq;
 using Fudge.Types;
