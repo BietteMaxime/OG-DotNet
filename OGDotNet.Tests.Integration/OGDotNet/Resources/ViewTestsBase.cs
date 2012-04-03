@@ -46,11 +46,14 @@ namespace OGDotNet.Tests.Integration.OGDotNet.Resources
                                                                       "Alan",
                                                                       "Swaps with Market Data Shifts",
                                                                       "Case Test View - IR future option",
+                                                                      "Case Test View Swap USD PV",
                                                                       "Simple IR Future Test View",
                                                                       "Equity Option Test View 1 with market data shifts",
                                                                       "Simple FRA Test View",
                                                                       "Simple Swap Test View",
-                                                                      "Local Volatility Vanilla FX Option Test View"
+                                                                      "Local Volatility Vanilla FX Option Test View",
+                                                                      "Elaine - A test - IR future option",
+                                                                      "Elaine - A test - IR future option (1)"
                                                                   };
 
         protected static readonly HashSet<string> FastTickingViews = new HashSet<string>
