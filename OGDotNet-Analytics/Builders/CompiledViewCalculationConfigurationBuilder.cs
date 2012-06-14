@@ -26,7 +26,7 @@ namespace OGDotNet.Builders
         {
             string name = msg.GetString("name");
             Dictionary<ValueRequirement, ValueSpecification> marketDataRequirements = MapBuilder.FromFudgeMsg<ValueRequirement, ValueSpecification>(msg.GetMessage("marketDataRequirements"), deserializer);
-            var computationTargets = new HashSet<ComputationTarget>(msg.GetMessage("computationTargets").GetAllByOrdinal(1).Select(deserializer.FromField<ComputationTarget>));
+            var computationTargets = new HashSet<ComputationTargetSpecification>(msg.GetMessage("computationTargets").GetAllByOrdinal(1).Select(deserializer.FromField<ComputationTargetSpecification>));
 
             IFudgeFieldContainer specMessage = msg.GetMessage("terminalOutputSpecifications");
             Dictionary<ValueSpecification, HashSet<ValueRequirement>> terminalOutputSpecifications = MapBuilder.FromFudgeMsg(specMessage, deserializer.FromField<ValueSpecification>, f => GetRequirementSet(f, deserializer));

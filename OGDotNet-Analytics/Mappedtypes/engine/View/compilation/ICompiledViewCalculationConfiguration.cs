@@ -20,6 +20,6 @@ namespace OGDotNet.Mappedtypes.Engine.View.Compilation
         Dictionary<ValueSpecification, HashSet<ValueRequirement>> TerminalOutputSpecifications { get; }
         HashSet<Pair<string, ValueProperties>> TerminalOutputValues { get; }
         Dictionary<ValueRequirement, ValueSpecification> MarketDataRequirements { get; }
-        HashSet<ComputationTarget> ComputationTargets { get; }
+        HashSet<ComputationTargetSpecification> ComputationTargets { get; }
     }
 }

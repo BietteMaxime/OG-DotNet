@@ -18,11 +18,11 @@ namespace OGDotNet.Mappedtypes.Engine.View.Compilation
     {
         private readonly string _name;
         private readonly Dictionary<ValueRequirement, ValueSpecification> _marketDataRequirements;
-        private readonly HashSet<ComputationTarget> _computationTargets;
+        private readonly HashSet<ComputationTargetSpecification> _computationTargets;
         private readonly Dictionary<ValueSpecification, HashSet<ValueRequirement>> _terminalOutputSpecifications;
         private readonly HashSet<Pair<string, ValueProperties>> _terminalOutputValues;
 
-        public CompiledViewCalculationConfigurationImpl(string name, Dictionary<ValueRequirement, ValueSpecification> marketDataRequirements, HashSet<ComputationTarget> computationTargets, Dictionary<ValueSpecification, HashSet<ValueRequirement>> terminalOutputSpecifications)
+        public CompiledViewCalculationConfigurationImpl(string name, Dictionary<ValueRequirement, ValueSpecification> marketDataRequirements, HashSet<ComputationTargetSpecification> computationTargets, Dictionary<ValueSpecification, HashSet<ValueRequirement>> terminalOutputSpecifications)
         {
             _name = name;
             _marketDataRequirements = marketDataRequirements;
@@ -61,7 +61,7 @@ namespace OGDotNet.Mappedtypes.Engine.View.Compilation
             get { return _marketDataRequirements; }
         }
 
-        public HashSet<ComputationTarget> ComputationTargets
+        public HashSet<ComputationTargetSpecification> ComputationTargets
         {
             get { return _computationTargets; }
         }
