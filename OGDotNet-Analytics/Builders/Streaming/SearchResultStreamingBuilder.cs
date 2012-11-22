@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Fudge;
 using Fudge.Serialization;
+using OGDotNet.Mappedtypes.Id;
 using OGDotNet.Mappedtypes.Master;
 using OGDotNet.Mappedtypes.Util;
 using OGDotNet.Model;
@@ -23,6 +24,7 @@ namespace OGDotNet.Builders.Streaming
             bool inList = false;
             var items = new List<T>();
             Paging paging = null;
+            VersionCorrection versionCorrection = null;
             while (stream.HasNext)
             {
                 switch (stream.MoveNext())
@@ -30,7 +32,7 @@ namespace OGDotNet.Builders.Streaming
                     case FudgeStreamElement.MessageStart:
                         break;
                     case FudgeStreamElement.MessageEnd:
-                        return new SearchResult<T>(paging, items);
+                        return new SearchResult<T>(paging, versionCorrection, items);
                     case FudgeStreamElement.SimpleField:
                         if (stream.FieldName == null && stream.FieldOrdinal == 0)
                         {
@@ -45,6 +47,14 @@ namespace OGDotNet.Builders.Streaming
                                 throw new ArgumentException();
                             }
                             paging = DeserializeStandard<Paging>(context, stream, typeMap);
+                        }
+                        else if (stream.FieldName == "versionCorrection" && stream.FieldOrdinal == null)
+                        {
+                            if (inList)
+                            {
+                                throw new ArgumentException();
+                            }
+                            versionCorrection = DeserializeStandard<VersionCorrection>(context, stream, typeMap);
                         }
                         else if (stream.FieldName == "documents" && stream.FieldOrdinal == null)
                         {
@@ -65,7 +75,7 @@ namespace OGDotNet.Builders.Streaming
                         }
                         break;
                     case FudgeStreamElement.SubmessageFieldEnd:
-                        if (! inList)
+                        if (!inList)
                         {
                             throw new ArgumentException();
                         }
