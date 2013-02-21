@@ -1,17 +1,18 @@
-//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CurveControl.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using OGDotNet.Mappedtypes.Analytics.Math.Curve;
+
+using OpenGamma.Analytics.Math.Curve;
 
 namespace OGDotNet.AnalyticsViewer.View.Charts
 {
@@ -72,7 +73,7 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
             if (Curve != null)
             {
                 if (Curve.IsVirtual)
-                {//We can't display this
+                {// We can't display this
                     IsEnabled = false;
                     ShowDisabled();
                     canvas.Visibility = Visibility.Visible;
@@ -112,6 +113,7 @@ namespace OGDotNet.AnalyticsViewer.View.Charts
             {
                 canvas.Visibility = Visibility.Hidden;
             }
+
             nameGroup.Visibility = canvas.Visibility;
         }
 

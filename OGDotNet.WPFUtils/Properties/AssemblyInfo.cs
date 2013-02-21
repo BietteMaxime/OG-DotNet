@@ -1,10 +1,11 @@
-//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="AssemblyInfo.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -29,12 +30,10 @@ using System.Runtime.InteropServices;
 [assembly: Guid("99ff49ff-61ca-455c-8519-d0b0d2b14d1d")]
 
 // Version information for an assembly consists of the following four values:
-//
 //      Major Version
 //      Minor Version 
 //      Build Number
 //      Revision
-//
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]

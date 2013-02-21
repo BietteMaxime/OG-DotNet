@@ -1,21 +1,22 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ComputationResultsTables.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.Engine;
-using OGDotNet.Mappedtypes.Engine.Value;
-using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.Engine.View.Compilation;
-using OGDotNet.Mappedtypes.Engine.View.Listener;
-using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Model.Resources;
+
+using OpenGamma.Engine;
+using OpenGamma.Engine.View;
+using OpenGamma.Engine.View.Listener;
+using OpenGamma.Engine.View.compilation;
+using OpenGamma.Engine.value;
+using OpenGamma.Id;
+using OpenGamma.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
@@ -81,13 +82,14 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 
                 foreach (var req in configuration.Value.SpecificRequirements.Where(r => r.TargetSpecification.Type == ComputationTargetType.Primitive))
                 {
-                    //TODO less slow
+                    // TODO less slow
                     if (Satisfies(specs, Tuple.Create(req.ValueName, req.Constraints)))
                     {
                         columns.Add(new ColumnHeader(configuration.Key, req.ValueName, req.Constraints));
                     }
                 }
             }
+
             return columns;
         }
 
@@ -109,6 +111,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                     }
                 }
             }
+
             return columns;
         }
 
@@ -127,7 +130,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         private static void UpdatePortfolioRows(IEnumerable<PortfolioRow> rows, ILookup<UniqueId, ViewResultEntry> indexedResults)
         {
             UpdateDynamicRows(rows, r => indexedResults[r.ComputationTargetSpecification.Uid].ToDictionary(
-                GetColumnHeader,
+                GetColumnHeader, 
                 v => v.ComputedValue.Value)
                 );
         }
@@ -140,7 +143,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         private static void UpdatePrimitiveRows(IEnumerable<PrimitiveRow> rows, ILookup<UniqueId, ViewResultEntry> indexedResults)
         {
             UpdateDynamicRows(rows, r => indexedResults[r.TargetId].ToDictionary(
-                GetColumnHeader,
+                GetColumnHeader, 
                 v => v.ComputedValue.Value)
                 );
         }

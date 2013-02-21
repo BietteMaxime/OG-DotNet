@@ -1,15 +1,17 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ColumnHeader.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OGDotNet.Mappedtypes.Engine.Value;
+
+using OpenGamma.Engine.value;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
@@ -70,6 +72,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 {
                     continue;
                 }
+
                 if (firstProperty)
                 {
                     firstProperty = false;
@@ -78,6 +81,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 {
                     sb.Append("; \n");
                 }
+
                 sb.Append(propertyName).Append("=");
                 ISet<string> propertyValues = constraints.GetValues(propertyName);
                 if (propertyValues.Count() == 0)
@@ -95,6 +99,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                     sb.Append(")");
                 }
             }
+
             return sb.ToString();
         }
 

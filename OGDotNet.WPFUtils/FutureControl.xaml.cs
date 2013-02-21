@@ -1,10 +1,11 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="FutureControl.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ namespace OGDotNet.WPFUtils
             {
                 return (Visibility)GetValue(LoadingVisibilityProperty);
             }
+
             set
             {
                 SetValue(LoadingVisibilityProperty, value);
@@ -47,6 +49,7 @@ namespace OGDotNet.WPFUtils
             {
                 return (Visibility)GetValue(ErrorVisibilityProperty);
             }
+
             set
             {
                 SetValue(ErrorVisibilityProperty, value);
@@ -58,6 +61,7 @@ namespace OGDotNet.WPFUtils
             {
                 return (string)GetValue(ErrorTextProperty);
             }
+
             set
             {
                 SetValue(ErrorTextProperty, value);
@@ -69,6 +73,7 @@ namespace OGDotNet.WPFUtils
             {
                 return (string)GetValue(ErrorDetailTextProperty);
             }
+
             set
             {
                 SetValue(ErrorDetailTextProperty, value);
@@ -78,7 +83,7 @@ namespace OGDotNet.WPFUtils
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var content = Content as FrameworkElement;
-            var dataContext = DataContext as Task; //This is really Task<?> but I haven't bothered to express that
+            var dataContext = DataContext as Task; // This is really Task<?> but I haven't bothered to express that
             if (content != null && dataContext != null)
             {
                 var taskId = Interlocked.Increment(ref _taskId);
@@ -117,6 +122,7 @@ namespace OGDotNet.WPFUtils
                         LoadingVisibility = Visibility.Hidden;
                     });
                 }
+
                     );
                 if (dataContext.Status == TaskStatus.Created)
                 {
@@ -132,6 +138,7 @@ namespace OGDotNet.WPFUtils
             {
                 return GetErrorText(agg.InnerExceptions[0], out detailMessage);
             }
+
             detailMessage = e.ToString();
             return e.Message;
         }

@@ -1,0 +1,476 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D0AA326F-E93D-42D2-9E4E-A000406350BA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenGamma</RootNamespace>
+    <AssemblyName>OpenGamma.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Debug\OpenGamma.Core.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Apache.NMS" />
+    <Reference Include="Apache.NMS.ActiveMQ" />
+    <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
+    <Reference Include="Castle.Windsor, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
+    <Reference Include="log4net" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
+    <Compile Include="Core\Position\IPortfolioNode.cs" />
+    <Compile Include="Engine\DepGraph\DependencyGraph.cs" />
+    <Compile Include="Engine\DepGraph\DependencyNode.cs" />
+    <Compile Include="Engine\DepGraph\IDependencyGraph.cs" />
+    <Compile Include="Engine\DepGraph\IDependencyGraphExplorer.cs" />
+    <Compile Include="Engine\Target\ClassComputationTargetType.cs" />
+    <Compile Include="Engine\Target\ComputationTargetReference.cs" />
+    <Compile Include="Engine\Target\IComputationTargetReferenceVisitor.cs" />
+    <Compile Include="Engine\Target\ComputationTargetRequirement.cs" />
+    <Compile Include="Engine\Target\ComputationTargetType.cs" />
+    <Compile Include="Engine\Target\IComputationTargetTypeVisitor.cs" />
+    <Compile Include="Engine\Target\MultipleComputationTargetType.cs" />
+    <Compile Include="Engine\Target\NestedComputationTargetType.cs" />
+    <Compile Include="Engine\Target\NullComputationTargetType.cs" />
+    <Compile Include="Engine\View\Cache\NotCalculatedSentinel.cs" />
+    <Compile Include="Financial\Analytics\IRCurve\IndexType.cs" />
+    <Compile Include="Fudge\AbstractDocumentHelper.cs" />
+    <Compile Include="Fudge\AbstractLinkBuilder.cs" />
+    <Compile Include="Fudge\AvailableOutputsImplBuilder.cs" />
+    <Compile Include="Fudge\BuilderBase.cs" />
+    <Compile Include="Fudge\CombinedMarketDataSpecificationBuilder.cs" />
+    <Compile Include="Fudge\CompiledViewCalculationConfigurationBuilder.cs" />
+    <Compile Include="Fudge\ComputationCacheQueryBuilder.cs" />
+    <Compile Include="Fudge\ComputationCacheResponseBuilder.cs" />
+    <Compile Include="Fudge\ComputationTargetBuilder.cs" />
+    <Compile Include="Fudge\ComputationTargetReferenceBuilder.cs" />
+    <Compile Include="Fudge\ComputationTargetReferenceIdentifierVisitor.cs" />
+    <Compile Include="Fudge\ComputationTargetTypeBuilder.cs" />
+    <Compile Include="Fudge\ComputedValueBuilder.cs" />
+    <Compile Include="Fudge\ConfigDocumentBuilder.cs" />
+    <Compile Include="Fudge\ConfigItemBuilder.cs" />
+    <Compile Include="Fudge\CurrencyLabelledMatrix1DBuilder.cs" />
+    <Compile Include="Fudge\CurrencyMatrixBuilder.cs" />
+    <Compile Include="Fudge\DependencyNodeBuilder.cs" />
+    <Compile Include="Fudge\DoubleLabelledMatrix2DBuilder.cs" />
+    <Compile Include="Fudge\DurationBuilder.cs" />
+    <Compile Include="Fudge\EmptyFunctionParametersBuilder.cs" />
+    <Compile Include="Fudge\EnumBuilder.cs" />
+    <Compile Include="Fudge\EnumUtils.cs" />
+    <Compile Include="Fudge\ExecutionOptionsBuilder.cs" />
+    <Compile Include="Fudge\ExternalIdBuilder.cs" />
+    <Compile Include="Fudge\ExternalIdBundleBuilder.cs" />
+    <Compile Include="Fudge\FudgeValueAttribute.cs" />
+    <Compile Include="Fudge\GenericBuilderBase.cs" />
+    <Compile Include="Fudge\ManageableSecurityLinkBuilder.cs" />
+    <Compile Include="Fudge\NotCalculatedSentinelBuilder.cs" />
+    <Compile Include="Fudge\OpenGammaTypeMappingStrategy.cs" />
+    <Compile Include="Fudge\LabelledMatrix1DBuilder.cs" />
+    <Compile Include="Fudge\LiveMarketDataSpecificationBuilder.cs" />
+    <Compile Include="Fudge\ManageablePortfolioBuilder.cs" />
+    <Compile Include="Fudge\ManageablePortfolioNodeBuilder.cs" />
+    <Compile Include="Fudge\ManageablePositionBuilder.cs" />
+    <Compile Include="Fudge\MapBuilder.cs" />
+    <Compile Include="Fudge\MemoizingTypeMappingStrategy.cs" />
+    <Compile Include="Fudge\PagingBuilder.cs" />
+    <Compile Include="Fudge\PagingRequestBuilder.cs" />
+    <Compile Include="Fudge\PortfolioBuilder.cs" />
+    <Compile Include="Fudge\PortfolioDocumentBuilder.cs" />
+    <Compile Include="Fudge\PositionDocumentBuilder.cs" />
+    <Compile Include="Fudge\SerializationUtils.cs" />
+    <Compile Include="Fudge\SimplePortfolioNodeBuilder.cs" />
+    <Compile Include="Fudge\SimplePositionBuilder.cs" />
+    <Compile Include="Fudge\Streaming\DependencyGraphStreamingBuilder.cs" />
+    <Compile Include="Fudge\Streaming\FudgeListWrapperStreamingBuilder.cs" />
+    <Compile Include="Fudge\Streaming\IStreamingFudgeBuilder.cs" />
+    <Compile Include="Fudge\Streaming\SearchResultStreamingBuilder.cs" />
+    <Compile Include="Fudge\Streaming\StreamingFudgeBuilder.cs" />
+    <Compile Include="Fudge\Streaming\StreamingFudgeBuilderBase.cs" />
+    <Compile Include="Fudge\StringLabelledMatrix1DBuilder.cs" />
+    <Compile Include="Fudge\TradeBuilder.cs" />
+    <Compile Include="Fudge\UnorderedCurrencyPairBuilder.cs" />
+    <Compile Include="Fudge\UserMarketDataSpecificationBuilder.cs" />
+    <Compile Include="Fudge\ValuePropertiesBuilder.cs" />
+    <Compile Include="Fudge\ValueRequirementBuilder.cs" />
+    <Compile Include="Fudge\ValueSpecificationBuilder.cs" />
+    <Compile Include="Fudge\VersionCorrectionBuilder.cs" />
+    <Compile Include="Fudge\ViewResultModel\InMemoryViewDeltaResultModelBuilder.cs" />
+    <Compile Include="Fudge\ViewResultModel\InMemoryViewResultModelBuilderBase.cs" />
+    <Compile Include="Fudge\ViewResultModel\InMemoryViewComputationResultModelBuilder.cs" />
+    <Compile Include="Fudge\VolatilitySurfaceDataBuilder.cs" />
+    <Compile Include="Log\ApplicationNamePatternConverter.cs" />
+    <Compile Include="Log\SpecialFolderPatternConverter.cs" />
+    <Compile Include="Analytics\Financial\Model\InterestRate\Curve\ForwardCurveYieldImplied.cs" />
+    <Compile Include="Analytics\Financial\Model\Volatility\Surface\BlackVolatilitySurfaceMoneyness.cs" />
+    <Compile Include="Analytics\Financial\Model\Volatility\Surface\LocalVolatilitySurfaceMoneyness.cs" />
+    <Compile Include="Core\Change\AggregatingChangeListener.cs" />
+    <Compile Include="Core\Change\ChangeEvent.cs" />
+    <Compile Include="Core\Change\ChangeType.cs" />
+    <Compile Include="Core\Change\IChangeListener.cs" />
+    <Compile Include="Core\Config\Impl\ConfigItem.cs" />
+    <Compile Include="MarketDataSnapshot\Impl\SnapshotExtensionMethods.cs" />
+    <Compile Include="Core\Position\Impl\SimplePosition.cs" />
+    <Compile Include="Core\Position\IPositionOrTrade.cs" />
+    <Compile Include="Engine\Function\IFunctionDefinition.cs" />
+    <Compile Include="MarketDataSnapshot\VolatilityCubeData.cs" />
+    <Compile Include="Engine\Function\Resolver\IdentityResolutionRuleTransform.cs" />
+    <Compile Include="Engine\Function\Resolver\IResolutionRuleTransform.cs" />
+    <Compile Include="Engine\Function\Resolver\SimpleResolutionRuleTransform.cs" />
+    <Compile Include="Engine\MarketData\Spec\CombinedMarketDataSpecification.cs" />
+    <Compile Include="Engine\MarketData\Spec\UserMarketDataSpecification.cs" />
+    <Compile Include="Engine\Value\ValuePropertyNames.cs" />
+    <Compile Include="Engine\Value\ValueRequirementNames.cs" />
+    <Compile Include="Engine\View\DeltaDefinition.cs" />
+    <Compile Include="Engine\View\Execution\ViewExecutionFlags.cs" />
+    <Compile Include="Engine\View\Helper\AvailableOutput.cs" />
+    <Compile Include="Engine\View\Helper\AvailableOutputsImpl.cs" />
+    <Compile Include="Engine\View\Helper\IAvailableOutputs.cs" />
+    <Compile Include="Engine\View\IDeltaComparer.cs" />
+    <Compile Include="Engine\View\Listener\JobResultReceivedCall.cs" />
+    <Compile Include="Engine\View\NumberDeltaComparer.cs" />
+    <Compile Include="Financial\Analytics\DoubleLabelledMatrix2D.cs" />
+    <Compile Include="Financial\Analytics\DoubleLabelledMatrix3D.cs" />
+    <Compile Include="Financial\Analytics\LabelledMatrixEntry2D.cs" />
+    <Compile Include="Financial\Analytics\StringLabelledMatrix1D.cs" />
+    <Compile Include="Financial\Analytics\Volatility\Cube\Fitting\FittedSmileDataPoints.cs" />
+    <Compile Include="Financial\Analytics\Volatility\Cube\VolatilityCubeDefinition.cs" />
+    <Compile Include="Financial\Analytics\Volatility\Cube\VolatilityCubeKey.cs" />
+    <Compile Include="MarketDataSnapshot\VolatilityPoint.cs" />
+    <Compile Include="Financial\Analytics\Volatility\Cube\VolatilitySurfaceKey.cs" />
+    <Compile Include="Financial\Analytics\Volatility\FittedResults\SABRFittedSurfaces.cs" />
+    <Compile Include="Financial\Analytics\Volatility\Surface\BloombergFXOptionVolatilitySurfaceInstrumentProvider.cs" />
+    <Compile Include="Financial\Analytics\Volatility\Surface\FuturePriceCurveData.cs" />
+    <Compile Include="Financial\Analytics\Volatility\Surface\Fitting\SurfaceFittedSmileDataPoints.cs" />
+    <Compile Include="Financial\Analytics\Volatility\Surface\VolatilitySurfaceSpecification.cs" />
+    <Compile Include="Financial\Forex\Method\MultipleCurrencyInterestRateCurveSensitivity.cs" />
+    <Compile Include="Financial\Greeks\BucketedGreekResultCollection.cs" />
+    <Compile Include="Financial\Greeks\PDEGreekResultCollection.cs" />
+    <Compile Include="Analytics\Financial\InterestRate\InterestRateCurveSensitivity.cs" />
+    <Compile Include="Financial\InterestRate\PresentValueSensitivity.cs" />
+    <Compile Include="Analytics\Financial\Model\FiniteDifference\PdeFullResults1D.cs" />
+    <Compile Include="Analytics\Financial\Model\InterestRate\Curve\ForwardCurve.cs" />
+    <Compile Include="Analytics\Financial\Model\Option\Definition\SmileDeltaTermStructureParameter.cs" />
+    <Compile Include="Financial\Security\Equity\EquitySecurity.cs" />
+    <Compile Include="Financial\Security\Option\EquityOptionSecurity.cs" />
+    <Compile Include="Financial\User\FinancialUser.cs" />
+    <Compile Include="Engine\MarketData\Spec\LiveMarketDataSpecification.cs" />
+    <Compile Include="Engine\MarketData\Spec\MarketDataSpecification.cs" />
+    <Compile Include="Id\ObjectId.cs" />
+    <Compile Include="Id\IObjectIdentifiable.cs" />
+    <Compile Include="Id\VersionCorrection.cs" />
+    <Compile Include="Master\AbstractLink.cs" />
+    <Compile Include="Master\Position\PositionHistoryRequest.cs" />
+    <Compile Include="Master\Position\PositionSearchRequest.cs" />
+    <Compile Include="Master\Security\ManageableSecurityLink.cs" />
+    <Compile Include="Time\Calendar\LocalDate.cs" />
+    <Compile Include="MarketDataSnapshot\Impl\ManageableVolatilityCubeSnapshot.cs" />
+    <Compile Include="MarketDataSnapshot\Impl\ManageableVolatilitySurfaceSnapshot.cs" />
+    <Compile Include="Master\AbstractHistoryRequest.cs" />
+    <Compile Include="Master\Config\ConfigDocument.cs" />
+    <Compile Include="Master\Config\ConfigSearchRequest.cs" />
+    <Compile Include="Master\Config\ConfigSearchSortOrder.cs" />
+    <Compile Include="Master\MarketDataSnapshot\MarketDataSnapshotHistoryRequest.cs" />
+    <Compile Include="Master\Portfolio\ManageablePortfolio.cs" />
+    <Compile Include="Master\Portfolio\ManageablePortfolioNode.cs" />
+    <Compile Include="Master\Portfolio\PortfolioDocument.cs" />
+    <Compile Include="Master\Portfolio\PortfolioHistoryRequest.cs" />
+    <Compile Include="Master\Portfolio\PortfolioSearchRequest.cs" />
+    <Compile Include="Master\Position\ManageablePosition.cs" />
+    <Compile Include="Master\Position\PositionDocument.cs" />
+    <Compile Include="Master\Security\RawSecurity.cs" />
+    <Compile Include="Analytics\Math\Curve\NodalDoublesCurve.cs" />
+    <Compile Include="Analytics\Math\Matrix\DoubleMatrix1D.cs" />
+    <Compile Include="Analytics\Math\Surface\IDoublesSurface.cs" />
+    <Compile Include="Analytics\Math\Surface\InterpolatedDoublesSurface.cs" />
+    <Compile Include="Master\Security\SecurityHistoryRequest.cs" />
+    <Compile Include="Util\FudgeMsg\FudgeListWrapper.cs" />
+    <Compile Include="Util\Money\CurrencyAmount.cs" />
+    <Compile Include="Financial\Analytics\CurrencyLabelledMatrix1D.cs" />
+    <Compile Include="Util\Money\MultipleCurrencyAmount.cs" />
+    <Compile Include="Util\Money\UnorderedCurrencyPair.cs" />
+    <Compile Include="Model\Context\ComponentInfo.cs" />
+    <Compile Include="Model\Context\ComponentKey.cs" />
+    <Compile Include="Model\Context\ComponentRepository.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\Invalidater.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\LastResultViewClient.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\LiveDataStream.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStream.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\SnapshotDataStreamInvalidater.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\SnapshotLiveDataStreamInvalidater.cs" />
+    <Compile Include="Model\MQTopicTemplate.cs" />
+    <Compile Include="Model\MasterRestTarget.cs" />
+    <Compile Include="Model\RemotePositionMaster.cs" />
+    <Compile Include="Model\Resources\MsgEvent.cs" />
+    <Compile Include="Model\Resources\RemoteAvailableOutputs.cs" />
+    <Compile Include="Model\Resources\FudgeMessageDecoder.cs" />
+    <Compile Include="Model\Resources\RemoteChangeManger.cs" />
+    <Compile Include="Master\Config\RemoteConfigMaster.cs" />
+    <Compile Include="Core\Config\Impl\RemoteConfigSource.cs" />
+    <Compile Include="Financial\RemoteMaster.cs" />
+    <Compile Include="Financial\View\Rest\RemoteNamedMarketDataSpecificationRepository.cs" />
+    <Compile Include="Financial\View\Rest\RemoteMarketDataSnapshotter.cs" />
+    <Compile Include="Model\Resources\RemotePortfolioMaster.cs" />
+    <Compile Include="Financial\Analytics\Volatility\Cube\RemoteVolatilityCubeDefinitionSource.cs" />
+    <Compile Include="Financial\RestfulJmsResultConsumerBase.cs" />
+    <Compile Include="Model\Resources\RestUtils.cs" />
+    <Compile Include="Util\GenericUtils.cs" />
+    <Compile Include="Util\SmallSet.cs" />
+    <Compile Include="Engine\View\Cache\MissingMarketDataSentinel.cs" />
+    <Compile Include="Financial\Ccy\CurrencyMatrix.cs" />
+    <Compile Include="Util\Money\Currency.cs" />
+    <Compile Include="MarketDataSnapshot\SnapshotDataBundle.cs" />
+    <Compile Include="MarketDataSnapshot\ValueSnapshot.cs" />
+    <Compile Include="MarketDataSnapshot\YieldCurveKey.cs" />
+    <Compile Include="Core\Position\ICounterparty.cs" />
+    <Compile Include="Core\Position\Impl\CounterpartyImpl.cs" />
+    <Compile Include="Core\Position\Impl\SimpleTrade.cs" />
+    <Compile Include="Core\Position\ITrade.cs" />
+    <Compile Include="Core\Security\ISecurity.cs" />
+    <Compile Include="DataNotFoundException.cs" />
+    <Compile Include="Engine\ComputationTarget.cs" />
+    <Compile Include="Engine\ComputationTargetSpecification.cs" />
+    <Compile Include="Engine\View\ResultOutputMode.cs" />
+    <Compile Include="Engine\Function\EmptyFunctionParameters.cs" />
+    <Compile Include="Engine\Function\ICompiledFunctionDefinition.cs" />
+    <Compile Include="Engine\Function\IFunctionParameters.cs" />
+    <Compile Include="Engine\Function\ParameterizedFunction.cs" />
+    <Compile Include="Engine\Value\ComputedValue.cs" />
+    <Compile Include="Engine\View\Calc\ComputationCacheQuery.cs" />
+    <Compile Include="Engine\View\Calc\ComputationCacheResponse.cs" />
+    <Compile Include="Engine\View\Calc\IEngineResourceReference.cs" />
+    <Compile Include="Engine\View\Calc\IViewCycle.cs" />
+    <Compile Include="Engine\View\Calc\ViewCycleState.cs" />
+    <Compile Include="Engine\View\Compilation\CompiledViewCalculationConfigurationImpl.cs" />
+    <Compile Include="Engine\View\Compilation\ICompiledViewCalculationConfiguration.cs" />
+    <Compile Include="Engine\View\Compilation\ICompiledViewDefinitionWithGraphs.cs" />
+    <Compile Include="Engine\View\InMemoryViewDeltaResultModel.cs" />
+    <Compile Include="Engine\View\InMemoryViewResultModelBase.cs" />
+    <Compile Include="Engine\View\IViewResultModel.cs" />
+    <Compile Include="Engine\View\Listener\CycleExecutionFailedCall.cs" />
+    <Compile Include="Engine\View\Listener\JavaException.cs" />
+    <Compile Include="Engine\View\Listener\ProcessTerminatedCall.cs" />
+    <Compile Include="Engine\View\Listener\ViewDefinitionCompilationFailedCall.cs" />
+    <Compile Include="Engine\View\Client\ViewResultMode.cs" />
+    <Compile Include="Engine\View\Compilation\CompiledViewDefinitionImpl.cs" />
+    <Compile Include="Engine\View\Compilation\ICompiledViewDefinition.cs" />
+    <Compile Include="Engine\View\Execution\ArbitraryViewCycleExecutionSequence.cs" />
+    <Compile Include="Engine\View\Execution\ExecutionOptions.cs" />
+    <Compile Include="Engine\View\Execution\IViewCycleExecutionSequence.cs" />
+    <Compile Include="Engine\View\Execution\InfiniteViewCycleExecutionSequence.cs" />
+    <Compile Include="Engine\View\Execution\ViewCycleExecutionOptions.cs" />
+    <Compile Include="Engine\View\Execution\IViewExecutionOptions.cs" />
+    <Compile Include="Engine\View\IViewComputationResultModel.cs" />
+    <Compile Include="Engine\View\Listener\CycleCompletedCall.cs" />
+    <Compile Include="Engine\View\Listener\EventViewResultListener.cs" />
+    <Compile Include="Engine\View\Listener\IViewResultListener.cs" />
+    <Compile Include="Engine\View\Listener\ProcessCompletedCall.cs" />
+    <Compile Include="Engine\View\Listener\ViewDefinitionCompiledCall.cs" />
+    <Compile Include="Engine\View\Permission\ViewPermissionException.cs" />
+    <Compile Include="Engine\Value\ValueProperties.cs" />
+    <Compile Include="Engine\Value\ValueRequirement.cs" />
+    <Compile Include="Engine\View\ViewCalculationConfiguration.cs" />
+    <Compile Include="Engine\View\IViewDeltaResultModel.cs" />
+    <Compile Include="Financial\Analytics\IRCurve\FixedIncomeStrip.cs" />
+    <Compile Include="Financial\Analytics\IRCurve\FixedIncomeStripWithIdentifier.cs" />
+    <Compile Include="Financial\Analytics\IRCurve\FixedIncomeStripWithSecurity.cs" />
+    <Compile Include="Financial\Analytics\IRCurve\InterpolatedYieldCurveSpecificationWithSecurities.cs" />
+    <Compile Include="Financial\Analytics\IRCurve\StripInstrumentType.cs" />
+    <Compile Include="Financial\Analytics\IRCurve\YieldCurveDefinition.cs" />
+    <Compile Include="Financial\Analytics\LabelledMatrix1D.cs" />
+    <Compile Include="Financial\Analytics\LocalDateLabelledMatrix1D.cs" />
+    <Compile Include="Financial\Ccy\CurrencyMatrixValue.cs" />
+    <Compile Include="Financial\LiveData\Rest\AddValueRequest.cs" />
+    <Compile Include="Financial\LiveData\Rest\RemoveValueRequest.cs" />
+    <Compile Include="Financial\Security\Bond\BondSecurity.cs" />
+    <Compile Include="Financial\View\Rest\AttachToViewProcessRequest.cs" />
+    <Compile Include="Id\IUniqueIdentifiable.cs" />
+    <Compile Include="Time\Instant.cs" />
+    <Compile Include="Analytics\Math\Curve\CurveUtils.cs" />
+    <Compile Include="Analytics\Math\Surface\ConstantDoublesSurface.cs" />
+    <Compile Include="Analytics\Financial\Model\Volatility\Surface\VolatilitySurface.cs" />
+    <Compile Include="Master\AbstractDocument.cs" />
+    <Compile Include="MarketDataSnapshot\Impl\IUpdatableFrom.cs" />
+    <Compile Include="MarketDataSnapshot\Impl\ManageableMarketDataSnapshot.cs" />
+    <Compile Include="MarketDataSnapshot\Impl\ManageableUnstructuredMarketDataSnapshot.cs" />
+    <Compile Include="Master\MarketDataSnapshot\MarketDataSnapshotDocument.cs" />
+    <Compile Include="Master\MarketDataSnapshot\MarketDataSnapshotSearchRequest.cs" />
+    <Compile Include="MarketDataSnapshot\MarketDataValueSpecification.cs" />
+    <Compile Include="MarketDataSnapshot\MarketDataValueType.cs" />
+    <Compile Include="MarketDataSnapshot\Impl\ManageableYieldCurveSnapshot.cs" />
+    <Compile Include="Analytics\Math\Curve\Curve.cs" />
+    <Compile Include="Analytics\Math\Curve\FunctionalDoublesCurve.cs" />
+    <Compile Include="Analytics\Financial\InterestRate\NelsonSiegelSvennsonBondCurveModel.cs" />
+    <Compile Include="OpenGammaException.cs" />
+    <Compile Include="Util\TimeSeries\Fast\LongInt\FastArrayLongDoubleTimeSeries.cs" />
+    <Compile Include="Util\TimeSeries\LocalDate\ArrayLocalDateDoubleTimeSeries.cs" />
+    <Compile Include="Util\TimeSeries\Fast\DateTimeNumericEncoding.cs" />
+    <Compile Include="Util\TimeSeries\Fast\Integer\FastArrayIntDoubleTimeSeries.cs" />
+    <Compile Include="Util\TimeSeries\FastArrayTDoubleTimeSeries.cs" />
+    <Compile Include="Util\TimeSeries\LocalDate\LocalDateEpochDaysConverter.cs" />
+    <Compile Include="Util\Tuple\IPair.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshotManager.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshotProcessor.cs" />
+    <Compile Include="Model\Context\RemoteEngineContextFactory.cs" />
+    <Compile Include="Financial\Analytics\IRCurve\InterpolatedYieldCurveSpecification.cs" />
+    <Compile Include="Util\TimeSeries\LocalDate\ILocalDateDoubleTimeSeries.cs" />
+    <Compile Include="Financial\Ccy\ICurrencyMatrix.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\UpdateAction.cs" />
+    <Compile Include="Model\Context\MarketDataSnapshot\Warnings\Warning.cs" />
+    <Compile Include="Model\Resources\HeartbeatSender.cs" />
+    <Compile Include="Model\Resources\IFinancialSecuritySource.cs" />
+    <Compile Include="Model\Resources\RemoteCompiledViewDefinitionWithGraphs.cs" />
+    <Compile Include="Financial\Ccy\RemoteCurrencyMatrixSource.cs" />
+    <Compile Include="Financial\View\Rest\RemoteDependencyGraphExplorer.cs" />
+    <Compile Include="Model\Resources\RemoteHistoricalTimeSeriesSource.cs" />
+    <Compile Include="Model\Resources\RemoteInterpolatedYieldCurveSpecificationBuilder.cs" />
+    <Compile Include="Model\MQTemplate.cs" />
+    <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMaster.cs" />
+    <Compile Include="Model\Resources\RemoteLiveDataInjector.cs" />
+    <Compile Include="Model\Resources\RemoteMarketDataSnapshotMaster.cs" />
+    <Compile Include="Model\Resources\RemoteSecurityMaster.cs" />
+    <Compile Include="Financial\Analytics\IRCurve\YieldCurveDefinitionDocument.cs" />
+    <Compile Include="Financial\View\Rest\RemoteViewCycle.cs" />
+    <Compile Include="Model\Resources\RemoteViewCycleReference.cs" />
+    <Compile Include="Model\Resources\ResultEvent.cs" />
+    <Compile Include="Master\Security\SecurityMetaDataRequest.cs" />
+    <Compile Include="Master\Security\SecurityMetaDataResult.cs" />
+    <Compile Include="Model\Resources\UriEncoding.cs" />
+    <Compile Include="Util\PublicAPI\ViewClientState.cs" />
+    <Compile Include="Model\RestExceptionMapping.cs" />
+    <Compile Include="Model\UriHacks.cs" />
+    <Compile Include="OpenGammaModule.cs" />
+    <Compile Include="Financial\Ccy\CurrencyMatrixSourcingFunction.cs" />
+    <Compile Include="Util\DictionaryUtils.cs" />
+    <Compile Include="Util\DisposableBase.cs" />
+    <Compile Include="Model\Resources\ClientResultStream.cs" />
+    <Compile Include="Financial\Analytics\DoubleLabelledMatrix1D.cs" />
+    <Compile Include="Financial\Analytics\LabelledMatrixEntry.cs" />
+    <Compile Include="LiveData\UserPrincipal.cs" />
+    <Compile Include="Core\Position\IPortfolio.cs" />
+    <Compile Include="Core\Position\Impl\SimplePortfolio.cs" />
+    <Compile Include="Core\Position\Impl\SimplePortfolioNode.cs" />
+    <Compile Include="Core\Position\IPosition.cs" />
+    <Compile Include="Model\Context\RemoteEngineContext.cs" />
+    <Compile Include="Model\Resources\RemoteSecuritySource.cs" />
+    <Compile Include="Model\Resources\RemoteViewProcessor.cs" />
+    <Compile Include="Financial\View\Rest\RemoteViewClient.cs" />
+    <Compile Include="Engine\View\ViewResultEntry.cs" />
+    <Compile Include="Engine\View\ViewTargetResultModelImpl.cs" />
+    <Compile Include="Engine\View\ViewCalculationResultModel.cs" />
+    <Compile Include="Engine\Value\ValueSpecification.cs" />
+    <Compile Include="Engine\View\InMemoryViewComputationResultModel.cs" />
+    <Compile Include="Financial\User\FinancialClient.cs" />
+    <Compile Include="Id\ExternalIdSearchType.cs" />
+    <Compile Include="Master\SearchResult.cs" />
+    <Compile Include="Util\ArgumentChecker.cs" />
+    <Compile Include="Financial\Security\FinancialSecurity.cs" />
+    <Compile Include="Id\ExternalIdBundle.cs" />
+    <Compile Include="Id\ExternalIdSearch.cs" />
+    <Compile Include="Id\ExternalId.cs" />
+    <Compile Include="Model\Resources\ISecuritySource.cs" />
+    <Compile Include="Util\Paging.cs" />
+    <Compile Include="Master\Security\ManageableSecurity.cs" />
+    <Compile Include="Util\PagingRequest.cs" />
+    <Compile Include="Model\RestTarget.cs" />
+    <Compile Include="Master\Security\SecurityDocument.cs" />
+    <Compile Include="Master\Security\SecuritySearchRequest.cs" />
+    <Compile Include="Util\FudgeDateTimeExtensions.cs" />
+    <Compile Include="Util\LoggingClassBase.cs" />
+    <Compile Include="Util\Memoizer.cs" />
+    <Compile Include="Util\StringUtils.cs" />
+    <Compile Include="Id\UniqueId.cs" />
+    <Compile Include="Fudge\OpenGammaFudgeContext.cs" />
+    <Compile Include="Analytics\Math\Curve\InterpolatedDoublesCurve.cs" />
+    <Compile Include="Engine\View\ResultModelDefinition.cs" />
+    <Compile Include="Util\Time\Tenor.cs" />
+    <Compile Include="MarketDataSnapshot\VolatilitySurfaceData.cs" />
+    <Compile Include="Analytics\Financial\Model\InterestRate\Curve\YieldCurve.cs" />
+    <Compile Include="Engine\View\ViewDefinition.cs" />
+    <Compile Include="Engine\View\IViewTargetResultModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Log\log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Fudge-CSharp\Fudge\Fudge.csproj">
+      <Project>{109a43d4-ce96-41e7-9ffc-d7a30d238e06}</Project>
+      <Name>Fudge</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Import Project="..\MSBuild\Common.Targets" />
+</Project>

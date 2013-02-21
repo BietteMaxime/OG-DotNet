@@ -1,15 +1,17 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CellTemplateSelectorBase.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using OGDotNet.Utils;
+
+using OpenGamma.Util;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplateSelection
 {
@@ -32,7 +34,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplateSelection
 
             object cellValue = GetCellValue(item);
             if (cellValue == null)
-            {//Let's late bind when we get a value
+            {// Let's late bind when we get a value
                 var comboFactory = new FrameworkElementFactory(typeof(NullCell));
                 comboFactory.SetValue(NullCell.CellTemplateSelectorProperty, this);
                 comboFactory.SetValue(FrameworkElement.DataContextProperty, Binding);
@@ -68,6 +70,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplateSelection
 
         private static readonly Memoizer<Binding, Type, DataTemplate> DefaultIndexedTemplateMemoizer = new Memoizer<Binding, Type, DataTemplate>(BuildIndexedTemplateImpl);
         
+
         /// <summary>
         /// Virtual to allow templates to be embedded etc.
         /// NOTE: this needs to be fast

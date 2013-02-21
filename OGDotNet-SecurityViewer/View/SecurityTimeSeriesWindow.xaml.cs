@@ -1,10 +1,10 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SecurityTimeSeriesWindow.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
@@ -17,9 +17,11 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using OGDotNet.Mappedtypes.Core.Security;
-using OGDotNet.Model.Resources;
+
 using OGDotNet.WPFUtils.Windsor;
+
+using OpenGamma.Core.Security;
+using OpenGamma.Model.Resources;
 
 namespace OGDotNet.SecurityViewer.View
 {
@@ -32,8 +34,8 @@ namespace OGDotNet.SecurityViewer.View
         {
             var securityTimeSeriesWindow = new SecurityTimeSeriesWindow
             {
-                DataContext = securities,
-                Owner = owner,
+                DataContext = securities, 
+                Owner = owner, 
             };
             securityTimeSeriesWindow.ShowDialog();
         }
@@ -76,6 +78,7 @@ namespace OGDotNet.SecurityViewer.View
                     sb.AppendFormat(string.Format("{0}: {1}", propertyInfo.Name, propertyInfo.GetGetMethod().Invoke(security, null)));
                     sb.Append(Environment.NewLine);
                 }
+
                 sb.AppendLine(new string('-', 12));
             }
 
@@ -89,37 +92,48 @@ namespace OGDotNet.SecurityViewer.View
                 var security = tuple.Item1;
                 var style = tuple.Item2;
 
-                var seriesTuple = TimeSeriesSource.GetHistoricalTimeSeries(security.Identifiers, DateTimeOffset.Now, "BLOOMBERG", null, "PX_LAST");
+                var seriesTuple = TimeSeriesSource.GetHistoricalTimeSeries(
+                    security.Identifiers, DateTimeOffset.Now, "BLOOMBERG", null, "PX_LAST");
                 if (seriesTuple.Item1 == null && seriesTuple.Item2 == null)
+                {
                     continue;
+                }
 
                 var timeSeries = seriesTuple.Item2;
-                //NOTE: the chart understands DateTime, but not DateTime Offset
+
+                // NOTE: the chart understands DateTime, but not DateTime Offset
                 var tuples = timeSeries.Values.Select(t => Tuple.Create(t.Item1.LocalDateTime, t.Item2)).ToList();
 
                 if (tuples.Count == 0)
+                {
                     continue;
+                }
 
                 var lineSeries = new LineSeries
                                      {
-                                         IndependentValueBinding = new Binding("Item1"),
-                                         DependentValueBinding = new Binding("Item2"),
-                                         ItemsSource = tuples,
-                                         Title = security.Name,
-                                         DataPointStyle = new Style(),
-
-                                         PolylineStyle = new Style(),
+                                         IndependentValueBinding = new Binding("Item1"), 
+                                         DependentValueBinding = new Binding("Item2"), 
+                                         ItemsSource = tuples, 
+                                         Title = security.Name, 
+                                         DataPointStyle = new Style(), 
+                                         PolylineStyle = new Style(), 
                                          LegendItemStyle = new Style()
                                      };
-                //Data points make us even slower, and there's too many of them to be useful
+
+                // Data points make us even slower, and there's too many of them to be useful
                 lineSeries.DataPointStyle.Setters.Add(new Setter(VisibilityProperty, Visibility.Hidden));
 
-                //The background is set from the style palette, which sets the line color?! http://wpf.codeplex.com/discussions/207938?ProjectName=wpf
-                var backgroundSetter = style.Setters.Where(s => s is Setter).Cast<Setter>().Where(s => s.Property == BackgroundProperty).First();
+                // The background is set from the style palette, which sets the line color?! http://wpf.codeplex.com/discussions/207938?ProjectName=wpf
+                var backgroundSetter =
+                    style.Setters.Where(s => s is Setter)
+                         .Cast<Setter>()
+                         .Where(s => s.Property == BackgroundProperty)
+                         .First();
                 lineSeries.DataPointStyle.Setters.Add(backgroundSetter);
 
                 chart.Series.Add(lineSeries);
             }
+
             if (chart.Series.Count == 0)
             {
                 chart.Title = "No time series found";
@@ -342,6 +356,7 @@ namespace OGDotNet.SecurityViewer.View
         {
             return TimeSpan.FromMilliseconds(timeSpan.TotalMilliseconds * factor);
         }
+
         private static DateTime Max(DateTime x1, DateTime x2)
         {
             return x1 > x2 ? x1 : x2;

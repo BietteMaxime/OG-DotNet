@@ -1,15 +1,17 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="DynamicRow.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Data;
-using OGDotNet.Mappedtypes.Engine.Value;
+
+using OpenGamma.Engine.value;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
@@ -36,11 +38,12 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                     {
                         if (key.RequiredConstraints.IsSatisfiedBy(o.Key))
                         {
-                            //TODO PLAT-1299: if there are multiple we should probably work out which value to use, but in theory either is fine
+                            // TODO PLAT-1299: if there are multiple we should probably work out which value to use, but in theory either is fine
                             return o.Value;
                         }
                     }
                 }
+
                 return null;
             }
         }
@@ -80,6 +83,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
                 case 0:
                     break;
                 default:
+
                     // TODO : if there's a small number of properties changed update individual ones
                     InvokePropertyChanged(Binding.IndexerName);
                     break;

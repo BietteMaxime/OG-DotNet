@@ -1,10 +1,10 @@
-//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="WindowLocationPersister.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace OGDotNet.WPFUtils
                 window.GetType().GetProperty(property.Key).GetSetMethod().Invoke(window, new[] { property.Value });
             }
 
-            if (!Double.IsNaN(window.Top))
+            if (!double.IsNaN(window.Top))
                 window.WindowStartupLocation = WindowStartupLocation.Manual;
         }
 
@@ -78,7 +78,7 @@ namespace OGDotNet.WPFUtils
         private static object UnPickle(string o)
         {
             double d;
-            if (Double.TryParse(o, out d))
+            if (double.TryParse(o, out d))
                 return d;
             WindowState ws;
             if (Enum.TryParse(o, out ws))

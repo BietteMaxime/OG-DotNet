@@ -1,18 +1,20 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="PortfolioResultsTableBase.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OGDotNet.Mappedtypes.Core.Position;
-using OGDotNet.Mappedtypes.Core.Security;
-using OGDotNet.Mappedtypes.Engine;
-using OGDotNet.Mappedtypes.Id;
-using OGDotNet.Model.Resources;
+
+using OpenGamma.Core.Position;
+using OpenGamma.Core.Security;
+using OpenGamma.Engine;
+using OpenGamma.Id;
+using OpenGamma.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
@@ -98,7 +100,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         {
             get
             {
-                _name = _name ?? String.Format("{0} ({1})", _security().Name, _quantity);
+                _name = _name ?? string.Format("{0} ({1})", _security().Name, _quantity);
                 return _name;
             }
         }

@@ -1,10 +1,11 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="FreezeDetector.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -12,9 +13,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
+
 using Castle.Core.Logging;
-using OGDotNet.Mappedtypes;
-using OGDotNet.Utils;
+
+using OpenGamma;
+using OpenGamma.Util;
 
 namespace OGDotNet.WPFUtils.Windsor
 {
@@ -36,7 +39,7 @@ namespace OGDotNet.WPFUtils.Windsor
             _dispatcher = dispatcher;
             _thread = new Thread(Watchdog)
                           {
-                              Name = typeof(FreezeDetector).FullName,
+                              Name = typeof(FreezeDetector).FullName, 
                               IsBackground = true
                           };
             _thread.Start();
@@ -53,8 +56,8 @@ namespace OGDotNet.WPFUtils.Windsor
                 Thread.Sleep(MaxBusy);
                 if (! _idleReached && ! Debugger.IsAttached)
                 {
-                    //Make sure we don't see our own post monitoring!
-                    //TODO: should we sample more than once?
+                    // Make sure we don't see our own post monitoring!
+                    // TODO: should we sample more than once?
 #pragma warning disable 612,618
                     var thread = _dispatcher.Thread;
                     thread.Suspend();
@@ -81,16 +84,17 @@ namespace OGDotNet.WPFUtils.Windsor
                     var sb = new StringBuilder();
                     sb.AppendLine("Dispatcher is blocked:");
                     sb.AppendLine(timedOutTrace.ToString());
-                    Thread.Sleep(SamplePeriod); //wait for some posts
+                    Thread.Sleep(SamplePeriod); // wait for some posts
 
                     var nameGetter = typeof(DispatcherOperation).GetProperty("Name", BindingFlags.Default  | BindingFlags.NonPublic | BindingFlags.Instance).GetGetMethod(true);
                     foreach (var operation in postedOperations)
                     {
                         sb.AppendLine(nameGetter.Invoke(operation, new object[] { }).ToString());
                     }
+
                     var message = sb.ToString();
                     Logger.Error(message);
-                    throw new OpenGammaException(message); //Should be caught by general error handler
+                    throw new OpenGammaException(message); // Should be caught by general error handler
                 }
             }
         }
@@ -99,6 +103,7 @@ namespace OGDotNet.WPFUtils.Windsor
         {
             _shuttingDown = true;
         }
+
         private void DispatcherInactive(object sender, EventArgs e)
         {
             _idleReached = true;

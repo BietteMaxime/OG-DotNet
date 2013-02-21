@@ -1,16 +1,18 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="YieldCurveCell.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 using System.Windows.Controls;
 using System.Windows.Input;
+
 using OGDotNet.AnalyticsViewer.View.Charts;
-using OGDotNet.Mappedtypes.Analytics.Financial.Model.Interestrate.Curve;
-using OGDotNet.Mappedtypes.Analytics.Math.Curve;
+
+using OpenGamma.Analytics.Financial.Model.InterestRate.Curve;
+using OpenGamma.Analytics.Math.Curve;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {

@@ -1,23 +1,25 @@
-//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="OGDotNetApp.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 using System;
 using System.Configuration;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+
 using Castle.Core.Logging;
 using Castle.Core.Resource;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
 using Castle.Windsor.Installer;
-using OGDotNet.Model.Context;
+
+using OpenGamma.Model.Context;
 
 namespace OGDotNet.WPFUtils.Windsor
 {
@@ -53,7 +55,7 @@ namespace OGDotNet.WPFUtils.Windsor
 
         public OGDotNetApp()
         {
-            //Can't read default config directly if we're untrusted http://social.msdn.microsoft.com/Forums/en-US/clr/thread/1e14f665-10a3-426b-a75d-4e66354c5522
+            // Can't read default config directly if we're untrusted http://social.msdn.microsoft.com/Forums/en-US/clr/thread/1e14f665-10a3-426b-a75d-4e66354c5522
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             var section = config.Sections["castle"];
@@ -66,7 +68,7 @@ namespace OGDotNet.WPFUtils.Windsor
 
             _container.Register();
 
-            //Give all of the windows the opportunity to pick up context
+            // Give all of the windows the opportunity to pick up context
             var windowStyle = new Style(typeof(Window));
 
             windowStyle.Setters.Add(new Setter(OGContextProperty, new Binding("OGContext") { Source = this }));

@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ED3DD6D3-4C21-46A2-9252-A8DED93FB259}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenGamma</RootNamespace>
+    <AssemblyName>OpenGamma.Tests.Integration</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
+    <Reference Include="Castle.Windsor, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
+    <Reference Include="Mono.Cecil" />
+    <Reference Include="PresentationCore">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.XML" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="xunit, Version=1.4.9.1465, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="xunit.extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+      <Visible>False</Visible>
+    </CodeAnalysisDependentAssemblyPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
+    <Compile Include="Fudge\MemoizingTypeMappingStrategyTest.cs" />
+    <Compile Include="Model\Resources\RemotePortfolioMasterTests.cs" />
+    <Compile Include="Model\Resources\ViewTestFixture.cs" />
+    <Compile Include="Xunit.Extensions\CecilTests.cs" />
+    <Compile Include="Model\Resources\AvailableOutputsResourceTest.cs" />
+    <Compile Include="Model\Resources\RemoteMarketDataSnapshotterTests.cs" />
+    <Compile Include="Model\Resources\RemoteVolatilityCubeDefinitionSourceTests.cs" />
+    <Compile Include="StaticAnalysisTests.cs" />
+    <Compile Include="Model\Context\RemoteEngineContextFactoryTests.cs" />
+    <Compile Include="Model\Context\RemoteEngineContextTests.cs" />
+    <Compile Include="Fudge\OpenGammaFudgeContextTests.cs" />
+    <Compile Include="Fudge\OpenGammaFudgeContextTestsTypes.cs" />
+    <Compile Include="Model\Resources\CurrencyMatrixSourcingFunctionTests.cs" />
+    <Compile Include="Model\Resources\InterpolatedYieldCurveDefinitionMasterTests.cs" />
+    <Compile Include="Model\Resources\InterpolatedYieldCurveSpecificationBuilderTests.cs" />
+    <Compile Include="Model\Resources\MarketDataSnapshotManagerTests.cs" />
+    <Compile Include="Model\Resources\MarketDataSnapshotProcessorTests.cs" />
+    <Compile Include="Model\Resources\FinancialClientTests.cs" />
+    <Compile Include="Model\Resources\RemoteCurrencyMatrixSourceTests.cs" />
+    <Compile Include="Model\Resources\RemoteHistoricalTimeSeriesSourceTests.cs" />
+    <Compile Include="Model\Resources\RemoteLiveDataInjectorTests.cs" />
+    <Compile Include="Model\Resources\RemoteMarketDataSnapshotMasterTests.cs" />
+    <Compile Include="Model\Resources\RemoteSecurityMasterTests.cs" />
+    <Compile Include="Model\Resources\RemoteSecuritySourceTests.cs" />
+    <Compile Include="Model\Resources\RemoteViewClientBatchTests.cs" />
+    <Compile Include="Model\Resources\RemoteViewClientExtensions.cs" />
+    <Compile Include="Model\Resources\RemoteViewClientTests.cs" />
+    <Compile Include="Model\Resources\RemoteViewCycleTests.cs" />
+    <Compile Include="Model\Resources\RemoteViewProcessorTests.cs" />
+    <Compile Include="Model\Resources\TestViewUtils.cs" />
+    <Compile Include="Model\Resources\RemoteEngineContextTestBase.cs" />
+    <Compile Include="MarketDataSnapshot\VolatilityCubeTest.cs" />
+    <Compile Include="TestsStaticAnalysisTests.cs" />
+    <Compile Include="Xunit.Extensions\CustomizingCommand.cs" />
+    <Compile Include="Xunit.Extensions\ExceptionUtility.cs" />
+    <Compile Include="Xunit.Extensions\FactAttribute.cs" />
+    <Compile Include="Xunit.Extensions\ManualTimeout.cs" />
+    <Compile Include="Xunit.Extensions\ParallelCommandGroup.cs" />
+    <Compile Include="Xunit.Extensions\TestUtils.cs" />
+    <Compile Include="Xunit.Extensions\TheoryAttribute.cs" />
+    <Compile Include="Model\Resources\ViewTestBase.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ValueAssertions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Fudge-CSharp\Fudge\Fudge.csproj">
+      <Project>{109a43d4-ce96-41e7-9ffc-d7a30d238e06}</Project>
+      <Name>Fudge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenGamma.Core\OpenGamma.Core.csproj">
+      <Project>{D0AA326F-E93D-42D2-9E4E-A000406350BA}</Project>
+      <Name>OpenGamma.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenGamma.Tests.Core\OpenGamma.Tests.Core.csproj">
+      <Project>{E0720E55-0A15-4D4A-AFFD-FA3C232F4589}</Project>
+      <Name>OpenGamma.Tests.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Import Project="..\MSBuild\Test.Targets" />
+</Project>

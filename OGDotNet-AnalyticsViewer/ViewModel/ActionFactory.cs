@@ -1,10 +1,11 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActionFactory.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Concurrent;
 
@@ -21,7 +22,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
         }
 
         public Func<TValue> GetAction(TKey key)
-        {//TODO suck less
+        {// TODO suck less
             return () => _results.GetOrAdd(key, _action);
         }
     }

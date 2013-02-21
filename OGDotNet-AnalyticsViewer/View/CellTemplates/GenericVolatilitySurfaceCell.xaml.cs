@@ -1,17 +1,19 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="GenericVolatilitySurfaceCell.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
-using OGDotNet.Mappedtypes.Financial.Analytics;
-using OGDotNet.Utils;
+
+using OpenGamma.Financial.Analytics;
+using OpenGamma.MarketDataSnapshot;
+using OpenGamma.Util;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {

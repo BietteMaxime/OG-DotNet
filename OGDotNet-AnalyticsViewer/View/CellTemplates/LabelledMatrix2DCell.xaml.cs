@@ -1,17 +1,19 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="LabelledMatrix2DCell.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using OGDotNet.Mappedtypes.Financial.Analytics;
+
+using OpenGamma.Financial.Analytics;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {
@@ -39,7 +41,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
                 grid.Columns.Add(new DataGridTextColumn
                                      {
-                                         Header = "Y \\ X",
+                                         Header = "Y \\ X", 
                                          Binding =
                                                          new Binding(".Key")
                                                          {
@@ -50,16 +52,17 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 {
                     grid.Columns.Add(new DataGridTextColumn
                                          {
-                        Header = x,
+                        Header = x, 
                         Binding =
                                         new Binding(".Key")
                                         {
-                                            Mode = BindingMode.OneWay,
-                                            Path = GetPath(x),
+                                            Mode = BindingMode.OneWay, 
+                                            Path = GetPath(x), 
                                             StringFormat = "{0:N2}"
                                         }
                     });
                 }
+
                  summaryBlock.Visibility = Visibility.Visible;
             }
             else

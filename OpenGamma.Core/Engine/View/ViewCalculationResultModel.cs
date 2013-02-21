@@ -1,0 +1,38 @@
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ViewCalculationResultModel.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System.Collections.Generic;
+using System.Linq;
+
+using OpenGamma.Engine.Value;
+
+namespace OpenGamma.Engine.View
+{
+    public class ViewCalculationResultModel
+    {
+        private readonly Dictionary<ComputationTargetSpecification, ISet<ComputedValue>> _mapAll;
+
+        public ViewCalculationResultModel(Dictionary<ComputationTargetSpecification, ISet<ComputedValue>> mapAll)
+        {
+            _mapAll = mapAll;
+        }
+
+        public IEnumerable<ComputedValue> AllResults
+        {
+            get
+            {
+                return _mapAll.SelectMany(kvp => kvp.Value);
+            }
+        }
+
+        public bool TryGetAllValues(ComputationTargetSpecification target, out ISet<ComputedValue> values)
+        {
+            return _mapAll.TryGetValue(target, out values);
+        }
+    }
+}

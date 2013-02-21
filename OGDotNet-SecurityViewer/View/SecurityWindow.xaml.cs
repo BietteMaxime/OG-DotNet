@@ -1,10 +1,10 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SecurityWindow.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
@@ -13,11 +13,13 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using OGDotNet.Mappedtypes.Core.Security;
-using OGDotNet.Mappedtypes.Master.Security;
-using OGDotNet.Mappedtypes.Util;
-using OGDotNet.Model.Resources;
+
 using OGDotNet.WPFUtils.Windsor;
+
+using OpenGamma.Core.Security;
+using OpenGamma.Master.Security;
+using OpenGamma.Model.Resources;
+using OpenGamma.Util;
 
 namespace OGDotNet.SecurityViewer.View
 {
@@ -63,7 +65,7 @@ namespace OGDotNet.SecurityViewer.View
 
             if (type == string.Empty)
             {
-                type = null; //Wildcard
+                type = null; // Wildcard
             }
 
             int currentPage = CurrentPage;
@@ -101,14 +103,17 @@ namespace OGDotNet.SecurityViewer.View
                 {
                     currentPage = 1;
                 }
+
                 return currentPage;
             }
+
             set
             {
                 if (value < 1)
                 {
                     value = 1;
                 }
+
                 currentPageLabel.Text = value.ToString();
             }
         }
@@ -137,6 +142,7 @@ namespace OGDotNet.SecurityViewer.View
             CurrentPage++;
             Update();
         }
+
         private void lastPage_Click(object sender, RoutedEventArgs e)
         {
             CurrentPage = PageCount;

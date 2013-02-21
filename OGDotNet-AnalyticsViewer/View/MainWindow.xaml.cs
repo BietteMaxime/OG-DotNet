@@ -1,10 +1,10 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MainWindow.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 using System;
 using System.Linq;
@@ -12,25 +12,29 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+
+using OGDotNet.AnalyticsViewer.Properties;
 using OGDotNet.AnalyticsViewer.ViewModel;
-using OGDotNet.Mappedtypes.Engine.View;
-using OGDotNet.Mappedtypes.Engine.View.Client;
-using OGDotNet.Mappedtypes.Engine.View.Execution;
-using OGDotNet.Mappedtypes.Engine.View.Listener;
-using OGDotNet.Model.Resources;
 using OGDotNet.WPFUtils;
-using OGDotNet.WPFUtils.Windsor;
+
+using OpenGamma.Engine.View;
+using OpenGamma.Engine.View.Execution;
+using OpenGamma.Engine.View.Listener;
+using OpenGamma.Engine.View.client;
+using OpenGamma.Id;
+using OpenGamma.Master;
+using OpenGamma.Master.Config;
+using OpenGamma.Model.Resources;
 
 namespace OGDotNet.AnalyticsViewer.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : OGDotNetWindow
+    public partial class MainWindow
     {
-        private static readonly Properties.Settings Settings = Properties.Settings.Default;
-        private ISecuritySource _remoteSecuritySource;
-        private RemoteViewProcessor _remoteViewProcessor;
+        private static readonly Settings Settings = Properties.Settings.Default;
+        private ISecuritySource _securitySource;
 
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
@@ -39,7 +43,7 @@ namespace OGDotNet.AnalyticsViewer.View
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs args)
+        private void WindowLoaded(object sender, RoutedEventArgs args)
         {
             if (OGContext == null)
             {
@@ -59,55 +63,56 @@ namespace OGDotNet.AnalyticsViewer.View
 
             Title = string.Format("OpenGamma Analytics ({0})", OGContext.RootUri);
 
-            _remoteViewProcessor = OGContext.ViewProcessor;
-            var viewNames = _remoteViewProcessor.ViewDefinitionRepository.GetDefinitionNames();
-            var liveDataSources = _remoteViewProcessor.LiveMarketDataSourceRegistry.GetNames();
+            SearchResult<ConfigDocument<ViewDefinition>> viewDefinitionSearchResult = OGContext.ConfigMaster.Search(new ConfigSearchRequest<ViewDefinition>());
+            var viewDefinitions = viewDefinitionSearchResult.Documents.Select(d => Tuple.Create(d.UniqueId, d.Name));
+            var liveDataSources = OGContext.ViewProcessor.LiveMarketDataSourceRegistry.GetNames();
 
-            _remoteSecuritySource = OGContext.SecuritySource;
-            viewSelector.DataContext = viewNames;
+            _securitySource = OGContext.SecuritySource;
+            viewSelector.DataContext = viewDefinitions;
+            viewSelector.DisplayMemberPath = "Item2";
 
             liveMarketDataSelector.DataContext = liveDataSources;
 
             WindowLocationPersister.InitAndPersistPosition(this, Settings);
 
-            var viewToSelect = viewNames.Where(v => Settings.PreviousViewName == v).FirstOrDefault();
+            var viewToSelect = viewDefinitions.FirstOrDefault(t => Settings.PreviousViewDefinitionId == t.Item1.ToString());
             viewSelector.SelectedItem = viewToSelect;
         }
 
-        private void viewSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ViewSelectorSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _cancellationTokenSource.Cancel();
             _cancellationTokenSource = new CancellationTokenSource();
             pauseToggle.IsChecked = false;
 
-            var viewName = (string)viewSelector.SelectedItem;
+            var viewDefinitionId = (UniqueId) viewSelector.SelectedValue;
             var liveDataSource = (string) liveMarketDataSelector.SelectedItem;
 
-            Settings.PreviousViewName = viewName;
+            Settings.PreviousViewDefinitionId = viewDefinitionId.ToString();
 
-            if (viewName != null)
+            if (viewDefinitionId != null)
             {
-                new Thread(() => RefreshMyData(viewName, liveDataSource, _cancellationTokenSource.Token)) { Name = "MainWindow.RefreshMyData thread" }.Start();
+                new Thread(() => RefreshMyData(viewDefinitionId, liveDataSource, _cancellationTokenSource.Token)) { Name = "MainWindow.RefreshMyData thread" }.Start();
             }
         }
 
         private void Invoke(Action action, CancellationToken token)
         {
-            Dispatcher.Invoke(((Action)delegate
+            Dispatcher.Invoke((Action)delegate
                                             {
                                                 if (!token.IsCancellationRequested)
                                                 {
                                                     action();
                                                 }
-                                            }));
+                                            });
             token.ThrowIfCancellationRequested();
         }
 
-        private void RefreshMyData(string viewName, string liveDataSource, CancellationToken cancellationToken)
+        private void RefreshMyData(UniqueId viewDefinitionId, string liveDataSource, CancellationToken cancellationToken)
         {
             try
             {
-                RefreshMyDataImpl(viewName, liveDataSource, cancellationToken);
+                RefreshMyDataImpl(viewDefinitionId, liveDataSource, cancellationToken);
             }
             catch (Exception e)
             {
@@ -115,7 +120,7 @@ namespace OGDotNet.AnalyticsViewer.View
             }
         }
 
-        private void RefreshMyDataImpl(string viewName, string liveDataSource, CancellationToken cancellationToken)
+        private void RefreshMyDataImpl(UniqueId viewDefinitionId, string liveDataSource, CancellationToken cancellationToken)
         {
             Invoke(delegate { resultsTableView.DataContext = null; }, cancellationToken);
 
@@ -123,33 +128,39 @@ namespace OGDotNet.AnalyticsViewer.View
 
             lock (clientLock)
             {
-                var client = OGContext.ViewProcessor.CreateClient();
+                var client = OGContext.ViewProcessor.CreateViewClient();
                 RoutedEventHandler pausedHandler = delegate
-                {
-                    if (!cancellationToken.IsCancellationRequested)
                     {
-                        client.Pause();
-                    }
-                };
+                        if (!cancellationToken.IsCancellationRequested)
+                        {
+                            client.Pause();
+                        }
+                    };
                 RoutedEventHandler unpausedHandler = delegate
-                {
-                    if (!cancellationToken.IsCancellationRequested)
                     {
-                        client.Resume();
-                    }
-                };
-                //Must do this before we can throw any exceptions
-                ThreadPool.RegisterWaitForSingleObject(cancellationToken.WaitHandle, delegate
-                {
-                    lock (clientLock)
-                    {
-                        client.Dispose();
-                        pauseToggle.Checked -= pausedHandler;
-                        pauseToggle.Unchecked -= unpausedHandler;
-                    }
-                }, null, int.MaxValue, true);
+                        if (!cancellationToken.IsCancellationRequested)
+                        {
+                            client.Resume();
+                        }
+                    };
 
-                //Now we can start hooking things together
+                // Must do this before we can throw any exceptions
+                ThreadPool.RegisterWaitForSingleObject(
+                    cancellationToken.WaitHandle, 
+                    delegate
+                        {
+                            lock (clientLock)
+                            {
+                                client.Dispose();
+                                pauseToggle.Checked -= pausedHandler;
+                                pauseToggle.Unchecked -= unpausedHandler;
+                            }
+                        }, 
+                    null, 
+                    int.MaxValue, 
+                    true);
+
+                // Now we can start hooking things together
                 pauseToggle.Checked += pausedHandler;
                 pauseToggle.Unchecked += unpausedHandler;
 
@@ -160,46 +171,51 @@ namespace OGDotNet.AnalyticsViewer.View
                 eventViewResultListener.ViewDefinitionCompiled +=
                     delegate(object sender, ViewDefinitionCompiledArgs args)
                         {
-                            resultsTable = new ComputationResultsTables(_remoteSecuritySource, args.CompiledViewDefinition);
-                            Invoke(delegate
-                                       {
-                                           resultsTableView.DataContext = resultsTable;
-                                           SetStatus(string.Format("Waiting for first cycle..."));
-                                       }, cancellationToken);
+                            resultsTable = new ComputationResultsTables(_securitySource, args.CompiledViewDefinition);
+                            Invoke(
+                                delegate
+                                    {
+                                        resultsTableView.DataContext = resultsTable;
+                                        SetStatus(string.Format("Waiting for first cycle..."));
+                                    }, 
+                                cancellationToken);
                         };
                 eventViewResultListener.CycleCompleted += delegate(object sender, CycleCompletedArgs e)
-                                                              {
-                                                                  resultsTable.Update(e);
-                                                                  SetStatus(GetMessage(e.FullResult ?? (IViewResultModel)e.DeltaResult, ref count));
-                                                              };
+                    {
+                        resultsTable.Update(e);
+                        SetStatus(GetMessage(e.FullResult ?? (IViewResultModel)e.DeltaResult, ref count));
+                    };
 
-                eventViewResultListener.ViewDefinitionCompilationFailed +=
-                    delegate(object sender, ViewDefinitionCompilationFailedArgs args)
-                    {
-                        Invoke(delegate
-                                   {
-                                       SetStatus(string.Format("Failed to compile {0} @ {1}", args.Exception, args.ValuationTime), true);
-                                       resultsTableView.DataContext = null;
-                                   }, cancellationToken);
-                    };
-                eventViewResultListener.CycleExecutionFailed +=
-                    delegate(object sender, CycleExecutionFailedArgs args)
-                    {
-                        Invoke(delegate
+                eventViewResultListener.ViewDefinitionCompilationFailed += (sender, args) => Invoke(
+                    delegate
                         {
-                            SetStatus(string.Format("Failed to execute {0} @ {1}", args.Exception, args.ExecutionOptions.ValuationTime), true);                            
-                        }, cancellationToken);
-                    };
+                            SetStatus(
+                                string.Format("Failed to compile {0} @ {1}", args.Exception, args.ValuationTime), true);
+                            resultsTableView.DataContext = null;
+                        }, 
+                    cancellationToken);
+                eventViewResultListener.CycleExecutionFailed +=
+                    (sender, args) =>
+                    Invoke(
+                        () =>
+                        SetStatus(
+                            string.Format(
+                                "Failed to execute {0} @ {1}", args.Exception, args.ExecutionOptions.ValuationTime), 
+                            true), 
+                        cancellationToken);
 
                 eventViewResultListener.ProcessTerminated +=
-                    delegate {
-                        Invoke(() => SetStatus(string.Format("Process terminated @ {0}", DateTimeOffset.Now), true), cancellationToken);
-                    };
+                    delegate
+                        {
+                            Invoke(
+                                () => SetStatus(string.Format("Process terminated @ {0}", DateTimeOffset.Now), true), 
+                                cancellationToken);
+                        };
 
                 SetStatus(string.Format("Waiting for compilation..."));
                 client.SetResultMode(ViewResultMode.FullThenDelta);
                 client.SetResultListener(eventViewResultListener);
-                client.AttachToViewProcess(viewName, ExecutionOptions.GetRealTime(liveDataSource));
+                client.AttachToViewProcess(viewDefinitionId, ExecutionOptions.GetRealTime(liveDataSource));
             }
         }
 
@@ -215,7 +231,7 @@ namespace OGDotNet.AnalyticsViewer.View
                                                statusText.Text = msg;
                                                if (isError)
                                                {
-                                                   statusBar.Background = statusBar.Background  == Brushes.Red ? Brushes.Yellow : Brushes.Red;
+                                                   statusBar.Background = Equals(statusBar.Background, Brushes.Red) ? Brushes.Yellow : Brushes.Red;
                                                    statusBar.Height = 90;
                                                }
                                                else
@@ -226,7 +242,7 @@ namespace OGDotNet.AnalyticsViewer.View
                                            }));
         }
 
-        private void Window_Closed(object sender, EventArgs e)
+        private void WindowClosed(object sender, EventArgs e)
         {
             Settings.Save();
             viewSelector.SelectedItem = null;

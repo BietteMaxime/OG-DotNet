@@ -1,0 +1,436 @@
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MarketDataSnapshotProcessorTests.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+
+using OpenGamma.Analytics.Financial.Model.InterestRate.Curve;
+using OpenGamma.Analytics.Math.Curve;
+using OpenGamma.Core.Config.Impl;
+using OpenGamma.Engine.View;
+using OpenGamma.Financial.Analytics.IRCurve;
+using OpenGamma.MarketDataSnapshot;
+using OpenGamma.MarketDataSnapshot.Impl;
+using OpenGamma.Master.Config;
+using OpenGamma.Model.Context;
+using OpenGamma.Model.Context.MarketDataSnapshot;
+using OpenGamma.Xunit.Extensions;
+
+using Xunit;
+
+namespace OpenGamma.Model.Resources
+{
+    public class MarketDataSnapshotProcessorTests : ViewTestBase
+    {
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanGetYieldCurveValues(ViewDefinition viewDefinition)
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
+            {
+                GetAndCheckYieldCurves(dataSnapshotProcessor);
+            }
+        }
+
+        private const string ViewDefinitionName = "Equity Option Test View 1";
+
+        [Xunit.Extensions.Fact]
+        public void CanGetYieldCurveValuesRepeatedly()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    GetAndCheckYieldCurves(dataSnapshotProcessor);
+                }
+            }
+        }
+
+        private static void GetAndCheckYieldCurves(MarketDataSnapshotProcessor dataSnapshotProcessor)
+        {
+            var valuedCurves = dataSnapshotProcessor.GetYieldCurves();
+
+            CheckYieldCurves(dataSnapshotProcessor, valuedCurves);
+        }
+
+        private static void CheckYieldCurves(MarketDataSnapshotProcessor dataSnapshotProcessor, Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> valuedCurves)
+        {
+            var unexpectedCurves = valuedCurves.Keys.Except(dataSnapshotProcessor.Snapshot.YieldCurves.Keys);
+            if (unexpectedCurves.Any())
+            {
+                Assert.False(true, string.Format(
+                    "Found {0} curves which weren't in snapshot", 
+                    string.Join(",", unexpectedCurves)));
+            }
+        }
+
+        [Xunit.Extensions.Fact(Skip = "[DOTNET-36] This doesn't pass on the build server for some reason")]
+        public void CanOverrideYieldCurveValuesEqView()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
+                var beforeCurve = beforeCurves.First().Value.Item1.Curve;
+
+                var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
+                var ycSnapshot = manageableMarketDataSnapshot.YieldCurves.Values.First();
+
+                ValueSnapshot value = ycSnapshot.Values.Values.First().Value.First().Value;
+                value.OverrideValue = value.MarketValue * 1.01;
+
+                var afterCurves = dataSnapshotProcessor.GetYieldCurves();
+                Assert.NotEmpty(afterCurves);
+                var afterCurve = afterCurves.First().Value.Item1.Curve;
+
+                // Curve should change Ys but not x
+                Assert.Equal(beforeCurve.XData, afterCurve.XData);
+
+                var diffs = beforeCurve.YData.Zip(afterCurve.YData, DiffProportion).ToList();
+                Assert.NotEmpty(diffs.Where(d => d > 0.001).ToList());
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanCancelGettingYieldCurves()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                using (var cts = new CancellationTokenSource())
+                {
+                    var yieldCurves = dataSnapshotProcessor.GetYieldCurves(cts.Token);
+                    CheckYieldCurves(dataSnapshotProcessor, yieldCurves);
+
+                    cts.Cancel();
+                    Assert.Throws<OperationCanceledException>(() => dataSnapshotProcessor.GetYieldCurves(cts.Token));
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanCancelGettingYieldCurvesAfterStart()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                using (var cts = new CancellationTokenSource())
+                {
+                    TimeSpan when = TimeSpan.FromSeconds(0.2);
+                    ThreadPool.QueueUserWorkItem(delegate
+                                                     {
+                                                         Thread.Sleep(when);
+                                                         cts.Cancel();
+                                                     });
+                    Assert.Throws<OperationCanceledException>(() => dataSnapshotProcessor.GetYieldCurves(cts.Token));
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanDoStupidOverride()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
+
+                var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
+                var key = beforeCurves.Where(c => c.Value != null).First().Key;
+                var ycSnapshot = manageableMarketDataSnapshot.YieldCurves[key];
+                foreach (var value in ycSnapshot.Values.Values)
+                {
+                    foreach (var vs in value.Value.Values)
+                    {
+                        vs.OverrideValue = vs.MarketValue * -1000;        
+                    }
+                }
+
+                var afterCurves = dataSnapshotProcessor.GetYieldCurves();
+                Assert.Equal(beforeCurves.Count, afterCurves.Count);
+                Assert.Equal(beforeCurves.Where(c => c.Value != null).Count() - 1, afterCurves.Where(c => c.Value != null).Count());
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void GettingYieldCurveValuesIsQuick()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                var beforeCurves = dataSnapshotProcessor.GetYieldCurves();
+                YieldCurveKey curveKey = beforeCurves.First(k => k.Value != null).Key;
+                var beforeCurve = beforeCurves[curveKey].Item1.Curve;
+
+                var manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
+                var ycSnapshot = manageableMarketDataSnapshot.YieldCurves[curveKey];
+
+                const double f = 1.001;
+
+                foreach (var value1 in ycSnapshot.Values.Values)
+                {
+                    foreach (var valueSnapshot in value1.Value.Values)
+                    {
+                        valueSnapshot.OverrideValue = valueSnapshot.MarketValue * f;
+                    }
+                }
+
+                var afterCurves = dataSnapshotProcessor.GetYieldCurves();
+                Assert.NotEmpty(afterCurves);
+
+                Assert.Empty(beforeCurves.Keys.Except(afterCurves.Keys));
+                
+                var afterCurve = afterCurves[curveKey].Item1.Curve;
+
+                // Curve should change Ys but not x
+                Assert.Equal(beforeCurve.XData, afterCurve.XData);
+
+                var diffs = beforeCurve.YData.Zip(afterCurve.YData, DiffProportion).ToList();
+                Assert.NotEmpty(diffs.Where(d => d > 0.001).ToList());
+
+                foreach (var value1 in ycSnapshot.Values.Values)
+                {
+                    foreach (var valueSnapshot in value1.Value.Values)
+                    {
+                        valueSnapshot.OverrideValue = null;
+                    }
+                }
+
+                Dictionary<YieldCurveKey, Tuple<YieldCurve, InterpolatedYieldCurveSpecificationWithSecurities, NodalDoublesCurve>> timedCurves = null;
+
+                TimeSpan time = Time(() => timedCurves = dataSnapshotProcessor.GetYieldCurves());
+                Assert.InRange(time, TimeSpan.Zero, TimeSpan.FromSeconds(3)); // TODO faster
+                Console.Out.WriteLine(time);
+
+                var diffs2 = beforeCurves[curveKey].Item1.Curve.YData.Zip(timedCurves[curveKey].Item1.Curve.YData, DiffProportion).ToList();
+                Assert.Empty(diffs2.Where(d => d > 0.001).ToList());
+
+                // TODO check nodal curves
+            }
+        }
+
+        [Theory]
+        [TypedPropertyData("FastTickingViewDefinitions")]
+        public void CanUpdateFromLiveDataStream(ViewDefinition viewDefinition)
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition))
+            {
+                UpdateAction<ManageableMarketDataSnapshot> prepareUpdate = dataSnapshotProcessor.PrepareUpdate();
+                var before = GetCount(dataSnapshotProcessor);
+                prepareUpdate.Execute(dataSnapshotProcessor.Snapshot);
+
+                var after = GetCount(dataSnapshotProcessor);
+                Assert.Equal(before, after);
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void UpdatingFromLiveDataStreamIsFast()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(ViewDefinitionName))
+            {
+                var fromStream = Time(() => dataSnapshotProcessor.PrepareUpdate());
+                Assert.InRange(fromStream, TimeSpan.Zero, TimeSpan.FromSeconds(4));
+
+                // TODO check that we have actually updated
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetYieldCurveValuesAfterRemovingView()
+        {
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            ViewDefinition viewDefinition = Context.ViewProcessor.ConfigSource.Get<ViewDefinition>(ViewDefinitionName);
+            using (var remoteClient = Context.CreateFinancialClient())
+            {
+                SetTemporaryName(viewDefinition);
+                var clientViewDefinitionItem = ConfigItem.Create(viewDefinition, viewDefinition.Name);
+                var clientViewDefinitionDoc = new ConfigDocument<ViewDefinition>(clientViewDefinitionItem);
+                clientViewDefinitionDoc = remoteClient.ConfigMaster.Add(clientViewDefinitionDoc);
+                try
+                {
+                    using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition.Name))
+                    {
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                        remoteClient.ConfigMaster.Remove(clientViewDefinitionDoc.UniqueId);
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                    }
+                }
+                finally
+                {
+                    if (Context.ViewProcessor.ConfigSource.Get<ViewDefinition>(viewDefinition.Name) != null)
+                    {
+                        remoteClient.ConfigMaster.Remove(clientViewDefinitionDoc.UniqueId);
+                    }
+                }
+            }
+        }
+
+        private static void SetTemporaryName(ViewDefinition viewDefinition)
+        {
+            viewDefinition.Name = string.Format("{0}-RoundTripped-{1}", viewDefinition.Name, TestUtils.GetUniqueName());
+            viewDefinition.UniqueId = null;
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetYieldCurveValuesAfterRemovingViewAndReconnecting()
+        {
+            // LAP-66
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            var viewDefinition = Context.ViewProcessor.ConfigSource.Get<ViewDefinition>(ViewDefinitionName);
+            using (var remoteClient = Context.CreateFinancialClient())
+            {
+                SetTemporaryName(viewDefinition);
+                var clientViewDefinitionItem = ConfigItem.Create(viewDefinition, viewDefinition.Name);
+                var clientViewDefinitionDoc = new ConfigDocument<ViewDefinition>(clientViewDefinitionItem);
+                clientViewDefinitionDoc = remoteClient.ConfigMaster.Add(clientViewDefinitionDoc);
+                try
+                {
+                    ManageableMarketDataSnapshot manageableMarketDataSnapshot;
+                    using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition.Name))
+                    {
+                        manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                    }
+
+                    remoteClient.ConfigMaster.Remove(clientViewDefinitionDoc.UniqueId);
+                    manageableMarketDataSnapshot.BasisViewName = ViewDefinitionName;
+                    using (var dataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
+                    {
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                    }
+                }
+                finally
+                {
+                    if (Context.ViewProcessor.ConfigSource.Get<ViewDefinition>(viewDefinition.Name) != null)
+                    {
+                        remoteClient.ConfigMaster.Remove(clientViewDefinitionDoc.UniqueId);
+                    }
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetYieldCurveValuesAfterChangingName()
+        {
+            // LAP-66
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            var viewDefinition = Context.ViewProcessor.ConfigSource.Get<ViewDefinition>(ViewDefinitionName);
+            using (var remoteClient = Context.CreateFinancialClient())
+            {
+                SetTemporaryName(viewDefinition);
+                var clientViewDefinitionItem = ConfigItem.Create(viewDefinition, viewDefinition.Name);
+                var clientViewDefinitionDoc = new ConfigDocument<ViewDefinition>(clientViewDefinitionItem);
+                clientViewDefinitionDoc = remoteClient.ConfigMaster.Add(clientViewDefinitionDoc);
+                try
+                {
+                    ManageableMarketDataSnapshot manageableMarketDataSnapshot;
+                    using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition.Name))
+                    {
+                        manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                    }
+
+                    remoteClient.ConfigMaster.Remove(clientViewDefinitionDoc.UniqueId);
+                    using (var dataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
+                    {
+                        manageableMarketDataSnapshot.BasisViewName = ViewDefinitionName;
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                    }
+                }
+                finally
+                {
+                    if (Context.ViewProcessor.ConfigSource.Get<ViewDefinition>(viewDefinition.Name) != null)
+                    {
+                        remoteClient.ConfigMaster.Remove(clientViewDefinitionDoc.UniqueId);
+                    }
+                }
+            }
+        }
+
+        [Xunit.Extensions.Fact]
+        public void CanGetYieldCurveValuesAfterChangingNameAndWaiting()
+        {
+            // LAP-66
+            var snapshotManager = Context.MarketDataSnapshotManager;
+
+            var viewDefinition = Context.ViewProcessor.ConfigSource.Get<ViewDefinition>(ViewDefinitionName);
+            using (var remoteClient = Context.CreateFinancialClient())
+            {
+                SetTemporaryName(viewDefinition);
+                var clientViewDefinitionItem = ConfigItem.Create(viewDefinition, viewDefinition.Name);
+                var clientViewDefinitionDoc = new ConfigDocument<ViewDefinition>(clientViewDefinitionItem);
+                clientViewDefinitionDoc = remoteClient.ConfigMaster.Add(clientViewDefinitionDoc);
+                try
+                {
+                    ManageableMarketDataSnapshot manageableMarketDataSnapshot;
+                    using (var dataSnapshotProcessor = snapshotManager.CreateFromViewDefinition(viewDefinition.Name))
+                    {
+                        manageableMarketDataSnapshot = dataSnapshotProcessor.Snapshot;
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                    }
+
+                    remoteClient.ConfigMaster.Remove(clientViewDefinitionDoc.UniqueId);
+                    using (var dataSnapshotProcessor = snapshotManager.GetProcessor(manageableMarketDataSnapshot))
+                    {
+                        Assert.Throws<OpenGammaException>(() => GetAndCheckYieldCurves(dataSnapshotProcessor));
+                        manageableMarketDataSnapshot.BasisViewName = ViewDefinitionName;
+                        GetAndCheckYieldCurves(dataSnapshotProcessor);
+                    }
+                }
+                finally
+                {
+                    if (Context.ViewProcessor.ConfigSource.Get<ViewDefinition>(viewDefinition.Name) != null)
+                    {
+                        remoteClient.ConfigMaster.Remove(clientViewDefinitionDoc.UniqueId);
+                    }
+                }
+            }
+        }
+
+        private static TimeSpan Time(Action act)
+        {
+            Stopwatch s = new Stopwatch();
+            s.Start();
+            act();
+            s.Stop();
+            return s.Elapsed;
+        }
+
+        private static Tuple<int, int> GetCount(MarketDataSnapshotProcessor dataSnapshotProcessor)
+        {
+            int count = dataSnapshotProcessor.Snapshot.GlobalValues.Values.Count;
+            int ycCount = dataSnapshotProcessor.Snapshot.YieldCurves.Any() ? dataSnapshotProcessor.Snapshot.YieldCurves.First().Value.Values.Values.Count : 0;
+            return Tuple.Create(count, ycCount);
+        }
+
+        private static double DiffProportion(double a, double b)
+        {
+            return Math.Abs(a - b) / Math.Max(Math.Abs(a), Math.Abs(b));
+        }
+    }
+}

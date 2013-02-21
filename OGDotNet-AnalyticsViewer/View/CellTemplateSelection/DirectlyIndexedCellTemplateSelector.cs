@@ -1,16 +1,19 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="DirectlyIndexedCellTemplateSelector.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
-using OGDotNet.Utils;
+
 using OGDotNet.WPFUtils;
+
+using OpenGamma.Util;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplateSelection
 {

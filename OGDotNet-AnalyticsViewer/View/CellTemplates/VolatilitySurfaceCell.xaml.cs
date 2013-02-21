@@ -1,9 +1,10 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="VolatilitySurfaceCell.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+
 using OGDotNet.AnalyticsViewer.Properties;
 using OGDotNet.AnalyticsViewer.View.Charts;
-using OGDotNet.Mappedtypes.Core.MarketDataSnapshot;
-using OGDotNet.Mappedtypes.Util.Time;
 using OGDotNet.WPFUtils;
+
+using OpenGamma.MarketDataSnapshot;
+using OpenGamma.Util.Time;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {
@@ -74,9 +77,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
                 detailsList.Columns.Add(new DataGridTextColumn
                 {
-                    Width = 60,
-                    Header = x,
-                    CellStyle = textBlockStyle,
+                    Width = 60, 
+                    Header = x, 
+                    CellStyle = textBlockStyle, 
                     Binding = BindingUtils.GetIndexerBinding(x.ToString())
                 });
             }
@@ -163,12 +166,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private Model3DGroup BuildXSliceModel()
         {
-            //LAP-85 Model3DGroup labelModel = BuildXSliceLabel();
-
+            // LAP-85 Model3DGroup labelModel = BuildXSliceLabel();
             BuildXSliceGraphModel();
             var ret = new Model3DGroup();
             ret.Children.Add(_xSliceModel);
-            //LAP-85 ret.Children.Add(labelModel);
+
+            // LAP-85 ret.Children.Add(labelModel);
             return ret;
         }
 
@@ -192,19 +195,19 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                    new Point3D(-GraphOffset, 1, 0), 
                                                    new Point3D(-GraphOffset, 0, 1), 
                                                    new Point3D(-GraphOffset, 1, 1)
-                                               },
+                                               }, 
                 Normals = new Vector3DCollection
                                              {
                                                  normal, 
                                                  normal, 
                                                  normal, 
                                                  normal
-                                             },
+                                             }, 
                 TriangleIndices = new Int32Collection
                                                      {
                                                          0, 1, 3, 
                                                          0, 3, 2
-                                                     },
+                                                     }, 
                 TextureCoordinates = new PointCollection
                                                         {
                                                             new Point(0, ProjectedCurveSize), 
@@ -222,8 +225,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
             var transform3Ds = new Transform3D[]
                                    {
-                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), -90)),
-                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 180)),
+                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), -90)), 
+                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 180)), 
                                        new ScaleTransform3D(1.0, 1.0, LabelHeight), 
                                        new TranslateTransform3D(1, -GraphOffset, 1 + LabelHeight)
                                    };
@@ -237,8 +240,8 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
             var transform3Ds = new Transform3D[]
                                    {
-                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), -90)),
-                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 90)),
+                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), -90)), 
+                                       new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 90)), 
                                        new ScaleTransform3D(1.0, 1.0, LabelHeight), 
                                        new TranslateTransform3D(-GraphOffset, 0, 1 + LabelHeight)
                                    };
@@ -262,10 +265,10 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             var b = new TextBlock
             {
-                Text = text,
-                Background = new SolidColorBrush(Colors.White),
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Center,
+                Text = text, 
+                Background = new SolidColorBrush(Colors.White), 
+                VerticalAlignment = VerticalAlignment.Center, 
+                HorizontalAlignment = HorizontalAlignment.Center, 
             };
             var materialWithLabel = new DiffuseMaterial {Brush = new VisualBrush(b)};
 
@@ -287,12 +290,12 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
         private Model3DGroup BuildYSliceModel()
         {
-            //LAP-85 Model3DGroup labelModel = BuildYSliceLabel();
-
+            // LAP-85 Model3DGroup labelModel = BuildYSliceLabel();
             var graphModel = BuildYSliceGraphModel();
             var ret = new Model3DGroup();
             ret.Children.Add(graphModel);
-            //LAP-85 ret.Children.Add(labelModel);
+
+            // LAP-85 ret.Children.Add(labelModel);
             return ret;
         }
 
@@ -313,19 +316,19 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                                                    new Point3D(1, -GraphOffset, 0), 
                                                    new Point3D(0, -GraphOffset, 1), 
                                                    new Point3D(1, -GraphOffset, 1)
-                                               },
+                                               }, 
                 Normals = new Vector3DCollection
                                              {
                                                  normal, 
                                                  normal, 
                                                  normal, 
                                                  normal
-                                             },
+                                             }, 
                 TriangleIndices = new Int32Collection
                                                      {
                                                          0, 1, 3, 
                                                          0, 3, 2
-                                                     },
+                                                     }, 
                 TextureCoordinates = new PointCollection
                                                         {
                                                             new Point(0, ProjectedCurveSize), 
@@ -343,9 +346,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
         {
             var geometryModel3D = new GeometryModel3D(buildSurfaceModel.Geometry, buildSurfaceModel.Material) { BackMaterial = buildSurfaceModel.BackMaterial };
             var transform = new Matrix3D(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 0, 0,
+                1, 0, 0, 0, 
+                0, 1, 0, 0, 
+                0, 0, 0, 0, 
                 0, 0, 0, 1);
             geometryModel3D.Transform = new MatrixTransform3D(transform);
             return geometryModel3D;
@@ -376,7 +379,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             // TODO this should really be a texture generated by interpolating the surface
             var linearGradientBrush = new LinearGradientBrush
             {
-                StartPoint = new Point(0, 0),
+                StartPoint = new Point(0, 0), 
                 EndPoint = new Point(1, 0)
             };
 
@@ -509,9 +512,9 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 double yScale = 1.0 / (yMax - yMin);
 
                 scaleMatrix = new Matrix3D(
-                    xScale, 0, 0, 0,
-                    0, yScale, 0, 0,
-                    0, 0, zScale, 0,
+                    xScale, 0, 0, 0, 
+                    0, yScale, 0, 0, 
+                    0, 0, zScale, 0, 
 
                     -xMin * xScale, -yMin * yScale, 0, 1);
             }
@@ -521,18 +524,19 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                 double yScale = 1.0 / (yKeys.Count - 1);
 
                 scaleMatrix = new Matrix3D(
-                    xScale, 0, 0, 0,
-                    0, yScale, 0, 0,
-                    0, 0, zScale, 0,
+                    xScale, 0, 0, 0, 
+                    0, yScale, 0, 0, 
+                    0, 0, zScale, 0, 
 
                     0, 0, 0, 1);
             }
+
             return scaleMatrix;
         }
 
         private Tuple<List<Tenor>, List<Tenor>> GetSurfaceKeys()
         {
-            //TODO: handle sparse surfaces properly
+            // TODO: handle sparse surfaces properly
             var xKeys = new List<Tenor>(Surface.Xs);
             var yKeys = new List<Tenor>(Surface.Ys);
 
@@ -553,6 +557,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                     yKeys.Remove(y);
                 }
             }
+
             return Tuple.Create(xKeys, yKeys);
         }
 
@@ -609,6 +614,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
             {
                 return;
             }
+
             Point3D start = startTuple.Item2;
             Point3D end = transform3DGroup.Transform(dragObjectHit.PointHit);
 
@@ -665,6 +671,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
                     {
                         _groupModel.Transform = new Transform3DGroup();
                     }
+
                     ((Transform3DGroup)_groupModel.Transform).Children.Add(new MatrixTransform3D(Matrix3D.Identity));
                 }
             }
@@ -694,6 +701,7 @@ namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 
                 return Tuple.Create(result.PointHit, result.MeshHit);
             }
+
             return default(Tuple<Point3D, MeshGeometry3D>);
         }
 

@@ -1,16 +1,17 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MultipleCurrencyAmountCell.xaml.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using OGDotNet.Mappedtypes.Financial.Analytics;
-using OGDotNet.Mappedtypes.Util.Money;
-using Currency = OGDotNet.Mappedtypes.Util.Money.Currency;
+
+using OpenGamma.Financial.Analytics;
+using OpenGamma.Util.Money;
 
 namespace OGDotNet.AnalyticsViewer.View.CellTemplates
 {

@@ -1,12 +1,12 @@
-﻿//-----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="PrimitiveRow.cs" company="OpenGamma Inc. and the OpenGamma group of companies">
-//     Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
-//
-//     Please see distribution for license.
+//   Copyright © 2009 - present by OpenGamma Inc. and the OpenGamma group of companies
+//   
+//   Please see distribution for license.
 // </copyright>
-//-----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
-using OGDotNet.Mappedtypes.Id;
+using OpenGamma.Id;
 
 namespace OGDotNet.AnalyticsViewer.ViewModel
 {
@@ -26,7 +26,7 @@ namespace OGDotNet.AnalyticsViewer.ViewModel
 
         public string TargetName
         {
-            get { return _targetId.ToString(); }//This is what the WebUI does
+            get { return _targetId.ToString(); }// This is what the WebUI does
         }
     }
 }
